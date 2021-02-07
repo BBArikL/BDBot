@@ -32,7 +32,7 @@ async def help(ctx): # Custom Help command
   embed=discord.Embed(title="Comics!")
   embed.add_field(name="Garfield", value="-garf today OR -garf DD/MM/YYYY OR -garf random OR -garf auto")
   embed.add_field(name="Calvin & Hobbes", value="-CH today OR -CH DD/MM/YYYY OR -CH random OR -CH auto")
-  embed.add_field(name="XQCD", value="-XQCD today OR -XQCD DD/MM/YYYY OR -XQCD random OR -XQCD auto")
+  embed.add_field(name="XKCD", value="-XKCD today OR -XKCD DD/MM/YYYY OR -XKCD random OR -XKCD auto")
   embed.set_footer(text="Check the bot here: https://github.com/BBArikL/BDBot")
   await ctx.send(embed=embed)
 
@@ -45,8 +45,8 @@ async def CH(ctx, *, param=None): # C&H Strips
   await ctx.send('Calvin & Hobbes! https://www.gocomics.com/calvinandhobbes')
 
 @client.command()
-async def XQCD(ctx, *, param=None):
-  await ctx.send('XQCD! https://xkcd.com/')
+async def XKCD(ctx, *, param=None):
+  await ctx.send('XKCD! https://xkcd.com/')
 
 @client.command()
 async def git(ctx): # Links back to the github page
