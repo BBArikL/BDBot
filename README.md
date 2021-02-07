@@ -1,2 +1,2 @@
 # BDBot
-Bot that post bd strips. Simple as that
+Bot that post bd strips daily. Simple as that
