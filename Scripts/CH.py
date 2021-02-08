@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from Scripts import Time_manager
 
 class CH(commands.Cog):
   # Class responsible for sending XKCD comics
@@ -11,7 +12,12 @@ class CH(commands.Cog):
 
   @commands.command()
   async def CH(self, ctx, *, param=None):
-    await ctx.send('Calvin & Hobbes! https://www.gocomics.com/calvinandhobbes')
+    if(param != None):
+      if (param.split(" ")[0] == "today"):
+        link = Time_manager.Time_manager.send_link_today(self, 'CalvinandHobbes')
+        await ctx.send(link)
+    else:  
+      await ctx.send('Calvin & Hobbes! https://www.gocomics.com/calvinandhobbes')
 
 
 def setup(client): # Initialize the cog
