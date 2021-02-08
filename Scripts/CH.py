@@ -10,7 +10,7 @@ class CH(commands.Cog):
     # Initialize all the properties of the cog
     self.client = client
 
-  @commands.command()
+  @commands.command(aliases=['CalvinandHobbes', 'C&H', 'c&h'])
   async def CH(self, ctx, *, param=None):
     if(param != None):
       if (param.split(" ")[0] == "today"):

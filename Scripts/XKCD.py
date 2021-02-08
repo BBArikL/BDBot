@@ -10,7 +10,7 @@ class XKCD(commands.Cog):
     # Initialize all the properties of the cog
     self.client = client
 
-  @commands.command()
+  @commands.command(aliases=['xkcd', 'xk'])
   async def XKCD(self, ctx, *, param=None):
     if(param != None):
       if((param.split(" ")[0]) == "today"):

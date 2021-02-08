@@ -10,7 +10,7 @@ class Garfield(commands.Cog):
     # Initialize all the properties of the cog
     self.client = client
 
-  @commands.command()
+  @commands.command(aliases=['Garfield', 'Garf', 'garfield'])
   async def garf(self, ctx, *, param=None):
     if(param != None):
       if (param.split(" ")[0] == "today"):
