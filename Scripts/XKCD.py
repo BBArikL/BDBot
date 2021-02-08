@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import random
 
 class XKCD(commands.Cog):
   # Class responsible for sending XKCD comics
@@ -11,7 +12,17 @@ class XKCD(commands.Cog):
 
   @commands.command()
   async def XKCD(self, ctx, *, param=None):
-    await ctx.send('XKCD! https://xkcd.com/')
+    if((param.split(" ")[0]) == "today"):
+      # Takes the last comic number
+      # Add 1
+      await ctx.send('XKCD today! https://xkcd.com/')
+    
+    elif ((param.split(" ")[0]) == "random"):
+      nb=random.randint(0,2421) # Choose a random XKCD comic
+      await ctx.send(f'XKCD #{nb}! https://xkcd.com/{nb}/')
+    
+    else: # Links to the main website
+      await ctx.send('XKCD! https://xkcd.com/')
 
 
 def setup(client): # Initialize the cog
