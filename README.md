@@ -6,7 +6,7 @@ Bot that post bd strips. Simple as that.
 # Comics in the plan to add:
 - Garfield https://www.gocomics.com/garfield/2021/02/07
 - Calvin and Hobbes https://www.gocomics.com/calvinandhobbes/2021/02/07
-- XQCD https://xkcd.com/
+- XKCD https://xkcd.com/
 
 # Related Github pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
