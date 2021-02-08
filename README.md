@@ -5,6 +5,7 @@ Bot that post bd strips. Simple as that.
 
 # Comics in the plan to add:
 - Garfield https://www.gocomics.com/garfield/2021/02/07
+- Garfield classics? https://www.gocomics.com/garfield-classics
 - Calvin and Hobbes https://www.gocomics.com/calvinandhobbes/2021/02/07
 - XKCD https://xkcd.com/
 
