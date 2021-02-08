@@ -9,7 +9,7 @@ class Errors(commands.Cog):
     # Initialize all the properties of the cog
     self.client = client
   
-  '''@commands.Cog.listener()
+  @commands.Cog.listener()
   async def on_command_error(self,ctx,error):
     #Handles errors
     if isinstance(error, commands.CommandNotFound): # Command not found
@@ -20,6 +20,6 @@ class Errors(commands.Cog):
       await ctx.send('You do not have the permission to do that.')
     else: # Erreurs non supporté pour le moment
       await ctx.send('Error not supported. Visit https://github.com/BBArikL/BDBot')
-'''
+
 def setup(client): # Initialize the cog
   client.add_cog(Errors(client))
