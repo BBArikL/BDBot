@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**Is your comic request on GoComics? If not, please add a link.**
+**Is your comic request on GoComics? If yes, please add a link.**
 Example: Add garfield, comic page https://www.gocomics.com/garfield
 
 **If it is not on GoComics, can you tell us more about the organization of the website? (Optional)**
