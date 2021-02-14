@@ -38,7 +38,7 @@ CalvinBot : https://github.com/wdr1/CalvinBot
 -TODO
   - Gocomics:
     - 'Random' and date specific comics.
-  -XKCD / Other sites:
+  - XKCD / Other sites:
     - Do the specific date comic and core functionality of 'Other_sites_manager'.
     - Improve 'Daily' command.
  
