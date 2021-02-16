@@ -13,7 +13,7 @@ class BDBot(commands.Cog):
   @commands.Cog.listener()
   async def on_ready(self):
     # Change bot's activity
-    await self.client.change_presence(status = discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name='-help'))
+    await self.client.change_presence(status = discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name='*help'))
 
     # To be sure that the bot is ready
     print('Logged in as {0.user}'.format(self.client))

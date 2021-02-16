@@ -39,12 +39,14 @@ class GoComics_manager(commands.Cog):
           details["year"] = yesterday.strftime("%Y")
 
           # Gets today's url
-          details["url"] = GoComics_manager.send_link(comic_Name, today)
+          details["url"] = GoComics_manager.send_link(comic_Name, yesterday)
         
           # Get the html of the comic site
           html = urlopen(details["url"]).read()
+
+          details["title"] = GoComics_manager.extract_title(html) # Ectracts the title of the comic
         
-          details["img_url"] = GoComics_manager.extract_img(html)
+          details["img_url"] = GoComics_manager.extract_img(html) # Finds the url of the image
 
     else:
       details = None
