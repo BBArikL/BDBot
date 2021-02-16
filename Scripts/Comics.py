@@ -15,7 +15,7 @@ class Comic(commands.Cog):
   #---- Preferably, Gocomics comics are the easiest to implement, so try to stick with that if your comic is hosted there 
   #---- (Literally copy-paste the 'garf' command, change the name of the command and change the comic_name to what it is in the GoComics url, example : https://www.gocomics.com/garfield/ --> comic_name = 'Garfield').  
   #---- If the comic is NOT hosted on GoComics, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
-  #---- Any pull requests that was'nt approved from another site will be automatically rejected and you will be asked to follow the procedure cited ----#
+  #---- Any pull requests that wasnt approved from another site will be automatically rejected and you will be asked to follow the procedure cited ----#
   @commands.command(aliases=['CalvinandHobbes', 'C&H', 'c&h', 'ch'])
   async def CH(self, ctx, *, param=None): # Calvin and Hobbes
     comic_name = 'CalvinandHobbes'
@@ -25,7 +25,7 @@ class Comic(commands.Cog):
     await self.parameters_interpreter(ctx,comic_name,main_website,param)
 
   @commands.command(aliases=['Garfield', 'Garf', 'garfield'])
-  async def garf(self, ctx, *, param=None):
+  async def garf(self, ctx, *, param=None): # Garfield
     comic_name = 'Garfield'
     main_website = 'https://www.gocomics.com/'
 
@@ -33,7 +33,7 @@ class Comic(commands.Cog):
     await self.parameters_interpreter(ctx,comic_name,main_website,param)
 
   @commands.command(aliases=['xkcd', 'xk'])
-  async def XKCD(self, ctx, *, param=None):
+  async def XKCD(self, ctx, *, param=None): # XKCD
     comic_name = 'XKCD'
     main_website = 'https://xkcd.com/'
 
@@ -75,7 +75,7 @@ class Comic(commands.Cog):
       elif(param.lower().find("stop") != -1 and BDbot.BDBot.post_daily().is_running()):
         BDbot.BDBot.post_daily.stop() # Stops the current loop
       
-      elif(param.lower().find("today") != -1 and comic_name == 'XKCD'):
+      elif(param.lower().find("random") != -1 and comic_name == 'XKCD'):
         # Temporary, the bot can only send random XKCD comics
         await self.rand(ctx,comic_name, main_website)
 
@@ -93,7 +93,7 @@ class Comic(commands.Cog):
       comic_details = Web_requests_manager.GoComics_manager.Comic_info(self,comic_name)
     
     else: # Other websites
-      comic_details = Web_requests_manager.Other_site_manager.Comic_info(self,comic_name)
+      comic_details = Web_requests_manager.Other_site_manager.Comic_info(self,comic_name, main_website)
 
     # Sends the comic
     await BDbot.BDBot.send_comic_embed(self, ctx, comic_details)
