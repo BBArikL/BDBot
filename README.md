@@ -2,11 +2,14 @@
 
 Discord bot that post bd strips. Simple as that!
 
-## Comics in the plan to add:
+## Comics:
+### Added:
 - Garfield https://www.gocomics.com/garfield/
-- Garfield classics https://www.gocomics.com/garfield-classics
 - Calvin and Hobbes https://www.gocomics.com/calvinandhobbes/
 - XKCD https://xkcd.com/
+
+### To Add:
+- Garfield classics https://www.gocomics.com/garfield-classics
 - Peanuts https://www.gocomics.com/peanuts
 - Peanuts Begins https://www.gocomics.com/peanuts-begins
 
