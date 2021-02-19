@@ -39,8 +39,7 @@ CalvinBot : https://github.com/wdr1/CalvinBot
   - Tell me if I forgot some commands here!
 
 - Bugs
- - Lots of them!
- - The search method to extract the image for Gocomics seems to be very inconsistent. EDIT: Should be fixed (theoratically). My guess is that since the bot is hosted on Replit, the server where the bot is hosted is in advance compared to the GoComics site. The fix used is not the best approach, I must admit, but it should work.
+  - The search method to extract the image for Gocomics seems to be very inconsistent. EDIT: Should be fixed (theoratically). My guess is that since the bot is hosted on Replit, the server where the bot is hosted is in advance compared to the GoComics site. The fix used is not the best approach, I must admit, but it should work.
 
 - TODO
   - Gocomics:
