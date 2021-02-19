@@ -12,6 +12,13 @@ Discord bot that post bd strips. Simple as that!
 - Garfield classics https://www.gocomics.com/garfield-classics
 - Peanuts https://www.gocomics.com/peanuts
 - Peanuts Begins https://www.gocomics.com/peanuts-begins
+- Poorly drawn lines https://poorlydrawnlines.com/
+- Safely endangered https://www.webtoons.com/en/comedy/safely-endangered/list?title_no=352
+- Carl https://www.webtoons.com/en/slice-of-life/carl/list?title_no=1216
+- BlueChair https://www.webtoons.com/en/slice-of-life/bluechair/list?title_no=199
+- Live with yourself https://www.webtoons.com/en/comedy/live-with-yourself/list?title_no=919
+- Adventures of god https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853&page=1
+- Cyanide and Happines https://explosm.net/
 
 ## Related Github pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
