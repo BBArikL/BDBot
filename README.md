@@ -7,11 +7,10 @@ Discord bot that post bd strips. Simple as that!
 - Garfield https://www.gocomics.com/garfield/
 - Calvin and Hobbes https://www.gocomics.com/calvinandhobbes/
 - XKCD https://xkcd.com/
-
-### To Add:
 - Garfield classics https://www.gocomics.com/garfield-classics
 - Peanuts https://www.gocomics.com/peanuts
 - Peanuts Begins https://www.gocomics.com/peanuts-begins
+### To Add:
 - Poorly drawn lines https://poorlydrawnlines.com/
 - Safely endangered https://www.webtoons.com/en/comedy/safely-endangered/list?title_no=352
 - Carl https://www.webtoons.com/en/slice-of-life/carl/list?title_no=1216
@@ -33,9 +32,9 @@ CalvinBot : https://github.com/wdr1/CalvinBot
   - For GoComics comics, its easy to add more.
   - Command 'today' and 'daily' working even if 'daily' can only send one comic daily on one server for now.
   - Command 'today' and 'random' working for XKCD. Command 'random' just links back to the random page for now.
-  - '*help' : Help embed
-  - '*git' command : Redirects to this github page
-  - '*invite' command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
+  - '!help' : Help embed
+  - '!git' command : Redirects to this github page
+  - '!invite' command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
   - Tell me if I forgot some commands here!
 
 - Bugs

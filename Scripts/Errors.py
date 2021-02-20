@@ -16,13 +16,13 @@ class Errors(commands.Cog):
   async def on_command_error(self,ctx,error):
     #Handles errors
     if isinstance(error, commands.CommandNotFound): # Command not found
-     await ctx.send('Invalid command. Try *help to search for usable commands.')
+     await ctx.send('Invalid command. Try !help to search for usable commands.')
     elif isinstance(error, commands.MissingRequiredArgument): # Manque d'arguments
-      await ctx.send('A required argument is needed. Try *help to see required arguments.')
+      await ctx.send('A required argument is needed. Try !help to see required arguments.')
     elif isinstance(error, commands.MissingPermissions):
       await ctx.send('You do not have the permission to do that.')
     else: # Not supported errors
-      await ctx.send('Error not supported. Visit https://github.com/BBArikL/BDBot')
+      await ctx.send('Error not supported. Visit https://github.com/BBArikL/BDBot to report the issue.')
       
 def setup(client): # Initialize the cog
   client.add_cog(Errors(client))

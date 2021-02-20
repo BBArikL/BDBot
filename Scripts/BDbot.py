@@ -13,7 +13,7 @@ class BDBot(commands.Cog):
   @commands.Cog.listener()
   async def on_ready(self):
     # Change bot's activity
-    await self.client.change_presence(status = discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name='*help'))
+    await self.client.change_presence(status = discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name='!help'))
 
     # To be sure that the bot is ready
     print('Logged in as {0.user}'.format(self.client))
@@ -41,7 +41,8 @@ class BDBot(commands.Cog):
 
       embed=discord.Embed(title=f"{comic_title}", url = url)
       
-      embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
+      if(day!=None):
+        embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
 
       if(comic_details["alt"]!=None): # If there is alt text (Text when you hover your mouse on the image)
         alt = comic_details["alt"]

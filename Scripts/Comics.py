@@ -32,6 +32,32 @@ class Comic(commands.Cog):
     # Interprets the parmeters given by the user
     await self.parameters_interpreter(ctx,comic_name,main_website,param)
 
+  @commands.command(aliases=['GarfieldClassics', 'GarfClassic', 'garfieldclass', 'GarfCl'])
+  async def garfcl(self, ctx, *, param=None): # Garfield
+    comic_name = 'Garfield-Classics'
+    main_website = 'https://www.gocomics.com/'
+
+    # Interprets the parmeters given by the user
+    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+
+  
+  @commands.command(aliases=['Peanuts', 'peanut'])
+  async def peanuts(self, ctx, *, param=None): # Garfield
+    comic_name = 'Peanuts'
+    main_website = 'https://www.gocomics.com/'
+
+    # Interprets the parmeters given by the user
+    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+
+  @commands.command(aliases=['PeanutsBegins', 'peanutbegin', 'peanutsbegin'])
+  async def peanutsbegins(self, ctx, *, param=None): # Garfield
+    comic_name = 'Peanuts-Begins'
+    main_website = 'https://www.gocomics.com/'
+
+    # Interprets the parmeters given by the user
+    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+
+
   @commands.command(aliases=['xkcd', 'xk'])
   async def XKCD(self, ctx, *, param=None): # XKCD
     comic_name = 'XKCD'

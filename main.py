@@ -4,7 +4,7 @@ from keepalive import keep_alive # imports the web server that pings the bot con
 from discord.ext import commands
 
 client = discord.Client() # Connects to the discord client
-client = commands.Bot(command_prefix = '*')
+client = commands.Bot(command_prefix = '!')
 #discord.ext.commands.Bot(command_prefix = get_prefix, case_insensitive = True)
 client.remove_command("help") # Removes the default "help" function to replace it by our own
 
