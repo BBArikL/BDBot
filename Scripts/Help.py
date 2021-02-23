@@ -15,6 +15,7 @@ class Help(commands.Cog):
     
     embed.add_field(name="Gocomics", value="Currently available: 'Garfield',\n'Garfield classics',\n'Calvin&Hobbes',\n'Peanuts', 'Peanuts Begins'\nCommands:\n!name-of-comic today")
     embed.add_field(name="XKCD", value="Aliases: 'xkcd', 'xk'\nCommands:\n!XKCD today\n!XKCD random")
+    embed.add_field(name= 'Cyanide and Happiness', value="Aliases: 'Cyanide',\n'cyanide',\n'Cyanide&Happiness',\n'cyan'\nCommands:\n!cyanide today")
 
     embed.add_field(name="Git", value="Link back to the git page\nCommand:\n!git")
     embed.add_field(name="Git", value="Gives a link to add the bot to your servers\nCommand:\n!invite")

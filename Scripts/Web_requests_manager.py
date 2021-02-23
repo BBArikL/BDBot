@@ -77,8 +77,11 @@ class Other_site_manager(commands.Cog):
     if(comic_Name!=None):
       if(day==None and month==None and year==None):
         # Gets today's url
-        if(comic_Name == 'XKCD'):
-          details["url"] = Other_site_manager.extract_url(main_website)
+
+        if(comic_Name=='Cyanide and Happinness'):
+          main_website = Other_site_manager.extract_id_content(main_website, 'comic-social-link')
+
+        details["url"] = Other_site_manager.extract_url(main_website)
         
         # Gets today date
         d = date.today()
@@ -101,7 +104,7 @@ class Other_site_manager(commands.Cog):
     
     return details
 
-  #---- START XKCD specific functions ----#
+  #---- START of web scraping functions ----#
   def extract_url(main_website):
     # Get the html of the comic site
     html = urlopen(main_website).read()
@@ -128,6 +131,7 @@ class Other_site_manager(commands.Cog):
       return None
 
   def extract_alt_xk(html): # Extract the alt text. 
+    # TODO
     # Get the html of the comic site
     soup = BeautifulSoup(html,"html5lib")
     #links = soup.find_all('div', {'class': 'img'})
@@ -135,6 +139,21 @@ class Other_site_manager(commands.Cog):
     print(img[2].find('img')['title']) 
     """.find_all('title')"""
     return None
+
+  def extract_id_content(main_website, id):
+    # Returns the demanded id content (href of an id attribute)
+    # TO OPTIMIZE (It works but it is the worst implementation of all)
+    html = urlopen(main_website).read()
+    soup = BeautifulSoup(html, "html5lib")
+
+    # From : https://stackoverflow.com/questions/43814754/python-beautifulsoup-how-to-get-href-attribute-of-a-element
+    id_content = []
+    for a in soup.find_all('a', href=True): 
+      if a.text: 
+        id_content.append(a['href'])
+    id_content = id_content[47]
+
+    return main_website + id_content
 
   #--- End of Other_site_manager ---#
 

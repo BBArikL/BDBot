@@ -10,6 +10,7 @@ Discord bot that post bd strips. Simple as that!
 - Garfield classics https://www.gocomics.com/garfield-classics
 - Peanuts https://www.gocomics.com/peanuts
 - Peanuts Begins https://www.gocomics.com/peanuts-begins
+- Cyanide and Happines https://explosm.net/
 ### To Add:
 - Poorly drawn lines https://poorlydrawnlines.com/
 - Safely endangered https://www.webtoons.com/en/comedy/safely-endangered/list?title_no=352
@@ -17,7 +18,6 @@ Discord bot that post bd strips. Simple as that!
 - BlueChair https://www.webtoons.com/en/slice-of-life/bluechair/list?title_no=199
 - Live with yourself https://www.webtoons.com/en/comedy/live-with-yourself/list?title_no=919
 - Adventures of god https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853&page=1
-- Cyanide and Happines https://explosm.net/
 
 ## Related Github pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
@@ -48,6 +48,7 @@ CalvinBot : https://github.com/wdr1/CalvinBot
     - Do the specific date comic command.
     - Improve 'Daily' command.
     - Improve 'random' command.
+    - Go back and see the extract_id_content() method in Web_requests_manager to fix the poor implementation of the link (For Cyanide and Happines).
   - Other:
     - Optimize Web_requests_manager
  

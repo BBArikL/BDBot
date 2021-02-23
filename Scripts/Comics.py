@@ -66,6 +66,14 @@ class Comic(commands.Cog):
     # Interprets the parmeters given by the user
     await self.parameters_interpreter(ctx,comic_name,main_website,param)
 
+  @commands.command(aliases=['Cyanide', 'cyanide', 'Cyanide&Happiness', 'cyan'])
+  async def CyanideandHappinness(self, ctx, *, param=None): # XKCD
+    comic_name = 'Cyanide and Happiness'
+    main_website = 'https://explosm.net'
+
+    # Interprets the parmeters given by the user
+    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+
   # ---- End of Comics parameters ----#
 
   async def send_request_error(self, ctx):
