@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 from Scripts import Web_requests_manager
+import os
 
 class BDBot(commands.Cog):
   # Class responsible for main functions of the bot
@@ -24,7 +25,7 @@ class BDBot(commands.Cog):
 
   @commands.command(aliases = ['inv'])
   async def invite(self,ctx): # Creates a Oauth2 link to share the bot
-    inv = "https://discord.com/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot" # Dynamic linking not working for the moment : discord.utils.oauth_url(self.client.id)
+    inv = discord.utils.oauth_url(os.getenv('CLIENT_ID'))
     await ctx.send(f'Share the bot! {inv}')
 
   #---- End of commands ----#  
