@@ -10,7 +10,7 @@ Discord bot that post bd strips. Simple as that!
 - Garfield classics https://www.gocomics.com/garfield-classics
 - Peanuts https://www.gocomics.com/peanuts
 - Peanuts Begins https://www.gocomics.com/peanuts-begins
-- Cyanide and Happines https://explosm.net/
+- Cyanide and Happines https://explosm.net/ (Need rework)
 ### To Add:
 - Poorly drawn lines https://poorlydrawnlines.com/
 - Safely endangered https://www.webtoons.com/en/comedy/safely-endangered/list?title_no=352
