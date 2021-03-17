@@ -66,18 +66,18 @@ class Comic(commands.Cog):
     # Interprets the parmeters given by the user
     await self.parameters_interpreter(ctx,comic_name,main_website,param)
 
-  @commands.command(aliases=['Cyanide', 'cyanide', 'Cyanide&Happiness', 'cyan'])
+  """@commands.command(aliases=['Cyanide', 'cyanide', 'Cyanide&Happiness', 'cyan'])
   async def CyanideandHappinness(self, ctx, *, param=None): # XKCD
     comic_name = 'Cyanide and Happiness'
     main_website = 'https://explosm.net'
 
     # Interprets the parmeters given by the user
-    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+    await self.parameters_interpreter(ctx,comic_name,main_website,param)"""
 
   # ---- End of Comics parameters ----#
 
   async def send_request_error(self, ctx):
-    await ctx.send('Request not understood.')
+    await ctx.send('Request not understood. Try bd!help for usable commands.')
 
   async def send_comic_website(self, ctx,comic_name,main_website):
     if(main_website == 'https://www.gocomics.com/'):
@@ -100,18 +100,18 @@ class Comic(commands.Cog):
       """
       if (param.lower().find("today") != -1):
         # Sends the website of today's comic
-        await self.today(ctx,comic_name,main_website)
+        await self.comic_send(ctx,comic_name,main_website, "today")
 
-      elif(param.lower().find("daily") != -1):
+      #elif(param.lower().find("daily") != -1):
         # Sends the comic daily
-        await self.daily(ctx,comic_name,main_website)
+       # await self.daily(ctx,comic_name,main_website)
 
-      elif(param.lower().find("stop") != -1 and BDbot.BDBot.post_daily().is_running()):
-        BDbot.BDBot.post_daily.stop() # Stops the current loop
+      #elif(param.lower().find("stop") != -1 and BDbot.BDBot.post_daily().is_running()):
+       # BDbot.BDBot.post_daily.stop() # Stops the current loop
       
-      elif(param.lower().find("random") != -1 and comic_name == 'XKCD'):
-        # Temporary, the bot can only send random XKCD comics
-        await self.rand(ctx,comic_name, main_website)
+      elif(param.lower().find("random") != -1):
+        #Random comic
+        await self.comic_send(ctx,comic_name, main_website, "random")
 
       else: # Return a error because the parameters given doesnt work
         await self.send_request_error(ctx)
@@ -120,26 +120,35 @@ class Comic(commands.Cog):
       # If the user didn't send any parameters, return the main website of the comic requested
       await self.send_comic_website(ctx,comic_name,main_website)
 
-  async def today(self,ctx,comic_name,main_website):
-    # Posts today's strip
+  async def comic_send(self,ctx,comic_name,main_website, param):
+    # Posts the strip (with the given parameters)
     if(main_website == 'https://www.gocomics.com/'):
       # Specific manager for GoComics website
-      comic_details = Web_requests_manager.GoComics_manager.Comic_info(self,comic_name)
+      comic_details = Web_requests_manager.GoComics_manager.Comic_info(self,comic_name, param=param)
     
     else: # Other websites
-      comic_details = Web_requests_manager.Other_site_manager.Comic_info(self,comic_name, main_website)
+      comic_details = Web_requests_manager.Other_site_manager.Comic_info(self,comic_name, main_website, param=param)
 
     # Sends the comic
     await BDbot.BDBot.send_comic_embed(self, ctx, comic_details)
 
-  async def daily(self,ctx,comic_name,main_website):
-    # Posts daily strip
+  """async def daily(self,ctx,comic_name,main_website, param):
+    # Posts the daily strip
     BDbot.BDBot.post_daily.start(ctx,comic_name,main_website)
-
-  async def rand(self,ctx,comic_name,main_website):
+    async def rand(self,ctx,comic_name,main_website, param):
     # TODO random for GoComics comics
     nb=random.randint(0,2421) # Choose a random XKCD comic to send (TODO find a way to increment automatically the number) : *** //c.xkcd.com/random/comic/ ****
     await BDbot.BDBot.send_any(self, ctx,f'XKCD #{nb}! https://xkcd.com/{nb}/')
+     # Posts random strip
+    if(main_website == 'https://www.gocomics.com/'):
+      # Specific manager for GoComics website
+      comic_details = Web_requests_manager.GoComics_manager.Comic_info(self, comic_name, param=param)
+    
+    else: # Other websites
+      comic_details = Web_requests_manager.Other_site_manager.Comic_info(self, comic_name, main_website, param=param)
+
+    # Sends the comic
+    await BDbot.BDBot.send_comic_embed(self, ctx, comic_details)"""
 
   #--- END of cog ----#
 

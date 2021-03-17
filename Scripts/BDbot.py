@@ -14,7 +14,7 @@ class BDBot(commands.Cog):
   @commands.Cog.listener()
   async def on_ready(self):
     # Change bot's activity
-    await self.client.change_presence(status = discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name='!help'))
+    await self.client.change_presence(status = discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name='bd!help'))
 
     # To be sure that the bot is ready
     print('Logged in as {0.user}'.format(self.client))
@@ -45,7 +45,8 @@ class BDBot(commands.Cog):
       if(day!=None):
         embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
 
-      if(comic_details["alt"]!=None): # If there is alt text (Text when you hover your mouse on the image)
+      if(comic_details["alt"]!=None): 
+        # If there is alt text (Text when you hover your mouse on the image)
         alt = comic_details["alt"]
         embed.add_field(name="Alt text",value=alt)
 
@@ -53,6 +54,7 @@ class BDBot(commands.Cog):
 
       embed.set_footer(text="Check out the bot here! https://github.com/BBArikL/BDBot")
       return embed
+
     else:
       # Error message
       embed=discord.Embed(title = "Error", url = "https://github.com/BBArikL/BDBot")
@@ -73,7 +75,7 @@ class BDBot(commands.Cog):
 
   #---- End of BDBot ----#
 
-class dailyposter(): # Class responsible for posting daily comic strips
+"""class dailyposter(): # Class responsible for posting daily comic strips
   def __init__(self, ctx, comic_name, main_website):
     self.post_daily.start(ctx, comic_name, main_website)
 
@@ -86,7 +88,7 @@ class dailyposter(): # Class responsible for posting daily comic strips
     else:
       comic_details = None # Placeholder for OtherSitesManager when its working
         
-    BDBot.send_comic_embed(ctx, comic_details) # Sends the embed with the comics details
+    BDBot.send_comic_embed(ctx, comic_details) # Sends the embed with the comics details"""
 
 def setup(client): # Initialize the cog
   client.add_cog(BDBot(client))

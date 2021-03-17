@@ -8,7 +8,7 @@ class GoComics_manager(commands.Cog):
   def __init__(self, client):
     pass
 
-  def Comic_info(self,comic_Name=None,day=None,month=None,year=None):
+  def Comic_info(self,comic_Name=None,day=None,month=None,year=None, param=None):
     # Details of the comic
     details = {"url": None, "Name": comic_Name,"title": None,"day": None, "month": None, "year": None, "img_url": None, "alt": None}
     
@@ -16,13 +16,19 @@ class GoComics_manager(commands.Cog):
       if(day==None and month==None and year==None):
         # Gets today date
         today = date.today()
+        
         while(details["img_url"] == None):
-          details["day"] = today.strftime("%d")
-          details["month"] = today.strftime("%m")
-          details["year"] = today.strftime("%Y")
+          if(param == "today"):
+            details["day"] = today.strftime("%d")
+            details["month"] = today.strftime("%m")
+            details["year"] = today.strftime("%Y")
 
-          # Gets today url
-          details["url"] = GoComics_manager.send_link(comic_Name, today)
+            # Gets today url
+            details["url"] = GoComics_manager.send_link(comic_Name, today)
+
+          elif (param == "random"):
+            # Random comic
+            details["url"] = GoComics_manager.send_random_link(comic_Name)
 
           # Get the html of the comic site
           html = urlopen(details["url"]).read()
@@ -31,16 +37,20 @@ class GoComics_manager(commands.Cog):
 
           details["img_url"] = GoComics_manager.extract_meta_content(html, 'image') # Finds the url of the image
 
-          if (details["img_url"] == None): 
+          if (details["img_url"] == None and param=="today"): 
             today = today - timedelta(days = 1)
     else:
       details = None
     
     return details
 
-  def send_link(comic_Name, day): # Returns the comic title
+  def send_link(comic_Name, day): # Returns the comic url
     date_formatted = day.strftime("%Y/%m/%d")
     URL = f'https://www.gocomics.com/{comic_Name.lower()}/{date_formatted}'
+    return (URL)
+
+  def send_random_link(comic_Name): # Returns the random comic url
+    URL = f'https://www.gocomics.com/random/{comic_Name.lower()}'
     return (URL)
 
   def extract_meta_content(html,content):
@@ -71,23 +81,28 @@ class Other_site_manager(commands.Cog):
     pass
   
   # TODO ALL OF THIS SITE MANAGER WITH XKCD AS A TEMPLATE
-  def Comic_info(self,comic_Name,main_website,day=None,month=None,year=None):
+  def Comic_info(self,comic_Name,main_website,day=None,month=None,year=None,param=None):
     # Details of the comic
     details = {"url": None, "Name": comic_Name,"title": None,"day": None, "month": None, "year": None, "img_url": None, "alt": None}    
     if(comic_Name!=None):
       if(day==None and month==None and year==None):
         # Gets today's url
 
-        if(comic_Name=='Cyanide and Happinness'):
-          main_website = Other_site_manager.extract_id_content(main_website, 'comic-social-link')
+        # Doesnt work, deactivated Cyanide and happiness to come back later
+        #if(comic_Name=='Cyanide and Happinness'):
+        #  main_website = Other_site_manager.extract_id_content(main_website, 'comic-social-link')
+
+        if(comic_Name=='XKCD' and param=="random"):
+          main_website = "https://c.xkcd.com/random/comic/" # Link for random XKCD comic
 
         details["url"] = Other_site_manager.extract_url(main_website)
         
         # Gets today date
-        d = date.today()
-        details["day"] = d.strftime("%d")
-        details["month"] = d.strftime("%m")
-        details["year"] = d.strftime("%Y")
+        if (param=="today"):
+          d = date.today()
+          details["day"] = d.strftime("%d")
+          details["month"] = d.strftime("%m")
+          details["year"] = d.strftime("%Y")
 
         # Get the html of the comic site
         html = urlopen(details["url"]).read()
@@ -142,7 +157,7 @@ class Other_site_manager(commands.Cog):
 
   def extract_id_content(main_website, id):
     # Returns the demanded id content (href of an id attribute)
-    # TO OPTIMIZE (It works but it is the worst implementation of all)
+    # TO OPTIMIZE (Doesnt work, the worst implementation of all)
     html = urlopen(main_website).read()
     soup = BeautifulSoup(html, "html5lib")
 
