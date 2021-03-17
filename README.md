@@ -30,11 +30,11 @@ CalvinBot : https://github.com/wdr1/CalvinBot
 ## Current state of the project
 - Functionalities
   - For GoComics comics, its easy to add more.
-  - Command 'today' and 'daily' working even if 'daily' can only send one comic daily on one server for now.
-  - Command 'today' and 'random' working for XKCD. Command 'random' just links back to the random page for now.
-  - '!help' : Help embed
-  - '!git' command : Redirects to this github page
-  - '!invite' command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
+  - Command 'today' and 'random' working. (Deactivated 'daily' until ready)
+  - Command 'today' and 'random' working for XKCD.
+  - 'bd!help' : Help embed
+  - 'bd!git' command : Redirects to this github page
+  - 'bd!invite' command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
   - Tell me if I forgot some commands here!
 
 - Bugs
