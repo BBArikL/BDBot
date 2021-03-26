@@ -18,6 +18,7 @@ Discord bot that post bd strips. Simple as that!
 - BlueChair https://www.webtoons.com/en/slice-of-life/bluechair/list?title_no=199
 - Live with yourself https://www.webtoons.com/en/comedy/live-with-yourself/list?title_no=919
 - Adventures of god https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853&page=1
+- War and peas https://warandpeas.com/
 
 ## Related Github pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
@@ -42,14 +43,13 @@ CalvinBot : https://github.com/wdr1/CalvinBot
 
 - TODO
   - Gocomics:
-    - 'Random' and date specific comics.
+    - Date specific comic
   - XKCD / Other sites:
     - Show the alt-text
-    - Do the specific date comic command.
-    - Improve 'Daily' command.
-    - Improve 'random' command.
-    - Go back and see the extract_id_content() method in Web_requests_manager to fix the poor implementation of the link (For Cyanide and Happines).
+    - Do the specific date / number comic command.
+    - Go back and see the extract_id_content() method in Web_requests_manager to fix the poor implementation of the link (For Cyanide and Happines). EDIT: Deactivated until its ready.
   - Other:
+    - 'Daily' command 
     - Optimize Web_requests_manager
  
 - Anything else to know?
