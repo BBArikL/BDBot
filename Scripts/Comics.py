@@ -132,24 +132,6 @@ class Comic(commands.Cog):
     # Sends the comic
     await BDbot.BDBot.send_comic_embed(self, ctx, comic_details)
 
-  """async def daily(self,ctx,comic_name,main_website, param):
-    # Posts the daily strip
-    BDbot.BDBot.post_daily.start(ctx,comic_name,main_website)
-    async def rand(self,ctx,comic_name,main_website, param):
-    # TODO random for GoComics comics
-    nb=random.randint(0,2421) # Choose a random XKCD comic to send (TODO find a way to increment automatically the number) : *** //c.xkcd.com/random/comic/ ****
-    await BDbot.BDBot.send_any(self, ctx,f'XKCD #{nb}! https://xkcd.com/{nb}/')
-     # Posts random strip
-    if(main_website == 'https://www.gocomics.com/'):
-      # Specific manager for GoComics website
-      comic_details = Web_requests_manager.GoComics_manager.Comic_info(self, comic_name, param=param)
-    
-    else: # Other websites
-      comic_details = Web_requests_manager.Other_site_manager.Comic_info(self, comic_name, main_website, param=param)
-
-    # Sends the comic
-    await BDbot.BDBot.send_comic_embed(self, ctx, comic_details)"""
-
   #--- END of cog ----#
 
 

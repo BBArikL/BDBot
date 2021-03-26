@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from Scripts import Web_requests_manager
 import os
 
@@ -18,6 +18,9 @@ class BDBot(commands.Cog):
 
     # To be sure that the bot is ready
     print('Logged in as {0.user}'.format(self.client))
+
+  
+
 
   @commands.command(aliases = ['Git','github','Github'])
   async def git(self, ctx): # Links back to the github page
@@ -74,21 +77,6 @@ class BDBot(commands.Cog):
     await ctx.send(text)
 
   #---- End of BDBot ----#
-
-"""class dailyposter(): # Class responsible for posting daily comic strips
-  def __init__(self, ctx, comic_name, main_website):
-    self.post_daily.start(ctx, comic_name, main_website)
-
-  @tasks.loop(hours=24.0) # Daily loop
-  async def post_daily(self, ctx, comic_name, main_website):
-    # Loop that post daily a comic
-    if(main_website == 'https://www.gocomics.com/'):
-      comic_details = Web_requests_manager.GoComics_manager.Comic_info(self,comic_name)
-    
-    else:
-      comic_details = None # Placeholder for OtherSitesManager when its working
-        
-    BDBot.send_comic_embed(ctx, comic_details) # Sends the embed with the comics details"""
 
 def setup(client): # Initialize the cog
   client.add_cog(BDBot(client))
