@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from Scripts import Web_requests_manager
+from Scripts import DailyPoster
 import os
 
 class BDBot(commands.Cog):
@@ -19,9 +19,6 @@ class BDBot(commands.Cog):
     # To be sure that the bot is ready
     print('Logged in as {0.user}'.format(self.client))
 
-  
-
-
   @commands.command(aliases = ['Git','github','Github'])
   async def git(self, ctx): # Links back to the github page
     await ctx.send("Want to help the bot? Go here: https://github.com/BBArikL/BDBot")
@@ -30,6 +27,14 @@ class BDBot(commands.Cog):
   async def invite(self,ctx): # Creates a Oauth2 link to share the bot
     inv = discord.utils.oauth_url(os.getenv('CLIENT_ID'))
     await ctx.send(f'Share the bot! {inv}')
+
+  @commands.command()
+  async def start_daily(self,ctx): # Starts the dailyposter loop
+    await DailyPoster.dailyposter.start_poster(self)
+
+  @commands.command()
+  async def remove_guild(self,ctx): # Remove the guild from the database
+    DailyPoster.dailyposter.remove_guild(self,ctx)
 
   #---- End of commands ----#  
 
@@ -71,6 +76,13 @@ class BDBot(commands.Cog):
     embed = BDBot.create_Embed(comic_details) # Creates the embed
     
     await ctx.send(embed=embed) # Send the comic
+
+  async def send_comic_embed_channel_specific(self, comic_details, channel_id):
+    channel = self.client.get_channel(channel_id)
+    
+    embed = BDBot.create_Embed(comic_details) # Creates the embed
+
+    await channel.send(embed=embed)
 
   async def send_any(self,ctx,text):
     # Send any text given. Mostly for debugging purposes

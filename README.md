@@ -49,7 +49,7 @@ CalvinBot : https://github.com/wdr1/CalvinBot
     - Do the specific date / number comic command.
     - Go back and see the extract_id_content() method in Web_requests_manager to fix the poor implementation of the link (For Cyanide and Happines). EDIT: Deactivated until its ready.
   - Other:
-    - 'Daily' command 
+    - 'Daily' command
     - Optimize Web_requests_manager
  
 - Anything else to know?
