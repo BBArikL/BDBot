@@ -1,7 +1,5 @@
-import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from Scripts import Web_requests_manager, BDbot, DailyPoster
-import random
 
 class Comic(commands.Cog):
   # Class responsible for sending comics
@@ -101,19 +99,22 @@ class Comic(commands.Cog):
       if (param.lower().find("today") != -1):
         # Sends the website of today's comic
         await self.comic_send(ctx,comic_name,main_website, "today")
-      
       elif(param.lower().find("random") != -1):
         #Random comic
         await self.comic_send(ctx,comic_name, main_website, "random")
-
       elif(param.lower().find("add") != -1):
-        DailyPoster.dailyposter.new_change(self,ctx, comic_name, "add")
-        await BDbot.BDBot.send_any(self, ctx, "Daily comic added successfully!")
-
+        if ctx.message.author.guild_permissions.manage_guild:
+          DailyPoster.dailyposter.new_change(self,ctx, comic_name, "add")
+          await BDbot.BDBot.send_any(self, ctx, "Daily comic added successfully!")
+        else:
+          await BDbot.BDBot.send_any(self, ctx, "You need `manage_guild` permission to do that!")
       elif(param.lower().find("remove") != -1):
-        DailyPoster.dailyposter.new_change(self,ctx, comic_name, "remove")
-        await BDbot.BDBot.send_any(self, ctx, "Daily comic removed successfully!")
-        
+        if ctx.message.author.guild_permissions.manage_guild:
+          DailyPoster.dailyposter.new_change(self,ctx, comic_name, "remove")
+          await BDbot.BDBot.send_any(self, ctx, "Daily comic removed successfully!")
+        else:
+          await BDbot.BDBot.send_any(self, ctx, "You need `manage_guild` permission to do that!")
+
       else: 
         # Return a error because the parameters given doesnt work
         await self.send_request_error(ctx)

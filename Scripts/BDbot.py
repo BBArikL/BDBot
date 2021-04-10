@@ -34,9 +34,14 @@ class BDBot(commands.Cog):
     await ctx.send(f'Share the bot! {inv}')
 
   @commands.command()
-  async def remove_guild(self,ctx): # Remove the guild from the database
+  @commands.has_permissions(manage_guild=True) # Only mods can delete the server from the database
+  async def remove_all(self,ctx): # Remove the guild from the database
     DailyPoster.dailyposter.remove_guild(self,ctx.guild)
     await ctx.send("All daily commands removed successfully!")
+
+  # @bot.check
+  # async def globally_block_dms(ctx):
+    # return ctx.guild is not None
 
   #---- End of commands ----#  
 

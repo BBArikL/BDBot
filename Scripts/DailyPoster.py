@@ -9,18 +9,19 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
 
   @commands.command()
   async def start_daily(self,ctx): # Starts the dailyposter loop
-    await dailyposter.post_daily.start(self)
+    if(ctx.message.author.id == 404833747360284695):
+      await dailyposter.post_daily.start(self)
 
   @tasks.loop(hours=24.0) # Daily loop
   async def post_daily(self):
     # Daily loop
     NB_OF_COMICS = 6
-    i=0
     comic_data = dailyposter.get_database_data()
     comic_list = [""]*NB_OF_COMICS
 
     # Construct the list of what comics need to be sent
     for guild in comic_data:
+      i=0
       for char in comic_data[str(guild)]["ComData"]:
         if(char == "1"):
           comic_list[i] += str(comic_data[str(guild)]["channel_id"])+";"
