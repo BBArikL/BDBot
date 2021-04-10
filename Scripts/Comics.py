@@ -96,7 +96,6 @@ class Comic(commands.Cog):
       today -> Today's comic
       add -> Add the comic to the daily posting list
       remove -> remove the comic to the daily posting list
-      removeall -> Remove the guild to the daily posting list
       random -> Choose a random comic to send (Only works with XKCD for now)
       """
       if (param.lower().find("today") != -1):
@@ -109,9 +108,11 @@ class Comic(commands.Cog):
 
       elif(param.lower().find("add") != -1):
         DailyPoster.dailyposter.new_change(self,ctx, comic_name, "add")
+        await BDbot.BDBot.send_any(self, ctx, "Daily comic added successfully!")
 
       elif(param.lower().find("remove") != -1):
         DailyPoster.dailyposter.new_change(self,ctx, comic_name, "remove")
+        await BDbot.BDBot.send_any(self, ctx, "Daily comic removed successfully!")
         
       else: 
         # Return a error because the parameters given doesnt work

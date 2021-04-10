@@ -7,55 +7,60 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
   def __init__(self, client):
     self.client = client
 
-  async def start_poster(self):
-    await dailyposter.post_daily.start(dailyposter) # Starts the dailyposter  
+  @commands.command()
+  async def start_daily(self,ctx): # Starts the dailyposter loop
+    await dailyposter.post_daily.start(self)
 
-  @tasks.loop(seconds=10) # Daily loop
+  @tasks.loop(hours=24.0) # Daily loop
   async def post_daily(self):
     # Daily loop
-    comic_list = []
-    comic_data = dailyposter.getComicsData()
+    NB_OF_COMICS = 6
+    i=0
+    comic_data = dailyposter.get_database_data()
+    comic_list = [""]*NB_OF_COMICS
 
     # Construct the list of what comics need to be sent
-    for guild_id in comic_data:
-      for i in range(len(guild_id["ComData"])):
-        if(guild_id["ComData"][i] == "1"):
-          comic_list[i] += guild_id["channel_id"]+";"
+    for guild in comic_data:
+      for char in comic_data[str(guild)]["ComData"]:
+        if(char == "1"):
+          comic_list[i] += str(comic_data[str(guild)]["channel_id"])+";"
+        
+        i+=1
       
     for i in range(len(comic_list)):
       if(comic_list[i] != None):
         # Define the comic that need to be sent
-        if(i==1):
+        if(i==0):
           comic_name = 'Garfield'
           main_website = 'https://www.gocomics.com/'
-        elif(i==2):
+        elif(i==1):
           comic_name = 'Garfield-Classics'
           main_website = 'https://www.gocomics.com/'
-        elif(i==3):
+        elif(i==2):
           comic_name = 'CalvinandHobbes'
           main_website = 'https://www.gocomics.com/'
-        elif(i==4):
+        elif(i==3):
           comic_name = 'XKCD'
           main_website = 'https://xkcd.com/'
-        elif(i==5):
+        elif(i==4):
           comic_name = 'Peanuts'
           main_website = 'https://www.gocomics.com/'
-        elif(i==6):
+        elif(i==5):
           comic_name = 'Peanuts-Begins'
           main_website = 'https://www.gocomics.com/'
 
         if(main_website == 'https://www.gocomics.com/'):
-           # Specific manager for GoComics website
+          # Specific manager for GoComics website
           comic_details = Web_requests_manager.GoComics_manager.Comic_info(self,comic_name, param="today")
-    
         else: # Other websites
           comic_details = Web_requests_manager.Other_site_manager.Comic_info(self,comic_name, main_website, param="today")
 
         # Sends the comic
         for channel in comic_list[i].split(";"):
-          await BDbot.BDBot.send_comic_embed_channel_specific(self, comic_details, int(channel))
+          if(channel != None and channel != ''):
+            await BDbot.BDBot.send_comic_embed_channel_specific(self, comic_details, channel)
   
-  def getComicsData():
+  def get_database_data():
     # Returns the ids and what need to be sent
     FILE_PATH = "./data/data.json"
 
@@ -65,19 +70,19 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
 
     return data
 
-  def new_change(self, ctx, comic, param):
+  def new_change(self, ctx, comic, param): # Make a change in the database
     if(comic == 'Garfield'):
-        comic_number = 1
+        comic_number = 0
     if(comic == 'Garfield-Classics'):
-      comic_number = 2
+      comic_number = 1
     elif(comic == "CalvinandHobbes"):
-      comic_number = 3
+      comic_number = 2
     elif(comic == "XKCD"):
-      comic_number = 4
+      comic_number = 3
     elif(comic == 'Peanuts'):
-      comic_number = 5
+      comic_number = 4
     elif(comic == 'Peanuts-Begins'):
-      comic_number = 6
+      comic_number = 5
 
     if(param=="add"):
       dailyposter.add(self, ctx, comic_number)
@@ -102,75 +107,66 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
     # Doesnt work, to construct the list THEN save it
     FILE_PATH = "./data/data.json"
     NB_OF_COMICS = 6
-    guild_id = ctx.guild.id
-    channel_id = ctx.channel.id
 
-    # Loads the prefixes file
-    with open(FILE_PATH,'r') as f:
-      data = json.load(f)
+    if(use == 'add' or use == 'remove'):
+      guild_id = str(ctx.guild.id)
+      channel_id = str(ctx.channel.id)
+    else:
+      guild_id = str(ctx.id)
+
+    data = dailyposter.get_database_data()
 
     if(use == 'add'):
       d = {
-        "server_id":  None,
-        "channel_id": None,
-        "ComData" : None
+        guild_id:{
+          "server_id":  None,
+          "channel_id": None,
+          "ComData" : None
+        }
       }
       
-      if(str(guild_id) in data): # If this server was already in the database, fill out information
-        d["server_id"] = data[guild_id]["server_id"]
-        d["channel_id"] = data[guild_id]["channel_id"]
-        d["ComData"] = data[guild_id]["ComData"]
+      if(guild_id in data): # If this server was already in the database, fill out information
+        d[guild_id]["server_id"] = data[guild_id]["server_id"]
+        d[guild_id]["channel_id"] = data[guild_id]["channel_id"]
+        d[guild_id]["ComData"] = data[guild_id]["ComData"]
 
         # If there is already comic data stored
-        comic_str = d["ComData"]
+        comic_str = list(d[guild_id]["ComData"])
 
         comic_str[comics_number] = "1";
 
-        d["ComData"] = comic_str
+        d[guild_id]["ComData"] = "".join(comic_str)
 
       else:
         # Add a comic to the list of comics
-        d["server_id"] = str(guild_id)
+        d[guild_id]["server_id"] = int(guild_id)
 
-        d["channel_id"] = str(channel_id)
+        d[guild_id]["channel_id"] = int(channel_id)
 
         # If there was no comic data stored for this guild
         comic_str = ""
       
         # Construct the string of data 
-        for i in range (1, NB_OF_COMICS):
+        for i in range(NB_OF_COMICS):
           if(i==comics_number):
             comic_str += "1"
           else:
             comic_str += "0"
-      
-        data[guild_id]["ComData"] = comic_str
+
+        d[guild_id]["ComData"] = comic_str
       
       data.update(d)
 
-      # await BDbot.BDBot.send_any(self, ctx, f"Daily comic added successfully in channel {d["channel_id"]} !")
-
-    elif (use == "remove"):
-      if(str(guild_id) in data):
-
-        if(data[guild_id]["ComData"][comics_number] != "0"):
-          data[guild_id]["ComData"][comics_number] = "0"
-
-          # await BDbot.BDBot.send_any(self, ctx, "Comic removed successfully!")
-        else:
-          # await BDbot.BDBot.send_any(self, ctx, "This comic is already not in the daily list!")
-          pass
-      else:
-        # await BDbot.BDBot.send_any(self, ctx, "This server is not set up to receive daily comics!")
-        pass
-      data.update(d)
+    elif (use == "remove"): # Remove comic
+      if(guild_id in data):
+        comic_str = list(data[guild_id]["ComData"])
+        if(comic_str[comics_number] != "0"):
+          comic_str[comics_number] = "0"
+          data[guild_id]["ComData"] = "".join(comic_str)
       
     elif(use == 'remove_guild'): #Remove a guild from the list
-      if(data[guild_id] != None):
+      if(guild_id in data):
         data.pop(guild_id)
-      else:
-        # await BDbot.BDBot.send_any(self, ctx,"This server does not appear to be in the database yet!")
-        pass
 
     # Saves the file
     with open(FILE_PATH,'w') as f:
