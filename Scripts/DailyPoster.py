@@ -2,6 +2,9 @@
 import json
 from discord.ext import tasks, commands
 from Scripts import BDbot, Web_requests_manager
+import datetime
+import asyncio
+import os
 
 class dailyposter(commands.Cog): # Class responsible for posting daily comic strips
   def __init__(self, client):
@@ -9,8 +12,31 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
 
   @commands.command()
   async def start_daily(self,ctx): # Starts the dailyposter loop
-    if(ctx.message.author.id == 404833747360284695):
+    if(ctx.message.author.id == int(os.getenv('BOT_OWNER_ID'))):
+      await BDbot.BDBot.send_any(self, ctx, "Daily loop started! Daily comics are posted at 00:00 UTC each day.")
+
+      minutes_till_end_hour = 60 - datetime.datetime.now().minute
+      await asyncio.sleep(60*minutes_till_end_hour)
+      
+      hours_till_midnight_today = 24 - datetime.datetime.now().hour
+      
+      await asyncio.sleep(3600*hours_till_midnight_today)
+
       await dailyposter.post_daily.start(self)
+    else:
+      await BDbot.BDBot.send_any(self, ctx, "You cannot do that.")
+
+  @commands.command()
+  async def is_daily_running(self,ctx): # Starts the dailyposter loop
+    if(ctx.message.author.id == int(os.getenv('BOT_OWNER_ID'))):
+      if(dailyposter.post_daily.is_running()):
+        await BDbot.BDBot.send_any(self, ctx, "The loop is running.")
+      else:
+        await BDbot.BDBot.send_any(self, ctx, "The loop is NOT running.")
+
+    else:
+      await BDbot.BDBot.send_any(self, ctx, "You cannot do that.")
+
 
   @tasks.loop(hours=24.0) # Daily loop
   async def post_daily(self):
@@ -29,7 +55,7 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
         i+=1
       
     for i in range(len(comic_list)):
-      if(comic_list[i] != None):
+      if(comic_list[i] != ""):
         # Define the comic that need to be sent
         if(i==0):
           comic_name = 'Garfield'

@@ -19,6 +19,7 @@ Discord bot that post bd strips. Simple as that!
 - Live with yourself https://www.webtoons.com/en/comedy/live-with-yourself/list?title_no=919
 - Adventures of god https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853&page=1
 - War and peas https://warandpeas.com/
+- Dilbert classics https://www.gocomics.com/dilbert-classics
 
 ## Related Github pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
@@ -27,12 +28,13 @@ CalvinBot : https://github.com/wdr1/CalvinBot
 - More about discord bots.
 - Automated / Scheduled tasks.
 - Looking for content in web pages.
+- Parsing Date
+- Database support
 
 ## Current state of the project
 - Functionalities
   - For GoComics comics, its easy to add more.
-  - Command 'today' and 'random' working. (Deactivated 'daily' until ready)
-  - Command 'today' and 'random' working for XKCD.
+  - All commands working.
   - 'bd!help' : Help embed
   - 'bd!git' command : Redirects to this github page
   - 'bd!invite' command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
@@ -41,18 +43,16 @@ CalvinBot : https://github.com/wdr1/CalvinBot
   - Tell me if I forgot some commands here!
 
 - Bugs
-  - The search method to extract the image for Gocomics seems to be very inconsistent. EDIT: Should be fixed (theoratically). My guess is that since the bot is hosted on Replit, the server where the bot is hosted is in advance compared to the GoComics site. The fix used is not the best approach, I must admit, but it should work.
+  - None for the moment. Open a issue if you find any! :)
 
 - TODO
   - Gocomics:
-    - Date specific comic
+    - Nothing! :)
   - XKCD / Other sites:
     - Show the alt-text (migrate to www.xkcd.com/#comic/info.0.json for that)
-    - Do the specific number comic command.
     - Go back and see the extract_id_content() method in Web_requests_manager to fix the poor implementation of the link (For Cyanide and Happines). EDIT: Deactivated until its ready.
   - Other:
     - Optimize Web_requests_manager
-    - Add a countdown to always send comics at the same time when rebooting the bot (00:00 UTC)
     - Add update_database() 'add / remove ##' that will add another 0 in all the ComData in the database / remove one comic from the database.
  
 - Anything else to know?
@@ -61,4 +61,5 @@ CalvinBot : https://github.com/wdr1/CalvinBot
     - Preferably, Gocomics comics are the easiest to implement, so try to stick with that if your comic is hosted there (Literally copy-paste the 'garf' command, change the name of the command and change the comic_name to what it is in the GoComics url, example : https://www.gocomics.com/garfield/ --> comic_name = 'Garfield').
     - If the comic is NOT hosted on GoComics, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
     - Any pull requests that wasnt approved from another site will be automatically rejected and you will be asked to follow the procedure cited.
-  - The bot is in developement and hosted on Replit.
+  - Core features of the bot are done and it is hosted on Replit.
+  - The bot is on UTC time. The daily comic post happen at 00:00 UTC daily.

@@ -1,5 +1,6 @@
 from discord.ext import commands
 from Scripts import Web_requests_manager, BDbot, DailyPoster
+import datetime
 
 class Comic(commands.Cog):
   # Class responsible for sending comics
@@ -18,51 +19,57 @@ class Comic(commands.Cog):
   async def CH(self, ctx, *, param=None): # Calvin and Hobbes
     comic_name = 'CalvinandHobbes'
     main_website = 'https://www.gocomics.com/'
+    first_date = datetime.datetime(1985,11,18)
 
     # Interprets the parmeters given by the user
-    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+    await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
 
   @commands.command(aliases=['Garfield', 'Garf', 'garfield'])
   async def garf(self, ctx, *, param=None): # Garfield
     comic_name = 'Garfield'
     main_website = 'https://www.gocomics.com/'
+    first_date = datetime.datetime(1978,6,19)
 
     # Interprets the parmeters given by the user
-    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+    await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
 
   @commands.command(aliases=['GarfieldClassics', 'GarfClassic', 'garfieldclass', 'GarfCl'])
   async def garfcl(self, ctx, *, param=None): # Garfield
     comic_name = 'Garfield-Classics'
     main_website = 'https://www.gocomics.com/'
+    first_date = datetime.datetime(2016,6,20)
 
     # Interprets the parmeters given by the user
-    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+    await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
 
   
   @commands.command(aliases=['Peanuts', 'peanut'])
   async def peanuts(self, ctx, *, param=None): # Garfield
     comic_name = 'Peanuts'
     main_website = 'https://www.gocomics.com/'
+    first_date = datetime.datetime(1950,10,2)
 
     # Interprets the parmeters given by the user
-    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+    await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)
 
   @commands.command(aliases=['PeanutsBegins', 'peanutbegin', 'peanutsbegin'])
   async def peanutsbegins(self, ctx, *, param=None): # Garfield
     comic_name = 'Peanuts-Begins'
     main_website = 'https://www.gocomics.com/'
+    first_date = datetime.datetime(1950,10,2)
 
     # Interprets the parmeters given by the user
-    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+    await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
 
 
   @commands.command(aliases=['xkcd', 'xk'])
   async def XKCD(self, ctx, *, param=None): # XKCD
     comic_name = 'XKCD'
     main_website = 'https://xkcd.com/'
+    first_date = 1
 
     # Interprets the parmeters given by the user
-    await self.parameters_interpreter(ctx,comic_name,main_website,param)
+    await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
 
   """@commands.command(aliases=['Cyanide', 'cyanide', 'Cyanide&Happiness', 'cyan'])
   async def CyanideandHappinness(self, ctx, *, param=None): # XKCD
@@ -87,7 +94,7 @@ class Comic(commands.Cog):
 
   #--- END of functions that communicate directly with discord ----
 
-  async def parameters_interpreter(self,ctx,comic_name,main_website, param=None): 
+  async def parameters_interpreter(self,ctx,comic_name,main_website, param=None,first_date=None): 
     # Interprets the parameters given by the user
     if(param != None):
       """ Parameters:
@@ -114,20 +121,42 @@ class Comic(commands.Cog):
           await BDbot.BDBot.send_any(self, ctx, "Daily comic removed successfully!")
         else:
           await BDbot.BDBot.send_any(self, ctx, "You need `manage_guild` permission to do that!")
+      else:
+        # Tries to parse date
+        if(main_website=="https://www.gocomics.com/"):
+          # Tries to parse date
+          try:
+            comic_date = datetime.datetime.strptime(param, "%d/%m/%Y")
+            
+            if(comic_date > first_date and comic_date < datetime.datetime.utcnow()):
+              await self.comic_send(ctx,comic_name, main_website, "Specific_date",comic_date=comic_date)
+            else:
+              first_date_formatted = datetime.datetime.strftime(first_date,"%d/%m/%Y")
+              date_now_formatted = datetime.datetime.strftime(datetime.datetime.utcnow(),"%d/%m/%Y")
+              await BDbot.BDBot.send_any(self, ctx, f"Invalid date. Try sending a date between {first_date_formatted} and {date_now_formatted}.")
+          except ValueError:
+            await BDbot.BDBot.send_any(self, ctx, "This is not a valid date format! The format is : dd/mm/YYYY.")
+        else:
+          try:
+            number = int(param.split(" ")[0])
+            if(number >= first_date):
+              main_website = main_website+str(number)+'/'
+              await self.comic_send(ctx,comic_name,main_website,param=param)
+            else:
+              await BDbot.BDBot.send_any(self, ctx, "There isnt comics with such negative values!")
+          except ValueError:
+            await ctx.send('This is not a valid date / comic number!')
+          
 
-      else: 
-        # Return a error because the parameters given doesnt work
-        await self.send_request_error(ctx)
-    
     else:
       # If the user didn't send any parameters, return the main website of the comic requested
       await self.send_comic_website(ctx,comic_name,main_website)
 
-  async def comic_send(self,ctx,comic_name,main_website, param):
+  async def comic_send(self,ctx,comic_name,main_website, param, comic_date=None):
     # Posts the strip (with the given parameters)
     if(main_website == 'https://www.gocomics.com/'):
       # Specific manager for GoComics website
-      comic_details = Web_requests_manager.GoComics_manager.Comic_info(self,comic_name, param=param)
+      comic_details = Web_requests_manager.GoComics_manager.Comic_info(self,comic_name, param=param,comic_date=comic_date)
     
     else: # Other websites
       comic_details = Web_requests_manager.Other_site_manager.Comic_info(self,comic_name, main_website, param=param)

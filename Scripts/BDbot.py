@@ -72,9 +72,9 @@ class BDBot(commands.Cog):
 
     else:
       # Error message
-      embed=discord.Embed(title = "Error", url = "https://github.com/BBArikL/BDBot")
+      embed=discord.Embed(title = "No comic found!")
 
-      embed.set_field(name = "An error occured :sob: . Maybe you tried to access a comic that is inaccessible? Open an issue at https://github.com/BBArikL/BDBot to let us know what arrived.")
+      embed.add_field(name = "We could not find a comic at this date :thinking:....", value="Try another date!")
 
       embed.set_footer(text="Check out the bot here! https://github.com/BBArikL/BDBot")
       return embed

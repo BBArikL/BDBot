@@ -8,37 +8,43 @@ class GoComics_manager(commands.Cog):
   def __init__(self, client):
     pass
 
-  def Comic_info(self,comic_Name=None,day=None,month=None,year=None, param=None):
+  def Comic_info(self,comic_Name=None,param=None, comic_date=None):
     # Details of the comic
     details = {"url": None, "Name": comic_Name,"title": None,"day": None, "month": None, "year": None, "img_url": None, "alt": None}
     
-    if(comic_Name!=None):
-      if(day==None and month==None and year==None):
+    if(comic_Name != None):
+      i=0
+      
+      if(comic_date == None):
         # Gets today date
-        today = date.today()
+        comic_date = date.today()
         
-        while(details["img_url"] == None):
-          if(param == "today"):
-            details["day"] = today.strftime("%d")
-            details["month"] = today.strftime("%m")
-            details["year"] = today.strftime("%Y")
+      while(details["img_url"] == None and i<3):
+        i+=1
+        if(param != "random"):
+          details["day"] = comic_date.strftime("%d")
+          details["month"] = comic_date.strftime("%m")
+          details["year"] = comic_date.strftime("%Y")
 
-            # Gets today url
-            details["url"] = GoComics_manager.send_link(comic_Name, today)
+          # Gets today /  url
+          details["url"] = GoComics_manager.send_link(comic_Name, comic_date)
 
-          elif (param == "random"):
-            # Random comic
-            details["url"] = GoComics_manager.send_random_link(comic_Name)
+        else:
+          # Random comic
+          details["url"] = GoComics_manager.send_random_link(comic_Name)
 
-          # Get the html of the comic site
-          html = urlopen(details["url"]).read()
+        # Get the html of the comic site
+        html = urlopen(details["url"]).read()
         
-          details["title"] = GoComics_manager.extract_meta_content(html, 'title') # Ectracts the title of the comic
+        details["title"] = GoComics_manager.extract_meta_content(html, 'title') # Ectracts the title of the comic
 
-          details["img_url"] = GoComics_manager.extract_meta_content(html, 'image') # Finds the url of the image
+        details["img_url"] = GoComics_manager.extract_meta_content(html, 'image') # Finds the url of the image
 
-          if (details["img_url"] == None and param=="today"): 
-            today = today - timedelta(days = 1)
+        if (details["img_url"] == None and param!="today"): 
+          comic_date = comic_date - timedelta(days = 1)
+        
+      if(i==3): # S'il n'a rien trouvé
+          details = None
     else:
       details = None
     
@@ -81,32 +87,31 @@ class Other_site_manager(commands.Cog):
     pass
   
   # TODO ALL OF THIS SITE MANAGER WITH XKCD AS A TEMPLATE
-  def Comic_info(self,comic_Name,main_website,day=None,month=None,year=None,param=None):
+  def Comic_info(self,comic_Name,main_website,param=None):
     # Details of the comic
     details = {"url": None, "Name": comic_Name,"title": None,"day": None, "month": None, "year": None, "img_url": None, "alt": None}    
     if(comic_Name!=None):
-      if(day==None and month==None and year==None):
-        # Gets today's url
+      # Doesnt work, deactivated Cyanide and happiness to come back later
+      #if(comic_Name=='Cyanide and Happinness'):
+      #  main_website = Other_site_manager.extract_id_content(main_website='comic-social-link')
 
-        # Doesnt work, deactivated Cyanide and happiness to come back later
-        #if(comic_Name=='Cyanide and Happinness'):
-        #  main_website = Other_site_manager.extract_id_content(main_website, 'comic-social-link')
-
-        if(comic_Name=='XKCD' and param=="random"):
+      if(comic_Name=='XKCD'):
+        if (param=="random"):
           main_website = "https://c.xkcd.com/random/comic/" # Link for random XKCD comic
-
-        details["url"] = Other_site_manager.extract_url(main_website)
         
-        # Gets today date
-        if (param=="today"):
-          d = date.today()
-          details["day"] = d.strftime("%d")
-          details["month"] = d.strftime("%m")
-          details["year"] = d.strftime("%Y")
-
-        # Get the html of the comic site
-        html = urlopen(details["url"]).read()
+      details["url"] = Other_site_manager.extract_url(main_website)
         
+      # Gets today date
+      if (param == "today"):
+        d = date.today()
+        details["day"] = d.strftime("%d")
+        details["month"] = d.strftime("%m")
+        details["year"] = d.strftime("%Y")
+
+      # Get the html of the comic site
+      html = urlopen(details["url"]).read()
+      
+      if(html != None):
         details["title"] = Other_site_manager.extract_meta_content(html, 'title')
         
         details["img_url"] = Other_site_manager.extract_meta_content(html, 'image')
@@ -114,6 +119,8 @@ class Other_site_manager(commands.Cog):
         #if(comic_Name == 'XKCD'): # Extracts the title, the image, and the alt-text of the comic
           # Doesnt work  
           #details["alt"] = Other_site_manager.extract_alt_xk(html)
+      else:
+        details = None
     else:
       details = None
     
