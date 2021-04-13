@@ -62,4 +62,4 @@ CalvinBot : https://github.com/wdr1/CalvinBot
     - If the comic is NOT hosted on GoComics, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
     - Any pull requests that wasnt approved from another site will be automatically rejected and you will be asked to follow the procedure cited.
   - Core features of the bot are done and it is hosted on Replit.
-  - The bot is on UTC time. The daily comic post happen at 00:00 UTC daily.
+  - The bot is on UTC time. The daily comic post happen at 2:00 AM UTC daily.
