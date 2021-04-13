@@ -13,19 +13,19 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
   @commands.command()
   async def start_daily(self,ctx): # Starts the dailyposter loop
     if(ctx.message.author.id == int(os.getenv('BOT_OWNER_ID'))):
-      await BDbot.BDBot.send_any(self, ctx, "Daily loop started! Daily comics are posted at 2:00 AM UTC each day.")
+      await BDbot.BDBot.send_any(self, ctx, "Daily loop started! Daily comics are posted at 6:00 AM UTC each day.")
 
       minutes_till_end_hour = 60 - datetime.datetime.now().minute
       await asyncio.sleep(60*minutes_till_end_hour)
       
       hour_now = datetime.datetime.now().hour
 
-      if(hour_now <= 2):
-        hours_till_two_AM = 1 - hour_now
+      if(hour_now <= 6):
+        hours_till_six_AM = 6 - hour_now
       else:
-        hours_till_two_AM = (24-hour_now)+2
+        hours_till_six_AM = (24-hour_now)+6
 
-      await asyncio.sleep(3600*hours_till_two_AM)
+      await asyncio.sleep(3600*hours_till_six_AM)
 
       await dailyposter.post_daily.start(self)
     else:
