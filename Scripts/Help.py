@@ -13,7 +13,7 @@ class Help(commands.Cog):
   async def help(self, ctx): # Custom Help command
     embed=discord.Embed(title="BDBot!")
     
-    embed.add_field(name="Gocomics", value="Currently available: 'Garfield',\n'Garfield classics',\n'Calvin&Hobbes',\n'Peanuts', 'Peanuts Begins'\nCommands:\n`bd!name-of-comic today / random / dd/mm/YYY`.")
+    embed.add_field(name="Gocomics", value="Currently available: 'Garfield',\n'Garfield classics',\n'Calvin&Hobbes',\n'Peanuts', 'Peanuts Begins',\n'Dilbert classics' (Dilbert)\nCommands:\n`bd!name-of-comic today / random / dd/mm/YYY`.")
     embed.add_field(name="XKCD", value="Aliases: 'xkcd', 'xk'\nCommands:\n`bd!XKCD today / random / # of comic`.")
     #embed.add_field(name= 'Cyanide and Happiness', value="Aliases: 'Cyanide',\n'cyanide',\n'Cyanide&Happiness',\n'cyan'\nCommands:\n!cyanide today")
     embed.add_field(name="Daily comics commands.", value="Use bd!help daily to see available commands for daily comics. Post daily at 6:00 AM UTC.")
