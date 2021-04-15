@@ -40,7 +40,7 @@ class GoComics_manager(commands.Cog):
 
         details["img_url"] = GoComics_manager.extract_meta_content(html, 'image') # Finds the url of the image
 
-        if (details["img_url"] == None and param!="today"): 
+        if (details["img_url"] == None and param!="today"): # Go back one day
           comic_date = comic_date - timedelta(days = 1)
         
       if(i==3): # S'il n'a rien trouvé
