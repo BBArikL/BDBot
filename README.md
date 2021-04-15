@@ -10,6 +10,7 @@ Discord bot that post bd strips. Simple as that!
 - Garfield classics https://www.gocomics.com/garfield-classics
 - Peanuts https://www.gocomics.com/peanuts
 - Peanuts Begins https://www.gocomics.com/peanuts-begins
+- Dilbert classics https://www.gocomics.com/dilbert-classics
 - Cyanide and Happines https://explosm.net/ (Need rework)
 ### To Add:
 - Poorly drawn lines https://poorlydrawnlines.com/
@@ -19,7 +20,6 @@ Discord bot that post bd strips. Simple as that!
 - Live with yourself https://www.webtoons.com/en/comedy/live-with-yourself/list?title_no=919
 - Adventures of god https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853&page=1
 - War and peas https://warandpeas.com/
-- Dilbert classics https://www.gocomics.com/dilbert-classics
 
 ## Related Github pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
