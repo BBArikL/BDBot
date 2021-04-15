@@ -84,10 +84,9 @@ class BDBot(commands.Cog):
     
     await ctx.send(embed=embed) # Send the comic
 
-  async def send_comic_embed_channel_specific(self, comic_details, channel_id):
+  # Send a comic embed to a specific channel
+  async def send_comic_embed_channel_specific(self, embed, channel_id):
     channel = self.client.get_channel(int(channel_id))
-    
-    embed = BDBot.create_Embed(comic_details) # Creates the embed
 
     await channel.send(embed=embed)
 

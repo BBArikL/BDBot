@@ -40,7 +40,7 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
   @tasks.loop(hours=24.0) # Daily loop
   async def post_daily(self):
     # Daily loop
-    NB_OF_COMICS = 6
+    NB_OF_COMICS = int(os.getenv('NB_OF_COMICS'))
     comic_data = dailyposter.get_database_data()
     comic_list = [""]*NB_OF_COMICS
 
@@ -74,6 +74,9 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
         elif(i==5):
           comic_name = 'Peanuts-Begins'
           main_website = 'https://www.gocomics.com/'
+        elif(i==6):
+          comic_name = 'dilbert-classics'
+          main_website = 'https://www.gocomics.com/'
 
         if(main_website == 'https://www.gocomics.com/'):
           # Specific manager for GoComics website
@@ -81,10 +84,12 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
         else: # Other websites
           comic_details = Web_requests_manager.Other_site_manager.Comic_info(self,comic_name, main_website, param="today")
 
+        embed = BDbot.BDBot.create_Embed(comic_details) # Creates the embed
+
         # Sends the comic
         for channel in comic_list[i].split(";"):
           if(channel != None and channel != ''):
-            await BDbot.BDBot.send_comic_embed_channel_specific(self, comic_details, channel)
+            await BDbot.BDBot.send_comic_embed_channel_specific(self, embed, channel)
   
   def get_database_data():
     # Returns the ids and what need to be sent
@@ -109,6 +114,8 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
       comic_number = 4
     elif(comic == 'Peanuts-Begins'):
       comic_number = 5
+    elif(comic == 'dilbert-classics'):
+      comic_number = 6
 
     if(param=="add"):
       dailyposter.add(self, ctx, comic_number)
@@ -132,7 +139,7 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
     # Adds or delete the guild_id, the channel id and the comic_strip data
     # Doesnt work, to construct the list THEN save it
     FILE_PATH = "./data/data.json"
-    NB_OF_COMICS = 6
+    NB_OF_COMICS = os.getenv('NB_OF_COMICS')
 
     if(use == 'add' or use == 'remove'):
       guild_id = str(ctx.guild.id)

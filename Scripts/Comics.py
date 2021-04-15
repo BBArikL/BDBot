@@ -15,14 +15,7 @@ class Comic(commands.Cog):
   #---- (Literally copy-paste the 'garf' command, change the name of the command and change the comic_name to what it is in the GoComics url, example : https://www.gocomics.com/garfield/ --> comic_name = 'Garfield').  
   #---- If the comic is NOT hosted on GoComics, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
   #---- Any pull requests that wasnt approved from another site will be automatically rejected and you will be asked to follow the procedure cited ----#
-  @commands.command(aliases=['CalvinandHobbes', 'C&H', 'c&h', 'ch'])
-  async def CH(self, ctx, *, param=None): # Calvin and Hobbes
-    comic_name = 'CalvinandHobbes'
-    main_website = 'https://www.gocomics.com/'
-    first_date = datetime.datetime(1985,11,18)
 
-    # Interprets the parmeters given by the user
-    await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
 
   @commands.command(aliases=['Garfield', 'Garf', 'garfield'])
   async def garf(self, ctx, *, param=None): # Garfield
@@ -41,7 +34,24 @@ class Comic(commands.Cog):
 
     # Interprets the parmeters given by the user
     await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
+  
+  @commands.command(aliases=['CalvinandHobbes', 'C&H', 'c&h', 'ch'])
+  async def CH(self, ctx, *, param=None): # Calvin and Hobbes
+    comic_name = 'CalvinandHobbes'
+    main_website = 'https://www.gocomics.com/'
+    first_date = datetime.datetime(1985,11,18)
 
+    # Interprets the parmeters given by the user
+    await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
+  
+  @commands.command(aliases=['xkcd', 'xk'])
+  async def XKCD(self, ctx, *, param=None): # XKCD
+    comic_name = 'XKCD'
+    main_website = 'https://xkcd.com/'
+    first_date = 1
+
+    # Interprets the parmeters given by the user
+    await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
   
   @commands.command(aliases=['Peanuts', 'peanut'])
   async def peanuts(self, ctx, *, param=None): # Garfield
@@ -61,12 +71,11 @@ class Comic(commands.Cog):
     # Interprets the parmeters given by the user
     await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
 
-
-  @commands.command(aliases=['xkcd', 'xk'])
-  async def XKCD(self, ctx, *, param=None): # XKCD
-    comic_name = 'XKCD'
-    main_website = 'https://xkcd.com/'
-    first_date = 1
+  @commands.command(aliases=['Dilbert', 'Dilb', 'dilb'])
+  async def dilbert(self, ctx, *, param=None): # Garfield
+    comic_name = 'dilbert-classics'
+    main_website = 'https://www.gocomics.com/'
+    first_date = datetime.datetime(2012,6,13)
 
     # Interprets the parmeters given by the user
     await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
