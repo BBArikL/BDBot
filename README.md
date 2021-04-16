@@ -28,8 +28,9 @@ CalvinBot : https://github.com/wdr1/CalvinBot
 - More about discord bots.
 - Automated / Scheduled tasks.
 - Looking for content in web pages.
-- Parsing Date
-- Database support
+- Parsing Date.
+- Database support.
+- Github version handling.
 
 ## Current state of the project
 - Functionalities
@@ -61,5 +62,9 @@ CalvinBot : https://github.com/wdr1/CalvinBot
     - Preferably, Gocomics comics are the easiest to implement, so try to stick with that if your comic is hosted there (Literally copy-paste the 'garf' command, change the name of the command and change the comic_name to what it is in the GoComics url, example : https://www.gocomics.com/garfield/ --> comic_name = 'Garfield').
     - If the comic is NOT hosted on GoComics, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
     - Any pull requests that wasnt approved from another site will be automatically rejected and you will be asked to follow the procedure cited.
+  - 'Beta' and 'main'?
+    - The main branch is the current bot that is running on Discord.
+    - Beta branch is for all experiments and additions waiting for approval to add to the current bot. This runs on a (for now) private bot upon completion of current goals.
+    - More about branches: https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-branches
   - Core features of the bot are done and it is hosted on Replit.
   - The bot is on UTC time. The daily comic post happen at 6:00 AM UTC daily.
