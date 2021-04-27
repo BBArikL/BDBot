@@ -15,15 +15,23 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
     if(ctx.message.author.id == int(os.getenv('BOT_OWNER_ID'))):
       await BDbot.BDBot.send_any(self, ctx, "Daily loop started! Daily comics are posted at 6:00 AM UTC each day.")
 
-      wait_until_hour = datetime.time(hour=6, minute=0)
-      wait_until_date = datetime.date.today() + datetime.timedelta(days = 1)
-      combined_date = datetime.datetime.combine(wait_until_date, wait_until_hour)
-
-      await utils.sleep_until(combined_date)
-
-      await dailyposter.post_daily.start(self)
+      await dailyposter.wait_for_daily(self)
     else:
       await BDbot.BDBot.send_any(self, ctx, "You cannot do that.")
+
+  async def wait_for_daily(self):
+    wait_until_hour = datetime.time(hour=6, minute=0)
+    
+    if(datetime.datetime.now().hour < 6):
+      day_wait = 0
+    else:
+      day_wait = 1
+    
+    wait_until_date = datetime.date.today() + datetime.timedelta(days = day_wait)
+    combined_date = datetime.datetime.combine(wait_until_date, wait_until_hour)
+	  
+    await utils.sleep_until(combined_date)
+    await dailyposter.post_daily.start(self) 
 
   @commands.command()
   async def is_daily_running(self,ctx): # Checks the dailyposter loop

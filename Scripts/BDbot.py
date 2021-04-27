@@ -47,7 +47,7 @@ class BDBot(commands.Cog):
 
   @commands.command()
   async def vote(self, ctx): # Links back to the github page
-    await ctx.send("Vote for the bot here: https://github.com/BBArikL/BDBot")
+    await ctx.send("Vote for the bot here: https://top.gg/bot/807780409362481163")
 
   # @bot.check
   # async def globally_block_dms(ctx):
