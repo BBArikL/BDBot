@@ -16,8 +16,14 @@ class BDBot(commands.Cog):
     # Change bot's activity
     await self.client.change_presence(status = discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name='bd!help'))
 
-    # To be sure that the bot is ready
-    print('Logged in as {0.user}'.format(self.client))
+    print("Logged in as {0.user}".format(self.client))
+    id = int(os.getenv('PRIVATE_CHANNEL_SUPPORT_ID'))
+
+    channel = self.client.get_channel(id)
+
+    await channel.send("Bot restarted. I will now try to restart the loop.") # Sends this message whenever restarting the bot
+
+    await DailyPoster.dailyposter.wait_for_daily(self) # Wait for daily poster
 
   @commands.Cog.listener()
   async def on_guild_remove(self,guild):
@@ -38,6 +44,10 @@ class BDBot(commands.Cog):
   async def remove_all(self,ctx): # Remove the guild from the database
     DailyPoster.dailyposter.remove_guild(self,ctx.guild)
     await ctx.send("All daily commands removed successfully!")
+
+  @commands.command()
+  async def vote(self, ctx): # Links back to the github page
+    await ctx.send("Vote for the bot here: https://github.com/BBArikL/BDBot")
 
   # @bot.check
   # async def globally_block_dms(ctx):

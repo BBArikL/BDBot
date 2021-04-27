@@ -9,6 +9,7 @@ client = commands.Bot(command_prefix = 'bd!')
 client.remove_command("help") # Removes the default "help" function to replace it by our own
 
 # END OF FUNCTIONS ON MAIN.PY
+print("Starting Bot...")
 
 keep_alive() # Keeps the bot alive
 
