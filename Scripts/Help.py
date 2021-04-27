@@ -18,9 +18,10 @@ class Help(commands.Cog):
     #embed.add_field(name= 'Cyanide and Happiness', value="Aliases: 'Cyanide',\n'cyanide',\n'Cyanide&Happiness',\n'cyan'\nCommands:\n!cyanide today")
     embed.add_field(name="Daily comics commands.", value="Use bd!help daily to see available commands for daily comics. Post daily at 6:00 AM UTC.")
 
-    embed.add_field(name="Git", value="Link back to the git page\nCommand:\n`bd!git`.")
-    embed.add_field(name="Invite", value="Gives a link to add the bot to your servers\nCommand:\n`bd!invite`.")
-    
+    embed.add_field(name="Git", value="Link back to the git page.\nCommand:\n`bd!git`.")
+    embed.add_field(name="Invite", value="Gives a link to add the bot to your servers.\nCommand:\n`bd!invite`.")
+    embed.add_field(name="Vote", value="Link back to the Top.gg page.\nCommand:\n`bd!vote`.")
+
     embed.set_footer(text="Check the bot here: https://github.com/BBArikL/BDBot.")
     await ctx.send(embed=embed)
   
