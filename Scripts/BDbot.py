@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from Scripts import DailyPoster
 import os
+import dbl
 
 class BDBot(commands.Cog):
   # Class responsible for main functions of the bot
@@ -10,6 +11,8 @@ class BDBot(commands.Cog):
     # Constructor of the cog
     # Initialize all the properties of the cog
     self.client = client
+    dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
+    self.dblpy = dbl.DBLClient(client, dbl_token)
 
   @commands.Cog.listener()
   async def on_ready(self):
@@ -48,6 +51,17 @@ class BDBot(commands.Cog):
   @commands.command()
   async def vote(self, ctx): # Links back to the github page
     await ctx.send("Vote for the bot here: https://top.gg/bot/807780409362481163")
+
+  @commands.command()
+  async def nb_guild(self,ctx): # Gets the number of guilds that the bot is in (for analytics)
+    if(ctx.message.author.id == int(os.getenv('BOT_OWNER_ID'))):
+      await ctx.send(f"The bot is in {len(self.client.guilds)} guilds. Trying to update status on Top.gg.....")
+      """This function runs every 30 minutes to automatically update your server count."""
+      try:
+          await self.dblpy.post_guild_count()
+          await ctx.send(f'Posted server count ({self.dblpy.guild_count})')
+      except Exception as e:
+          await ctx.send('Failed to post server count\n{}: {}'.format(type(e).__name__, e))
 
   # @bot.check
   # async def globally_block_dms(ctx):
