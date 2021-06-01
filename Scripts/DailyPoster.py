@@ -147,7 +147,7 @@ class dailyposter(commands.Cog): # Class responsible for posting daily comic str
     # Adds or delete the guild_id, the channel id and the comic_strip data
     # Doesnt work, to construct the list THEN save it
     FILE_PATH = "./data/data.json"
-    NB_OF_COMICS = os.getenv('NB_OF_COMICS')
+    NB_OF_COMICS = int(os.getenv('NB_OF_COMICS'))
 
     if(use == 'add' or use == 'remove'):
       guild_id = str(ctx.guild.id)
