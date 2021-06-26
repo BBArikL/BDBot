@@ -13,7 +13,7 @@ class Help(commands.Cog):
   async def help(self, ctx): # Custom Help command
     embed=discord.Embed(title="BDBot!")
     
-    embed.add_field(name="Gocomics", value="Currently available: 'Garfield',\n'Garfield classics',\n'Calvin&Hobbes',\n'Peanuts', 'Peanuts Begins',\n'Dilbert classics' (Dilbert)\nCommands:\n`bd!name-of-comic today / random / dd/mm/YYY`.")
+    embed.add_field(name="Gocomics", value="Use bd!gocomics to get all comics that are supported on the Gocomics website.\nCommands:\n`bd!<name-of-comic> today / random / dd/mm/YYY`.")
     embed.add_field(name="XKCD", value="Aliases: 'xkcd', 'xk'\nCommands:\n`bd!XKCD today / random / # of comic`.")
     #embed.add_field(name= 'Cyanide and Happiness', value="Aliases: 'Cyanide',\n'cyanide',\n'Cyanide&Happiness',\n'cyan'\nCommands:\n!cyanide today")
     embed.add_field(name="Daily comics commands.", value="Use bd!help daily to see available commands for daily comics. Post daily at 6:00 AM UTC.")
@@ -36,5 +36,18 @@ class Help(commands.Cog):
     embed.set_footer(text="Check the bot here: https://github.com/BBArikL/BDBot")
     await ctx.send(embed=embed)
 
+  @help.command
+  async def gocomics(self, ctx):
+    embed=discord.Embed(title="Gocomics!")
+    
+    embed.add_field(name="Garfield", value="Aliases: 'Garf', 'garf', 'garfield'.")
+    embed.add_field(name="Garfield classics", value="Aliases: 'GarfieldClassics', 'GarfClassic', 'garfieldclassic', 'garfcl', 'GarfCl'.")
+    embed.add_field(name="Calvin and Hobbes", value="Aliases: 'CalvinandHobbes', 'C&H', 'c&h', 'CH', 'ch'.")
+    embed.add_field(name="Peanuts", value="Aliases: 'peanut', 'peanuts', 'pean'.")
+    embed.add_field(name="Peanuts Begins", value="Aliases: 'PeanutsBegins', 'peanutsbegins', 'peanutbegin', 'peanutsbegin', 'peanbeg'.")
+    embed.add_field(name="Dilbert classics", value="Aliases: 'Dilbert', 'dilbert', 'Dilb', 'dilb'.")
+    
+    embed.set_footer(text="Check the bot here: https://github.com/BBArikL/BDBot")
+    await ctx.send(embed=embed)
 def setup(client): # Initialize the cog
   client.add_cog(Help(client))

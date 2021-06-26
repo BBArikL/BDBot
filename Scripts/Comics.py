@@ -53,7 +53,7 @@ class Comic(commands.Cog):
     # Interprets the parmeters given by the user
     await self.parameters_interpreter(ctx,comic_name,main_website,param,first_date)
   
-  @commands.command(aliases=['Peanuts', 'peanut'])
+  @commands.command(aliases=['Peanuts', 'peanut', 'pean'])
   async def peanuts(self, ctx, *, param=None): # Garfield
     comic_name = 'Peanuts'
     main_website = 'https://www.gocomics.com/'
@@ -62,7 +62,7 @@ class Comic(commands.Cog):
     # Interprets the parmeters given by the user
     await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)
 
-  @commands.command(aliases=['PeanutsBegins', 'peanutbegin', 'peanutsbegin'])
+  @commands.command(aliases=['PeanutsBegins', 'peanutbegin', 'peanutsbegin', 'peanbeg'])
   async def peanutsbegins(self, ctx, *, param=None): # Garfield
     comic_name = 'Peanuts-Begins'
     main_website = 'https://www.gocomics.com/'
