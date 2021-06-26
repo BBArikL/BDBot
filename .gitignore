@@ -1,3 +1,5 @@
 data
 __pycache__
 Scripts/__pycache__
+.idea
+.env
