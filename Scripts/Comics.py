@@ -134,9 +134,9 @@ class Comic(commands.Cog):
                 else:
                     await BDbot.BDBot.send_any(self, ctx, "You need `manage_guild` permission to do that!")
             else:
-                # Tries to parse date
+                # Tries to parse date / numbe rof comic
                 if main_website == "https://www.gocomics.com/":
-                    # Tries to parse date
+                    # Works by date
                     try:
                         comic_date = datetime.datetime.strptime(param, "%d/%m/%Y")
 
@@ -152,13 +152,14 @@ class Comic(commands.Cog):
                         await BDbot.BDBot.send_any(self, ctx,
                                                    "This is not a valid date format! The format is : dd/mm/YYYY.")
                 else:
+                  # Works by number of comic
                     try:
                         number = int(param.split(" ")[0])
                         if number >= first_date:
                             main_website = main_website + str(number) + '/'
                             await self.comic_send(ctx, comic_name, main_website, param=param)
                         else:
-                            await BDbot.BDBot.send_any(self, ctx, "There isnt comics with such negative values!")
+                            await BDbot.BDBot.send_any(self, ctx, "There is no comics with such negative values!")
 
                     except ValueError:
                         await ctx.send('This is not a valid date / comic number!')

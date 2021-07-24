@@ -10,10 +10,13 @@ import os
 class DailyPoster(commands.Cog):  # Class responsible for posting daily comic strips
     def __init__(self, client):
         self.client = client
+    
+    def isOwner(self, ctx):
+      return ctx.message.author.id == int(os.getenv('BOT_OWNER_ID'))
 
     @commands.command()
     async def start_daily(self, ctx):  # Starts the DailyPoster loop
-        if ctx.message.author.id == int(os.getenv('BOT_OWNER_ID')):
+        if self.isOwner(ctx):
             await BDbot.BDBot.send_any(self, ctx,
                                        "Daily loop started! Daily comics are posted at 6:00 AM UTC each day.")
 
@@ -37,7 +40,7 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
 
     @commands.command()
     async def is_daily_running(self, ctx):  # Checks the DailyPoster loop
-        if ctx.message.author.id == int(os.getenv('BOT_OWNER_ID')):
+        if self.isOwner(ctx):
             if DailyPoster.post_daily.is_running():
                 await BDbot.BDBot.send_any(self, ctx, "The loop is running.")
             else:
@@ -112,6 +115,13 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
             data = json.load(f)
 
         return data
+    
+    def save(self, data):
+      FILE_PATH = "./data/data.json"
+
+      # Saves the file
+      with open(FILE_PATH, 'w') as f:
+            json.dump(data, f, indent=4)
 
     def new_change(self, ctx, comic, param):  # Make a change in the database
         if comic == 'Garfield':
@@ -135,31 +145,37 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
             DailyPoster.remove(self, ctx, comic_number)
 
     def add(self, ctx, comic_number):  # Add a Comic to the comic list
-        DailyPoster.save(self, ctx, 'add', comics_number=comic_number)
+        DailyPoster.modifyDatabase(self, ctx, 'add', comics_number=comic_number)
 
     def remove(self, ctx, comic_number):  # Remove a Comic to comic list
-        DailyPoster.save(self, ctx, 'remove', comics_number=comic_number)
+        DailyPoster.modifyDatabase(self, ctx, 'remove', comics_number=comic_number)
 
     def remove_guild(self, ctx):  # Removes a guild from the database
-        DailyPoster.save(self, ctx, 'remove_guild')
+        DailyPoster.modifyDatabase(self, ctx, 'remove_guild')
 
-    def updateDatabase(self, ctx):
-        pass  # TODO to add/remove one 0 to each "ComData" when changing the comic list
+    @commands.command()
+    async def updateDatabaseadd(self, ctx):
+        # TODO to add/remove one 0 to each "ComData" when changing the comic list
+        if self.isOwner(self, ctx):
+          data = self.get_database_data(self)
+          
+          for guild in data:
+            data[guild]["ComData"] += "0"
+            
+          DailyPoster.save(self, data)
 
-    def save(self, ctx, use, comics_number=None):
+    def modifyDatabase(self, ctx, use, comics_number=None):
         # Saves the new informations in the database
         # Adds or delete the guild_id, the channel id and the comic_strip data
-        # Doesnt work, to construct the list THEN save it
-        FILE_PATH = "./data/data.json"
         NB_OF_COMICS = int(os.getenv('NB_OF_COMICS'))
 
         if use == 'add' or use == 'remove':
             guild_id = str(ctx.guild.id)
             channel_id = str(ctx.channel.id)
         else:
-            guild_id = str(ctx.id)
+            guild_id = str(ctx.guild.id)
 
-        data = DailyPoster.get_database_data(self)
+        data = DailyPoster.get_database_data()
 
         if use == 'add':
             d = {
@@ -212,11 +228,8 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
         elif use == 'remove_guild':  # Remove a guild from the list
             if guild_id in data:
                 data.pop(guild_id)
-
-        # Saves the file
-        with open(FILE_PATH, 'w') as f:
-            json.dump(data, f, indent=4)
-
+      
+        DailyPoster.save(self, data)
 
 def setup(client):  # Initialize the cog
     client.add_cog(DailyPoster(client))

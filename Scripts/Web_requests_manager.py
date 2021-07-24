@@ -2,6 +2,7 @@ from urllib.request import urlopen
 from discord.ext import commands
 from datetime import date, timedelta
 from bs4 import BeautifulSoup
+import json
 
 
 class GoComicsManager(commands.Cog):
@@ -12,7 +13,7 @@ class GoComicsManager(commands.Cog):
     def Comic_info(self, comic_Name=None, param=None, comic_date=None):
         # Details of the comic
         details = {"url": None, "Name": comic_Name, "title": None, "day": None, "month": None, "year": None,
-                   "img_url": None, "alt": None}
+                   "img_url": None, "alt": None, "transcript": None}
 
         if comic_Name is not None:
             i = 0
@@ -94,17 +95,21 @@ class OtherSiteManager(commands.Cog):
     def Comic_info(self, comic_Name, main_website, param=None):
         # Details of the comic
         details = {"url": None, "Name": comic_Name, "title": None, "day": None, "month": None, "year": None,
-                   "img_url": None, "alt": None}
+                   "img_url": None, "alt": None, "transcript": None}
         if comic_Name is not None:
             # Doesnt work, deactivated Cyanide and happiness to come back later
             # if(comic_Name=='Cyanide and Happinness'):
             #  main_website = OtherSiteManager.extract_id_content(main_website='comic-social-link')
 
             if comic_Name == 'XKCD':
-                if param == "random":
-                    main_website = "https://c.xkcd.com/random/comic/"  # Link for random XKCD comic
-
-            details["url"] = OtherSiteManager.extract_url(self, main_website)
+              if param == "random":
+                  main_website = "https://c.xkcd.com/random/comic/"  # Link for random XKCD comic
+              main_website = main_website + "info.0.json"
+              
+              details["url"] = main_website
+            
+            else:
+              details["url"] = OtherSiteManager.extract_url(self, main_website)
 
             # Gets today date
             if param == "today":
@@ -116,18 +121,34 @@ class OtherSiteManager(commands.Cog):
             # Get the html of the comic site
             html = urlopen(details["url"]).read()
 
-            if html is not None:
-                details["title"] = OtherSiteManager.extract_meta_content(self, html, 'title')
+            if comic_Name != 'XKCD':
+              if html is not None:
+                  details["title"] = OtherSiteManager.extract_meta_content(self, html, 'title')
 
-                details["img_url"] = OtherSiteManager.extract_meta_content(self, html, 'image')
+                  details["img_url"] = OtherSiteManager.extract_meta_content(self, html, 'image')
 
-                # if(comic_Name == 'XKCD'): # Extracts the title, the image, and the alt-text of the comic
-                # Doesnt work
-                # details["alt"] = OtherSiteManager.extract_alt_xk(html)
+                  # if(comic_Name == 'XKCD'): # Extracts the title, the image, and the alt-text of the comic
+                  # Doesnt work
+                  # details["alt"] = OtherSiteManager.extract_alt_xk(html)
+              else:
+                  details = None
             else:
-                details = None
+              # XKCD special extractor
+              # We requested a json and not a html
+              json_details = json.loads(html)
+
+              details["title"] = json_details["title"]
+              details["url"] = details["url"].replace("info.0.json", "")
+              details["img_url"] = json_details["img"]
+              details["alt"] = json_details["alt"]
+              # Transcript is not really relevant since there is no transcripts now.... I'll leave it and if I want to add it, I will  
+              # details["transcript"] = json_details["transcript"] 
+              details["day"] = json_details["day"]
+              details["month"] = json_details["month"]
+              details["year"] = json_details["year"]
+
         else:
-            details = None
+          details = None
 
         return details
 
@@ -156,16 +177,6 @@ class OtherSiteManager(commands.Cog):
 
         else:
             return None
-
-    def extract_alt_xk(self, html):  # Extract the alt text.
-        # TODO
-        # Get the html of the comic site
-        soup = BeautifulSoup(html, "html5lib")
-        # links = soup.find_all('div', {'class': 'img'})
-        img = soup.find_all('img')
-        print(img[2].find('img')['title'])
-        """.find_all('title')"""
-        return None
 
     def extract_id_content(self, main_website, id):
         # Returns the demanded id content (href of an id attribute)

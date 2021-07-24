@@ -82,20 +82,28 @@ class BDBot(commands.Cog):
             month = comic_details["month"]
             year = comic_details["year"]
             url = comic_details["url"]
+            alt = comic_details["alt"]
+            transcript = comic_details["transcript"]
+            img_url = comic_details["img_url"]
 
-            embed = discord.Embed(title=f"{comic_title}", url=url)
+            embed = discord.Embed(title=f"{comic_title}", url=url, description=alt)
 
             if day is not None:
                 embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
-
-            if comic_details["alt"] is not None:
+            
+            embed.set_image(url=img_url)
+            
+            """if alt is not None:
                 # If there is alt text (Text when you hover your mouse on the image)
-                alt = comic_details["alt"]
-                embed.add_field(name="Alt text", value=alt)
+                embed.add_field(name="Alt text", value=alt)"""
+            
+            if transcript is not None and transcript != "":
+              embed.add_field(name="Transcript", value=transcript)
 
-            embed.set_image(url=comic_details["img_url"])
+            
 
             embed.set_footer(text="Check out the bot here! https://github.com/BBArikL/BDBot")
+
             return embed
 
         else:
@@ -105,6 +113,7 @@ class BDBot(commands.Cog):
             embed.add_field(name="We could not find a comic at this date :thinking:....", value="Try another date!")
 
             embed.set_footer(text="Check out the bot here! https://github.com/BBArikL/BDBot")
+            
             return embed
 
     async def send_comic_embed(self, ctx, comic_details):
