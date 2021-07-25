@@ -91,6 +91,9 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
                 elif i == 6:
                     comic_name = 'dilbert-classics'
                     main_website = 'https://www.gocomics.com/'
+                elif i == 7:
+                  comic_name = 'Cyanide and Happiness'
+                  main_website = 'https://explosm.net/comics/'
 
                 if main_website == 'https://www.gocomics.com/':
                     # Specific manager for GoComics website
@@ -138,6 +141,8 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
             comic_number = 5
         elif comic == 'dilbert-classics':
             comic_number = 6
+        elif comic == 'Cyanide and Happiness':
+          comic_number = 7
 
         if param == "add":
             DailyPoster.add(self, ctx, comic_number)
@@ -155,14 +160,62 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
 
     @commands.command()
     async def updateDatabaseadd(self, ctx):
-        # TODO to add/remove one 0 to each "ComData" when changing the comic list
-        if self.isOwner(self, ctx):
-          data = self.get_database_data(self)
+        # Add one 0 to each "ComData" when changing the comic list
+        if self.isOwner(ctx):
+          data = self.get_database_data()
           
           for guild in data:
             data[guild]["ComData"] += "0"
             
           DailyPoster.save(self, data)
+          
+          await ctx.send("Updated the database by adding 1 one comic to all servers.")
+    
+    @commands.command()
+    async def updateDatabaseremove(self, ctx, *, number=None):
+        # Remove one 0 to each "ComData" when changing the comic list
+        if self.isOwner(ctx):
+          data = self.get_database_data()
+          
+          try:
+            index = int(number.split(" ")[0])
+            
+            if index > 0 and index <= int(os.getenv('NB_OF_COMICS')):
+              for guild in data:
+                comData = list(data[guild]['ComData'])
+                comData.pop(index-1)
+                data[guild]['ComData'] = ''.join(comData)
+            
+              DailyPoster.save(self, data)
+            
+              await ctx.send("Updated the database by removing 1 one comic to all servers.")
+            
+            else:
+              await ctx.send('Cannot find the index of the comic to remove!')
+          
+          except ValueError:
+            await ctx.send('This is not a valid comic number!')
+    
+    @commands.command()
+    async def updateDatabaseclean(self, ctx, *, number=None):
+        # Clean the database from servers that don't have any daily comics saved
+        if self.isOwner(ctx):
+          data = self.get_database_data()
+          blank_com_data = '0'*int(os.getenv('NB_OF_COMICS'))
+          guilds_to_clean = []
+          nb_removed = 0
+          
+          for guild in data:
+            if data[guild]['ComData'] == blank_com_data:
+              nb_removed += 1
+              guilds_to_clean.append(guild)
+
+          for guild in guilds_to_clean:
+            data.pop(guild)
+
+          DailyPoster.save(self, data)
+
+          await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
 
     def modifyDatabase(self, ctx, use, comics_number=None):
         # Saves the new informations in the database
@@ -175,7 +228,7 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
         else:
             guild_id = str(ctx.guild.id)
 
-        data = DailyPoster.get_database_data()
+        data = DailyPoster.get_database_data(self)
 
         if use == 'add':
             d = {

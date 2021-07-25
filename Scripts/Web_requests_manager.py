@@ -3,7 +3,7 @@ from discord.ext import commands
 from datetime import date, timedelta
 from bs4 import BeautifulSoup
 import json
-
+import urllib
 
 class GoComicsManager(commands.Cog):
 
@@ -31,6 +31,7 @@ class GoComicsManager(commands.Cog):
 
                     # Gets today /  url
                     details["url"] = GoComicsManager.send_link(self, comic_Name, comic_date)
+                    print(details["url"])
 
                 else:
                     # Random comic
@@ -39,13 +40,11 @@ class GoComicsManager(commands.Cog):
                 # Get the html of the comic site
                 html = urlopen(details["url"]).read()
 
-                details["title"] = GoComicsManager.extract_meta_content(self, html,
-                                                                        'title')  # Ectracts the title of the comic
+                details["title"] = GoComicsManager.extract_meta_content(self, html, 'title')  # Extracts the title of the comic
 
-                details["img_url"] = GoComicsManager.extract_meta_content(self, html,
-                                                                          'image')  # Finds the url of the image
+                details["img_url"] = GoComicsManager.extract_meta_content(self, html, 'image')  # Finds the url of the image
 
-                if details["img_url"] is None and param != "today":  # Go back one day
+                if details["img_url"] is None:  # Go back one day
                     comic_date = comic_date - timedelta(days=1)
 
             if i == 3:  # S'il n'a rien trouvé
@@ -107,9 +106,16 @@ class OtherSiteManager(commands.Cog):
               main_website = main_website + "info.0.json"
               
               details["url"] = main_website
-            
+            elif comic_Name == 'Cyanide and Happiness':
+              if param == 'random':
+                main_website += 'random'
+              elif param == 'today':
+                main_website += 'latest'
+              
+              details["url"] = main_website
+
             else:
-              details["url"] = OtherSiteManager.extract_url(self, main_website)
+              details["url"] = OtherSiteManager.extract_meta_content(self, 'url', main_website)
 
             # Gets today date
             if param == "today":
@@ -119,19 +125,21 @@ class OtherSiteManager(commands.Cog):
                 details["year"] = d.strftime("%Y")
 
             # Get the html of the comic site
-            html = urlopen(details["url"]).read()
+            try:
+              html = urlopen(details["url"]).read()
+            except urllib.error.HTTPError:
+              html = None
 
             if comic_Name != 'XKCD':
               if html is not None:
-                  details["title"] = OtherSiteManager.extract_meta_content(self, html, 'title')
+                details["url"] = OtherSiteManager.extract_meta_content(self, html, 'url')
 
-                  details["img_url"] = OtherSiteManager.extract_meta_content(self, html, 'image')
+                details["title"] = OtherSiteManager.extract_meta_content(self, html, 'title')
 
-                  # if(comic_Name == 'XKCD'): # Extracts the title, the image, and the alt-text of the comic
-                  # Doesnt work
-                  # details["alt"] = OtherSiteManager.extract_alt_xk(html)
+                details["img_url"] = OtherSiteManager.extract_meta_content(self, html, 'image')
               else:
-                  details = None
+                details = None
+            
             else:
               # XKCD special extractor
               # We requested a json and not a html
@@ -153,16 +161,6 @@ class OtherSiteManager(commands.Cog):
         return details
 
     # ---- START of web scraping functions ----#
-    def extract_url(self, main_website):
-        # Get the html of the comic site
-        html = urlopen(main_website).read()
-        soup = BeautifulSoup(html, "html.parser")
-
-        url_meta = soup.find('meta', attrs={'property': 'og:url', 'content': True})
-        url = url_meta['content']
-
-        return url
-
     def extract_meta_content(self, html, content):
         # Copied from CalvinBot : https://github.com/wdr1/CalvinBot/blob/master/CalvinBot.py
         # Extract the image source of the comic
@@ -177,21 +175,6 @@ class OtherSiteManager(commands.Cog):
 
         else:
             return None
-
-    def extract_id_content(self, main_website, id):
-        # Returns the demanded id content (href of an id attribute)
-        # TO OPTIMIZE (Doesnt work, the worst implementation of all)
-        html = urlopen(main_website).read()
-        soup = BeautifulSoup(html, "html5lib")
-
-        # From : https://stackoverflow.com/questions/43814754/python-beautifulsoup-how-to-get-href-attribute-of-a-element
-        id_content = []
-        for a in soup.find_all('a', href=True):
-            if a.text:
-                id_content.append(a['href'])
-        id_content = id_content[47]
-
-        return main_website + id_content
 
     # --- End of OtherSiteManager ---#
 

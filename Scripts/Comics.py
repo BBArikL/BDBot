@@ -81,14 +81,15 @@ class Comic(commands.Cog):
 
         # Interprets the parmeters given by the user
         await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        
+    @commands.command(aliases=['Cyanide', 'cyanide', 'Cyanide&Happiness', 'cyan'])
+    async def CyanideandHappinness(self, ctx, *, param=None): # XKCD
+      comic_name = 'Cyanide and Happiness'
+      main_website = 'https://explosm.net/comics/'
+      first_date = 1
 
-    """@commands.command(aliases=['Cyanide', 'cyanide', 'Cyanide&Happiness', 'cyan'])
-  async def CyanideandHappinness(self, ctx, *, param=None): # XKCD
-    comic_name = 'Cyanide and Happiness'
-    main_website = 'https://explosm.net'
-
-    # Interprets the parmeters given by the user
-    await self.parameters_interpreter(ctx,comic_name,main_website,param)"""
+      # Interprets the parmeters given by the user
+      await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)
 
     # ---- End of Comics parameters ----#
 
@@ -159,7 +160,7 @@ class Comic(commands.Cog):
                             main_website = main_website + str(number) + '/'
                             await self.comic_send(ctx, comic_name, main_website, param=param)
                         else:
-                            await BDbot.BDBot.send_any(self, ctx, "There is no comics with such negative values!")
+                            await BDbot.BDBot.send_any(self, ctx, "There is no comics with such values!")
 
                     except ValueError:
                         await ctx.send('This is not a valid date / comic number!')
@@ -182,7 +183,6 @@ class Comic(commands.Cog):
         await BDbot.BDBot.send_comic_embed(self, ctx, comic_details)
 
     # --- END of cog ----#
-
 
 def setup(client):  # Initialize the cog
     client.add_cog(Comic(client))

@@ -60,10 +60,10 @@ class BDBot(commands.Cog):
     async def nb_guild(self, ctx):  # Gets the number of guilds that the bot is in (for analytics)
         if ctx.message.author.id == int(os.getenv('BOT_OWNER_ID')):
             await ctx.send(f"The bot is in {len(self.client.guilds)} guilds. Trying to update status on Top.gg.....")
-            """This function runs every 30 minutes to automatically update your server count."""
+            
             try:
                 await self.dblpy.post_guild_count()
-                await ctx.send(f'Posted server count ({self.dblpy.guild_count})')
+                await ctx.send(f'Posted server count ({self.dblpy.guild_count()})')
             except Exception as e:
                 await ctx.send('Failed to post server count\n{}: {}'.format(type(e).__name__, e))
 
@@ -82,8 +82,13 @@ class BDBot(commands.Cog):
             month = comic_details["month"]
             year = comic_details["year"]
             url = comic_details["url"]
-            alt = comic_details["alt"]
-            transcript = comic_details["transcript"]
+            
+            if comic_details["alt"] is not None:
+              alt = comic_details["alt"]
+            else:
+              alt = ""
+              
+            #transcript = comic_details["transcript"]
             img_url = comic_details["img_url"]
 
             embed = discord.Embed(title=f"{comic_title}", url=url, description=alt)
@@ -91,16 +96,11 @@ class BDBot(commands.Cog):
             if day is not None:
                 embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
             
-            embed.set_image(url=img_url)
-            
-            """if alt is not None:
-                # If there is alt text (Text when you hover your mouse on the image)
-                embed.add_field(name="Alt text", value=alt)"""
-            
+            """ The transcript is not shown
             if transcript is not None and transcript != "":
-              embed.add_field(name="Transcript", value=transcript)
-
+              embed.add_field(name="Transcript", value=transcript)"""
             
+            embed.set_image(url=img_url)
 
             embed.set_footer(text="Check out the bot here! https://github.com/BBArikL/BDBot")
 
@@ -110,7 +110,7 @@ class BDBot(commands.Cog):
             # Error message
             embed = discord.Embed(title="No comic found!")
 
-            embed.add_field(name="We could not find a comic at this date :thinking:....", value="Try another date!")
+            embed.add_field(name="We could not find a comic at this date / number :thinking:....", value="Try another date / number!")
 
             embed.set_footer(text="Check out the bot here! https://github.com/BBArikL/BDBot")
             
