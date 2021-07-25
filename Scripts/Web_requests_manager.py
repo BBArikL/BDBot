@@ -31,7 +31,6 @@ class GoComicsManager(commands.Cog):
 
                     # Gets today /  url
                     details["url"] = GoComicsManager.send_link(self, comic_Name, comic_date)
-                    print(details["url"])
 
                 else:
                     # Random comic

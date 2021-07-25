@@ -56,7 +56,7 @@ class Comic(commands.Cog):
         await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
 
     @commands.command(aliases=['Peanuts', 'peanut', 'pean'])
-    async def peanuts(self, ctx, *, param=None):  # Garfield
+    async def peanuts(self, ctx, *, param=None):  # Peanuts
         comic_name = 'Peanuts'
         main_website = 'https://www.gocomics.com/'
         first_date = datetime.datetime(1950, 10, 2)
@@ -65,7 +65,7 @@ class Comic(commands.Cog):
         await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
 
     @commands.command(aliases=['PeanutsBegins', 'peanutbegin', 'peanutsbegin', 'peanbeg'])
-    async def peanutsbegins(self, ctx, *, param=None):  # Garfield
+    async def peanutsbegins(self, ctx, *, param=None):  # Peanuts begins
         comic_name = 'Peanuts-Begins'
         main_website = 'https://www.gocomics.com/'
         first_date = datetime.datetime(1950, 10, 2)
@@ -74,7 +74,7 @@ class Comic(commands.Cog):
         await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
 
     @commands.command(aliases=['Dilbert', 'Dilb', 'dilb'])
-    async def dilbert(self, ctx, *, param=None):  # Garfield
+    async def dilbert(self, ctx, *, param=None):  # Dilbert classics
         comic_name = 'dilbert-classics'
         main_website = 'https://www.gocomics.com/'
         first_date = datetime.datetime(2012, 6, 13)
@@ -83,10 +83,19 @@ class Comic(commands.Cog):
         await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
         
     @commands.command(aliases=['Cyanide', 'cyanide', 'Cyanide&Happiness', 'cyan'])
-    async def CyanideandHappinness(self, ctx, *, param=None): # XKCD
+    async def CyanideandHappinness(self, ctx, *, param=None): # Cyanide and Happiness
       comic_name = 'Cyanide and Happiness'
       main_website = 'https://explosm.net/comics/'
       first_date = 1
+
+      # Interprets the parmeters given by the user
+      await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)
+
+    @commands.command(aliases=['Frazz', 'fraz'])
+    async def frazz(self, ctx, *, param=None): # Frazz
+      comic_name = 'Frazz'
+      main_website = 'https://www.gocomics.com/'
+      first_date = datetime.datetime(2001, 4, 2)
 
       # Interprets the parmeters given by the user
       await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)

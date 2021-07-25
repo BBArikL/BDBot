@@ -53,6 +53,7 @@ class Help(commands.Cog):
         embed.add_field(name="Peanuts Begins",
                         value="Aliases: 'PeanutsBegins', 'peanutsbegins', 'peanutbegin', 'peanutsbegin', 'peanbeg'.")
         embed.add_field(name="Dilbert classics", value="Aliases: 'Dilbert', 'dilbert', 'Dilb', 'dilb'.")
+        embed.add_field(name="Frazz", value="Aliases:'frazz'.")
 
         embed.set_footer(text="Check the bot here: https://github.com/BBArikL/BDBot")
         await ctx.send(embed=embed)

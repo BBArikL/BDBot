@@ -94,6 +94,9 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
                 elif i == 7:
                   comic_name = 'Cyanide and Happiness'
                   main_website = 'https://explosm.net/comics/'
+                elif i == 8:
+                  comic_name = 'Frazz'
+                  main_website = 'https://www.gocomics.com/'
 
                 if main_website == 'https://www.gocomics.com/':
                     # Specific manager for GoComics website
@@ -143,6 +146,8 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
             comic_number = 6
         elif comic == 'Cyanide and Happiness':
           comic_number = 7
+        elif comic == 'Frazz':
+          comic_number = 8
 
         if param == "add":
             DailyPoster.add(self, ctx, comic_number)
