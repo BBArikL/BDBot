@@ -52,11 +52,9 @@ CalvinBot : https://github.com/wdr1/CalvinBot
   - Gocomics:
     - Nothing! :)
   - XKCD / Other sites:
-    - Show the alt-text (migrate to www.xkcd.com/#comic/info.0.json for that)
-    - Go back and see the extract_id_content() method in Web_requests_manager to fix the poor implementation of the link (For Cyanide and Happines). EDIT: Deactivated until its ready.
+    - Nothing
   - Other:
     - Optimize Web_requests_manager
-    - Add update_database() 'add / remove ##' that will add another 0 in all the ComData in the database / remove one comic from the database.
  
 - Anything else to know?
   - The error manager ('Errors.py') might be sometimes commented out because I want to see the errors directly in the terminal. Please tell me if I forget to remove those multi-line comments.
