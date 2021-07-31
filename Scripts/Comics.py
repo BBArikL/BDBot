@@ -100,6 +100,15 @@ class Comic(commands.Cog):
       # Interprets the parmeters given by the user
       await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)
 
+    @commands.command(aliases=['Garfieldminus', 'garfminus', 'gmng'])
+    async def GmnG(self, ctx, *, param=None): # Frazz
+      comic_name = 'Garfield minus Garfield'
+      main_website = 'https://garfieldminusgarfield.net/'
+      first_date = datetime.datetime(2008, 2, 13)
+
+      # Interprets the parmeters given by the user
+      await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)
+
     # ---- End of Comics parameters ----#
 
     async def send_request_error(self, ctx):
@@ -144,13 +153,12 @@ class Comic(commands.Cog):
                 else:
                     await BDbot.BDBot.send_any(self, ctx, "You need `manage_guild` permission to do that!")
             else:
-                # Tries to parse date / numbe rof comic
-                if main_website == "https://www.gocomics.com/":
+                # Tries to parse date / numbe of comic
+                if main_website == "https://www.gocomics.com/" or main_website == 'https://garfieldminusgarfield.net/':
                     # Works by date
                     try:
                         comic_date = datetime.datetime.strptime(param, "%d/%m/%Y")
-
-                        if first_date < comic_date < datetime.datetime.utcnow():
+                        if first_date <= comic_date and comic_date <= datetime.datetime.utcnow():
                             await self.comic_send(ctx, comic_name, main_website, "Specific_date", comic_date=comic_date)
                         else:
                             first_date_formatted = datetime.datetime.strftime(first_date, "%d/%m/%Y")
@@ -160,12 +168,13 @@ class Comic(commands.Cog):
                                                        f"{first_date_formatted} and {date_now_formatted}.")
                     except ValueError:
                         await BDbot.BDBot.send_any(self, ctx,
-                                                   "This is not a valid date format! The format is : dd/mm/YYYY.")
+                                                   "This is not a valid date format! The format is : DD/MM/YYYY.")
                 else:
                   # Works by number of comic
                     try:
                         number = int(param.split(" ")[0])
                         if number >= first_date:
+
                             main_website = main_website + str(number) + '/'
                             await self.comic_send(ctx, comic_name, main_website, param=param)
                         else:
@@ -183,6 +192,9 @@ class Comic(commands.Cog):
             # Specific manager for GoComics website
             comic_details = Web_requests_manager.GoComicsManager.Comic_info(self, comic_name, param=param,
                                                                             comic_date=comic_date)
+
+        elif main_website == 'https://garfieldminusgarfield.net/':
+          comic_details = Web_requests_manager.RssSiteManager.Comic_info(self, comic_name, main_website, param=param, comic_date=comic_date)
 
         else:  # Other websites
             comic_details = Web_requests_manager.OtherSiteManager.Comic_info(self, comic_name, main_website,
