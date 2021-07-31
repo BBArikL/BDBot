@@ -229,3 +229,4 @@ class RssSiteManager(commands.Cog):
 def setup(client):  # Initialize the cogs
     client.add_cog(GoComicsManager(client))
     client.add_cog(OtherSiteManager(client))
+    client.add_cog(RssSiteManager(client))
