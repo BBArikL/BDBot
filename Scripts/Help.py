@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from BDBot import BDBot
+from Scripts import BDbot
 
 
 class Help(commands.Cog):
@@ -31,7 +31,7 @@ class Help(commands.Cog):
         
         embed.add_field(name="Vote", value="Link back to the Top.gg page.\nCommand:\n`bd!vote`.")
 
-        embed.set_footer(text=BDBot.get_random_footer())
+        embed.set_footer(text=BDbot.BDBot.get_random_footer())
         await ctx.send(embed=embed)
 
     @help.command()
@@ -42,7 +42,7 @@ class Help(commands.Cog):
         embed.add_field(name="remove", value="Use `bd!<name_of_comic> remove` to remove the comic to the daily list.")
         embed.add_field(name="Remove all", value="Use `bd!remove_all` to unsubscribe your server from all the comics")
 
-        embed.set_footer(text=BDBot.get_random_footer())
+        embed.set_footer(text=BDbot.BDBot.get_random_footer())
         await ctx.send(embed=embed)
 
     @help.command()
@@ -59,7 +59,7 @@ class Help(commands.Cog):
         embed.add_field(name="Dilbert classics", value="Aliases: 'Dilbert', 'dilbert', 'Dilb', 'dilb'.")
         embed.add_field(name="Frazz", value="Aliases:'frazz'.")
 
-        embed.set_footer(text=BDBot.get_random_footer())
+        embed.set_footer(text=BDbot.BDBot.get_random_footer())
         await ctx.send(embed=embed)
 
 

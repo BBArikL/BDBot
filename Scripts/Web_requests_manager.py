@@ -48,12 +48,12 @@ class GoComicsManager(commands.Cog):
         if details["img_url"] is None:  # Go back one day
           comic_date = comic_date - timedelta(days=1)
 
-        if i == 3:  # If it hasn't found anything
+        if i == 4 and details["img_url"] is None:  # If it hasn't found anything
           details = None
-      else:
-        details = None
+    else:
+      details = None
 
-      return details
+    return details
 
   def send_link(self, comic_Name, day):  # Returns the comic url
       date_formatted = day.strftime("%Y/%m/%d")

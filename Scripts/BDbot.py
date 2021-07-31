@@ -4,6 +4,7 @@ from Scripts import DailyPoster
 from datetime import date
 import os
 import topgg
+import random
 
 class BDBot(commands.Cog):
     # Class responsible for main functions of the bot
@@ -85,50 +86,49 @@ class BDBot(commands.Cog):
     # ---- End of commands ----#
 
     def create_embed(self, comic_details=None):
-        if comic_details is not None:
-            # Embeds the comic
-            comic_name = comic_details["Name"]
-            comic_title = comic_details["title"]
-            day = comic_details["day"]
-            month = comic_details["month"]
-            year = comic_details["year"]
-            url = comic_details["url"]
+      if comic_details is not None:
+          # Embeds the comic
+          comic_name = comic_details["Name"]
+          comic_title = comic_details["title"]
+          day = comic_details["day"]
+          month = comic_details["month"]
+          year = comic_details["year"]
+          url = comic_details["url"]
             
-            if comic_details["alt"] is not None:
-              alt = comic_details["alt"]
-            else:
-              alt = ""
+          if comic_details["alt"] is not None:
+            alt = comic_details["alt"]
+          else:
+            alt = ""
               
-            #transcript = comic_details["transcript"]
-            img_url = comic_details["img_url"]
+          #transcript = comic_details["transcript"]
+          img_url = comic_details["img_url"]
 
-            embed = discord.Embed(title=f"{comic_title}", url=url, description=alt)
+          embed = discord.Embed(title=f"{comic_title}", url=url, description=alt)
 
-            if day is not None:
-                embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
+          if day is not None:
+              embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
             
-            """ The transcript is not shown
-            if transcript is not None and transcript != "":
-              embed.add_field(name="Transcript", value=transcript)"""
+          """ The transcript is not shown
+          if transcript is not None and transcript != "":
+            embed.add_field(name="Transcript", value=transcript)"""
             
-            embed.set_image(url=img_url)
+          embed.set_image(url=img_url)
 
-            embed.set_footer(text=get_random_footer())
+          embed.set_footer(text=BDBot.get_random_footer())
 
-            return embed
+          return embed
+      else:
+          # Error message
+          embed = discord.Embed(title="No comic found!")
 
-        else:
-            # Error message
-            embed = discord.Embed(title="No comic found!")
+          embed.add_field(name="We could not find a comic at this date / number :thinking:....", value="Try another date / number!")
 
-            embed.add_field(name="We could not find a comic at this date / number :thinking:....", value="Try another date / number!")
-
-            embed.set_footer(text=get_random_footer())
+          embed.set_footer(text=BDBot.get_random_footer())
             
-            return embed
+          return embed
 
     async def send_comic_embed(self, ctx, comic_details):
-        embed = BDBot.create_embed(self, comic_details)  # Creates the embed
+        embed = BDBot.create_embed(self, comic_details=comic_details)  # Creates the embed
 
         await ctx.send(embed=embed)  # Send the comic
 
@@ -147,7 +147,9 @@ class BDBot(commands.Cog):
 
       footers = open(FILE_PATH, 'r')
 
-      return random.choice(footers)
+      rnd_footer = random.choice(footers.readlines())
+
+      return rnd_footer.replace('\n', '')
 
     # ---- End of BDBot ----#
 
