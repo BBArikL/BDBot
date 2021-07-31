@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from BDBot import BDBot
 
 
 class Help(commands.Cog):
@@ -23,12 +24,14 @@ class Help(commands.Cog):
         
         embed.add_field(name="Daily comics commands.",
                         value="Use bd!help daily to see available commands for daily comics. Post daily at 6:00 AM UTC.")
-
+        
+        embed.add_field(name="Request", value="Have a request for the bot? Post your request at https://github.com/BBArikL/BDBot/issues/new?assignees=&labels=enhancement&template=comic-request.md&title=New+Comic+request for maximum visibility or use bd!request <your request> to ;leave a message to the developer!")
         embed.add_field(name="Git", value="Link back to the git page.\nCommand:\n`bd!git`.")
         embed.add_field(name="Invite", value="Gives a link to add the bot to your servers.\nCommand:\n`bd!invite`.")
+        
         embed.add_field(name="Vote", value="Link back to the Top.gg page.\nCommand:\n`bd!vote`.")
 
-        embed.set_footer(text="Check the bot here: https://github.com/BBArikL/BDBot.")
+        embed.set_footer(text=BDBot.get_random_footer())
         await ctx.send(embed=embed)
 
     @help.command()
@@ -39,7 +42,7 @@ class Help(commands.Cog):
         embed.add_field(name="remove", value="Use `bd!<name_of_comic> remove` to remove the comic to the daily list.")
         embed.add_field(name="Remove all", value="Use `bd!remove_all` to unsubscribe your server from all the comics")
 
-        embed.set_footer(text="Check the bot here: https://github.com/BBArikL/BDBot")
+        embed.set_footer(text=BDBot.get_random_footer())
         await ctx.send(embed=embed)
 
     @help.command()
@@ -56,7 +59,7 @@ class Help(commands.Cog):
         embed.add_field(name="Dilbert classics", value="Aliases: 'Dilbert', 'dilbert', 'Dilb', 'dilb'.")
         embed.add_field(name="Frazz", value="Aliases:'frazz'.")
 
-        embed.set_footer(text="Check the bot here: https://github.com/BBArikL/BDBot")
+        embed.set_footer(text=BDBot.get_random_footer())
         await ctx.send(embed=embed)
 
 

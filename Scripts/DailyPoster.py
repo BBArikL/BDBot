@@ -97,6 +97,9 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
                 elif i == 8:
                   comic_name = 'Frazz'
                   main_website = 'https://www.gocomics.com/'
+                elif i == 9:
+                  comic_name = 'Garfield minus Garfield'
+                  main_website = 'https://garfieldminusgarfield.net/'
 
                 if main_website == 'https://www.gocomics.com/':
                     # Specific manager for GoComics website
@@ -118,7 +121,7 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
 
         # Loads the prefixes file
         with open(FILE_PATH, 'r') as f:
-            data = json.load(f)
+          data = json.load(f)
 
         return data
     
@@ -148,6 +151,8 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
           comic_number = 7
         elif comic == 'Frazz':
           comic_number = 8
+        elif comic == 'Garfield minus Garfield':
+          comic_number = 9
 
         if param == "add":
             DailyPoster.add(self, ctx, comic_number)

@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
 from Scripts import DailyPoster
+from datetime import date
 import os
 import topgg
-
 
 class BDBot(commands.Cog):
     # Class responsible for main functions of the bot
@@ -67,6 +67,17 @@ class BDBot(commands.Cog):
             except Exception as e:
                 await ctx.send('Failed to post server count\n{}: {}'.format(type(e).__name__, e))
 
+    @commands.command()
+    async def request(self, ctx, *, param=None):
+      # Adds a request to the database
+      FILE_PATH = './Data/requests.txt'
+
+      requests = open(FILE_PATH, 'a')
+      
+      requests.writeline(f'{param} by {ctx.author.name} on {date.utcnow()}')
+
+      requests.close()
+
     # @bot.check
     # async def globally_block_dms(ctx):
     # return ctx.guild is not None
@@ -102,7 +113,7 @@ class BDBot(commands.Cog):
             
             embed.set_image(url=img_url)
 
-            embed.set_footer(text="Check out the bot here! https://github.com/BBArikL/BDBot")
+            embed.set_footer(text=get_random_footer())
 
             return embed
 
@@ -112,7 +123,7 @@ class BDBot(commands.Cog):
 
             embed.add_field(name="We could not find a comic at this date / number :thinking:....", value="Try another date / number!")
 
-            embed.set_footer(text="Check out the bot here! https://github.com/BBArikL/BDBot")
+            embed.set_footer(text=get_random_footer())
             
             return embed
 
@@ -130,6 +141,13 @@ class BDBot(commands.Cog):
     async def send_any(self, ctx, text):
         # Send any text given. Mostly for debugging purposes
         await ctx.send(text)
+
+    def get_random_footer():
+      FILE_PATH = './misc/random-footers.txt'
+
+      footers = open(FILE_PATH, 'r')
+
+      return random.choice(footers)
 
     # ---- End of BDBot ----#
 
