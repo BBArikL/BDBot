@@ -14,7 +14,7 @@ class BDBot(commands.Cog):
         # Initialize all the properties of the cog
         self.client = client
         dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
-        self.dblpy = topgg.DBLClient(client, dbl_token)
+        self.topggpy = topgg.DBLClient(client, dbl_token)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -63,8 +63,8 @@ class BDBot(commands.Cog):
             await ctx.send(f"The bot is in {len(self.client.guilds)} guilds. Trying to update status on Top.gg.....")
             
             try:
-                await self.dblpy.post_guild_count()
-                await ctx.send(f'Posted server count ({self.dblpy.guild_count()})')
+                await self.topggpy.post_guild_count()
+                await ctx.send(f'Posted server count ({self.topggpy.guild_count})')
             except Exception as e:
                 await ctx.send('Failed to post server count\n{}: {}'.format(type(e).__name__, e))
 
