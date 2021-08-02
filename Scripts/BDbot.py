@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from Scripts import DailyPoster
-from datetime import date
+from datetime import datetime, timezone
 import os
 import topgg
 import random
@@ -14,7 +14,7 @@ class BDBot(commands.Cog):
         # Initialize all the properties of the cog
         self.client = client
         dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
-        self.dblpy = topgg.DBLClient(client, dbl_token)
+        self.topggpy = topgg.DBLClient(client, dbl_token)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -63,21 +63,23 @@ class BDBot(commands.Cog):
             await ctx.send(f"The bot is in {len(self.client.guilds)} guilds. Trying to update status on Top.gg.....")
             
             try:
-                await self.dblpy.post_guild_count()
-                await ctx.send(f'Posted server count ({self.dblpy.guild_count()})')
+                await self.topggpy.post_guild_count()
+                await ctx.send(f'Posted server count ({self.topggpy.guild_count})')
             except Exception as e:
                 await ctx.send('Failed to post server count\n{}: {}'.format(type(e).__name__, e))
 
     @commands.command()
     async def request(self, ctx, *, param=None):
       # Adds a request to the database
-      FILE_PATH = './Data/requests.txt'
+      FILE_PATH = './data/requests.txt'
 
       requests = open(FILE_PATH, 'a')
       
-      requests.writeline(f'{param} by {ctx.author.name} on {date.utcnow()}')
+      requests.write(f'Request: "{param}" by {ctx.author.name}#{ctx.author.discriminator} on {datetime.now(timezone.utc)}\n')
 
       requests.close()
+
+      await ctx.send("Request saved! Thank you for using BDBot!")
 
     # @bot.check
     # async def globally_block_dms(ctx):
