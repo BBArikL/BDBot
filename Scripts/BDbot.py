@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from Scripts import DailyPoster
-from datetime import date
+from datetime import datetime, timezone
 import os
 import topgg
 import random
@@ -71,13 +71,15 @@ class BDBot(commands.Cog):
     @commands.command()
     async def request(self, ctx, *, param=None):
       # Adds a request to the database
-      FILE_PATH = './Data/requests.txt'
+      FILE_PATH = './data/requests.txt'
 
       requests = open(FILE_PATH, 'a')
       
-      requests.writeline(f'{param} by {ctx.author.name} on {date.utcnow()}')
+      requests.write(f'Request: "{param}" by {ctx.author.name}#{ctx.author.discriminator} on {datetime.now(timezone.utc)}\n')
 
       requests.close()
+
+      await ctx.send("Request saved! Thank you for using BDBot!")
 
     # @bot.check
     # async def globally_block_dms(ctx):
