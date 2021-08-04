@@ -55,7 +55,7 @@ class BDBot(commands.Cog):
 
     @commands.command()
     async def vote(self, ctx):  # Links back to the github page
-        await ctx.send("Vote for the bot here: https://top.gg/bot/807780409362481163")
+        await ctx.send("Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : https://discordbotlist.com/bots/bdbot")
 
     @commands.command()
     async def nb_guild(self, ctx):  # Gets the number of guilds that the bot is in (for analytics)

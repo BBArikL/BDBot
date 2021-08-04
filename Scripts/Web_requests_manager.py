@@ -99,7 +99,9 @@ class OtherSiteManager(commands.Cog):
       if comic_Name == 'XKCD':
         if param == "random":
           main_website = "https://c.xkcd.com/random/comic/"  # Link for random XKCD comic
-          
+          html = urlopen(main_website).read()
+          main_website = OtherSiteManager.extract_meta_content(self, html, 'url')
+
         main_website = main_website + "info.0.json"
         details["url"] = main_website
             
@@ -112,7 +114,8 @@ class OtherSiteManager(commands.Cog):
         details["url"] = main_website
 
       else:
-        details["url"] = OtherSiteManager.extract_meta_content(self, 'url', main_website)
+        html = urlopen(main_website).read()
+        details["url"] = OtherSiteManager.extract_meta_content(self, html, 'url')
 
       # Gets today date
       if param == "today":
