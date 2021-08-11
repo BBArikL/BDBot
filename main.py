@@ -1,4 +1,3 @@
-import discord  # Discord libraries
 import os
 from keepalive import keep_alive  # imports the web server that pings the bot continually
 from discord.ext import commands

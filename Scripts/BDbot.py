@@ -50,8 +50,8 @@ class BDBot(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
     async def remove_all(self, ctx):  # Remove the guild from the database
-        DailyPoster.DailyPoster.remove_guild(self, ctx.guild)
-        await ctx.send("All daily commands removed successfully!")
+        DailyPoster.DailyPoster.remove_guild(self, ctx)
+        await ctx.send("All daily comics removed successfully!")
 
     @commands.command()
     async def vote(self, ctx):  # Links back to the github page
