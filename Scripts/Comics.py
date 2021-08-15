@@ -109,6 +109,60 @@ class Comic(commands.Cog):
       # Interprets the parmeters given by the user
       await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)
 
+    @commands.command(aliases=['frank', 'Ernest', 'ernest', 'Frank&Ernest', 'frank&ernest'])
+    async def Frank(self, ctx, *, param=None):  # Frank and Ernest by Thaves
+        comic_name = 'Frank-and-Ernest'
+        main_website = 'https://www.gocomics.com/'
+        first_date = datetime.datetime(1990, 3, 10)
+
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+
+    @commands.command(aliases=['Broom', 'broom', 'Hilda', 'hilda'])
+    async def BroomHilda(self, ctx, *, param=None):  # Broom  Hilda
+        comic_name = 'BroomHilda'
+        main_website = 'https://www.gocomics.com/'
+        first_date = datetime.datetime(2001, 4, 8)
+
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+
+    @commands.command(aliases=['Inspector', 'inspector', 'crime', 'crimequiz'])
+    async def InspectorDanger(self, ctx, *, param=None):  # Broom  Hilda
+        comic_name = 'Inspector-Dangers-Crime-Quiz'
+        main_website = 'https://www.gocomics.com/'
+        first_date = datetime.datetime(2011, 8, 1)
+
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+
+    @commands.command(aliases=['emo', 'Emo', 'Cheerup', 'emokid'])
+    async def Cheerupemokid(self, ctx, *, param=None):  # Broom  Hilda
+        comic_name = 'Cheer-up-emo-kid'
+        main_website = 'https://www.gocomics.com/'
+        first_date = datetime.datetime(2017, 3, 20)
+
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+
+    @commands.command(aliases=['Catana', 'littlemoments'])
+    async def catana(self, ctx, *, param=None):  # Broom  Hilda
+        comic_name = 'little-moments-of-love'
+        main_website = 'https://www.gocomics.com/'
+        first_date = datetime.datetime(2018, 9, 24)
+
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+
+    @commands.command(aliases=['brevity', 'brev'])
+    async def Brevity(self, ctx, *, param=None):  # Broom  Hilda
+        comic_name = 'brevity'
+        main_website = 'https://www.gocomics.com/'
+        first_date = datetime.datetime(2005, 1, 3)
+
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+
     # ---- End of Comics parameters ----#
 
     async def send_request_error(self, ctx):

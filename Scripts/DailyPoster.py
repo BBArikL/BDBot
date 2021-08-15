@@ -92,14 +92,32 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
                     comic_name = 'dilbert-classics'
                     main_website = 'https://www.gocomics.com/'
                 elif i == 7:
-                  comic_name = 'Cyanide and Happiness'
-                  main_website = 'https://explosm.net/comics/'
+                    comic_name = 'Cyanide and Happiness'
+                    main_website = 'https://explosm.net/comics/'
                 elif i == 8:
-                  comic_name = 'Frazz'
-                  main_website = 'https://www.gocomics.com/'
+                    comic_name = 'Frazz'
+                    main_website = 'https://www.gocomics.com/'
                 elif i == 9:
-                  comic_name = 'Garfield minus Garfield'
-                  main_website = 'https://garfieldminusgarfield.net/'
+                    comic_name = 'Garfield minus Garfield'
+                    main_website = 'https://garfieldminusgarfield.net/'
+                elif i == 10:
+                    comic_name = 'Frank-and-Ernest'
+                    main_website = 'https://www.gocomics.com/'
+                elif i == 11:
+                    comic_name = 'BroomHilda'
+                    main_website = 'https://www.gocomics.com/'
+                elif i == 12:
+                    comic_name = 'Inspector-Dangers-Crime-Quiz'
+                    main_website = 'https://www.gocomics.com/'
+                elif i == 13:
+                    comic_name = 'Cheer-up-emo-kid'
+                    main_website = 'https://www.gocomics.com/'
+                elif i == 14:
+                    comic_name = 'little-moments-of-love'
+                    main_website = 'https://www.gocomics.com/'
+                elif i == 15:
+                    comic_name = 'brevity'
+                    main_website = 'https://www.gocomics.com/'
 
                 if main_website == 'https://www.gocomics.com/':
                     # Specific manager for GoComics website
@@ -148,11 +166,23 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
         elif comic == 'dilbert-classics':
             comic_number = 6
         elif comic == 'Cyanide and Happiness':
-          comic_number = 7
+            comic_number = 7
         elif comic == 'Frazz':
-          comic_number = 8
+            comic_number = 8
         elif comic == 'Garfield minus Garfield':
-          comic_number = 9
+            comic_number = 9
+        elif comic == 'Frank-and-Ernest':
+            comic_number = 10
+        elif comic == 'BroomHilda':
+            comic_number = 11
+        elif comic == 'Inspector-Dangers-Crime-Quiz':
+            comic_number = 12
+        elif comic == 'Cheer-up-emo-kid':
+            comic_number = 13
+        elif comic == 'little-moments-of-love':
+            comic_number = 14
+        elif comic == 'brevity':
+            comic_number = 15
 
         if param == "add":
             DailyPoster.add(self, ctx, comic_number)
@@ -190,7 +220,7 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
           try:
             index = int(number.split(" ")[0])
             
-            if index > 0 and index <= int(os.getenv('NB_OF_COMICS')):
+            if 0 < index <= int(os.getenv('NB_OF_COMICS')):
               for guild in data:
                 comData = list(data[guild]['ComData'])
                 comData.pop(index-1)

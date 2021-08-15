@@ -116,7 +116,7 @@ class BDBot(commands.Cog):
             
           embed.set_image(url=img_url)
 
-          embed.set_footer(text=BDBot.get_random_footer())
+          embed.set_footer(text=BDBot.get_random_footer(self))
 
           return embed
       else:
@@ -125,7 +125,7 @@ class BDBot(commands.Cog):
 
           embed.add_field(name="We could not find a comic at this date / number :thinking:....", value="Try another date / number!")
 
-          embed.set_footer(text=BDBot.get_random_footer())
+          embed.set_footer(text=BDBot.get_random_footer(self))
             
           return embed
 
@@ -144,7 +144,7 @@ class BDBot(commands.Cog):
         # Send any text given. Mostly for debugging purposes
         await ctx.send(text)
 
-    def get_random_footer():
+    def get_random_footer(self):
       FILE_PATH = './misc/random-footers.txt'
 
       footers = open(FILE_PATH, 'r')
