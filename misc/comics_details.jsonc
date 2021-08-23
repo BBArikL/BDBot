@@ -1,0 +1,66 @@
+{
+    "Garfield":{
+        "Name": "Garfield",
+        "Web_name": "garfield",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "A cynical, lazy, lasagna-loving, Monday-hating, dog-punting, mailman-mauling fat cat. Garfield's passion for food and sleep is matched only by his aversion to diet and exercise. Garfield and his human Jon Arbuckle debuted on June 19, 1978, and have been enduring/endearing one another ever since.
+
+        Garfield got a lot of representation in media and experimental cartoons such as:
+        Garkov: https://joshmillard.com/garkov/
+        Permanent Monday: https://permanent-monday.blogspot.com/
+        Barfield loses his lunch (Not intended for readers under 18 years of age): http://www.thereverend.com/barfield/index.html
+        Calvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/
+        Ultimate Garfield: https://www.sparehed.com/2009/11/22/ultimate-garfield/
+        Nothing Garfield: https://www.sparehed.com/2007/08/08/nothing-garfield/
+        Garfield minus Garfield (also supported trough bd!gmng): https://garfieldminusgarfield.net/
+
+        See also:
+        Garfield Classics
+        Garfield minus Garfield
+        Peanuts
+
+        Website: https://www.garfield.com/
+        Twitter: https://twitter.com/Garfield
+        Facebook: http://facebook.com/Garfield/
+        More info: https://www.gocomics.com/garfield/characters-garfield
+        ",
+        "Position": 1,
+        "First_date": "1978, 6, 19",
+        "Color": "228, 146, 52",
+        "Image": "./misc/images/garfield.jpg",
+        "Aliases": "<Aliases>",
+        "Helptxt": "<Help text>"
+    },
+     "Garfield_Classics":{
+        "Name": "Garfield Classics",
+        "Web_name": "garfield-classics",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Garfield Classics takes us back to the beginning to remind us why we fell in love with the lazy, cynical orange cat who loves lasagna, coffee, and his remote control.
+
+        Twitter: http://twitter.com/Garfield
+        Facebook: http://facebook.com/Garfield/
+        More info: https://www.gocomics.com/garfield-classics/
+
+        See also:
+        Garfield
+        Garfield minus Garfield
+        Peanuts
+        ",
+        "Position": 2,
+        "First_date": "<TO CHANGE>",
+        "Color": "228, 146, 52",
+        "Image": "./misc/images/garfieldcl.jpg"
+    },
+    "CalvinandHobbes":{
+        "Name": "Calvin and Hobbes",
+        "Web_name": "calvinandhobbes",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Garf description",
+        "Position": 3,
+        "First_date": "<TO CHANGE>",
+        "Color": "228, 146, 52",
+    },
+}
