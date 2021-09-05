@@ -74,40 +74,58 @@ class Comic(commands.Cog):
         await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
 
     @commands.command(aliases=['Dilbert', 'Dilb', 'dilb'])
-    async def dilbert(self, ctx, *, param=None):  # Dilbert classics
-        comic_name = 'dilbert-classics'
+    async def dilbert(self, ctx, *, param=None):  # Dilbert
+        comic_name = 'Dilbert'
+        main_website = 'https://dilbert.com/'
+        first_date = datetime.datetime(2012, 6, 13)
+
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+
+    @commands.command(aliases=['Dilbertcl', 'Dilbcl', 'dilbcl'])
+    async def dilbertcl(self, ctx, *, param=None):  # Dilbert classics
+        comic_name = 'Dilbert-Classics'
         main_website = 'https://www.gocomics.com/'
         first_date = datetime.datetime(2012, 6, 13)
 
         # Interprets the parmeters given by the user
         await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
-        
-    @commands.command(aliases=['Cyanide', 'cyanide', 'Cyanide&Happiness', 'cyan'])
-    async def CyanideandHappinness(self, ctx, *, param=None): # Cyanide and Happiness
-      comic_name = 'Cyanide and Happiness'
-      main_website = 'https://explosm.net/comics/'
-      first_date = 1
 
-      # Interprets the parmeters given by the user
-      await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)
+    @commands.command(aliases=['Cyanide', 'cyanide', 'Cyanide&Happiness', 'cyan'])
+    async def CyanideandHappinness(self, ctx, *, param=None):  # Cyanide and Happiness
+        comic_name = 'Cyanide_and_Happiness'
+        main_website = 'https://explosm.net/comics/'
+        first_date = 1
+
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
 
     @commands.command(aliases=['Frazz', 'fraz'])
-    async def frazz(self, ctx, *, param=None): # Frazz
-      comic_name = 'Frazz'
-      main_website = 'https://www.gocomics.com/'
-      first_date = datetime.datetime(2001, 4, 2)
+    async def frazz(self, ctx, *, param=None):  # Frazz
+        comic_name = 'Frazz'
+        main_website = 'https://www.gocomics.com/'
+        first_date = datetime.datetime(2001, 4, 2)
 
-      # Interprets the parmeters given by the user
-      await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
 
     @commands.command(aliases=['Garfieldminus', 'garfminus', 'gmng'])
-    async def GmnG(self, ctx, *, param=None): # Frazz
-      comic_name = 'Garfield minus Garfield'
-      main_website = 'https://garfieldminusgarfield.net/'
-      first_date = datetime.datetime(2008, 2, 13)
+    async def GmnG(self, ctx, *, param=None):  # Frazz
+        comic_name = 'Garfield_minus_Garfield'
+        main_website = 'https://garfieldminusgarfield.net/'
+        first_date = datetime.datetime(2008, 2, 13)
 
-      # Interprets the parmeters given by the user
-      await self.parameters_interpreter(ctx,comic_name,main_website,param, first_date)
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+
+    @commands.command(aliases=['Jon'])
+    async def jon(self, ctx, *, param=None): # Jon
+        comic_name = 'Jon'
+        main_website = 'images'
+        first_date = datetime.datetime(0, 0, 0)
+
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
 
     @commands.command(aliases=['frank', 'Ernest', 'ernest', 'Frank&Ernest', 'frank&ernest'])
     async def Frank(self, ctx, *, param=None):  # Frank and Ernest by Thaves
@@ -159,6 +177,15 @@ class Comic(commands.Cog):
         comic_name = 'brevity'
         main_website = 'https://www.gocomics.com/'
         first_date = datetime.datetime(2005, 1, 3)
+
+        # Interprets the parmeters given by the user
+        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+
+    @commands.command(aliases=['catscafe', 'Cats', 'cats', 'cafe'])
+    async def CatsCafe(self, ctx, *, param=None):
+        comic_name = 'Cats-Cafe'
+        main_website = 'https://www.gocomics.com/'
+        first_date = datetime.datetime(2019, 5, 20)
 
         # Interprets the parmeters given by the user
         await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
@@ -224,7 +251,7 @@ class Comic(commands.Cog):
                         await BDbot.BDBot.send_any(self, ctx,
                                                    "This is not a valid date format! The format is : DD/MM/YYYY.")
                 else:
-                  # Works by number of comic
+                    # Works by number of comic
                     try:
                         number = int(param.split(" ")[0])
                         if number >= first_date:
@@ -248,7 +275,8 @@ class Comic(commands.Cog):
                                                                             comic_date=comic_date)
 
         elif main_website == 'https://garfieldminusgarfield.net/':
-          comic_details = Web_requests_manager.RssSiteManager.Comic_info(self, comic_name, main_website, param=param, comic_date=comic_date)
+            comic_details = Web_requests_manager.RssSiteManager.Comic_info(self, comic_name, main_website, param=param,
+                                                                           comic_date=comic_date)
 
         else:  # Other websites
             comic_details = Web_requests_manager.OtherSiteManager.Comic_info(self, comic_name, main_website,
@@ -258,6 +286,7 @@ class Comic(commands.Cog):
         await BDbot.BDBot.send_comic_embed(self, ctx, comic_details)
 
     # --- END of cog ----#
+
 
 def setup(client):  # Initialize the cog
     client.add_cog(Comic(client))

@@ -6,6 +6,7 @@ import os
 import topgg
 import random
 
+
 class BDBot(commands.Cog):
     # Class responsible for main functions of the bot
 
@@ -55,13 +56,15 @@ class BDBot(commands.Cog):
 
     @commands.command()
     async def vote(self, ctx):  # Links back to the github page
-        await ctx.send("Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : https://discordbotlist.com/bots/bdbot")
+        await ctx.send(
+            "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : "
+            "https://discordbotlist.com/bots/bdbot")
 
     @commands.command()
     async def nb_guild(self, ctx):  # Gets the number of guilds that the bot is in (for analytics)
         if ctx.message.author.id == int(os.getenv('BOT_OWNER_ID')):
             await ctx.send(f"The bot is in {len(self.client.guilds)} guilds. Trying to update status on Top.gg.....")
-            
+
             try:
                 await self.topggpy.post_guild_count()
                 await ctx.send(f'Posted server count ({self.topggpy.guild_count})')
@@ -70,16 +73,17 @@ class BDBot(commands.Cog):
 
     @commands.command()
     async def request(self, ctx, *, param=None):
-      # Adds a request to the database
-      FILE_PATH = './data/requests.txt'
+        # Adds a request to the database
+        FILE_PATH = './data/requests.txt'
 
-      requests = open(FILE_PATH, 'a')
-      
-      requests.write(f'Request: "{param}" by {ctx.author.name}#{ctx.author.discriminator} on {datetime.now(timezone.utc)}\n')
+        requests = open(FILE_PATH, 'a')
 
-      requests.close()
+        requests.write(
+            f'Request: "{param}" by {ctx.author.name}#{ctx.author.discriminator} on {datetime.now(timezone.utc)}\n')
 
-      await ctx.send("Request saved! Thank you for using BDBot!")
+        requests.close()
+
+        await ctx.send("Request saved! Thank you for using BDBot!")
 
     # @bot.check
     # async def globally_block_dms(ctx):
@@ -88,46 +92,47 @@ class BDBot(commands.Cog):
     # ---- End of commands ----#
 
     def create_embed(self, comic_details=None):
-      if comic_details is not None:
-          # Embeds the comic
-          comic_name = comic_details["Name"]
-          comic_title = comic_details["title"]
-          day = comic_details["day"]
-          month = comic_details["month"]
-          year = comic_details["year"]
-          url = comic_details["url"]
-            
-          if comic_details["alt"] is not None:
-            alt = comic_details["alt"]
-          else:
-            alt = ""
-              
-          #transcript = comic_details["transcript"]
-          img_url = comic_details["img_url"]
+        if comic_details is not None:
+            # Embeds the comic
+            comic_name = comic_details["Name"]
+            comic_title = comic_details["title"]
+            day = comic_details["day"]
+            month = comic_details["month"]
+            year = comic_details["year"]
+            url = comic_details["url"]
 
-          embed = discord.Embed(title=f"{comic_title}", url=url, description=alt)
+            if comic_details["alt"] is not None:
+                alt = comic_details["alt"]
+            else:
+                alt = ""
 
-          if day is not None:
-              embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
-            
-          """ The transcript is not shown
+            # transcript = comic_details["transcript"]
+            img_url = comic_details["img_url"]
+
+            embed = discord.Embed(title=f"{comic_title}", url=url, description=alt)
+
+            if day is not None:
+                embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
+
+            """ The transcript is not shown
           if transcript is not None and transcript != "":
             embed.add_field(name="Transcript", value=transcript)"""
-            
-          embed.set_image(url=img_url)
 
-          embed.set_footer(text=BDBot.get_random_footer(self))
+            embed.set_image(url=img_url)
 
-          return embed
-      else:
-          # Error message
-          embed = discord.Embed(title="No comic found!")
+            embed.set_footer(text=BDBot.get_random_footer(self))
 
-          embed.add_field(name="We could not find a comic at this date / number :thinking:....", value="Try another date / number!")
+            return embed
+        else:
+            # Error message
+            embed = discord.Embed(title="No comic found!")
 
-          embed.set_footer(text=BDBot.get_random_footer(self))
-            
-          return embed
+            embed.add_field(name="We could not find a comic at this date / number :thinking:....",
+                            value="Try another date / number!")
+
+            embed.set_footer(text=BDBot.get_random_footer(self))
+
+            return embed
 
     async def send_comic_embed(self, ctx, comic_details):
         embed = BDBot.create_embed(self, comic_details=comic_details)  # Creates the embed
@@ -145,13 +150,13 @@ class BDBot(commands.Cog):
         await ctx.send(text)
 
     def get_random_footer(self):
-      FILE_PATH = './misc/random-footers.txt'
+        FILE_PATH = './misc/random-footers.txt'
 
-      footers = open(FILE_PATH, 'r')
+        footers = open(FILE_PATH, 'r')
 
-      rnd_footer = random.choice(footers.readlines())
+        rnd_footer = random.choice(footers.readlines())
 
-      return rnd_footer.replace('\n', '')
+        return rnd_footer.replace('\n', '')
 
     # ---- End of BDBot ----#
 

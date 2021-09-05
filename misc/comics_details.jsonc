@@ -13,24 +13,26 @@
         Calvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/
         Ultimate Garfield: https://www.sparehed.com/2009/11/22/ultimate-garfield/
         Nothing Garfield: https://www.sparehed.com/2007/08/08/nothing-garfield/
+        Lasagna Cat: https://www.youtube.com/channel/UC2AQkHXNVA-w9FA1m9VqO7A
         Garfield minus Garfield (also supported trough bd!gmng): https://garfieldminusgarfield.net/
 
-        See also:
-        Garfield Classics
-        Garfield minus Garfield
-        Peanuts
-
         Website: https://www.garfield.com/
+        Facebook: https://facebook.com/Garfield/
         Twitter: https://twitter.com/Garfield
-        Facebook: http://facebook.com/Garfield/
         More info: https://www.gocomics.com/garfield/characters-garfield
+
+        See also:
+        Garfield Classics,
+        Garfield minus Garfield,
+        Jon,
+        Peanuts
         ",
         "Position": 1,
         "First_date": "1978, 6, 19",
-        "Color": "228, 146, 52",
+        "Color": "FFA202",
         "Image": "./misc/images/garfield.jpg",
-        "Aliases": "<Aliases>",
-        "Helptxt": "<Help text>"
+        "Aliases": "'Garfield', 'garfield' 'Garf', 'garf'",
+        "Helptxt": "<help_text>"
     },
      "Garfield_Classics":{
         "Name": "Garfield Classics",
@@ -39,28 +41,372 @@
         "Working_type": "date",
         "Description": "Garfield Classics takes us back to the beginning to remind us why we fell in love with the lazy, cynical orange cat who loves lasagna, coffee, and his remote control.
 
-        Twitter: http://twitter.com/Garfield
-        Facebook: http://facebook.com/Garfield/
+        Facebook: https://facebook.com/Garfield/
+        Twitter: https://twitter.com/Garfield
         More info: https://www.gocomics.com/garfield-classics/
 
         See also:
-        Garfield
-        Garfield minus Garfield
+        Garfield,
+        Garfield minus Garfield,
+        Jon,
         Peanuts
         ",
         "Position": 2,
-        "First_date": "<TO CHANGE>",
-        "Color": "228, 146, 52",
-        "Image": "./misc/images/garfieldcl.jpg"
+        "First_date": "2016, 6, 20",
+        "Color": "FFA202",
+        "Image": "./misc/images/garfieldcl.jpg",
+        "Aliases": "'GarfieldClassics', 'GarfClassic', 'garfieldclass', 'GarfCl', 'garfcl'",
+        "Helptxt": "<help_text>"
     },
     "CalvinandHobbes":{
         "Name": "Calvin and Hobbes",
         "Web_name": "calvinandhobbes",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
-        "Description": "Garf description",
+        "Description": "One of the most famous and popular comic strips of all time, Bill Watterson's Calvin and Hobbes has been a timeless worldwide favorite since its introduction in 1985. The beloved comic follows the richly imaginative adventures of 6-year-old Calvin and his trusty tiger, Hobbes. Whether you enjoyed it as a child while expanding your vocabulary, as an adult in the newspaper or if you are reacquainting yourself with these cultural icons, Calvin and Hobbes will continue to astound and delight you.
+
+        More representations of C&H in media:
+        Calvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/
+        Calvin on ritalin: https://www.sparehed.com/2009/08/24/calvin-on-retalin/
+
+        Website: https://www.calvinandhobbes.com/
+        Facebook: https://facebook.com/CalvinAndHobbes/
+        Twitter: https://twitter.com/calvinandhobbes
+        More info: https://www.gocomics.com/calvinandhobbes/about
+
+        See also:
+        Peanuts
+        ",
         "Position": 3,
-        "First_date": "<TO CHANGE>",
-        "Color": "228, 146, 52",
+        "First_date": "1985, 11, 18",
+        "Color": "F0A921",
+        "Image": "./misc/images/C&H.jpg",
+        "Aliases": "'CalvinandHobbes', 'C&H', 'c&h', 'CH', 'ch'",
+        "Helptxt": "<help_text>"
+    },
+    "XKCD":{
+        "Name": "xkcd",
+        "Web_name": "xkcd",
+        "Main_website": "https://xkcd.com/",
+        "Working_type": "number",
+        "Description": "A webcomic of romance, sarcasm, math and language. The comic updates without fail every Monday, Wednesday and Friday.
+
+        Website: https://xkcd.com/
+        Facebook: https://www.facebook.com/TheXKCD/
+        Twitter: https://twitter.com/xkcd/
+        Instagram: https://www.instagram.com/xkcd/
+        More info: https://xkcd.com/about/
+        ",
+        "Position": 4,
+        "First_date": "1",
+        "Color": "FFFFFF",
+        "Image": "./misc/images/xkcd.png",
+        "Aliases": "'XKCD', 'xkcd', 'xk'",
+        "Helptxt": "Randall Munroe explores romance, sarcasm, math and language every Monday, Wednesday and Friday."
+    },
+    "Peanuts":{
+        "Name": "Peanuts",
+        "Web_name": "peanuts",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "The iconic strip Peanuts is an enduring classic since the 1950s, and is still assured to make you laugh!
+
+        Facebook: https://facebook.com/Snoopy/
+        Twitter: https://twitter.com/Snoopy
+        More info: https://www.gocomics.com/peanuts/characters
+
+        See also:
+        Peanuts Begins,
+        Garfield,
+        Calvin and Hobbes
+        ",
+        "Position": 5,
+        "First_date": "1950, 10, 2",
+        "Color": "6D9BB7",
+        "Image": "./misc/images/peanuts.jpg",
+        "Aliases": "'Peanuts', 'peanuts', 'peanut', 'pean'",
+        "Helptxt": "Charles Schulz's classic about the adventures of Charlie Brown, Snoopy and the gang."
+    },
+    "Peanuts Begins":{
+        "Name": "Peanuts Begins",
+        "Web_name": "peanuts-begins",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Stroll down memory lane with Charlie Brown, Snoopy, Lucy, Linus and the whole gang as they retrace the adventures what began on newspaper funny pages in 1950. Those were the days!
+
+        Disclaimer from GoComics: This historic comic is presented in its original form, unedited from the time period in which it was created. These images may contain harmful stereotypes, problematic and antiquated ideologies, or otherwise negative cultural depictions and themes indicative of the context in which it first appeared. We run these vintage comic strips to preserve a digital archive of the medium's early examples.
+
+        Facebook: https://facebook.com/Snoopy/
+        Twitter: https://twitter.com/Snoopy
+        More info: https://www.gocomics.com/peanuts-begins/about
+
+        See also:
+        Peanuts
+        ",
+        "Position": 6,
+        "First_date": "1950, 10, 2",
+        "Color": "6D9BB7",
+        "Image": "./misc/images/peanutsbeg.jpg",
+        "Aliases": "'PeanutsBegins', 'peanutsbegins', 'peanutbegin', 'peanutsbegin', 'peanbeg'",
+        "Helptxt": "The original comics of Charles Schulz's Peanuts, revisited!"
+    },
+    "Dilbert":{
+        "Name": "Dilbert",
+        "Web_name": "dilbert",
+        "Main_website": "https://dilbert.com/",
+        "Working_type": "date",
+        "Description": "Dilbert launched in 1989 in a handful of newspapers. Now Dilbert appears in over 2,000 newspapers, in 57 countries, and in 19 languages.
+
+        More representations of Dilbert in media:
+        Calvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/
+
+        Website: https://dilbert.com/
+        Facebook: https://facebook.com/dilbert/
+        Twitter: https://twitter.com/Dilbert_Daily
+        More info: https://dilbert.com/about
+
+        See also:
+        Dilbert classics
+        ",
+        "Position": 7,
+        "First_date": "1989, 4, 16",
+        "Color": "C20C21",
+        "Image": "./misc/images/dilbert.png",
+        "Aliases": "'Dilbert', 'dilbert', 'Dilb', 'dilb'",
+        "Helptxt": "A day in the office with Dilbert, Dogbert and the pointy-haired boss."
+    },
+    "Dilbert-Classics":{
+        "Name": "Dilbert Classics",
+        "Web_name": "dilbert-classics",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Dilbert Classics allows you the luxury of pushing the reset button with us, taking the iconic strip back to its first frames. Starting from the beginning and running each strip in succession from its first day of circulation, join in on the genesis of these stories. We're going to the days of fax and dial-up Internet connection frustration, people!
+
+        More representations of Dilbert in media:
+        Calvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/
+
+        Website: https://dilbert.com/
+        Facebook: https://facebook.com/dilbert/
+        Twitter: https://twitter.com/Dilbert_Daily
+        More info: https://www.gocomics.com/dilbert-classics/about
+
+        See also:
+        Dilbert
+        ",
+        "Position": 8,
+        "First_date": "2012, 6, 13",
+        "Color": "6D9BB7",
+        "Image": "./misc/images/dilbcl.jpg",
+        "Aliases": "'Dilbertcl', 'dilbertcl', 'Dilbcl', 'dilbcl'",
+        "Helptxt": "Dilbert classics revisit the old days of dial-up internet and fax in the office of the pointy-haired boss and Dogbert!"
+    },
+    "Cyanide_and_Happiness":{
+        "Name": "Cyanide and Happiness",
+        "Web_name": "Cyanide and Happiness",
+        "Main_website": "https://explosm.net/comics/",
+        "Working_type": "number",
+        "Description": "Cyanide & Happiness (C&H) is a webcomic created by Rob DenBleyker, Kris Wilson, Dave McElfatrick and Matt Melvin. The comic has been running since 2005 and is published on the website explosm.net along with animated shorts in the same style. Matt Melvin left C&H in 2014, and several other people have contributed to the comic and to the animated shorts.
+
+        Disclaimer: **Comics might contain sensitive / mature content, which might not be advised for persons under 18 of age.**
+
+        Comic generator: https://explosm.net/rcg
+
+        Facebook: https://www.facebook.com/explosm
+        Twitter: https://twitter.com/Explosm
+        Youtube: https://www.youtube.com/user/ExplosmEntertainment
+        Instagram: https://instagram.com/explosmofficial
+        ",
+        "Position": 9,
+        "First_date": "2012, 6, 13",
+        "Color": "FFFFFF",
+        "Image": "./misc/images/cyan.jpg",
+        "Aliases": "'Dilbertcl', 'dilbertcl', 'Dilbcl', 'dilbcl'",
+        "Helptxt": "Dilbert classics revisit the old days of dial-up internet and fax in the office of the pointy-haired boss and Dogbert!"
+    },
+    "Frazz":{
+        "Name": "Frazz",
+        "Web_name": "frazz",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Frazz by Jef Mallett follows the adventures of an unexpected role model: an elementary-school janitor who's also a Renaissance man. While he's sweeping the hall, he's whistling Beethoven. Frazz appears in 200 newspapers worldwide, including the Los Angeles Times, Seattle Times, Chicago Tribune and Detroit News.
+
+
+        Facebook: https://facebook.com/frazzcomic/
+        More info: https://www.gocomics.com/frazz/about
+        ",
+        "Position": 10,
+        "First_date": "2001, 4, 2",
+        "Color": "36535A",
+        "Image": "./misc/images/frazz.jpg",
+        "Aliases": "'Frazz', 'frazz', 'fraz'",
+        "Helptxt": "Join the adventures of Frazz the songwriter-janitor who is every kid's buddy!"
+    },
+    "Garfield_minus_Garfield":{
+        "Name": "Garfield minus Garfield",
+        "Web_name": "Garfield minus Garfield",
+        "Main_website": "https://garfieldminusgarfield.net/",
+        "Working_type": "rss",
+        "Description": "Garfield Minus Garfield is dedicated to removing Garfield from the Garfield comic strips in order to reveal the existential angst of a certain young Mr. Jon Arbuckle. It is a journey deep into the mind of an isolated young everyman as he fights a losing battle against loneliness and depression in a quiet American suburb.
+
+        What does Jim Davis think of Garfield minus Garfield: https://garfieldminusgarfield.net/private/61669516/fSymsOGXOgrmmihjqTZaCBY2
+        More info: https://garfieldminusgarfield.net/post/61669282/the-garfield-minus-garfield-faq
+
+        See also:
+        Garfield,
+        Garfield Classics,
+        Jon
+        ",
+        "Position": 11,
+        "First_date": "2008, 2, 13",
+        "Color": "FFA202",
+        "Image": "./misc/images/gmng.gif",
+        "Aliases": "'Garfieldminus', 'garfminus', 'GMNG', 'gmng'",
+        "Helptxt": "Revisit Garfield without the iconic orange and black cat, to see how can loneliness reveal existential angst in a daily life."
+    },
+    "Jon":{
+        "Name": "Jon",
+        "Web_name": "Jon",
+        "Main_website": "None",
+        "Working_type": "image",
+        "Description": "The original comic! Visit James Davis' original strip that later became the comic we all know and love.
+
+        See also:
+        Garfield,
+        Garfield Classics,
+        Garfield minus Garfield
+        ",
+        "Position": 12,
+        "First_date": "None",
+        "Color": "FFA202",
+        "Image": "./misc/images/jon.jpg",
+        "Aliases": "'Jon', 'jon'",
+        "Helptxt": "Revisit the comic before Garfield, with the original art style and humor of Jim Davis."
+    },
+    "Frank-and-Ernest":{
+        "Name": "Frank and Ernest by Thaves",
+        "Web_name": "frank-and-ernest",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Frank & Ernest chronicles the adventures of two 'every man' characters who are anything but ordinary! They are able to appear in different settings, time periods - even manifested as things and creatures other than people. The variety in the strip extends to their observations about a wide variety of subjects.
+
+        Website: https://frankandernest.com/
+        Animations: https://frankandernest.com/comics/animation.html
+        Puzzle: https://frankandernest.com/fun/puzzle.html
+        FAQ: https://frankandernest.com/faq.html
+        ",
+        "Position": 13,
+        "First_date": "1990, 3, 10",
+        "Color": "F6F495",
+        "Image": "./misc/images/F&H.jpg",
+        "Aliases": "'Frank', 'frank', 'Ernest', 'ernest', 'Frank&Ernest', 'frank&ernest'",
+        "Helptxt": "Enjoy the iconic comic from Bob Thaves!"
+    },
+    "BroomHilda":{
+        "Name": "Broom Hilda",
+        "Web_name": "broomhilda",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Living in an enchanted forest with surrealistic landscapes, the engaging characters of Broom Hilda happily have no connection with reality. Other comic characters are extensions or distortions of reality, but Broom Hilda deals in pure fantasy, making the strip bewitchingly unique. Here in the forest, the inhabitants maintain a standard of madness where total irrelevance is the only relevancy. The strip is simply a loony-bin where what’s said and done often makes no sense whatsoever, much to the joy of its millions of fans.",
+        "Position": 14,
+        "First_date": "2008, 4, 8",
+        "Color": "C0BC37",
+        "Image": "./misc/images/broomhilda.jpg",
+        "Aliases": "'BroomHilda', 'Broom', 'broom', 'Hilda', 'hilda'",
+        "Helptxt": "The adventures of a man-crazy, cigar-smoking, beer-guzzling, 1,500-year-old witch and her motley crew of friends!"
+    },
+    "Inspector-Dangers-Crime-Quiz":{
+        "Name": "Inspector Danger's Crime Quiz",
+        "Web_name": "inspector-dangers-crime-quiz",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "INSPECTOR DANGER’S CRIME-QUIZ Do you love whodunit-mysteries? Are you a Columbo-fan? Would you like to be a detective too? Here’s your chance. The comic strip “Inspector Danger’s Crime-Quiz” by Werner Wejp-Olsen, world-renowned cartoonist, is a crime-puzzle challenging armchair sleuths of both genders and all ages to activate their Sherlock Holmes-gene to figure out the right solution and solve the case.
+
+        Disclaimer from GoComics: All characters appearing in this comic strip are fictitious. Any resemblance to the real world, real crime scenes and actual criminals is purely coincidental, unintentional and not to be taken too literally.
+        ",
+        "Position": 15,
+        "First_date": "2011, 8, 1",
+        "Color": "7AB2BE",
+        "Image": "./misc/images/inspectordanger.jpg",
+        "Aliases": "'InspectorDanger' 'Inspector', 'inspector', 'crime', 'crimequiz'",
+        "Helptxt": "Solve crime puzzles every Monday with Inspector Danger and his assistant Alfie!"
+    },
+    "Cheer-up-emo-kid":{
+        "Name": "Cheer up Emo kid",
+        "Web_name": "cheer-up-emo-kid",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "'Cheer Up, Emo Kid started in 2008 as an amateur comic about relationships and events in my life, and has since graduated into a professional amateur comic about relationships and events in my life. It loosely follows the non-adventures of Zeke & Frank, two friends constantly at odds with each other in their attitudes towards relationships; and their friends Steve & Sue, an extraordinarily ordinary couple just going through the motions of monogamy.[...]' - Enzo.
+
+        Facebook: https://facebook.com/cheerupemokid
+        Twitter: https://twitter.com/enzocomics
+        Instagram: https://instagram.com/enzocomics
+        Tumblr: https://enzocomics.tumblr.com/
+        Website: https://cheerupemokid.com/
+        ",
+        "Position": 16,
+        "First_date": "2017, 3, 20",
+        "Color": "8B8C8C",
+        "Image": "./misc/images/cheerup.jpg",
+        "Aliases": "'Cheerupemokid' 'emo', 'Emo', 'Cheerup', 'emokid'",
+        "Helptxt": "A comic about friendship and love made by Enzo Comics."
+    },
+    "little-moments-of-love":{
+        "Name": "Catana comics",
+        "Web_name": "little-moments-of-love",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "<TODO>
+
+        Facebook: https://facebook.com/CatanaComics/
+        Twitter: https://twitter.com/catana_comics
+        Instagram: https://instagram.com/catanacomics
+        ",
+        "Position": 17,
+        "First_date": "2018, 9, 24",
+        "Color": "747474",
+        "Image": "./misc/images/catana.jpg",
+        "Aliases": "'Catana', 'catana', 'littlemoments'",
+        "Helptxt": "A wholesome comic about a wholesome couple!"
+    },
+    "brevity":{
+        "Name": "Brevity",
+        "Web_name": "brevity",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "With his random but always funny comics, Dan Thompson knows how to twist a situation with a whole new perspective.
+
+        Facebook: https://facebook.com/brevitycomic
+        Twitter: https://twitter.com/BrevityComic
+        ",
+        "Position": 18,
+        "First_date": "2005, 1, 3",
+        "Color": "99552F",
+        "Image": "./misc/images/brevity.jpg",
+        "Aliases": "'brevity', 'brev'",
+        "Helptxt": "Enjoy the humor of Dan Thompson as he twist seemingly normal situations into a whole new perspective."
+    },
+    "Cats-Cafe":{
+        "Name": "Cat's Cafe",
+        "Web_name": "cats-cafe",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Everyone is welcome at Cat’s Café! There is always a seat and someone to talk to. Follow Cat, Penguin, and Rabbit along with a variety of other special animals, form a wonderful place where everyone can feel warm, fuzzy, and accepted.
+
+        Facebook: https://facebook.com/catscafecomics
+        Twitter: https://twitter.com/CatsCafeComics
+        Instagram: https://twitter.com/CatsCafeComics
+        Tumblr: https://catscafecomics.tumblr.com/
+        Website: https://www.catscafecomics.com/
+        More info: https://www.gocomics.com/cats-cafe/characters
+
+        See also:
+        Garfield
+        ",
+        "Position": 19,
+        "First_date": "2019, 5, 20",
+        "Color": "F5D16F",
+        "Image": "./misc/images/catscafe.jpg",
+        "Aliases": "'Catscafe', 'catscafe', 'Cats', 'cats', 'cafe'",
+        "Helptxt": "Join Cat's cafe where wholesomeness and good vibes are always on the menu!"
     },
 }
