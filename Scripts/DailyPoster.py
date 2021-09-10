@@ -22,7 +22,7 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
 
             await DailyPoster.wait_for_daily(self)
         else:
-            await BDbot.BDBot.send_any(self, ctx, "You cannot do that.")
+            raise commands.CommandNotFound
 
     async def wait_for_daily(self):
         wait_until_hour = datetime.time(hour=6, minute=0)
@@ -47,10 +47,20 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
                 await BDbot.BDBot.send_any(self, ctx, "The loop is NOT running.")
 
         else:
-            await BDbot.BDBot.send_any(self, ctx, "You cannot do that.")
+            raise commands.CommandNotFound
+
+    @commands.command()
+    async def force_daily(self, ctx):
+        if self.isOwner(ctx):
+            await self.daily()
+        else:
+            raise commands.CommandNotFound
 
     @tasks.loop(hours=24.0)  # Daily loop
     async def post_daily(self):
+        await self.daily()
+
+    async def daily(self):
         # Daily loop
         main_website = ""
         comic_name = ""
@@ -323,6 +333,16 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
                 data.pop(guild_id)
 
         DailyPoster.save(self, data)
+
+    # Check if the comic is subscribed to this guild
+    def get_sub_status(self, guild_id, position, database=None):
+        if database is None:  # Gets database if needed
+            database = DailyPoster.get_database_data(self)
+
+        if guild_id in database:
+            return database[guild_id]["ComData"][position-1] == "1"
+        else:
+            return False
 
 
 def setup(client):  # Initialize the cog

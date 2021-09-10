@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import os
 import topgg
 import random
+import main
 
 
 class BDBot(commands.Cog):
@@ -13,6 +14,10 @@ class BDBot(commands.Cog):
     def __init__(self, client):
         # Constructor of the cog
         # Initialize all the properties of the cog
+        #self.comicsDetails = Comics_details.comDetails(client)
+
+        #print(self.comicsDetails.comicDetails)
+
         self.client = client
         dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
         self.topggpy = topgg.DBLClient(client, dbl_token)
@@ -85,6 +90,13 @@ class BDBot(commands.Cog):
 
         await ctx.send("Request saved! Thank you for using BDBot!")
 
+    @commands.command()
+    async def show(self, ctx):
+        stripDet = main.stripsDetails.comicDetails
+
+        for det in stripDet:
+            await ctx.send(str(det))
+
     # @bot.check
     # async def globally_block_dms(ctx):
     # return ctx.guild is not None
@@ -109,7 +121,7 @@ class BDBot(commands.Cog):
             # transcript = comic_details["transcript"]
             img_url = comic_details["img_url"]
 
-            embed = discord.Embed(title=f"{comic_title}", url=url, description=alt)
+            embed = discord.Embed(title=comic_title, url=url, description=alt)
 
             if day is not None:
                 embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")

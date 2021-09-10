@@ -1,5 +1,7 @@
+import discord
 from discord.ext import commands
 from Scripts import Web_requests_manager, BDbot, DailyPoster
+import main
 import datetime
 
 
@@ -22,225 +24,203 @@ class Comic(commands.Cog):
     @commands.command(aliases=['Garfield', 'Garf', 'garfield'])
     async def garf(self, ctx, *, param=None):  # Garfield
         comic_name = 'Garfield'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(1978, 6, 19)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['GarfieldClassics', 'GarfClassic', 'garfieldclass', 'GarfCl'])
     async def garfcl(self, ctx, *, param=None):  # Garfield
         comic_name = 'Garfield-Classics'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(2016, 6, 20)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['CalvinandHobbes', 'C&H', 'c&h', 'ch'])
     async def CH(self, ctx, *, param=None):  # Calvin and Hobbes
         comic_name = 'CalvinandHobbes'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(1985, 11, 18)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['xkcd', 'xk'])
     async def XKCD(self, ctx, *, param=None):  # XKCD
         comic_name = 'XKCD'
-        main_website = 'https://xkcd.com/'
-        first_date = 1
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['Peanuts', 'peanut', 'pean'])
     async def peanuts(self, ctx, *, param=None):  # Peanuts
         comic_name = 'Peanuts'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(1950, 10, 2)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['PeanutsBegins', 'peanutbegin', 'peanutsbegin', 'peanbeg'])
     async def peanutsbegins(self, ctx, *, param=None):  # Peanuts begins
         comic_name = 'Peanuts-Begins'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(1950, 10, 2)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['Dilbert', 'Dilb', 'dilb'])
     async def dilbert(self, ctx, *, param=None):  # Dilbert
         comic_name = 'Dilbert'
-        main_website = 'https://dilbert.com/'
-        first_date = datetime.datetime(2012, 6, 13)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['Dilbertcl', 'Dilbcl', 'dilbcl'])
     async def dilbertcl(self, ctx, *, param=None):  # Dilbert classics
         comic_name = 'Dilbert-Classics'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(2012, 6, 13)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['Cyanide', 'cyanide', 'Cyanide&Happiness', 'cyan'])
     async def CyanideandHappinness(self, ctx, *, param=None):  # Cyanide and Happiness
         comic_name = 'Cyanide_and_Happiness'
-        main_website = 'https://explosm.net/comics/'
-        first_date = 1
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['Frazz', 'fraz'])
     async def frazz(self, ctx, *, param=None):  # Frazz
         comic_name = 'Frazz'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(2001, 4, 2)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['Garfieldminus', 'garfminus', 'gmng'])
     async def GmnG(self, ctx, *, param=None):  # Frazz
         comic_name = 'Garfield_minus_Garfield'
-        main_website = 'https://garfieldminusgarfield.net/'
-        first_date = datetime.datetime(2008, 2, 13)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['Jon'])
-    async def jon(self, ctx, *, param=None): # Jon
+    async def jon(self, ctx, *, param=None):  # Jon
         comic_name = 'Jon'
-        main_website = 'images'
-        first_date = datetime.datetime(0, 0, 0)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['frank', 'Ernest', 'ernest', 'Frank&Ernest', 'frank&ernest'])
     async def Frank(self, ctx, *, param=None):  # Frank and Ernest by Thaves
         comic_name = 'Frank-and-Ernest'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(1990, 3, 10)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['Broom', 'broom', 'Hilda', 'hilda'])
     async def BroomHilda(self, ctx, *, param=None):  # Broom  Hilda
         comic_name = 'BroomHilda'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(2001, 4, 8)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['Inspector', 'inspector', 'crime', 'crimequiz'])
     async def InspectorDanger(self, ctx, *, param=None):  # Broom  Hilda
         comic_name = 'Inspector-Dangers-Crime-Quiz'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(2011, 8, 1)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['emo', 'Emo', 'Cheerup', 'emokid'])
     async def Cheerupemokid(self, ctx, *, param=None):  # Broom  Hilda
         comic_name = 'Cheer-up-emo-kid'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(2017, 3, 20)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['Catana', 'littlemoments'])
     async def catana(self, ctx, *, param=None):  # Broom  Hilda
         comic_name = 'little-moments-of-love'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(2018, 9, 24)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['brevity', 'brev'])
     async def Brevity(self, ctx, *, param=None):  # Broom  Hilda
         comic_name = 'brevity'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(2005, 1, 3)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     @commands.command(aliases=['catscafe', 'Cats', 'cats', 'cafe'])
     async def CatsCafe(self, ctx, *, param=None):
         comic_name = 'Cats-Cafe'
-        main_website = 'https://www.gocomics.com/'
-        first_date = datetime.datetime(2019, 5, 20)
 
-        # Interprets the parmeters given by the user
-        await self.parameters_interpreter(ctx, comic_name, main_website, param, first_date)
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
     # ---- End of Comics parameters ----#
 
     async def send_request_error(self, ctx):
         await ctx.send('Request not understood. Try bd!help for usable commands.')
 
-    async def send_comic_website(self, ctx, comic_name, main_website):
-        if main_website == 'https://www.gocomics.com/':
-            # GoComics pages : https://www.gocomics.com/name-of-comic/
-            await ctx.send(f'{comic_name}! {main_website}{comic_name.lower()}/')
+    async def send_comic_info(self, ctx, stripDetails):
+        embed = discord.Embed(title=stripDetails["Name"], url=stripDetails["Main_website"],
+                              description=stripDetails["Description"], color=int(stripDetails["Color"], 16))
+        embed.set_thumbnail(url=stripDetails["Image"])
+        embed.add_field(name="Working type", value=stripDetails["Working_type"], inline=True)
+        if stripDetails["Working_type"] == "date":
+            embed.add_field(name="First apparition", value=self.get_date(stripDetails["First_date"]), inline=True)
+        embed.add_field(name="Aliases", value=stripDetails["Aliases"], inline=True)
 
-        else:  # Other websites that doesnt have the same layout for pages
-            await ctx.send(f'{comic_name}! {main_website}')
+        sub_stat = ""
+        if DailyPoster.DailyPoster.get_sub_status(self, str(ctx.guild.id), int(stripDetails["Position"])):
+            sub_stat = "Yes"
+        else:
+            sub_stat = "No"
+
+        embed.add_field(name="Subscribed", value=sub_stat, inline=True)
+        embed.set_footer(text="Random footer")
+        embed.set_footer(text=BDbot.BDBot.get_random_footer(self))
+
+        await ctx.send(embed=embed)
+
 
     # --- END of functions that communicate directly with discord ----
 
-    async def parameters_interpreter(self, ctx, comic_name, main_website, param=None, first_date=None):
+    async def parameters_interpreter(self, ctx, stripDetails, param=None):
         # Interprets the parameters given by the user
         if param is not None:
             """ Parameters:
             today -> Today's comic
             add -> Add the comic to the daily posting list
             remove -> remove the comic to the daily posting list
-            random -> Choose a random comic to send (Only works with XKCD for now)
+            random -> Choose a random comic to send
             """
 
             if param.lower().find("today") != -1:
                 # Sends the website of today's comic
-                await self.comic_send(ctx, comic_name, main_website, "today")
+                await self.comic_send(ctx, stripDetails, "today")
             elif param.lower().find("random") != -1:
                 # Random comic
-                await self.comic_send(ctx, comic_name, main_website, "random")
+                await self.comic_send(ctx, stripDetails, "random")
             elif param.lower().find("add") != -1:
                 if ctx.message.author.guild_permissions.manage_guild:
-                    DailyPoster.DailyPoster.new_change(self, ctx, comic_name, "add")
+                    DailyPoster.DailyPoster.new_change(self, ctx, stripDetails, "add")
                     await BDbot.BDBot.send_any(self, ctx, "Daily comic added successfully!")
                 else:
                     await BDbot.BDBot.send_any(self, ctx, "You need `manage_guild` permission to do that!")
             elif param.lower().find("remove") != -1:
                 if ctx.message.author.guild_permissions.manage_guild:
-                    DailyPoster.DailyPoster.new_change(self, ctx, comic_name, "remove")
+                    DailyPoster.DailyPoster.new_change(self, ctx, stripDetails, "remove")
                     await BDbot.BDBot.send_any(self, ctx, "Daily comic removed successfully!")
                 else:
                     await BDbot.BDBot.send_any(self, ctx, "You need `manage_guild` permission to do that!")
             else:
                 # Tries to parse date / numbe of comic
-                if main_website == "https://www.gocomics.com/" or main_website == 'https://garfieldminusgarfield.net/':
+                if stripDetails["Main_website"] == "https://www.gocomics.com/" or \
+                        stripDetails["Main_website"] == 'https://garfieldminusgarfield.net/':
                     # Works by date
                     try:
                         comic_date = datetime.datetime.strptime(param, "%d/%m/%Y")
-                        if first_date <= comic_date and comic_date <= datetime.datetime.utcnow():
-                            await self.comic_send(ctx, comic_name, main_website, "Specific_date", comic_date=comic_date)
+                        first_date = datetime.datetime.strptime(stripDetails["First_date"], "%Y, %m, %d")
+                        if first_date <= comic_date <= datetime.datetime.utcnow():
+                            await self.comic_send(ctx, stripDetails, "Specific_date", comic_date=comic_date)
                         else:
                             first_date_formatted = datetime.datetime.strftime(first_date, "%d/%m/%Y")
                             date_now_formatted = datetime.datetime.strftime(datetime.datetime.utcnow(), "%d/%m/%Y")
@@ -254,10 +234,9 @@ class Comic(commands.Cog):
                     # Works by number of comic
                     try:
                         number = int(param.split(" ")[0])
-                        if number >= first_date:
-
-                            main_website = main_website + str(number) + '/'
-                            await self.comic_send(ctx, comic_name, main_website, param=param)
+                        if number >= stripDetails["First_date"]:
+                            stripDetails["Main_website"] = stripDetails["Main_website"] + str(number) + '/'
+                            await self.comic_send(ctx, stripDetails, param=param)
                         else:
                             await BDbot.BDBot.send_any(self, ctx, "There is no comics with such values!")
 
@@ -265,7 +244,7 @@ class Comic(commands.Cog):
                         await ctx.send('This is not a valid date / comic number!')
         else:
             # If the user didn't send any parameters, return the main website of the comic requested
-            await self.send_comic_website(ctx, comic_name, main_website)
+            await self.send_comic_info(ctx, stripDetails)
 
     async def comic_send(self, ctx, comic_name, main_website, param, comic_date=None):
         # Posts the strip (with the given parameters)
@@ -284,6 +263,12 @@ class Comic(commands.Cog):
 
         # Sends the comic
         await BDbot.BDBot.send_comic_embed(self, ctx, comic_details)
+
+    def getStripDet(self, comic_name):
+        return main.stripsDetails.comicDetails[comic_name]
+
+    def get_date(self, date):
+        return datetime.datetime.strptime(date, "%Y, %m, %d").strftime("%A %d, %Y")
 
     # --- END of cog ----#
 
