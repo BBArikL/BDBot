@@ -147,7 +147,7 @@ class Comic(commands.Cog):
         # Interprets the parameters given by the user
         await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
-    @commands.command(aliases=['catscafe', 'Cats', 'cats', 'cafe'])
+    @commands.command(aliases=['catscafe', 'Cats', 'cats', 'cafe', 'cat'])
     async def CatsCafe(self, ctx, *, param=None):
         comic_name = 'Cats-Cafe'
 
@@ -159,6 +159,7 @@ class Comic(commands.Cog):
     async def send_request_error(self, ctx):
         await ctx.send('Request not understood. Try bd!help for usable commands.')
 
+    # Sends comics info
     async def send_comic_info(self, ctx, stripDetails):
         embed = discord.Embed(title=stripDetails["Name"], url=stripDetails["Main_website"],
                               description=stripDetails["Description"], color=int(stripDetails["Color"], 16))
@@ -169,7 +170,7 @@ class Comic(commands.Cog):
         embed.add_field(name="Aliases", value=stripDetails["Aliases"], inline=True)
 
         sub_stat = ""
-        if DailyPoster.DailyPoster.get_sub_status(self, str(ctx.guild.id), int(stripDetails["Position"])):
+        if DailyPoster.DailyPosterHandler.get_sub_status(self, str(ctx.guild.id), int(stripDetails["Position"])):
             sub_stat = "Yes"
         else:
             sub_stat = "No"
@@ -179,7 +180,6 @@ class Comic(commands.Cog):
         embed.set_footer(text=BDbot.BDBot.get_random_footer(self))
 
         await ctx.send(embed=embed)
-
 
     # --- END of functions that communicate directly with discord ----
 
@@ -201,13 +201,13 @@ class Comic(commands.Cog):
                 await self.comic_send(ctx, stripDetails, "random")
             elif param.lower().find("add") != -1:
                 if ctx.message.author.guild_permissions.manage_guild:
-                    DailyPoster.DailyPoster.new_change(self, ctx, stripDetails, "add")
+                    DailyPoster.DailyPosterHandler.new_change(self, ctx, stripDetails, "add")
                     await BDbot.BDBot.send_any(self, ctx, "Daily comic added successfully!")
                 else:
                     await BDbot.BDBot.send_any(self, ctx, "You need `manage_guild` permission to do that!")
             elif param.lower().find("remove") != -1:
                 if ctx.message.author.guild_permissions.manage_guild:
-                    DailyPoster.DailyPoster.new_change(self, ctx, stripDetails, "remove")
+                    DailyPoster.DailyPosterHandler.new_change(self, ctx, stripDetails, "remove")
                     await BDbot.BDBot.send_any(self, ctx, "Daily comic removed successfully!")
                 else:
                     await BDbot.BDBot.send_any(self, ctx, "You need `manage_guild` permission to do that!")
@@ -246,20 +246,19 @@ class Comic(commands.Cog):
             # If the user didn't send any parameters, return the main website of the comic requested
             await self.send_comic_info(ctx, stripDetails)
 
-    async def comic_send(self, ctx, comic_name, main_website, param, comic_date=None):
+    async def comic_send(self, ctx, stripDetails, param, comic_date=None):
         # Posts the strip (with the given parameters)
-        if main_website == 'https://www.gocomics.com/':
-            # Specific manager for GoComics website
-            comic_details = Web_requests_manager.GoComicsManager.Comic_info(self, comic_name, param=param,
-                                                                            comic_date=comic_date)
-
-        elif main_website == 'https://garfieldminusgarfield.net/':
-            comic_details = Web_requests_manager.RssSiteManager.Comic_info(self, comic_name, main_website, param=param,
-                                                                           comic_date=comic_date)
-
+        if stripDetails["Working_type"] == 'date':
+            # Specific manager for date comics website
+            comic_details = Web_requests_manager.ComicsRequestsManager.Comic_info_date(self, stripDetails, param=param,
+                                                                                       comic_date=comic_date)
+        elif stripDetails["Working_type"] == 'rss':
+            comic_details = Web_requests_manager.ComicsRequestsManager.Comic_info_rss(self, stripDetails,
+                                                                                      param=param,
+                                                                                      comic_date=comic_date)
         else:  # Other websites
-            comic_details = Web_requests_manager.OtherSiteManager.Comic_info(self, comic_name, main_website,
-                                                                             param=param)
+            comic_details = Web_requests_manager.ComicsRequestsManager.Comic_info_number(self, stripDetails,
+                                                                                         param=param)
 
         # Sends the comic
         await BDbot.BDBot.send_comic_embed(self, ctx, comic_details)

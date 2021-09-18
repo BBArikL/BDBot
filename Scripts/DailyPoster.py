@@ -5,26 +5,31 @@ from discord.ext import tasks, commands
 from Scripts import BDbot, Web_requests_manager
 import datetime
 import os
+import Comics_details
 
 
-class DailyPoster(commands.Cog):  # Class responsible for posting daily comic strips
+class DailyPosterHandler(commands.Cog):  # Class responsible for posting daily comic strips
+    stripDet = None
+
     def __init__(self, client):
         self.client = client
+
 
     def isOwner(self, ctx):
         return ctx.message.author.id == int(os.getenv('BOT_OWNER_ID'))
 
     @commands.command()
-    async def start_daily(self, ctx):  # Starts the DailyPoster loop
+    async def start_daily(self, ctx):  # Starts the DailyPosterHandler loop
         if self.isOwner(ctx):
             await BDbot.BDBot.send_any(self, ctx,
                                        "Daily loop started! Daily comics are posted at 6:00 AM UTC each day.")
 
-            await DailyPoster.wait_for_daily(self)
+            await DailyPosterHandler.wait_for_daily(self, Comics_details.comDetails.load_details())
         else:
             raise commands.CommandNotFound
 
-    async def wait_for_daily(self):
+    async def wait_for_daily(self, stripDetails):
+        DailyPosterHandler.stripDet = stripDetails
         wait_until_hour = datetime.time(hour=6, minute=0)
 
         if datetime.datetime.now().hour < 6:
@@ -36,12 +41,12 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
         combined_date = datetime.datetime.combine(wait_until_date, wait_until_hour)
 
         await utils.sleep_until(combined_date)
-        await DailyPoster.post_daily.start(self)
+        await DailyPosterHandler.post_daily.start(self)
 
     @commands.command()
-    async def is_daily_running(self, ctx):  # Checks the DailyPoster loop
+    async def is_daily_running(self, ctx):  # Checks the DailyPosterHandler loop
         if self.isOwner(ctx):
-            if DailyPoster.post_daily.is_running():
+            if DailyPosterHandler.post_daily.is_running():
                 await BDbot.BDBot.send_any(self, ctx, "The loop is running.")
             else:
                 await BDbot.BDBot.send_any(self, ctx, "The loop is NOT running.")
@@ -63,10 +68,11 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
     async def daily(self):
         # Daily loop
         main_website = ""
-        comic_name = ""
-        NB_OF_COMICS = int(os.getenv('NB_OF_COMICS'))
-        comic_data = DailyPoster.get_database_data(self)
+        stripDetails = self.stripDet
+        NB_OF_COMICS = len(stripDetails)
+        comic_data = DailyPosterHandler.get_database_data(self)
         comic_list = [""] * NB_OF_COMICS
+
 
         # Construct the list of what comics need to be sent
         for guild in comic_data:
@@ -79,62 +85,13 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
 
         for i in range(len(comic_list)):
             if comic_list[i] != "":
-                # Define the comic that need to be sent
-                if i == 0:
-                    comic_name = 'Garfield'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 1:
-                    comic_name = 'Garfield-Classics'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 2:
-                    comic_name = 'CalvinandHobbes'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 3:
-                    comic_name = 'XKCD'
-                    main_website = 'https://xkcd.com/'
-                elif i == 4:
-                    comic_name = 'Peanuts'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 5:
-                    comic_name = 'Peanuts-Begins'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 6:
-                    comic_name = 'dilbert-classics'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 7:
-                    comic_name = 'Cyanide and Happiness'
-                    main_website = 'https://explosm.net/comics/'
-                elif i == 8:
-                    comic_name = 'Frazz'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 9:
-                    comic_name = 'Garfield minus Garfield'
-                    main_website = 'https://garfieldminusgarfield.net/'
-                elif i == 10:
-                    comic_name = 'Frank-and-Ernest'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 11:
-                    comic_name = 'BroomHilda'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 12:
-                    comic_name = 'Inspector-Dangers-Crime-Quiz'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 13:
-                    comic_name = 'Cheer-up-emo-kid'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 14:
-                    comic_name = 'little-moments-of-love'
-                    main_website = 'https://www.gocomics.com/'
-                elif i == 15:
-                    comic_name = 'brevity'
-                    main_website = 'https://www.gocomics.com/'
-
-                if main_website == 'https://www.gocomics.com/':
+                if stripDetails[i]["Main_website"] == 'https://www.gocomics.com/':
                     # Specific manager for GoComics website
-                    comic_details = Web_requests_manager.GoComicsManager.Comic_info(self, comic_name, param="today")
+                    comic_details = Web_requests_manager.ComicsRequestsManager.Comic_info_date(self, stripDetails[i],
+                                                                                               param="today")
                 else:  # Other websites
-                    comic_details = Web_requests_manager.OtherSiteManager.Comic_info(self, comic_name, main_website,
-                                                                                     param="today")
+                    comic_details = Web_requests_manager.ComicsRequestsManager.Comic_info_date(self, stripDetails[i],
+                                                                                          main_website)
 
                 embed = BDbot.BDBot.create_embed(self, comic_details)  # Creates the embed
 
@@ -160,53 +117,22 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
         with open(FILE_PATH, 'w') as f:
             json.dump(data, f, indent=4)
 
-    def new_change(self, ctx, comic, param):  # Make a change in the database
-        if comic == 'Garfield':
-            comic_number = 0
-        if comic == 'Garfield-Classics':
-            comic_number = 1
-        elif comic == "CalvinandHobbes":
-            comic_number = 2
-        elif comic == "XKCD":
-            comic_number = 3
-        elif comic == 'Peanuts':
-            comic_number = 4
-        elif comic == 'Peanuts-Begins':
-            comic_number = 5
-        elif comic == 'dilbert-classics':
-            comic_number = 6
-        elif comic == 'Cyanide and Happiness':
-            comic_number = 7
-        elif comic == 'Frazz':
-            comic_number = 8
-        elif comic == 'Garfield minus Garfield':
-            comic_number = 9
-        elif comic == 'Frank-and-Ernest':
-            comic_number = 10
-        elif comic == 'BroomHilda':
-            comic_number = 11
-        elif comic == 'Inspector-Dangers-Crime-Quiz':
-            comic_number = 12
-        elif comic == 'Cheer-up-emo-kid':
-            comic_number = 13
-        elif comic == 'little-moments-of-love':
-            comic_number = 14
-        elif comic == 'brevity':
-            comic_number = 15
+    def new_change(self, ctx, stripDetails, param):  # Make a change in the database
+        comic_number = int(stripDetails["Position"])
 
         if param == "add":
-            DailyPoster.add(self, ctx, comic_number)
+            DailyPosterHandler.add(self, ctx, comic_number)
         if param == "remove":
-            DailyPoster.remove(self, ctx, comic_number)
+            DailyPosterHandler.remove(self, ctx, comic_number)
 
     def add(self, ctx, comic_number):  # Add a Comic to the comic list
-        DailyPoster.modifyDatabase(self, ctx, 'add', comics_number=comic_number)
+        DailyPosterHandler.modifyDatabase(self, ctx, 'add', comics_number=comic_number)
 
     def remove(self, ctx, comic_number):  # Remove a Comic to comic list
-        DailyPoster.modifyDatabase(self, ctx, 'remove', comics_number=comic_number)
+        DailyPosterHandler.modifyDatabase(self, ctx, 'remove', comics_number=comic_number)
 
     def remove_guild(self, ctx):  # Removes a guild from the database
-        DailyPoster.modifyDatabase(self, ctx, 'remove_guild')
+        DailyPosterHandler.modifyDatabase(self, ctx, 'remove_guild')
 
     @commands.command()
     async def updateDatabaseadd(self, ctx):
@@ -217,7 +143,7 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
             for guild in data:
                 data[guild]["ComData"] += "0"
 
-            DailyPoster.save(self, data)
+            DailyPosterHandler.save(self, data)
 
             await ctx.send("Updated the database by adding 1 one comic to all servers.")
 
@@ -236,7 +162,7 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
                         comData.pop(index - 1)
                         data[guild]['ComData'] = ''.join(comData)
 
-                    DailyPoster.save(self, data)
+                    DailyPosterHandler.save(self, data)
 
                     await ctx.send("Updated the database by removing 1 one comic to all servers.")
 
@@ -263,7 +189,7 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
             for guild in guilds_to_clean:
                 data.pop(guild)
 
-            DailyPoster.save(self, data)
+            DailyPosterHandler.save(self, data)
 
             await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
 
@@ -278,7 +204,7 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
         else:
             guild_id = str(ctx.guild.id)
 
-        data = DailyPoster.get_database_data(self)
+        data = DailyPosterHandler.get_database_data(self)
 
         if use == 'add':
             d = {
@@ -332,12 +258,12 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
             if guild_id in data:
                 data.pop(guild_id)
 
-        DailyPoster.save(self, data)
+        DailyPosterHandler.save(self, data)
 
     # Check if the comic is subscribed to this guild
     def get_sub_status(self, guild_id, position, database=None):
         if database is None:  # Gets database if needed
-            database = DailyPoster.get_database_data(self)
+            database = DailyPosterHandler.get_database_data(self)
 
         if guild_id in database:
             return database[guild_id]["ComData"][position-1] == "1"
@@ -346,4 +272,4 @@ class DailyPoster(commands.Cog):  # Class responsible for posting daily comic st
 
 
 def setup(client):  # Initialize the cog
-    client.add_cog(DailyPoster(client))
+    client.add_cog(DailyPosterHandler(client))

@@ -37,11 +37,11 @@ class BDBot(commands.Cog):
         await channel.send(
             "Bot restarted. I will now try to restart the loop.")  # Sends this message whenever restarting the bot
 
-        await DailyPoster.DailyPoster.wait_for_daily(self)  # Wait for daily poster
+        await DailyPoster.DailyPosterHandler.wait_for_daily(self, main.get_strip_details().comicDetails)  # Wait for daily poster
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        DailyPoster.DailyPoster.remove_guild(self, guild)
+        DailyPoster.DailyPosterHandler.remove_guild(self, guild)
         print(f"Bot got removed from {guild}")
 
     @commands.command(aliases=['Git', 'github', 'Github'])
@@ -56,7 +56,7 @@ class BDBot(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
     async def remove_all(self, ctx):  # Remove the guild from the database
-        DailyPoster.DailyPoster.remove_guild(self, ctx)
+        DailyPoster.DailyPosterHandler.remove_guild(self, ctx)
         await ctx.send("All daily comics removed successfully!")
 
     @commands.command()
@@ -97,6 +97,13 @@ class BDBot(commands.Cog):
         for det in stripDet:
             await ctx.send(str(det))
 
+    @commands.command()
+    async def kill(self, ctx):
+        if ctx.author.id == int(os.getenv("BOT_OWNER_ID")):
+            await ctx.send("Closing bot....")
+
+            await self.client.close()
+
     # @bot.check
     # async def globally_block_dms(ctx):
     # return ctx.guild is not None
@@ -112,16 +119,16 @@ class BDBot(commands.Cog):
             month = comic_details["month"]
             year = comic_details["year"]
             url = comic_details["url"]
+            color = comic_details["color"]
 
             if comic_details["alt"] is not None:
                 alt = comic_details["alt"]
             else:
                 alt = ""
 
-            # transcript = comic_details["transcript"]
             img_url = comic_details["img_url"]
 
-            embed = discord.Embed(title=comic_title, url=url, description=alt)
+            embed = discord.Embed(title=comic_title, url=url, description=alt, colour=color)
 
             if day is not None:
                 embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
