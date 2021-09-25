@@ -18,6 +18,7 @@ class ComicsRequestsManager(commands.Cog):
 
     def Comic_info_date(self, stripDetails, param=None, comic_date=None):
         # Details of the comic
+        MAX_TRIES = 30
         details = ComicsRequestsManager.ORIGINAL_DETAILS.copy()
 
         details["Name"] = stripDetails["Name"]
@@ -29,7 +30,7 @@ class ComicsRequestsManager(commands.Cog):
                 # Gets today date
                 comic_date = date.today()
 
-            while details["img_url"] is None and i < 7:
+            while  i < MAX_TRIES and details["img_url"] is None:
                 i += 1
                 if param != "random":
                     details["day"] = comic_date.strftime("%d")
@@ -58,10 +59,11 @@ class ComicsRequestsManager(commands.Cog):
                 if details["img_url"] is None:  # Go back one day
                     comic_date = comic_date - timedelta(days=1)
 
-                if i >= 7 and details["img_url"] is None:  # If it hasn't found anything
+                if i >= MAX_TRIES and details["img_url"] is None:  # If it hasn't found anything
                     details = None
 
-            details["color"] = int(stripDetails["Color"], 16)
+            if details is not None:
+                details["color"] = int(stripDetails["Color"], 16)
         else:
             details = None
 
@@ -100,7 +102,7 @@ class ComicsRequestsManager(commands.Cog):
         if stripDetails["Name"] is not None:
             main_website = stripDetails["Main_website"]
 
-            if stripDetails["Name"] == 'XKCD':
+            if stripDetails["Name"] == 'xkcd':
                 if param == "random":
                     main_website = "https://c.xkcd.com/random/comic/"  # Link for random XKCD comic
                     html = urlopen(main_website).read()
@@ -134,7 +136,7 @@ class ComicsRequestsManager(commands.Cog):
             except urllib.error.HTTPError:
                 html = None
 
-            if stripDetails["Name"] != 'XKCD':
+            if stripDetails["Name"] != 'xkcd':
                 if html is not None:
                     details["url"] = ComicsRequestsManager.extract_meta_content(self, html, 'url')
 
@@ -145,23 +147,25 @@ class ComicsRequestsManager(commands.Cog):
                     details = None
 
             else:
-                # XKCD special extractor
-                # We requested a json and not a html
-                json_details = json.loads(html)
+                if html is not None:
+                    # XKCD special extractor
+                    # We requested a json and not a html
+                    json_details = json.loads(html)
 
-                details["title"] = json_details["title"]
-                details["url"] = details["url"].replace("info.0.json", "")
-                details["img_url"] = json_details["img"]
-                details["alt"] = json_details["alt"]
-                details["day"] = json_details["day"]
-                details["month"] = json_details["month"]
-                details["year"] = json_details["year"]
-
-            details["color"] = int(stripDetails["Color"], 16)
+                    details["title"] = json_details["title"]
+                    details["url"] = details["url"].replace("info.0.json", "")
+                    details["img_url"] = json_details["img"]
+                    details["alt"] = json_details["alt"]
+                    details["day"] = json_details["day"]
+                    details["month"] = json_details["month"]
+                    details["year"] = json_details["year"]
+                else:
+                    details = None
+            if details is not None:
+                details["color"] = int(stripDetails["Color"], 16)
         else:
             details = None
 
-        print(details)
         return details
 
     # --- End of OtherSiteManager ---#
@@ -212,7 +216,8 @@ class ComicsRequestsManager(commands.Cog):
 
                 details["img_url"] = rss.feed[comic_nb].description_images[0].source
 
-            details["color"] = stripDetails["Color"]
+            if details is not None:
+                details["color"] = int(stripDetails["Color"], 16)
         else:
             details = None
 

@@ -134,7 +134,7 @@ class BDBot(commands.Cog):
                 embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
 
             """ The transcript is not shown
-          if transcript is not None and transcript != "":
+            if transcript is not None and transcript != "":
             embed.add_field(name="Transcript", value=transcript)"""
 
             embed.set_image(url=img_url)

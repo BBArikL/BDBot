@@ -1,3 +1,5 @@
+import random
+
 import discord
 from discord.ext import commands
 from Scripts import Web_requests_manager, BDbot, DailyPoster
@@ -154,6 +156,13 @@ class Comic(commands.Cog):
         # Interprets the parameters given by the user
         await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
 
+    # Random comic
+    @commands.command(aliases=['rand', 'rnd'])
+    async def random(self, ctx, *, param=None):
+        await self.parameters_interpreter(ctx,
+                                          self.getStripDet(random.choice(
+                                              list(main.get_strip_details().comicDetails.keys()))), param)
+
     # ---- End of Comics parameters ----#
 
     async def send_request_error(self, ctx):
@@ -184,6 +193,7 @@ class Comic(commands.Cog):
     # --- END of functions that communicate directly with discord ----
 
     async def parameters_interpreter(self, ctx, stripDetails, param=None):
+        print(stripDetails['Name'])
         # Interprets the parameters given by the user
         if param is not None:
             """ Parameters:
@@ -234,7 +244,7 @@ class Comic(commands.Cog):
                     # Works by number of comic
                     try:
                         number = int(param.split(" ")[0])
-                        if number >= stripDetails["First_date"]:
+                        if number >= int(stripDetails["First_date"]):
                             stripDetails["Main_website"] = stripDetails["Main_website"] + str(number) + '/'
                             await self.comic_send(ctx, stripDetails, param=param)
                         else:
