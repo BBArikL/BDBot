@@ -1,9 +1,8 @@
 import random
-
 import discord
 from discord.ext import commands
 from Scripts import Web_requests_manager, BDbot, DailyPoster
-import main
+from Comics_details import comDetails
 import datetime
 
 
@@ -14,6 +13,7 @@ class Comic(commands.Cog):
         # Constructor of the cog
         # Initialize all the properties of the cog
         self.client = client
+        self.stripDetails = comDetails.load_details()
 
     # --- Start of functions PS: (If you want to add another comic, add it here between this and the 'END of comics
     # parameters'). Preferably, Gocomics comics are the easiest to implement, so try to stick with that if your
@@ -32,7 +32,7 @@ class Comic(commands.Cog):
 
     @commands.command(aliases=['GarfieldClassics', 'GarfClassic', 'garfieldclass', 'GarfCl'])
     async def garfcl(self, ctx, *, param=None):  # Garfield
-        comic_name = 'Garfield-Classics'
+        comic_name = 'Garfield_Classics'
 
         # Interprets the parameters given by the user
         await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
@@ -60,7 +60,7 @@ class Comic(commands.Cog):
 
     @commands.command(aliases=['PeanutsBegins', 'peanutbegin', 'peanutsbegin', 'peanbeg'])
     async def peanutsbegins(self, ctx, *, param=None):  # Peanuts begins
-        comic_name = 'Peanuts-Begins'
+        comic_name = 'Peanuts_Begins'
 
         # Interprets the parameters given by the user
         await self.parameters_interpreter(ctx, self.getStripDet(comic_name), param)
@@ -161,7 +161,7 @@ class Comic(commands.Cog):
     async def random(self, ctx, *, param=None):
         await self.parameters_interpreter(ctx,
                                           self.getStripDet(random.choice(
-                                              list(main.get_strip_details().comicDetails.keys()))), param)
+                                              list(self.stripDetails.keys()))), param)
 
     # ---- End of Comics parameters ----#
 
@@ -274,7 +274,7 @@ class Comic(commands.Cog):
         await BDbot.BDBot.send_comic_embed(self, ctx, comic_details)
 
     def getStripDet(self, comic_name):
-        return main.stripsDetails.comicDetails[comic_name]
+        return self.stripDetails[comic_name]
 
     def get_date(self, date):
         return datetime.datetime.strptime(date, "%Y, %m, %d").strftime("%A %d, %Y")

@@ -2,7 +2,6 @@ import os
 from keepalive import keep_alive  # imports the web server that pings the bot continually
 from discord.ext import commands
 from dotenv import load_dotenv
-import Comics_details
 
 load_dotenv()
 
@@ -16,19 +15,10 @@ print("Starting Bot...")
 
 keep_alive()  # Keeps the bot alive
 
-stripsDetails = Comics_details.comDetails()
-
 # Loads all the cogs
 for filename in os.listdir('./Scripts'):
     if filename.endswith('py'):
         client.load_extension(f'Scripts.{filename[:-3]}')
-
-def get_strip_details():
-    return stripsDetails
-
-
-def reload_strips_details():
-    stripsDetails = Comics_details.comDetails()
 
 client.run(os.getenv('TOKEN'))  # Runs the bot with the private bot token
 

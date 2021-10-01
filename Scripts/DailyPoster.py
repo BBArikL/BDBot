@@ -110,6 +110,16 @@ class DailyPosterHandler(commands.Cog):  # Class responsible for posting daily c
 
         return data
 
+    # Returns a specific guild's data
+    def get_specific_guild_data(self, ctx):
+        database = DailyPosterHandler.get_database_data(self)
+        guild_id = str(ctx.guild.id)
+
+        if guild_id in database:
+            return database[guild_id]
+        else:
+            return None
+
     def save(self, data):
         FILE_PATH = "./data/data.json"
 

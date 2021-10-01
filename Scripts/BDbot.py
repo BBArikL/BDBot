@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import os
 import topgg
 import random
-import main
+from Comics_details import comDetails
 
 
 class BDBot(commands.Cog):
@@ -14,7 +14,7 @@ class BDBot(commands.Cog):
     def __init__(self, client):
         # Constructor of the cog
         # Initialize all the properties of the cog
-        #self.comicsDetails = Comics_details.comDetails(client)
+        self.comicsDetails = comDetails.load_details()
 
         #print(self.comicsDetails.comicDetails)
 
@@ -37,7 +37,7 @@ class BDBot(commands.Cog):
         await channel.send(
             "Bot restarted. I will now try to restart the loop.")  # Sends this message whenever restarting the bot
 
-        await DailyPoster.DailyPosterHandler.wait_for_daily(self, main.get_strip_details().comicDetails)  # Wait for daily poster
+        await DailyPoster.DailyPosterHandler.wait_for_daily(self, self.comicsDetails)  # Wait for daily poster
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
@@ -90,12 +90,26 @@ class BDBot(commands.Cog):
 
         await ctx.send("Request saved! Thank you for using BDBot!")
 
-    @commands.command()
-    async def show(self, ctx):
-        stripDet = main.stripsDetails.comicDetails
+    @commands.command(aliases=["subs", "subscriptions", "subscription"])
+    async def sub(self, ctx):
+        guild_data = DailyPoster.DailyPosterHandler.get_specific_guild_data(self, ctx)
 
-        for det in stripDet:
-            await ctx.send(str(det))
+        if guild_data is not None:
+            comicList = []
+            comData = guild_data["ComData"]
+            comicIndex = 0
+            comicValues = list(self.comicsDetails.values())
+            for comic in comData:
+                if comic == "1":
+                    comicList.append(comicValues[comicIndex]["Name"])
+
+                comicIndex += 1
+
+            await ctx.send("This guild is subscribed to: "+(", ".join(comicList)))
+        else:
+            await ctx.send("This guild is not subscribed to any comic!")
+
+
 
     @commands.command()
     async def kill(self, ctx):

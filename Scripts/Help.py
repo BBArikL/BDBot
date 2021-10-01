@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from Scripts import BDbot
+from Comics_details import comDetails
 
 
 class Help(commands.Cog):
@@ -10,6 +11,7 @@ class Help(commands.Cog):
         # Constructor of the cog
         # Initialize all the properties of the cog
         self.client = client
+        self.stripDetails = comDetails.load_details()
 
     @commands.group(invoke_without_command=True, case_insensitive=True)
     async def help(self, ctx):  # Custom Help command
