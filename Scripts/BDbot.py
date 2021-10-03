@@ -1,11 +1,13 @@
+import sys
+sys.path.insert(0, "./Scripts/")
 import discord
 from discord.ext import commands
-from Scripts import DailyPoster
 from datetime import datetime, timezone
 import os
 import topgg
-import random
 from Comics_details import comDetails
+from DailyPoster import DailyPosterHandler
+import utils
 
 
 class BDBot(commands.Cog):
@@ -14,10 +16,7 @@ class BDBot(commands.Cog):
     def __init__(self, client):
         # Constructor of the cog
         # Initialize all the properties of the cog
-        self.comicsDetails = comDetails.load_details()
-
-        #print(self.comicsDetails.comicDetails)
-
+        self.strip_details = comDetails.load_details()
         self.client = client
         dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
         self.topggpy = topgg.DBLClient(client, dbl_token)
@@ -37,11 +36,11 @@ class BDBot(commands.Cog):
         await channel.send(
             "Bot restarted. I will now try to restart the loop.")  # Sends this message whenever restarting the bot
 
-        await DailyPoster.DailyPosterHandler.wait_for_daily(self, self.comicsDetails)  # Wait for daily poster
+        await DailyPosterHandler.wait_for_daily(self)  # Wait for daily poster
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        DailyPoster.DailyPosterHandler.remove_guild(self, guild)
+        DailyPosterHandler.remove_guild(self, guild)
         print(f"Bot got removed from {guild}")
 
     @commands.command(aliases=['Git', 'github', 'Github'])
@@ -56,7 +55,7 @@ class BDBot(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
     async def remove_all(self, ctx):  # Remove the guild from the database
-        DailyPoster.DailyPosterHandler.remove_guild(self, ctx)
+        DailyPosterHandler.remove_guild(self, ctx)
         await ctx.send("All daily comics removed successfully!")
 
     @commands.command()
@@ -91,106 +90,35 @@ class BDBot(commands.Cog):
         await ctx.send("Request saved! Thank you for using BDBot!")
 
     @commands.command(aliases=["subs", "subscriptions", "subscription"])
-    async def sub(self, ctx):
-        guild_data = DailyPoster.DailyPosterHandler.get_specific_guild_data(self, ctx)
+    async def sub(self, ctx):  # Checks if the server is subbed to any comic
+        guild_data = utils.get_specific_guild_data(ctx)
 
         if guild_data is not None:
-            comicList = []
-            comData = guild_data["ComData"]
-            comicIndex = 0
-            comicValues = list(self.comicsDetails.values())
-            for comic in comData:
+            comic_list = []
+            com_data = guild_data["ComData"]
+            comic_index = 0
+            comic_values = list(self.strip_details.values())
+            for comic in com_data:
                 if comic == "1":
-                    comicList.append(comicValues[comicIndex]["Name"])
+                    comic_list.append(comic_values[comic_index]["Name"])
 
-                comicIndex += 1
+                comic_index += 1
 
-            await ctx.send("This guild is subscribed to: "+(", ".join(comicList)))
+            await ctx.send("This guild is subscribed to: " + (", ".join(comic_list)))
         else:
             await ctx.send("This guild is not subscribed to any comic!")
-
-
 
     @commands.command()
     async def kill(self, ctx):
         if ctx.author.id == int(os.getenv("BOT_OWNER_ID")):
+            # Close the bot connection
             await ctx.send("Closing bot....")
 
             await self.client.close()
-
-    # @bot.check
-    # async def globally_block_dms(ctx):
-    # return ctx.guild is not None
+        else:
+            raise discord.ext.commands.CommandNotFound
 
     # ---- End of commands ----#
-
-    def create_embed(self, comic_details=None):
-        if comic_details is not None:
-            # Embeds the comic
-            comic_name = comic_details["Name"]
-            comic_title = comic_details["title"]
-            day = comic_details["day"]
-            month = comic_details["month"]
-            year = comic_details["year"]
-            url = comic_details["url"]
-            color = comic_details["color"]
-
-            if comic_details["alt"] is not None:
-                alt = comic_details["alt"]
-            else:
-                alt = ""
-
-            img_url = comic_details["img_url"]
-
-            embed = discord.Embed(title=comic_title, url=url, description=alt, colour=color)
-
-            if day is not None:
-                embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
-
-            """ The transcript is not shown
-            if transcript is not None and transcript != "":
-            embed.add_field(name="Transcript", value=transcript)"""
-
-            embed.set_image(url=img_url)
-
-            embed.set_footer(text=BDBot.get_random_footer(self))
-
-            return embed
-        else:
-            # Error message
-            embed = discord.Embed(title="No comic found!")
-
-            embed.add_field(name="We could not find a comic at this date / number :thinking:....",
-                            value="Try another date / number!")
-
-            embed.set_footer(text=BDBot.get_random_footer(self))
-
-            return embed
-
-    async def send_comic_embed(self, ctx, comic_details):
-        embed = BDBot.create_embed(self, comic_details=comic_details)  # Creates the embed
-
-        await ctx.send(embed=embed)  # Send the comic
-
-    # Send a comic embed to a specific channel
-    async def send_comic_embed_channel_specific(self, embed, channel_id):
-        channel = self.client.get_channel(int(channel_id))
-
-        await channel.send(embed=embed)
-
-    async def send_any(self, ctx, text):
-        # Send any text given. Mostly for debugging purposes
-        await ctx.send(text)
-
-    def get_random_footer(self):
-        FILE_PATH = './misc/random-footers.txt'
-
-        footers = open(FILE_PATH, 'r')
-
-        rnd_footer = random.choice(footers.readlines())
-
-        return rnd_footer.replace('\n', '')
-
     # ---- End of BDBot ----#
 
 

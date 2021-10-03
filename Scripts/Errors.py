@@ -11,7 +11,6 @@ class Errors(commands.Cog):
 
     # For debugging purposes, you can make multi-line comments around this function to clearly see the errors in the
     # terminal. But you should at least not forget to remove the comments when your bot goes live ;)
-
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         # Handles errors
@@ -22,7 +21,8 @@ class Errors(commands.Cog):
         elif isinstance(error, commands.MissingPermissions):
             await ctx.send('You do not have the permission to do that.')
         else:  # Not supported errors
-            await ctx.send(f'Error not supported. Visit https://github.com/BBArikL/BDBot to report the issue. {error}')
+            await ctx.send(f'Error not supported. Visit https://github.com/BBArikL/BDBot to report the issue. '
+                           f'The error is: {error}')
 
 
 def setup(client):  # Initialize the cog
