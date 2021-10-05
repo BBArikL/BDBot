@@ -1,5 +1,3 @@
-import sys
-sys.path.insert(0, "/Scripts/")
 import discord
 from discord.ext import commands
 from Comics_details import comDetails
@@ -84,7 +82,7 @@ class Help(commands.Cog):
                     embed = embed = discord.Embed(title=f"{website_name}!")
                     embed.set_footer(text=utils.get_random_footer())
 
-        if(i != 0):
+        if i != 0:
             await ctx.send(embed=embed)
 
 

@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 from DailyPoster import DailyPosterHandler
 from Comics_details import comDetails
-import datetime
+from datetime import datetime
 import utils
 import Web_requests_manager
 
@@ -162,6 +162,13 @@ class Comic(commands.Cog):
         # Interprets the parameters given by the user
         await self.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
 
+    @commands.command(aliases=['pop', 'Pop', 'Pops', 'Popeye', 'Popeyes', 'popeye'])
+    async def popeyes(self, ctx, *, param=None):
+        comic_name = 'Popeyes'
+
+        # Interprets the parameters given by the user
+        await self.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
     # Random comic
     @commands.command(aliases=['rand', 'rnd'])
     async def random(self, ctx, *, param=None):
@@ -177,7 +184,7 @@ class Comic(commands.Cog):
         embed.add_field(name="Working type", value=strip_details["Working_type"], inline=True)
 
         if strip_details["Working_type"] == "date":
-            embed.add_field(name="First apparition", value=utils.get_date(strip_details["First_date"]), inline=True)
+            embed.add_field(name="First apparition", value=utils.get_date(utils.get_first_date(strip_details)), inline=True)
         embed.add_field(name="Aliases", value=strip_details["Aliases"], inline=True)
 
         if utils.get_sub_status(str(ctx.guild.id), int(strip_details["Position"])):
@@ -230,13 +237,13 @@ class Comic(commands.Cog):
                 if working_type != "number":
                     # Works by date
                     try:
-                        comic_date = datetime.datetime.strptime(param, "%d/%m/%Y")
-                        first_date = datetime.datetime.strptime(strip_details["First_date"], "%Y, %m, %d")
-                        if first_date <= comic_date <= datetime.datetime.utcnow():
+                        comic_date = datetime.strptime(param, "%d/%m/%Y")
+                        first_date = datetime.strptime(utils.get_first_date(strip_details), "%Y, %m, %d")
+                        if first_date <= comic_date <= datetime.utcnow():
                             await self.comic_send(ctx, strip_details, "Specific_date", comic_date=comic_date)
                         else:
-                            first_date_formatted = datetime.datetime.strftime(first_date, "%d/%m/%Y")
-                            date_now_formatted = datetime.datetime.strftime(datetime.datetime.utcnow(), "%d/%m/%Y")
+                            first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
+                            date_now_formatted = datetime.strftime(datetime.utcnow(), "%d/%m/%Y")
                             await ctx.send(
                                 f"Invalid date. Try sending a date between {first_date_formatted} and "
                                 f"{date_now_formatted}.")
@@ -246,7 +253,7 @@ class Comic(commands.Cog):
                     # Works by number of comic
                     try:
                         number = int(param.split(" ")[0])
-                        if number >= int(strip_details["First_date"]):
+                        if number >= int(utils.get_first_date(strip_details)):
                             strip_details["Main_website"] = strip_details["Main_website"] + str(number) + '/'
                             await self.comic_send(ctx, strip_details, param=param)
                         else:

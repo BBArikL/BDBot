@@ -23,7 +23,7 @@
         "Color": "FFA202",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/gacl/mid_rec-201701251558.jpg",
         "Aliases": "'GarfieldClassics', 'GarfClassic', 'garfieldclass', 'GarfCl', 'garfcl'",
-        "Helptxt": "<help_text>"
+        "Helptxt": "<TODO>"
     },
     "CalvinandHobbes":{
         "Name": "Calvin and Hobbes",
@@ -238,12 +238,25 @@
         "Web_name": "cats-cafe",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
-        "Description": "Everyone is welcome at Cat’s Café! There is always a seat and someone to talk to. Follow Cat, Penguin, and Rabbit along with a variety of other special animals, form a wonderful place where everyone can feel warm, fuzzy, and accepted.\n\nFacebook: https://facebook.com/catscafecomics\nTwitter: https://twitter.com/CatsCafeComics\nInstagram: https://twitter.com/CatsCafeComics\nTumblr: https://catscafecomics.tumblr.com/\nWebsite: https://www.catscafecomics.com/\nMore info: https://www.gocomics.com/cats-cafe/characters\nSee also:\nGarfield",
+        "Description": "Everyone is welcome at Cat’s Café! There is always a seat and someone to talk to. Follow Cat, Penguin, and Rabbit along with a variety of other special animals, form a wonderful place where everyone can feel warm, fuzzy, and accepted.\n\nFacebook: https://facebook.com/catscafecomics\nTwitter: https://twitter.com/CatsCafeComics\nInstagram: https://instagram.com/catscafecomics/\nTumblr: https://catscafecomics.tumblr.com/\nWebsite: https://www.catscafecomics.com/\nMore info: https://www.gocomics.com/cats-cafe/characters\nSee also:\nGarfield",
         "Position": 18,
         "First_date": "2019, 5, 20",
         "Color": "F5D16F",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/ccf/large_ccf_rec_201905140834.jpg",
         "Aliases": "'Catscafe', 'catscafe', 'Cats', 'cats', 'cafe', 'cat'",
         "Helptxt": "Join Cat's cafe where wholesomeness and good vibes are always on the menu!"
+    },
+    "Popeyes":{
+        "Name": "Popeyes",
+        "Web_name": "popeye",
+        "Main_website": "https://comicskingdom.com/",
+        "Working_type": "date",
+        "Description": "He's short, balding, ornery and downright ugly by anyone's standards. But countless numbers of fans have grown up admiring and identifying with this unpretentious hero since his introduction to the public in 1929. With one of his cartoons airing somewhere in the world nearly every minute of every day, Popeye remains one of the most widely recognized and best-loved personalities ever.\n\nFacebook: https://www.facebook.com/Popeye/\nTwitter: https://twitter.com/PopeyeTweetsk\nInstagram: https://www.instagram.com/popeye\nYoutube: https://www.youtube.com/channel/UCqvXAiNyn8pd9SVPclWfJTg\nMore info: https://comicskingdom.com/popeye/about",
+        "Position": 19,
+        "First_date": "",
+        "Color": "CD1C23",
+        "Image": "https://api.kingdigital.com/img/features/232/logos/website.png",
+        "Aliases": "'Popeyes', 'popeyes', 'Pop', 'pop', 'Pops', 'Popeye', 'popeye'",
+        "Helptxt": "<TODO>!"
     }
 }

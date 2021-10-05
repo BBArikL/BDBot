@@ -5,8 +5,8 @@ Check out the bot here! https://github.com/BBArikL/BDBot
 Have you tried all the comics yet?
 Did you know you could have fresh comics delivered every day? Try bd!help daily for more information.
 The creator of this bot likes lasagna.
-A comic a day keeps keeps sadness away!
-What is your first ever comic?
+A comic a day keeps sadness away!
+What was your first ever comic?
 You did not find your preferred webcomic? Use bd!request to leave a message for the creator!
 You can request comics by github or by bd!request!
 In what webcomic world would you like to live?

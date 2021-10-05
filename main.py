@@ -10,7 +10,7 @@ client.remove_command("help")  # Removes the default "help" function to replace 
 
 print("Starting Bot...")
 
-keep_alive()  # Keeps the bot alive
+# keep_alive()  # Keeps the bot alive
 
 # Loads all the cogs
 for filename in os.listdir('./Scripts'):

@@ -1,8 +1,6 @@
-import sys
-sys.path.insert(0, "./Scripts/")
 from discord.ext import tasks, commands
 import discord
-import datetime
+from datetime import datetime, timedelta, time
 from Comics_details import comDetails
 import utils
 import Web_requests_manager
@@ -28,16 +26,15 @@ class DailyPosterHandler(commands.Cog):
 
     # Wait for the time to post the daily strip
     async def wait_for_daily(self):
-        wait_until_hour = datetime.time(hour=6, minute=0)  # 6 AM UTC
+        wait_until_hour = time(hour=6)  # 6 AM UTC
 
-        if datetime.datetime.utcnow().hour < 6:
+        if datetime.utcnow().hour < 6:
             day_wait = 0
         else:
             day_wait = 1
 
-        wait_until_date = datetime.date.today() + datetime.timedelta(days=day_wait)
-        combined_date = datetime.datetime.combine(wait_until_date, wait_until_hour)
-
+        wait_until_date = datetime.utcnow() + timedelta(days=day_wait)
+        combined_date = datetime.combine(wait_until_date, wait_until_hour)
         await discord.utils.sleep_until(combined_date)
         await DailyPosterHandler.post_daily.start(self)
 
@@ -103,11 +100,11 @@ class DailyPosterHandler(commands.Cog):
     def new_change(self, ctx, strip_details, param):
         comic_number = int(strip_details["Position"])
 
-        DailyPosterHandler.modify_database(self, ctx, param, comics_number=comic_number)
+        utils.modify_database(self.strip_details, ctx, param, comics_number=comic_number)
 
     # Removes a guild from the database
     def remove_guild(self, ctx):
-        DailyPosterHandler.modify_database(self, ctx, 'remove_guild')
+        utils.modify_database(self.strip_details, ctx, 'remove_guild')
 
     @commands.command()
     async def updateDatabaseadd(self, ctx):
@@ -173,74 +170,6 @@ class DailyPosterHandler(commands.Cog):
             await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
         else:
             raise commands.CommandNotFound
-
-    def modify_database(self, ctx, use, comics_number=None):
-        # Saves the new informations in the database
-        # Adds or delete the guild_id, the channel id and the comic_strip data
-        NB_OF_COMICS = len(self.strip_details)
-
-        guild_id = str(ctx.guild.id)
-        channel_id = str(ctx.channel.id)
-
-        data = utils.get_database_data()
-
-        if use == 'add':
-            d = {
-                guild_id: {
-                    "server_id": 0,
-                    "channel_id": 0,
-                    "ComData": ""
-                }
-            }
-
-            if guild_id in data:
-                # If this server was already in the database, fill out information
-                d[guild_id]["server_id"] = data[guild_id]["server_id"]
-                d[guild_id]["channel_id"] = data[guild_id]["channel_id"]
-                d[guild_id]["ComData"] = data[guild_id]["ComData"]
-
-                # If there is already comic data stored
-                comic_str = list(d[guild_id]["ComData"])
-
-                comic_str[comics_number] = "1"
-
-                d[guild_id]["ComData"] = "".join(comic_str)
-
-            else:
-                # Add a comic to the list of comics
-                d[guild_id]["server_id"] = int(guild_id)
-
-                d[guild_id]["channel_id"] = int(channel_id)
-
-                # If there was no comic data stored for this guild
-                comic_str = ""
-
-                # Construct the string of data
-                for i in range(NB_OF_COMICS):
-                    if i == comics_number:
-                        comic_str += "1"
-                    else:
-                        comic_str += "0"
-
-                d[guild_id]["ComData"] = comic_str
-
-            data.update(d)
-
-        elif use == "remove":
-            # Remove comic
-            if guild_id in data:
-                comic_str = list(data[guild_id]["ComData"])
-                if comic_str[comics_number] != "0":
-                    comic_str[comics_number] = "0"
-                    data[guild_id]["ComData"] = "".join(comic_str)
-
-        elif use == 'remove_guild':
-            # Remove a guild from the list
-            if guild_id in data:
-                data.pop(guild_id)
-
-        # Save the database
-        utils.save(data)
 
 
 def setup(client):  # Initialize the cog

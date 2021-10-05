@@ -1,13 +1,16 @@
 from urllib.request import urlopen
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from bs4 import BeautifulSoup
 from rss_parser import Parser
 from requests import get
 import json
 import urllib
 import random
+import randomtimestamp
 
 # Class that makes the web requests to have the fresh comic details
+import utils
+
 ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "day": "", "month": "", "year": "",
                     "img_url": "", "alt": "", "color": 0}
 MAX_TRIES = 30
@@ -29,6 +32,7 @@ def get_new_comic_details(strip_details, param, comic_date=None):
 # Get the details of comics which site works by date
 def get_comic_info_date(strip_details, param=None, comic_date=None):
     details = ORIGINAL_DETAILS.copy()
+    random_date = None
 
     details["Name"] = strip_details["Name"]
 
@@ -51,7 +55,7 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
 
             else:
                 # Random comic
-                details["url"] = get_random_link(strip_details)
+                details["url"], random_date = get_random_link(strip_details)
 
                 # Get the html of the comic site
             try:
@@ -65,6 +69,9 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
             # Finds the url of the image
             details["img_url"] = extract_meta_content(html, 'image')
 
+            # Finds the final url
+            details["url"] = extract_meta_content(html, 'url')
+
             if details["img_url"] is None:  # Go back one day
                 comic_date = comic_date - timedelta(days=1)
 
@@ -73,6 +80,21 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
 
         if details is not None:
             details["color"] = int(strip_details["Color"], 16)
+
+            # Finds the date of the random comic
+            if details['day'] == "":
+                final_date = None
+                if random_date is None:
+                    # We have to parse the string (Only gocomics)
+                    final_date = datetime.strptime(details["url"].replace(f'https://www.gocomics.com/{strip_details["Web_name"]}/', ""), "%Y/%m/%d")
+                else:
+                    final_date = random_date
+
+                details["day"] = final_date.strftime("%d")
+                details["month"] = final_date.strftime("%m")
+                details["year"] = final_date.strftime("%Y")
+
+
     else:
         return None
 
@@ -80,12 +102,36 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
 
 
 def get_link(strip_details, day):  # Returns the comic url
-    date_formatted = day.strftime("%Y/%m/%d")
-    return f'{strip_details["Main_website"]}{strip_details["Web_name"]}/{date_formatted}'
+    date_formatted = ""
+    middle_params = ""
+    if strip_details["Main_website"] == "https://www.gocomics.com/":
+        date_formatted = day.strftime("%Y/%m/%d")
+        middle_params = strip_details["Web_name"]
+    elif strip_details["Main_website"] == "https://comicskingdom.com/":
+        date_formatted = day.strftime("%Y-%m-%d")
+        middle_params = strip_details["Web_name"]
+    elif strip_details["Main_website"] == "https://dilbert.com/":
+        date_formatted = day.strftime("%Y-%m-%d")
+        middle_params = "strip"
+
+    return f'{strip_details["Main_website"]}{middle_params}/{date_formatted}'
 
 
 def get_random_link(strip_details):  # Returns the random comic url
-    return f'{strip_details["Main_website"]}random/{strip_details["Web_name"]}'
+    if strip_details["Main_website"] == "https://www.gocomics.com/":
+        return f'{strip_details["Main_website"]}random/{strip_details["Web_name"]}', None
+    else:
+        first_date = datetime.strptime(utils.get_first_date(strip_details), "%Y, %m, %d")
+        random_date = randomtimestamp.randomtimestamp(start=first_date,
+                                                      end=datetime.today().replace(hour=0, minute=0, second=0,
+                                                                                   microsecond=0))
+        middle_params = ""
+        if strip_details["Main_website"] == "https://comicskingdom.com/":
+            middle_params = strip_details["Web_name"]
+        elif strip_details["Main_website"] == "https://dilbert.com/":
+            middle_params = "strip"
+
+        return f'{strip_details["Main_website"]}{middle_params}/{random_date.strftime("%Y-%m-%d")}', random_date
 
 
 def extract_meta_content(html, content):
