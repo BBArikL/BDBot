@@ -58,71 +58,149 @@ def create_embed(comic_details=None):
 
         return embed
 
+# Make a change in the database
+def new_change(ctx, strip_details, param):
+    comic_number = int(strip_details["Position"])
 
-def modify_database(strip_details, ctx, use, comics_number=None):
+    modify_database(ctx, param, comic_number=comic_number)
+
+# Removes a guild from the database
+def remove_guild(guild, use=None):
+    if use is None:
+        use = 'remove_guild'
+
+    modify_database(guild, use)
+
+
+# Removes a channel from the database
+def remove_channel(ctx, use=None):
+    if use is None:
+        use = "remove_channel"
+
+    modify_database(ctx, use)
+
+
+def modify_database(ctx, use, day=None, hour=None, comic_number=None, channels=None):
     # Saves the new informations in the database
     # Adds or delete the guild_id, the channel id and the comic_strip data
-    NB_OF_COMICS = len(strip_details)
-
-    guild_id = str(ctx.guild.id)
-    channel_id = str(ctx.channel.id)
+    data = get_database_data()
 
     data = get_database_data()
 
     if use == 'add':
+        guild_id = str(ctx.guild.id)
+        channel_id = str(ctx.channel.id)
         d = {
             guild_id: {
                 "server_id": 0,
-                "channel_id": 0,
-                "ComData": ""
+                "channels": {
+                },
+                "role": 0,
+                "only-daily": 0,
             }
         }
+
+        """
+        Example of a specific channel data:
+        channel_specifc_data = {
+            channel_id: {
+                "channel_id": 0,
+                "date": {
+                    "6":[0],
+                }
+            },
+        }
+        """
 
         if guild_id in data:
             # If this server was already in the database, fill out information
             d[guild_id]["server_id"] = data[guild_id]["server_id"]
-            d[guild_id]["channel_id"] = data[guild_id]["channel_id"]
-            d[guild_id]["ComData"] = data[guild_id]["ComData"]
+            d[guild_id]["channels"] = data[guild_id]["channels"]
 
-            # If there is already comic data stored
-            comic_str = list(d[guild_id]["ComData"])
+            # Checks if the channel was already set
+            if channel_id in data[guild_id]["channels"]:
+                d[guild_id]["channels"][channel_id] = data[guild_id]["channels"][channel_id]
+            else:
+                d[guild_id]["channels"].update({channel_id: {"channel_id": 0, "date": {}}})
 
-            comic_str[comics_number] = "1"
+            if day is None:
+                day = "D"
 
-            d[guild_id]["ComData"] = "".join(comic_str)
+            if hour is None:
+                hour = "6"
+
+            # Checks if the day, the hour and the comic was already set for the channel
+            if day not in d[guild_id]["channels"][channel_id]["date"]:
+                d[guild_id]["channels"][channel_id]["date"].update({day: {hour: [comic_number]}})
+
+            elif hour not in d[guild_id]["channels"][channel_id]["date"][day]:
+                d[guild_id]["channels"][channel_id]["date"][day].update({hour: [comic_number]})
+
+            elif comic_number not in d[guild_id]["channels"][channel_id]["date"][day][hour]:
+                d[guild_id]["channels"][channel_id]["date"][day][hour].append(comic_number)
 
         else:
+            # If there was no comic data stored for this guild
             # Add a comic to the list of comics
             d[guild_id]["server_id"] = int(guild_id)
 
-            d[guild_id]["channel_id"] = int(channel_id)
+            comics_number = [comic_number]
 
-            # If there was no comic data stored for this guild
-            comic_str = ""
+            if day is None:
+                day = "D"
 
-            # Construct the string of data
-            for i in range(NB_OF_COMICS):
-                if i == comics_number:
-                    comic_str += "1"
-                else:
-                    comic_str += "0"
+            if hour is None:
+                hour = "6"
 
-            d[guild_id]["ComData"] = comic_str
-
+            d[guild_id]["channels"].update({channel_id: {"channel_id": int(channel_id),
+                                                         "date": {day: {hour: comics_number}}}})
+        # Update the main database
         data.update(d)
 
     elif use == "remove":
+        guild_id = str(ctx.guild.id)
+        channel_id = str(ctx.channel.id)
         # Remove comic
-        if guild_id in data:
-            comic_str = list(data[guild_id]["ComData"])
-            if comic_str[comics_number] != "0":
-                comic_str[comics_number] = "0"
-                data[guild_id]["ComData"] = "".join(comic_str)
+        if guild_id in data and channel_id in data[guild_id]["channels"]:
+            if day is None:
+                day = "D"
 
-    elif use == 'remove_guild':
+            if hour is None:
+                hour = "6"
+
+            # Verifies that the day and time was set
+            if day in data[guild_id]["channels"][channel_id]["date"] and hour in \
+                    data[guild_id]["channels"][channel_id]["date"][day]:
+                comic_list = data[guild_id]["channels"][channel_id]["date"][day][hour]
+
+                # Verifies if the comic is in the list
+                if comic_number in comic_list:
+                    comic_list.remove(comic_number)
+                    data[guild_id]["channels"][channel_id]["date"][day][hour] = comic_list
+
+    elif use == 'remove_guild' or use == 'auto_remove_guild':
+        guild_id = ""
+        if use == 'remove_guild':
+            guild_id = str(ctx.guild.id)
+        elif use == 'auto_remove_guild':
+            guild_id = str(ctx.id)
+
         # Remove a guild from the list
         if guild_id in data:
             data.pop(guild_id)
+
+    elif use == 'remove_channel' or use == 'auto_remove_channel':
+        guild_id = str(ctx.guild.id)
+        channel_id = ""
+        if use == 'remove_guild':
+            channel_id = str(ctx.channel.id)
+        elif use == 'auto_remove_channel':
+            channel_id = str(ctx.id)
+
+        # Remove a guild from the list
+        if guild_id in data:
+            if channel_id in data[guild_id]["channels"]:
+                data[guild_id]["channels"].pop(channel_id)
 
     # Save the database
     save(data)
@@ -156,12 +234,16 @@ def save(data):
 
 
 # Check if the comic is subscribed to this guild
-def get_sub_status(guild_id, position, database=None):
+def get_sub_status(ctx, position, database=None):
     if database is None:  # Gets database if needed
         database = get_database_data()
 
-    if guild_id in database:
-        return database[guild_id]["ComData"][position] == "1"
+    guild_id = str(ctx.guild.id)
+    channel_id = str(ctx.channel.id)
+
+    if guild_id in database and channel_id in database[guild_id]["channels"]:
+        # TODO CHECK ALL DATES AND HOURS
+        return position in database[guild_id]["channels"][channel_id]["date"]['D']['6']
     else:
         return False
 

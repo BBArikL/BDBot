@@ -40,8 +40,12 @@ class BDBot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        DailyPosterHandler.remove_guild(self, guild)
+        utils.remove_guild(guild, use="auto_remove_guild")
         print(f"Bot got removed from {guild}")
+
+    @commands.Cog.listener()
+    async def on_guild_channel_delete(self, deleted_channel):
+        utils.remove_channel(deleted_channel, use="auto_remove_channel")
 
     @commands.command(aliases=['Git', 'github', 'Github'])
     async def git(self, ctx):  # Links back to the github page
@@ -55,8 +59,14 @@ class BDBot(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
     async def remove_all(self, ctx):  # Remove the guild from the database
-        DailyPosterHandler.remove_guild(self, ctx)
+        utils.remove_guild(ctx)
         await ctx.send("All daily comics removed successfully!")
+
+    @commands.command()
+    @commands.has_permissions(manage_guild=True)  # Only mods can delete the channel from the database
+    async def remove_channel(self, ctx):  # Remove the channel from the database
+        utils.remove_channel(ctx)
+        await ctx.send("All daily comics removed successfully from this channel!")
 
     @commands.command()
     async def vote(self, ctx):  # Links back to the github page

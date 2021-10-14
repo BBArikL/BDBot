@@ -187,7 +187,7 @@ class Comic(commands.Cog):
             embed.add_field(name="First apparition", value=utils.get_date(utils.get_first_date(strip_details)), inline=True)
         embed.add_field(name="Aliases", value=strip_details["Aliases"], inline=True)
 
-        if utils.get_sub_status(str(ctx.guild.id), int(strip_details["Position"])):
+        if utils.get_sub_status(ctx, int(strip_details["Position"])):
             sub_stat = "Yes"
         else:
             sub_stat = "No"
@@ -220,14 +220,14 @@ class Comic(commands.Cog):
             elif param.find("add") != -1:
                 # Add the comic to the daily list for a guild
                 if ctx.message.author.guild_permissions.manage_guild:
-                    DailyPosterHandler.new_change(self, ctx, strip_details, "add")
+                    utils.new_change(ctx, strip_details, "add")
                     await ctx.send(f"{strip_details['Name']} added successfully as a daily comic!")
                 else:
                     await ctx.send("You need `manage_guild` permission to do that!")
             elif param.find("remove") != -1:
                 # Remove the comic to the daily list for a guild
                 if ctx.message.author.guild_permissions.manage_guild:
-                    DailyPosterHandler.new_change(self, ctx, strip_details, "remove")
+                    utils.new_change(ctx, strip_details, "remove")
                     await ctx.send(f"{strip_details['Name']} removed successfully from the daily list!")
                 else:
                     await ctx.send("You need `manage_guild` permission to do that!")

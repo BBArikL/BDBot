@@ -71,15 +71,19 @@ class DailyPosterHandler(commands.Cog):
         comic_data = utils.get_database_data()
         comic_list = [""] * NB_OF_COMICS
         comic_keys = list(strip_details.keys())
+        separator = ";"
 
         # Construct the list of what comics need to be sent
         for guild in comic_data:
-            i = 0
-            for char in comic_data[str(guild)]["ComData"]:
-                if char == "1":
-                    comic_list[i] += str(comic_data[str(guild)]["channel_id"]) + ";"
-
-                i += 1
+            for channel in comic_data[str(guild)]["channels"]:
+                post_days = ["D"]  # TODO add get_today()
+                for day in post_days:
+                    if day in comic_data[str(guild)]["channels"][str(channel)]["date"]:
+                        hour = "6"  # TODO add get_hour_now()
+                        if hour in comic_data[str(guild)]["channels"][str(channel)]["date"][day]:
+                            for pos in range(NB_OF_COMICS):
+                                if pos in comic_data[str(guild)]["channels"][str(channel)]["date"][day][hour]:
+                                    comic_list[pos] += str(channel) + separator
 
         # Check if any guild want the comic
         for i in range(len(comic_list)):
@@ -90,21 +94,11 @@ class DailyPosterHandler(commands.Cog):
                 embed = utils.create_embed(comic_details)  # Creates the embed
 
                 # Sends the comic to all subbed guilds
-                for channel in comic_list[i].split(";"):
+                for channel in comic_list[i].split(separator):
                     if channel is not None and channel != '':
                         channel = self.client.get_channel(int(channel))
 
                         await channel.send(embed=embed)
-
-    # Make a change in the database
-    def new_change(self, ctx, strip_details, param):
-        comic_number = int(strip_details["Position"])
-
-        utils.modify_database(self.strip_details, ctx, param, comics_number=comic_number)
-
-    # Removes a guild from the database
-    def remove_guild(self, ctx):
-        utils.modify_database(self.strip_details, ctx, 'remove_guild')
 
     @commands.command()
     async def updateDatabaseadd(self, ctx):
