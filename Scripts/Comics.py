@@ -13,8 +13,8 @@ class Comic(commands.Cog):
         self.client = client
         self.strip_details = comDetails.load_details()
 
-    # --- Start of functions PS: (If you want to add another comic, add it here between this and the 'END of comics
-    # parameters').
+    # --- Start of functions --- #
+    # --- If you want to add another comic, add it here between this and the 'END OF COMICS PARAMETERS'. --- #
 
     @commands.command(aliases=['Garfield', 'Garf', 'garfield'])
     async def garf(self, ctx, *, param=None):  # Garfield
@@ -187,6 +187,13 @@ class Comic(commands.Cog):
     @commands.command(aliases=['hiandlois', 'Hi', 'hi', 'Lois', 'lois'])
     async def HiandLois(self, ctx, *, param=None):
         comic_name = 'Hi-and-Lois'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
+    @commands.command(aliases=['SafelyEndangered', 'safelyendangered', 'Safely', 'safely', 'Safe'])
+    async def safe(self, ctx, *, param=None):
+        comic_name = 'Safely-Endangered'
 
         # Interprets the parameters given by the user
         await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)

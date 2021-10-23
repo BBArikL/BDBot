@@ -11,6 +11,7 @@ class Errors(commands.Cog):
 
     # For debugging purposes, you can make multi-line comments around this function to clearly see the errors in the
     # terminal. But you should at least not forget to remove the comments when your bot goes live ;)
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         # Handles errors

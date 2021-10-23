@@ -323,5 +323,18 @@
         "Image": "https://api.kingdigital.com/img/features/242/logos/website.png",
         "Aliases": "'HiandLois', 'hiandlois', 'Hi', 'hi', 'Lois', 'lois'",
         "Helptxt": "<TODO>!"
+    },
+    "Safely-Endangered":{
+        "Name": "Safely Endangered",
+        "Web_name": "comedy/safely-endangered/list?title_no=352",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "\"Safely Endangered is a webcomic drawn by me, Chris McCoy, a UK based cartoonist. I created the strip in late 2012 and began publishing comics via Tumblr. Ever since 2014, Safely Endangered has been published on Webtoon. New episodes are published every week and you can read over 600 free comics for free there. You can also find me at the occasional UK convention! When I'm not drawing comics, I like to play guitar, drink beers and watch re-runs of f.r.i.e.n.d.s :)\" -Chris McCoy \n\nOther Works:\nYour Adventure:https://www.webtoons.com/en/comedy/your-adventure/list?title_no=506.\nFacebook: https://facebook.com/safelyendangered\nTwitter: https://twitter.com/EndangeredComic\nWebsite: https://safelyendangered.com/\nMore info: https://safelyendangered.com/pages/comics",
+        "Position": 25,
+        "First_date": "1",
+        "Color": "F1AC52",
+        "Image": "https://swebtoon-phinf.pstatic.net/20160608_11/1465351605782P29tU_JPEG/thumb_ipad.jpg",
+        "Aliases": "'SafelyEndangered', 'safelyendangered', 'Safely', 'safely', 'Safe', 'safe'",
+        "Helptxt": "Silly comics for silly people updated each Monday and Wednesday!"
     }
 }

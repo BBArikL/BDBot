@@ -36,11 +36,20 @@ def create_embed(comic_details=None):
         else:
             alt = ""
 
+        if comic_details["sub_img_url"] != "":
+            thumbnail = comic_details["sub_img_url"]
+        else:
+            thumbnail = ""
+
         img_url = comic_details["img_url"]
 
+        # Creates the embed
         embed = discord.Embed(title=comic_title, url=url, description=alt, colour=color)
 
-        if day is not None or day != "":
+        if thumbnail != "": # Thumbnail for Webtoons
+            embed.set_thumbnail(url=thumbnail)
+
+        if day is not None and day != "":
             embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
 
         embed.set_image(url=img_url)
@@ -125,7 +134,7 @@ async def parameters_interpreter(ctx, strip_details, param=None):
         else:
             # Tries to parse date / number of comic
             working_type = strip_details["Working_type"]
-            if working_type != "number":
+            if working_type == "date" or strip_details["Main_website"] == 'https://garfieldminusgarfield.net/' :
                 # Works by date
                 try:
                     comic_date = datetime.strptime(param, "%d/%m/%Y")
@@ -145,8 +154,11 @@ async def parameters_interpreter(ctx, strip_details, param=None):
                 try:
                     number = int(param.split(" ")[0])
                     if number >= int(get_first_date(strip_details)):
-                        strip_details["Main_website"] = strip_details["Main_website"] + str(number) + '/'
-                        await comic_send(ctx, strip_details, param=param)
+                        if working_type == "number":
+                            strip_details["Main_website"] = strip_details["Main_website"] + str(number) + '/'
+                            await comic_send(ctx, strip_details, param=param)
+                        else:
+                            await comic_send(ctx, strip_details, "Specific_date", comic_date=number)
                     else:
                         await ctx.send("There is no comics with such values!")
 
@@ -292,7 +304,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None, channels=N
     elif use == 'remove_channel' or use == 'auto_remove_channel':
         guild_id = str(ctx.guild.id)
         channel_id = ""
-        if use == 'remove_guild':
+        if use == 'remove_channel':
             channel_id = str(ctx.channel.id)
         elif use == 'auto_remove_channel':
             channel_id = str(ctx.id)

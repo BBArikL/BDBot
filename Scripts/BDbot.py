@@ -56,7 +56,7 @@ class BDBot(commands.Cog):
         inv = discord.utils.oauth_url(os.getenv('CLIENT_ID'))
         await ctx.send(f'Share the bot! {inv}')
 
-    @commands.command()
+    @commands.command(aliases=["remove_guild"])
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
     async def remove_all(self, ctx):  # Remove the guild from the database
         utils.remove_guild(ctx)

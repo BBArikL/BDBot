@@ -12,7 +12,7 @@ import utils
 # Class that makes the web requests to have the fresh comic details
 
 ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "day": "", "month": "", "year": "",
-                    "img_url": "", "alt": "", "color": 0}
+                    "sub_img_url": "", "img_url": "", "alt": "", "color": 0}
 MAX_TRIES = 15
 
 
@@ -229,58 +229,79 @@ def get_comic_info_number(strip_details, param=None):
 
     # --- End of OtherSiteManager ---#
 
-    # For comics which can only be found by rss
 
-
+# For comics which can only be found by rss
 def get_comic_info_rss(strip_details, param=None, comic_date=None):
     # Details of the comic
+    fall_back_img = ""
+    rss_site = ""
+    max_entries = 19  # Max entries for rss files : 20
     details = ORIGINAL_DETAILS.copy()
     comic_nb = 0
 
     details["Name"] = strip_details["Name"]
     main_website = strip_details["Main_website"]
 
+    if main_website == 'https://garfieldminusgarfield.net/':
+        fall_back_img = 'https://64.media.tumblr.com/avatar_02c53466ae58_64.gif'
+        rss_site = 'https://garfieldminusgarfield.net/rss'
+    else:
+        main_website += strip_details["Web_name"]
+        fall_back_img = strip_details["Image"]
+        rss_site = main_website.replace("list", "rss")
+
     # Gets today date
     if param == "today":
-        d = date.today()
-        details["day"] = d.strftime("%d")
-        details["month"] = d.strftime("%m")
-        details["year"] = d.strftime("%Y")
+        # First comic in the rss feed
+        comic_nb = 0
+    elif param == 'random':
+        comic_nb = random.randint(0, max_entries)
 
-    # Get the RSS of the comic site
-    if main_website == 'https://garfieldminusgarfield.net/':
-        if param == 'random':
-            # Random comic in the rss feed (Go as far as July 11 2018)
-            comic_nb = random.randint(0, 19)
-        elif param == 'today':
-            # First comic in the rss feed
-            comic_nb = 0
+    details["title"] = strip_details["Name"]
 
-        details["title"] = strip_details["Name"]
+    if param == 'Specific_date':
+        details["img_url"] = fall_back_img
 
-        if param == 'Specific_date':
+        if main_website == 'https://garfieldminusgarfield.net/':
+            # Garfield minus Garfield
             date_formatted = comic_date.strftime("%Y/%m/%d")
 
             main_website += 'day/' + date_formatted
-
             details["url"] = main_website
-            details["img_url"] = 'https://64.media.tumblr.com/avatar_02c53466ae58_64.gif'
             details["day"] = comic_date.strftime("%d")
             details["month"] = comic_date.strftime("%m")
             details["year"] = comic_date.strftime("%Y")
         else:
-
-            main_website = 'https://garfieldminusgarfield.net/rss'
-            rss = Parser(xml=get(main_website).content, limit=None).parse()
-
-            # Get informations
-            details["url"] = rss.feed[comic_nb].link
-
-            details["img_url"] = rss.feed[comic_nb].description_images[0].source
-
-        if details is not None:
-            details["color"] = int(strip_details["Color"], 16)
+            # Webtoon
+            details["url"] = main_website + f"&episode_no={comic_date}"
     else:
-        return None
+        feed = Parser(xml=get(rss_site).content, limit=comic_nb+1).parse().feed[comic_nb]
+        # Get informations
+        tz = ""
+        weekday = ""
+        if strip_details["Main_website"] == 'https://www.webtoons.com/en/':
+            details["title"] = f"{feed.title}"
+            weekday = "A"
+            tz = "Z"
+        else:
+            weekday = "a"
+            tz = "z"
+
+        new_date = datetime.strptime(feed.publish_date, f"%{weekday}, %d %b %Y %H:%M:%S %{tz}")
+        details["day"] = new_date.strftime("%d")
+        details["month"] = new_date.strftime("%m")
+        details["year"] = new_date.strftime("%Y")
+
+        details["url"] = feed.link
+
+        img_index = 0
+        if strip_details["Main_website"] == 'https://www.webtoons.com/en/':
+            details["sub_img_url"] = feed.description_images[img_index].source
+            img_index += 1
+
+        details["img_url"] = feed.description_images[img_index].source
+
+    if details is not None:
+        details["color"] = int(strip_details["Color"], 16)
 
     return details
