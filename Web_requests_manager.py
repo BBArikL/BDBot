@@ -1,19 +1,19 @@
 from urllib.request import urlopen
+from urllib.error import HTTPError
 from datetime import date, timedelta, datetime
 from bs4 import BeautifulSoup
 from rss_parser import Parser
 from requests import get
 import json
-import urllib
 import random
 import randomtimestamp
+import utils
 
 # Class that makes the web requests to have the fresh comic details
-import utils
 
 ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "day": "", "month": "", "year": "",
                     "img_url": "", "alt": "", "color": 0}
-MAX_TRIES = 30
+MAX_TRIES = 15
 
 
 # Only gets the new comic details
@@ -57,10 +57,10 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
                 # Random comic
                 details["url"], random_date = get_random_link(strip_details)
 
-                # Get the html of the comic site
+            # Get the html of the comic site
             try:
                 html = urlopen(details["url"]).read()
-            except urllib.error.HTTPError:
+            except HTTPError:
                 html = None
 
             # Extracts the title of the comic
@@ -86,15 +86,15 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
                 final_date = None
                 if random_date is None:
                     # We have to parse the string (Only gocomics)
-                    final_date = datetime.strptime(details["url"].replace(f'https://www.gocomics.com/{strip_details["Web_name"]}/', ""), "%Y/%m/%d")
+                    final_date = datetime.strptime(
+                        details["url"].replace(f'https://www.gocomics.com/{strip_details["Web_name"]}/', ""),
+                        "%Y/%m/%d")
                 else:
                     final_date = random_date
 
                 details["day"] = final_date.strftime("%d")
                 details["month"] = final_date.strftime("%m")
                 details["year"] = final_date.strftime("%Y")
-
-
     else:
         return None
 
@@ -191,7 +191,7 @@ def get_comic_info_number(strip_details, param=None):
         # Get the html of the comic site
         try:
             html = urlopen(details["url"]).read()
-        except urllib.error.HTTPError:
+        except HTTPError:
             html = None
 
         if strip_details["Name"] != 'xkcd':

@@ -156,6 +156,41 @@ class Comic(commands.Cog):
         # Interprets the parameters given by the user
         await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
 
+    @commands.command(aliases=['Articcircle', 'articCircle', 'articcircle', 'Artic', 'artic', 'Circle', 'circle'])
+    async def ArticCircle(self, ctx, *, param=None):
+        comic_name = 'Artic-Circle'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
+    @commands.command(aliases=['lockhorns', 'Lock', 'lock'])
+    async def Lockhorns(self, ctx, *, param=None):
+        comic_name = 'Lockhorns'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
+    @commands.command(aliases=['marvin', 'Marv', 'marv'])
+    async def Marvin(self, ctx, *, param=None):
+        comic_name = 'Marvin'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
+    @commands.command(aliases=['zits', 'Zit', 'zit'])
+    async def Zits(self, ctx, *, param=None):
+        comic_name = 'Zits'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
+    @commands.command(aliases=['hiandlois', 'Hi', 'hi', 'Lois', 'lois'])
+    async def HiandLois(self, ctx, *, param=None):
+        comic_name = 'Hi-and-Lois'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
     # Random comic
     @commands.command(aliases=['rand', 'rnd'])
     async def random(self, ctx, *, param=None):

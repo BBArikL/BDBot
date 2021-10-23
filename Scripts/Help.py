@@ -21,8 +21,12 @@ class Help(commands.Cog):
         embed.add_field(name="Gocomics",
                         value="Use bd!help gocomics to get all comics that are supported on the Gocomics "
                               "website.\nCommands:\n`bd!<name-of-comic> today / random / dd/mm/YYY`.")
+        embed.add_field(name="Comics Kingdom",
+                        value="Use bd!help comicskingdom to get all comics that are supported on the Comics Kingdom "
+                              "website.\nCommands:\n`bd!<name-of-comic> today / random / dd/mm/YYY`.")
         for strip in strips:
-            if strips[strip]["Main_website"] != "https://www.gocomics.com/":
+            if strips[strip]["Main_website"] != "https://www.gocomics.com/" and strips[strip]["Main_website"] !=\
+                    "https://comicskingdom.com/":
                 embed.add_field(name=strips[strip]['Name'], value=f"{strips[strip]['Helptxt']}\nAliases: "
                                                                   f"{strips[strip]['Aliases']} / random "
                                                                   f"/ # or date of comic.")

@@ -92,7 +92,7 @@ async def comic_send(ctx, strip_details, param, comic_date=None):
 
 
 # Interprets the parameters given by the user
-async def parameters_interpreter(self, ctx, strip_details, param=None):
+async def parameters_interpreter(ctx, strip_details, param=None):
     if param is not None:
         """ Parameters:
             today -> Today's comic

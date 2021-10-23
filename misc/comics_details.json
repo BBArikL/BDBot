@@ -258,5 +258,70 @@
         "Image": "https://api.kingdigital.com/img/features/232/logos/website.png",
         "Aliases": "'Popeyes', 'popeyes', 'Pop', 'pop', 'Pops', 'Popeye', 'popeye'",
         "Helptxt": "<TODO>!"
+    },
+    "Artic-Circle":{
+        "Name": "Artic Circle",
+        "Web_name": "arctic-circle",
+        "Main_website": "https://comicskingdom.com/",
+        "Working_type": "date",
+        "Description": "Arctic Circle is a comic strip about three penguins who have migrated from the Antarctic to the small town of Snowpeak within the Arctic Circle.\n\nThe penguins have joined a polar bear, a snow bunny, a lemming and an Arctic tern. Collectively, they deal with everything the 21st century has to throw at them, including climate change, fashion, Facebook and genetically modified organisms gone wild.\n\nFacebook: https://www.facebook.com/arcticcirclecartoons/\nTwitter: https://twitter.com/alexhtweets\nInstagram: https://www.instagram.com/alexhallattcartoons/\nMore info: https://comicskingdom.com/artic-circle/about",
+        "Position": 20,
+        "First_date": "",
+        "Color": "C4E5F6",
+        "Image": "https://api.kingdigital.com/img/features/2/logos/website.png",
+        "Aliases": "'ArticCircle', 'Articcircle', 'articCircle', 'articcircle', 'Artic', 'artic', 'Circle', 'circle'",
+        "Helptxt": "A band of penguins and their friends have moved to the little town of Snowpeak, ready to deal with everything the 21st century has to throw at them!"
+    },
+    "Lockhorns":{
+        "Name": "The lockhorns",
+        "Web_name": "lockhorns",
+        "Main_website": "https://comicskingdom.com/",
+        "Working_type": "date",
+        "Description": "Join Leroy and Loretta Lockhorn in the award-winning comic strips gently spoofs the state of marital bliss, poking fun at the foibles of both partners. Their snappy repartee and witty banter has made them a perennial favorite.\n\nFacebook: https://www.facebook.com/TheLockhornsComic\nMore info: https://comicskingdom.com/lockhorns/about",
+        "Position": 21,
+        "First_date": "",
+        "Color": "03A582",
+        "Image": "https://api.kingdigital.com/img/features/292/logos/website.png",
+        "Aliases": "'Lockhorns', 'lockhorns', 'Lock', 'lock'",
+        "Helptxt": "Join Loretta and Leroy Lockhorns in their humorous couple!"
+    },
+    "Marvin":{
+        "Name": "Marvin",
+        "Web_name": "marvin",
+        "Main_website": "https://comicskingdom.com/",
+        "Working_type": "date",
+        "Description": "Marvin features a precocious red-headed toddler who spends much of his time lost in his own thoughts and fantasy adventures.\n\nLike most young children - and too many adults - Marvin is convinced that hersquos the center of the universe. And as such, he believes that everything and everyone else revolves around him. He may be right. Marvin is definitely the epicenter of all the activity and chaos in his family! Marvin relegates his mom and dad, Jenny and Jeff, to the position of household staff.\n\nMore info: https://comicskingdom.com/marvin/about",
+        "Position": 22,
+        "First_date": "",
+        "Color": "CC4637",
+        "Image": "https://api.kingdigital.com/img/features/342/logos/website.jpg",
+        "Aliases": "'Marvin', 'marvin', 'Marv', 'marv'",
+        "Helptxt": "Join the Miller family as they live adventures and good laughs!"
+    },
+    "Zits":{
+        "Name": "Zits",
+        "Web_name": "zits",
+        "Main_website": "https://comicskingdom.com/",
+        "Working_type": "date",
+        "Description": "Sixteen-year-old Jeremy Duncan is a high school freshman and an aspiring musician. He daydreams about the day when his band, Goat Cheese Pizza, records their first monster hit single, and they all pile into his van for their cross-country, sold-out concert tour. Between naps, study hall and band practice, Jeremy still manages to find time to be the star of the hugely popular comic strip, Zits.\n\nCreated in 1997 by Pulitzer Prize-winning editorial cartoonist Jim Borgman and Reuben Award-winning cartoonist/writer Jerry Scott, Zits appears in more than 1,600 newspapers worldwide in 45 countries and is translated into 15 different languages. The comic has an estimated daily readership of more than 200 million readers. Zits is the only strip in comics history to achieve that milestone in the short span of nine years.\nFacebook: https://www.facebook.com/zitscomics\nInstagram: https://www.instagram.com/zitsguys/\nMore info: https://comicskingdom.com/zits/about",
+        "Position": 23,
+        "First_date": "",
+        "Color": "7F4B85",
+        "Image": "https://api.kingdigital.com/img/features/642/logos/website.png",
+        "Aliases": "'Zits', 'zits', 'Zit', 'zit'",
+        "Helptxt": "<TODO>!"
+    },
+    "Hi-and-Lois":{
+        "Name": "Hi and Lois",
+        "Web_name": "hi-and-lois",
+        "Main_website": "https://comicskingdom.com/",
+        "Working_type": "date",
+        "Description": "Hi and Lois was created in 1954 by Mort Walker and Dik Browne, two of the most successful cartoonists in comic history. Provoking a strong emotional response from readers right from the beginning, it grew steadily in popularity, passing the 1,000-newspaper mark in 1982. It is continued today by their sons, writers Brian and Greg Walker and artist Chance Browne. Whether itrsquos busy parents juggling jobs and raising a family, a teen coping with his self-image, sibling rivalry among the youngsters, or a toddler learning about the world and her place in it, Hi and Lois has kept pace with mainstream life and found the gentle humor in familiar situations.\nFacebook: https://www.facebook.com/hiandlois\nInstagram: https://www.instagram.com/ericreavesart\nMore info: https://comicskingdom.com/hi-and-lois/about",
+        "Position": 24,
+        "First_date": "",
+        "Color": "CE552C",
+        "Image": "https://api.kingdigital.com/img/features/242/logos/website.png",
+        "Aliases": "'HiandLois', 'hiandlois', 'Hi', 'hi', 'Lois', 'lois'",
+        "Helptxt": "<TODO>!"
     }
 }
