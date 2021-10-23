@@ -4,6 +4,7 @@ import random
 from datetime import datetime, timedelta
 import json
 import os
+import Web_requests_manager
 
 FOOTERS_FILE_PATH = 'misc/random-footers.txt'
 DATABASE_FILE_PATH = "data/data.json"
@@ -58,11 +59,110 @@ def create_embed(comic_details=None):
 
         return embed
 
+
+# Sends comics info in a embed
+async def send_comic_info(ctx, strip_details):
+    embed = discord.Embed(title=strip_details["Name"], url=strip_details["Main_website"],
+                          description=strip_details["Description"], color=int(strip_details["Color"], 16))
+    embed.set_thumbnail(url=strip_details["Image"])
+    embed.add_field(name="Working type", value=strip_details["Working_type"], inline=True)
+
+    if strip_details["Working_type"] == "date":
+        embed.add_field(name="First apparition", value=get_date(get_first_date(strip_details)), inline=True)
+    embed.add_field(name="Aliases", value=strip_details["Aliases"], inline=True)
+
+    if get_sub_status(ctx, int(strip_details["Position"])):
+        sub_stat = "Yes"
+    else:
+        sub_stat = "No"
+
+    embed.add_field(name="Subscribed", value=sub_stat, inline=True)
+    embed.set_footer(text="Random footer")
+    embed.set_footer(text=get_random_footer())
+
+    await ctx.send(embed=embed)
+
+
+# Post the strip (with the given parameters)
+async def comic_send(ctx, strip_details, param, comic_date=None):
+    comic_details = Web_requests_manager.get_new_comic_details(strip_details, param, comic_date=comic_date)
+
+    # Sends the comic
+    await send_comic_embed(ctx, comic_details)
+
+
+# Interprets the parameters given by the user
+async def parameters_interpreter(self, ctx, strip_details, param=None):
+    if param is not None:
+        """ Parameters:
+            today -> Today's comic
+            add -> Add the comic to the daily posting list
+            remove -> remove the comic to the daily posting list
+            random -> Choose a random comic to send
+            """
+        param = param.lower()
+
+        if param.find("today") != -1:
+            # Sends the website of today's comic
+            await comic_send(ctx, strip_details, "today")
+        elif param.find("random") != -1:
+            # Random comic
+            await comic_send(ctx, strip_details, "random")
+        elif param.find("add") != -1:
+            # Add the comic to the daily list for a guild
+            if ctx.message.author.guild_permissions.manage_guild:
+                new_change(ctx, strip_details, "add")
+                await ctx.send(f"{strip_details['Name']} added successfully as a daily comic!")
+            else:
+                await ctx.send("You need `manage_guild` permission to do that!")
+        elif param.find("remove") != -1:
+            # Remove the comic to the daily list for a guild
+            if ctx.message.author.guild_permissions.manage_guild:
+                new_change(ctx, strip_details, "remove")
+                await ctx.send(f"{strip_details['Name']} removed successfully from the daily list!")
+            else:
+                await ctx.send("You need `manage_guild` permission to do that!")
+        else:
+            # Tries to parse date / number of comic
+            working_type = strip_details["Working_type"]
+            if working_type != "number":
+                # Works by date
+                try:
+                    comic_date = datetime.strptime(param, "%d/%m/%Y")
+                    first_date = datetime.strptime(get_first_date(strip_details), "%Y, %m, %d")
+                    if first_date <= comic_date <= datetime.utcnow():
+                        await comic_send(ctx, strip_details, "Specific_date", comic_date=comic_date)
+                    else:
+                        first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
+                        date_now_formatted = datetime.strftime(datetime.utcnow(), "%d/%m/%Y")
+                        await ctx.send(
+                            f"Invalid date. Try sending a date between {first_date_formatted} and "
+                            f"{date_now_formatted}.")
+                except ValueError:
+                    await ctx.send("This is not a valid date format! The format is : DD/MM/YYYY.")
+            else:
+                # Works by number of comic
+                try:
+                    number = int(param.split(" ")[0])
+                    if number >= int(get_first_date(strip_details)):
+                        strip_details["Main_website"] = strip_details["Main_website"] + str(number) + '/'
+                        await comic_send(ctx, strip_details, param=param)
+                    else:
+                        await ctx.send("There is no comics with such values!")
+
+                except ValueError:
+                    await ctx.send('This is not a valid comic number!')
+    else:
+        # If the user didn't send any parameters, return informations the comic requested
+        await send_comic_info(ctx, strip_details)
+
+
 # Make a change in the database
 def new_change(ctx, strip_details, param):
     comic_number = int(strip_details["Position"])
 
     modify_database(ctx, param, comic_number=comic_number)
+
 
 # Removes a guild from the database
 def remove_guild(guild, use=None):

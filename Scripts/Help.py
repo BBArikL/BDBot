@@ -62,6 +62,14 @@ class Help(commands.Cog):
 
         await self.website_specific_embed(ctx, website_name, website)
 
+    # Gocomics help embed
+    @help.command()
+    async def comicskingdom(self, ctx):
+        website_name = "Comics Kingdom"
+        website = "https://comicskingdom.com/"
+
+        await self.website_specific_embed(ctx, website_name, website)
+
     # Create a embed with all the specific comics from a website
     async def website_specific_embed(self, ctx, website_name, website, nb_per_embed=1000000):
         strips = self.strip_details
@@ -79,7 +87,7 @@ class Help(commands.Cog):
                     await ctx.send(embed=embed)
                     i = 0
                     # Reset the embed to create a new one
-                    embed = embed = discord.Embed(title=f"{website_name}!")
+                    embed = discord.Embed(title=f"{website_name}!")
                     embed.set_footer(text=utils.get_random_footer())
 
         if i != 0:
