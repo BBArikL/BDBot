@@ -4,9 +4,9 @@ from datetime import date, timedelta, datetime
 from bs4 import BeautifulSoup
 from rss_parser import Parser
 from requests import get
+from randomtimestamp import randomtimestamp
 import json
 import random
-import randomtimestamp
 import utils
 
 # Class that makes the web requests to have the fresh comic details
@@ -122,9 +122,9 @@ def get_random_link(strip_details):  # Returns the random comic url
         return f'{strip_details["Main_website"]}random/{strip_details["Web_name"]}', None
     else:
         first_date = datetime.strptime(utils.get_first_date(strip_details), "%Y, %m, %d")
-        random_date = randomtimestamp.randomtimestamp(start=first_date,
-                                                      end=datetime.today().replace(hour=0, minute=0, second=0,
-                                                                                   microsecond=0))
+        random_date = randomtimestamp(start=first_date,
+                                      end=datetime.today().replace(hour=0, minute=0, second=0,
+                                                                   microsecond=0))
         middle_params = ""
         if strip_details["Main_website"] == "https://comicskingdom.com/":
             middle_params = strip_details["Web_name"]
@@ -149,7 +149,7 @@ def extract_meta_content(html, content):
         return None
 
 
-# For sites which works number
+# For sites which works by number
 def get_comic_info_number(strip_details, param=None):
     # Details of the comic
     details = ORIGINAL_DETAILS.copy()

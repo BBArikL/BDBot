@@ -105,22 +105,25 @@ class BDBot(commands.Cog):
 
         if guild_data is not None:
             comic_list = []
-            com_data = guild_data["ComData"]
-            comic_index = 0
-            comic_values = list(self.strip_details.values())
-            for comic in com_data:
-                if comic == "1":
-                    comic_list.append(comic_values[comic_index]["Name"])
+            comic_values = self.strip_details
 
-                comic_index += 1
+            for channel in guild_data["channel"]:
+                for day in guild_data["channel"][channel]:
+                    for hour in guild_data["channels"][day]:
+                        for comic in guild_data["channels"][day][hour]:
+                            if comic not in comic_list:
+                                comic_list.append(comic_values[comic]["Name"])
 
-            await ctx.send("This guild is subscribed to: " + (", ".join(comic_list)))
+            if comic_list is not []:
+                await ctx.send("This guild is subscribed to: " + (", ".join(comic_list)))
+            else:
+                await ctx.send("This guild is not subscribed to any comic!")
         else:
             await ctx.send("This guild is not subscribed to any comic!")
 
     @commands.command()
     async def kill(self, ctx):
-        if ctx.author.id == int(os.getenv("BOT_OWNER_ID")):
+        if utils.is_owner(ctx):
             # Close the bot connection
             await ctx.send("Closing bot....")
 

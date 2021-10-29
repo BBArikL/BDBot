@@ -198,6 +198,48 @@ class Comic(commands.Cog):
         # Interprets the parameters given by the user
         await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
 
+    @commands.command(aliases=['carl'])
+    async def Carl(self, ctx, *, param=None):
+        comic_name = 'Carl'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
+    @commands.command(aliases=['blueChair', 'Bluechair', 'bluechair', 'blue', 'chair'])
+    async def BlueChair(self, ctx, *, param=None):
+        comic_name = 'BlueChair'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
+    @commands.command(aliases=['adventuresOfGod', 'adventuresGod', 'adventuresofgod', 'AOO', 'AOGod', 'aogod'])
+    async def AdventuresOfGod(self, ctx, *, param=None):
+        comic_name = 'Adventures-of-God'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
+    @commands.command(aliases=['livewithyourself', 'Live', 'live', 'LWY', 'lwy'])
+    async def LiveWithYourself(self, ctx, *, param=None):
+        comic_name = 'Live-with-yourself'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
+    @commands.command(aliases=['system32', 'Sys32', 'sys32', 'sys'])
+    async def System32(self, ctx, *, param=None):
+        comic_name = 'System32comics'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
+    @commands.command(aliases=['theGamer', 'thegamer', 'Gamer', 'gamer', 'game'])
+    async def TheGamer(self, ctx, *, param=None):
+        comic_name = 'TheGamer'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param)
+
     # Random comic
     @commands.command(aliases=['rand', 'rnd'])
     async def random(self, ctx, *, param=None):

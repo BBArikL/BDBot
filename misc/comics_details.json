@@ -336,5 +336,83 @@
         "Image": "https://swebtoon-phinf.pstatic.net/20160608_11/1465351605782P29tU_JPEG/thumb_ipad.jpg",
         "Aliases": "'SafelyEndangered', 'safelyendangered', 'Safely', 'safely', 'Safe', 'safe'",
         "Helptxt": "Silly comics for silly people updated each Monday and Wednesday!"
+    },
+    "Carl":{
+        "Name": "Carl",
+        "Web_name": "slice-of-life/carl/list?title_no=1216",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "Carl is a robot psychiatrist that suddenly becomes sentient. He starts longing to be human but his creator and father figure Dr Alda prevents him from showing his feelings out of fear of losing him. More challenges arise when Alda’s arch nemesis sets out to destroy them both.\nHussein Traboulsi's twitter: https://twitter.com/hughsain1\nInstagram: https://www.instagram.com/hughsain/?hl=en\nClaudia Z. twitter: https://twitter.com/SWEETC0UPS\nMore info: https://www.webtoons.com/en/slice-of-life/carl/list?title_no=1216",
+        "Position": 26,
+        "First_date": "1",
+        "Color": "798F90",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210707_107/16256036334140R8Fb_JPEG/1CARL_desktop_thumbnail.jpg",
+        "Aliases": "'Carl', 'carl'",
+        "Helptxt": "Join the adventures of the sentient robot Carl updated each Thuesday and Sunday!"
+    },
+    "BlueChair":{
+        "Name": "BlueChair",
+        "Web_name": "slice-of-life/bluechair/list?title_no=199",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "\"I'm the cartoonist behind Bluechair, Owlturd, and Live With Yourself! My comics are usually based on thoughts I have when I forget to think \"no, wait, that's stupid.\" If you say my name 3 times, I won't necessarily appear before you, but I might suddenly become nervous and not know why.\" -Shen\n\nOther Works:\nLive with yourself: https://www.webtoons.com/en/comedy/live-with-yourself/list?title_no=919.\nFacebook: https://www.facebook.com/owlturdcomix\nTwitter: https://twitter.com/shenanigansen\nWebsite: https://safelyendangered.com/\nMore info: https://safelyendangered.com/pages/comics",
+        "Position": 27,
+        "First_date": "1",
+        "Color": "FBD55D",
+        "Image": "https://swebtoon-phinf.pstatic.net/20180704_72/1530671398892KGNLr_JPEG/10_EC8DB8EB84A4EC9DBC_ipad.jpg",
+        "Aliases": "'BlueChair', 'blueChair', 'Bluechair', 'bluechair', 'blue', 'chair'",
+        "Helptxt": "The internet's favorite visual stand-up comic to make memes out of, updated each Wednesday and Satudray!"
+    },
+    "Adventures-of-God":{
+        "Name": "Adventures of God",
+        "Web_name": "comedy/adventures-of-god/list?title_no=853",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "In this slice of (eternal) life, you'll meet God, visit Heaven and learn that what goes on behind the pearly gates isn't exactly the way the good book describes it. For starters, it's a pretty unhealthy work environment - what with God's ginormous, fragile ego and heavy drinking problem. The good news is that while heaven is a lot less holy than expected, it's much more hilarious too.\n\nOther Works:\nDeadlove: https://www.webtoons.com/en/slice-of-life/deadlove/list?title_no=2460\nMy Dictator Boyfriend: https://www.webtoons.com/en/comedy/my-dictator-boyfriend/list?title_no=1391\nFacebook: https://www.facebook.com/adventuresofgod\nTwitter: https://twitter.com/adventuresofteo\nMore info: https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853",
+        "Position": 28,
+        "First_date": "1",
+        "Color": "EDE4DE",
+        "Image": "https://swebtoon-phinf.pstatic.net/20170502_80/1493715267628Gz02K_JPEG/thumb_ipad.jpg",
+        "Aliases": "'AdventuresOfGod', 'adventuresOfGod', 'adventuresGod', 'adventuresofgod', 'AOO', 'AOGod', 'aogod'",
+        "Helptxt": "The adventures of God, Gabe, Satan and Ebag updated each Tuesday and Saturday!"
+    },
+    "Live-with-yourself":{
+        "Name": "Live with yourself",
+        "Web_name": "comedy/live-with-yourself/list?title_no=919",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "An explosive time-space accident leaves happy-go-lucky 20-something Todd living with himself, himself, and himself. You get to watch the struggle.\n\nOther Works:\nBlueChair:https://www.webtoons.com/en/slice-of-life/bluechair/list?title_no=199\nMercWorks:https://www.webtoons.com/en/slice-of-life/mercworks/list?title_no=426\nFacebook: https://www.facebook.com/owlturdcomix\nTwitter: https://twitter.com/shenanigansen\nFacebook: https://facebook.com/mercworks.net\nTwitter: https://twitter.com/MercWorks\nWebsite: https://www.mercworks.net/\nMore info: https://www.mercworks.net/lwys",
+        "Position": 29,
+        "First_date": "1",
+        "Color": "F3DF76",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210329_125/1616995930991WAfcF_JPEG/5Live-with-Yourself21_ipad.jpg",
+        "Aliases": "'LiveWithYourself', 'livewithyourself', 'Live', 'live', 'LWY', 'lwy'",
+        "Helptxt": "Watch Todd live with himself at different time of his life each Tuesday and Sunday!!"
+    },
+    "System32comics":{
+        "Name": "System32Comics",
+        "Web_name": "challenge/system32comics/list?title_no=235074",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "If a computer could talk, what would it say? A tech webcomic!\nOther Works: https://twitter.com/System32ComicsA\nLinkTree: https://linktr.ee/System32Comics\nTwitter: https://twitter.com/system32comics\nFacebook: https://www.facebook.com/System32Comics\nInstagram: https://www.instagram.com/system32comics/\n Patreon: https://www.patreon.com/System32Comics\nMore info: https://www.webtoons.com/en/challenge/system32comics/list?title_no=235074",
+        "Position": 30,
+        "First_date": "1",
+        "Color": "BFDBBF",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210924_160/1632421968047cVuvN_JPEG/8fbef6a0-ea3d-472b-b655-1fe4395d1bc3.jpg",
+        "Aliases": "'System32', 'system32', 'Sys32', 'sys32', 'sys'",
+        "Helptxt": "A tech webcomic in a world where computers can talk!"
+    },
+    "TheGamer":{
+        "Name": "The Gamer",
+        "Web_name": "action/the-gamer/list?title_no=88",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "Jihan Han is your typical high school student -- minus the fact the he’s acquired the special ability to view the world around him as a video-game. Not long after this discovery, he stumbles upon a hidden world filled with others just like him. Now, amidst juggling homework and completing quests, Jihan must learn how to navigate his newfound power in order to level up in life.\nMore info: https://www.webtoons.com/en/action/the-gamer/list?title_no=88",
+        "Position": 31,
+        "First_date": "1",
+        "Color": "8B95C9",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210329_218/16169951215067JJXW_JPEG/6The-Gamer_ipad.jpg",
+        "Aliases": "'TheGamer', 'theGamer', 'thegamer', 'Gamer', 'gamer', 'game'",
+        "Helptxt": "What if your life turned into a video game? Follow Jihan Han advntures each Friday"
     }
 }

@@ -46,7 +46,7 @@ def create_embed(comic_details=None):
         # Creates the embed
         embed = discord.Embed(title=comic_title, url=url, description=alt, colour=color)
 
-        if thumbnail != "": # Thumbnail for Webtoons
+        if thumbnail != "":  # Thumbnail for Webtoons
             embed.set_thumbnail(url=thumbnail)
 
         if day is not None and day != "":
@@ -134,7 +134,7 @@ async def parameters_interpreter(ctx, strip_details, param=None):
         else:
             # Tries to parse date / number of comic
             working_type = strip_details["Working_type"]
-            if working_type == "date" or strip_details["Main_website"] == 'https://garfieldminusgarfield.net/' :
+            if working_type == "date" or strip_details["Main_website"] == 'https://garfieldminusgarfield.net/':
                 # Works by date
                 try:
                     comic_date = datetime.strptime(param, "%d/%m/%Y")
@@ -192,11 +192,9 @@ def remove_channel(ctx, use=None):
     modify_database(ctx, use)
 
 
-def modify_database(ctx, use, day=None, hour=None, comic_number=None, channels=None):
+def modify_database(ctx, use, day=None, hour=None, comic_number=None):
     # Saves the new informations in the database
     # Adds or delete the guild_id, the channel id and the comic_strip data
-    data = get_database_data()
-
     data = get_database_data()
 
     if use == 'add':
@@ -236,10 +234,10 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None, channels=N
                 d[guild_id]["channels"].update({channel_id: {"channel_id": 0, "date": {}}})
 
             if day is None:
-                day = "D"
+                day = "D"  # Default: Daily
 
             if hour is None:
-                hour = "6"
+                hour = "6"  # Default: 6 AM UTC
 
             # Checks if the day, the hour and the comic was already set for the channel
             if day not in d[guild_id]["channels"][channel_id]["date"]:
@@ -324,7 +322,7 @@ def get_database_data():
     with open(DATABASE_FILE_PATH, 'r') as f:
         data = json.load(f)
 
-        return data
+    return data
 
 
 # Returns a specific guild's data
@@ -387,3 +385,11 @@ def get_first_date(strip_details):
         return (datetime.today() - timedelta(days=7)).strftime("%Y, %m, %d")
     else:
         return strip_details["First_date"]
+
+
+def get_today():
+    return datetime.utcnow().today().strftime("%A")[2:]
+
+
+def get_hour():
+    return str(datetime.utcnow().hour)

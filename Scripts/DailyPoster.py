@@ -69,51 +69,36 @@ class DailyPosterHandler(commands.Cog):
         strip_details = self.strip_details
         NB_OF_COMICS = len(strip_details)
         comic_data = utils.get_database_data()
-        comic_list = [""] * NB_OF_COMICS
+        comic_list = [[]] * NB_OF_COMICS
         comic_keys = list(strip_details.keys())
-        separator = ";"
+        post_days = ["D", utils.get_today()]
+        hour = utils.get_hour()
 
         # Construct the list of what comics need to be sent
         for guild in comic_data:
             for channel in comic_data[str(guild)]["channels"]:
-                post_days = ["D"]  # TODO add get_today()
                 for day in post_days:
                     if day in comic_data[str(guild)]["channels"][str(channel)]["date"]:
-                        hour = "6"  # TODO add get_hour_now()
                         if hour in comic_data[str(guild)]["channels"][str(channel)]["date"][day]:
                             for pos in range(NB_OF_COMICS):
-                                if pos in comic_data[str(guild)]["channels"][str(channel)]["date"][day][hour]:
-                                    comic_list[pos] += str(channel) + separator
+                                if pos in comic_data[str(guild)]["channels"][str(channel)]["date"][day][hour] \
+                                        and channel not in comic_list[pos]:
+                                    comic_list[pos].append(channel)
 
         # Check if any guild want the comic
         for i in range(len(comic_list)):
-            if comic_list[i] != "":
+            if comic_list[i]:  # TODO check back on this
                 # Load the new details
                 comic_details = Web_requests_manager.get_new_comic_details(strip_details[comic_keys[i]], "today")
 
                 embed = utils.create_embed(comic_details)  # Creates the embed
 
                 # Sends the comic to all subbed guilds
-                for channel in comic_list[i].split(separator):
-                    if channel is not None and channel != '':
+                for channel in comic_list[i]:
+                    if channel is not None:
                         channel = self.client.get_channel(int(channel))
 
                         await channel.send(embed=embed)
-
-    @commands.command()
-    async def updateDatabaseadd(self, ctx):
-        # Add one 0 to each "ComData" when changing the comic list
-        if utils.is_owner(ctx):
-            data = utils.get_database_data()
-
-            for guild in data:
-                data[guild]["ComData"] += "0"
-
-            utils.save(data)
-
-            await ctx.send("Updated the database by adding 1 one comic to all servers.")
-        else:
-            raise commands.CommandNotFound
 
     @commands.command()
     async def updateDatabaseremove(self, ctx, *, number=None):
