@@ -134,7 +134,7 @@ async def parameters_interpreter(ctx, strip_details, param=None):
         else:
             # Tries to parse date / number of comic
             working_type = strip_details["Working_type"]
-            if working_type == "date" or strip_details["Main_website"] == 'https://garfieldminusgarfield.net/':
+            if working_type == "date" or strip_details["Main_website"] == 'https://garfieldminusgarfield.net/' :
                 # Works by date
                 try:
                     comic_date = datetime.strptime(param, "%d/%m/%Y")
