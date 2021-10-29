@@ -24,13 +24,20 @@ Discord bot that post bd strips. Simple as that!
 - Brevity https://www.gocomics.com/brevity
 - Cats cafe https://www.gocomics.com/cats-cafe
 - Popeyes https://comicskingdom.com/popeye
-### To Add:
-- Poorly drawn lines https://poorlydrawnlines.com/
+- Artic Circle https://comicskingdom.com/arctic-circle
+- Lockhorns https://comicskingdom.com/lockhorns
+- Marvin https://comicskingdom.com/marvin
+- Zits https://comicskingdom.com/zits
+- Hi and Lois https://comicskingdom.com/hi-and-lois
 - Safely endangered https://www.webtoons.com/en/comedy/safely-endangered/list?title_no=352
 - Carl https://www.webtoons.com/en/slice-of-life/carl/list?title_no=1216
 - BlueChair https://www.webtoons.com/en/slice-of-life/bluechair/list?title_no=199
 - Live with yourself https://www.webtoons.com/en/comedy/live-with-yourself/list?title_no=919
 - Adventures of god https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853
+- System32Comics https://www.webtoons.com/en/challenge/system32comics/list?title_no=235074
+- The Gamer https://www.webtoons.com/en/action/the-gamer/list?title_no=88
+### To Add:
+- Poorly drawn lines https://poorlydrawnlines.com/
 - War and peas https://warandpeas.com/
 
 ## Related Github pages: 
@@ -61,13 +68,13 @@ CalvinBot : https://github.com/wdr1/CalvinBot
 
 - TODO
   - Sites to add support:
-    - Webtoons
     - See section TO ADD
   - Other:
     - Optimize Web_requests_manager
  
 - Anything else to know?
   - Why can't I go farther than 7 comics on Comics Kingdom? Comics Kingdom use a special premium subscription plan to view all comics. There is no known way to get around it and getting the subscription and after distributing the comic for free could cause some undesirable consequences in the future.
+  - Why is there only 2 images for Webtoons? Webtoons only gives out two images link to the comic in their rss feed. Finding each image link is way more complicated than this and is not in place now.
   - The error manager ('Errors.py') might be sometimes commented out because I want to see the errors directly in the terminal. Please tell me if I forget to remove those multi-line comments.
   - You want to do a pull request to add your favourite comic? 
     - Preferably, Gocomics and Comics Kingdom comics are the easiest to implement, so try to stick with that if your comic is hosted there. 
@@ -75,11 +82,11 @@ CalvinBot : https://github.com/wdr1/CalvinBot
         1. Add a new value in misc/comics_details.json that specifies each value for the comic. (See [this README](misc/ADD_COMIC.md)).
         2. Add a command in Scripts/Comics.py under the latest comic with aliases that are the same that were added to the json file and change the value of 'comic_name' to the name of the comic added.
         3. That's it!
-   - If the comic is NOT hosted on GoComics/Comics Kingdom, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
-   - Any pull requests that was not approved from another site will be automatically rejected and you will be asked to follow the procedure cited.
-   - 'Beta' and 'main'?
-     - The main branch is the current bot that is running on Discord.
-     - Beta branch is for all experiments and additions waiting for approval to add to the current bot. This runs on a (for now) private bot upon completion of current goals.
-     - More about branches: https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-branches
-   - Core features of the bot are done, and it is hosted on Replit.
-   - The bot is on UTC time. The daily comic post happen at 6:00 AM UTC daily.
+  - If the comic is NOT hosted on GoComics/Comics Kingdom, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
+  - Any pull requests that was not approved from another site will be automatically rejected and you will be asked to follow the procedure cited.
+  - 'Beta' and 'main'?
+    - The main branch is the current bot that is running on Discord.
+    - Beta branch is for all experiments and additions waiting for approval to add to the current bot. This runs on a (for now) private bot upon completion of current goals.
+    - More about branches: https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-branches
+  - Core features of the bot are done, and it is hosted on Replit.
+  - The bot is on UTC time. The daily comic post happen at 6:00 AM UTC daily.
