@@ -99,23 +99,34 @@ class BDBot(commands.Cog):
 
         await ctx.send("Request saved! Thank you for using BDBot!")
 
+    @commands.has_permissions(manage_guild=True)
     @commands.command(aliases=["subs", "subscriptions", "subscription"])
     async def sub(self, ctx):  # Checks if the server is subbed to any comic
         guild_data = utils.get_specific_guild_data(ctx)
 
         if guild_data is not None:
             comic_list = []
-            comic_values = self.strip_details
+            comic_values = list(self.strip_details.values())
 
-            for channel in guild_data["channel"]:
-                for day in guild_data["channel"][channel]:
-                    for hour in guild_data["channels"][day]:
-                        for comic in guild_data["channels"][day][hour]:
-                            if comic not in comic_list:
-                                comic_list.append(comic_values[comic]["Name"])
+            for channel in guild_data["channels"]:
+                for day in guild_data["channels"][channel]["date"]:
+                    for hour in guild_data["channels"][channel]["date"][day]:
+                        for comic in guild_data["channels"][channel]["date"][day][hour]:
+                            comic_name = comic_values[comic]["Name"]
+                            comic_list.append({
+                                "Name": comic_name,
+                                "Hour": hour,
+                                "Date": day,
+                                "Channel": self.client.get_channel(int(channel)).mention
+                            })
 
-            if comic_list is not []:
-                await ctx.send("This guild is subscribed to: " + (", ".join(comic_list)))
+            if len(comic_list) > 0:
+                comic_txt = ""
+                matching_date = utils.match_date
+                for comic in comic_list:
+                    comic_txt += f"\n> {comic['Name']} each {matching_date[comic['Date']]} at {comic['Hour']}h UTC " \
+                                 f"in channel {comic['Channel']}"
+                await ctx.send("This guild is subscribed to: "+comic_txt)
             else:
                 await ctx.send("This guild is not subscribed to any comic!")
         else:

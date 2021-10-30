@@ -8,6 +8,17 @@ import Web_requests_manager
 
 FOOTERS_FILE_PATH = 'misc/random-footers.txt'
 DATABASE_FILE_PATH = "data/data.json"
+date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+match_date = {
+    "Mo": "Monday",
+    "Tu": "Tuesday",
+    "We": "Wednesday",
+    "Th": "Thursday",
+    "Fr": "Friday",
+    "Sa": "Saturday",
+    "Su": "Sunday",
+    "D": "day"
+}
 
 
 # Get a random footer
@@ -101,7 +112,7 @@ async def comic_send(ctx, strip_details, param, comic_date=None):
 
 
 # Interprets the parameters given by the user
-async def parameters_interpreter(ctx, strip_details, param=None):
+async def parameters_interpreter(ctx, strip_details, param=None, date=None, hour=None):
     if param is not None:
         """ Parameters:
             today -> Today's comic
@@ -111,30 +122,30 @@ async def parameters_interpreter(ctx, strip_details, param=None):
             """
         param = param.lower()
 
-        if param.find("today") != -1:
+        if param == "today" or param == "tod":
             # Sends the website of today's comic
             await comic_send(ctx, strip_details, "today")
-        elif param.find("random") != -1:
+        elif param == "random" or param == "rand" or param == "rnd":
             # Random comic
             await comic_send(ctx, strip_details, "random")
-        elif param.find("add") != -1:
+        elif param == "add":
             # Add the comic to the daily list for a guild
             if ctx.message.author.guild_permissions.manage_guild:
-                new_change(ctx, strip_details, "add")
+                new_change(ctx, strip_details, "add", date=date, hour=hour)
                 await ctx.send(f"{strip_details['Name']} added successfully as a daily comic!")
             else:
                 await ctx.send("You need `manage_guild` permission to do that!")
-        elif param.find("remove") != -1:
+        elif param == "remove":
             # Remove the comic to the daily list for a guild
             if ctx.message.author.guild_permissions.manage_guild:
-                new_change(ctx, strip_details, "remove")
+                new_change(ctx, strip_details, "remove", date=date, hour=hour)
                 await ctx.send(f"{strip_details['Name']} removed successfully from the daily list!")
             else:
                 await ctx.send("You need `manage_guild` permission to do that!")
         else:
             # Tries to parse date / number of comic
             working_type = strip_details["Working_type"]
-            if working_type == "date" or strip_details["Main_website"] == 'https://garfieldminusgarfield.net/' :
+            if working_type == "date" or strip_details["Main_website"] == 'https://garfieldminusgarfield.net/':
                 # Works by date
                 try:
                     comic_date = datetime.strptime(param, "%d/%m/%Y")
@@ -170,10 +181,39 @@ async def parameters_interpreter(ctx, strip_details, param=None):
 
 
 # Make a change in the database
-def new_change(ctx, strip_details, param):
+def new_change(ctx, strip_details, param, date=None, hour=None):
+    default_date = "D"
+    default_hour = 6
+    final_date = default_date
+    final_hour = default_hour
+
+    final_date, final_hour = parse_try(date, date_tries, final_date, final_hour)
+    final_date, final_hour = parse_try(hour, date_tries, final_date, final_hour)
+
     comic_number = int(strip_details["Position"])
 
-    modify_database(ctx, param, comic_number=comic_number)
+    modify_database(ctx, param, comic_number=comic_number, day=final_date, hour=str(final_hour))
+
+
+def parse_try(to_parse, date_tries, final_date, final_hour):
+    if to_parse is not None:
+        if len(str(to_parse)) >= 2:
+            date = to_parse[0:1].capitalize() + to_parse[1:2].lower()
+
+            if date in date_tries:
+                final_date = date
+            else:
+                try:
+                    final_hour = int(to_parse)
+                except ValueError:
+                    pass
+        else:
+            try:
+                final_hour = int(to_parse)
+            except ValueError:
+                pass
+
+    return final_date, final_hour
 
 
 # Removes a guild from the database
@@ -349,11 +389,15 @@ def get_sub_status(ctx, position, database=None):
         database = get_database_data()
 
     guild_id = str(ctx.guild.id)
-    channel_id = str(ctx.channel.id)
 
-    if guild_id in database and channel_id in database[guild_id]["channels"]:
-        # TODO CHECK ALL DATES AND HOURS
-        return position in database[guild_id]["channels"][channel_id]["date"]['D']['6']
+    if guild_id in database:
+        guild_data = database[guild_id]
+        for channel in guild_data["channels"]:
+            for day in guild_data["channels"][channel]["date"]:
+                for hour in guild_data["channels"][channel]["date"][day]:
+                    if position in guild_data["channels"][channel]["date"][day][hour]:
+                        return True
+        return False
     else:
         return False
 
@@ -388,7 +432,7 @@ def get_first_date(strip_details):
 
 
 def get_today():
-    return datetime.utcnow().today().strftime("%A")[2:]
+    return datetime.utcnow().today().strftime("%A")[0:2]
 
 
 def get_hour():

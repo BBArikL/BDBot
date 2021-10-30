@@ -26,16 +26,8 @@ class DailyPosterHandler(commands.Cog):
 
     # Wait for the time to post the daily strip
     async def wait_for_daily(self):
-        wait_until_hour = time(hour=6)  # 6 AM UTC
-
-        if datetime.utcnow().hour < 6:
-            day_wait = 0
-        else:
-            day_wait = 1
-
-        wait_until_date = datetime.utcnow() + timedelta(days=day_wait)
-        combined_date = datetime.combine(wait_until_date, wait_until_hour)
-        await discord.utils.sleep_until(combined_date)
+        sleep_date = datetime.utcnow().replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+        await discord.utils.sleep_until(sleep_date)
         await DailyPosterHandler.post_daily.start(self)
 
     # Checks if the daily loop is running
@@ -59,7 +51,7 @@ class DailyPosterHandler(commands.Cog):
             raise commands.CommandNotFound
 
     # Loop to post daily comics
-    @tasks.loop(hours=24.0)  # Daily loop
+    @tasks.loop(hours=1)  # Hourly loop
     async def post_daily(self):
         await self.daily()
 
@@ -69,7 +61,7 @@ class DailyPosterHandler(commands.Cog):
         strip_details = self.strip_details
         NB_OF_COMICS = len(strip_details)
         comic_data = utils.get_database_data()
-        comic_list = [[]] * NB_OF_COMICS
+        comic_list = [[] for i in range(NB_OF_COMICS)] # Thanks to Mark Beyers https://stackoverflow.com/questions/7745562/appending-to-2d-lists-in-python
         comic_keys = list(strip_details.keys())
         post_days = ["D", utils.get_today()]
         hour = utils.get_hour()
@@ -87,18 +79,25 @@ class DailyPosterHandler(commands.Cog):
 
         # Check if any guild want the comic
         for i in range(len(comic_list)):
-            if comic_list[i]:  # TODO check back on this
+            if len(comic_list[i]) > 0:  # TODO check back on this
                 # Load the new details
-                comic_details = Web_requests_manager.get_new_comic_details(strip_details[comic_keys[i]], "today")
+                try:
+                    comic_details = Web_requests_manager.get_new_comic_details(strip_details[comic_keys[i]], "today")
 
-                embed = utils.create_embed(comic_details)  # Creates the embed
+                    embed = utils.create_embed(comic_details)  # Creates the embed
 
-                # Sends the comic to all subbed guilds
-                for channel in comic_list[i]:
-                    if channel is not None:
-                        channel = self.client.get_channel(int(channel))
+                    # Sends the comic to all subbed guilds
+                    for channel in comic_list[i]:
+                        if channel is not None:
+                            channel = self.client.get_channel(int(channel))
 
-                        await channel.send(embed=embed)
+                            try:
+                                await channel.send(embed=embed)
+                            except Exception:
+                                pass
+
+                except Exception:
+                    pass
 
     @commands.command()
     async def updateDatabaseremove(self, ctx, *, number=None):
