@@ -113,21 +113,21 @@ class DailyPosterHandler(commands.Cog):
                         chan = self.client.get_channel(int(comic_list[channel]["channel"]))
 
                         if chan is not None:
-                            # try:
-                            if comic_list[channel]["hasBeenMentionned"] == 0:
-                                if comic_list[channel]["role"] is not None:
-                                    role_mention = comic_list[channel]["role"].mention
-                                else:
-                                    role_mention = ""
+                            try:
+                                if comic_list[channel]["hasBeenMentionned"] == 0:
+                                    if comic_list[channel]["role"] is not None:
+                                        role_mention = comic_list[channel]["role"].mention
+                                    else:
+                                        role_mention = ""
 
-                                await chan.send(f"Comics for "
-                                                f"{datetime.utcnow().strftime('%A the %d %B %Y, %H h UTC')} "
-                                                f"{role_mention}")
-                                comic_list[channel]["hasBeenMentionned"] = 1
+                                    await chan.send(f"Comics for "
+                                                    f"{datetime.utcnow().strftime('%A the %d %B %Y, %H h UTC')} "
+                                                    f"{role_mention}")
+                                    comic_list[channel]["hasBeenMentionned"] = 1
 
-                            await chan.send(embed=embed)
-                        # except Exception:
-                        #    pass
+                                await chan.send(embed=embed)
+                            except Exception:
+                                pass
 
     @commands.command()
     async def updateDatabaseremove(self, ctx, *, number=None):
