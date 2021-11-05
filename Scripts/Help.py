@@ -53,13 +53,11 @@ class Help(commands.Cog):
 
     @help.command()
     async def daily(self, ctx):  # help for daily commands
-        embed = discord.Embed(title="Daily commands!")
-
-        embed.add_field(name="Notice", value="Date and hour are optional arguments that can specify when the the bot "
-                                             "should send the comic. A date should be one of the seven days of the week"
-                                             " and the hour a number representing the time in a 24h clock in UTC time.",
-                        inline=True)
-
+        embed = discord.Embed(title="Daily commands!", description="Date and hour are optional arguments that can "
+                                                                   "specify when the the bot should send the comic. A "
+                                                                   "date should be one of the seven days of the week"
+                                                                   "and the hour a number representing the time in a "
+                                                                   "24h clock in UTC time.")
         embed.add_field(name="Add", value="Use `bd!<name_of_comic> add <date> <hour>` to add the comic to the daily "
                                           "list of the channel.")
         embed.add_field(name="Add all", value="Use `bd!add_all <date> <hour>` to add all the comics to a specific day "
