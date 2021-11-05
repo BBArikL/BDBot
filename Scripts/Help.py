@@ -55,9 +55,30 @@ class Help(commands.Cog):
     async def daily(self, ctx):  # help for daily commands
         embed = discord.Embed(title="Daily commands!")
 
-        embed.add_field(name="add", value="Use `bd!<name_of_comic> add` to add the comic to the daily list.")
-        embed.add_field(name="remove", value="Use `bd!<name_of_comic> remove` to remove the comic to the daily list.")
-        embed.add_field(name="Remove all", value="Use `bd!remove_all` to unsubscribe your server from all the comics")
+        embed.add_field(name="Notice", value="Date and hour are optional arguments that can specify when the the bot "
+                                             "should send the comic. A date should be one of the seven days of the week"
+                                             " and the hour a number representing the time in a 24h clock in UTC time.",
+                        inline=True)
+
+        embed.add_field(name="Add", value="Use `bd!<name_of_comic> add <date> <hour>` to add the comic to the daily "
+                                          "list of the channel.")
+        embed.add_field(name="Add all", value="Use `bd!add_all <date> <hour>` to add all the comics to a specific day "
+                                              "of the week and hour.")
+        embed.add_field(name="Remove", value="Use `bd!<name_of_comic> remove <date> <hour>` to remove the comic "
+                                             "from the daily list.")
+        embed.add_field(name="Remove channel", value="Use `bd!remove_channel` to unsubscribe your channel from all the "
+                                                     "comics")
+        embed.add_field(name="Remove all", value="Use `bd!remove_all` to unsubscribe your guild from all the comics "
+                                                 "in all the channels.")
+        embed.add_field(name="Subscriptions", value="Use `bd!sub` to view all subscribed comics for this guild.")
+        embed.add_field(name="Set role mention", value="Use `bd!set_role @<role>` to add a role to mention for "
+                                                       "comics posts. To remove, use `bd!remove_role`.")
+        embed.add_field(name="Mange role mention", value="Use `bd!set_mention yes/no` to change the mention policy for "
+                                                         "the bot in the guild. This does not affect daily comics "
+                                                         "posted at 6h AM UTC. If the mention policy is set to 'yes', "
+                                                         "the bot will mention the role at each comic post, otherwise"
+                                                         " it will only mention the role at 6h AM UTC daily.")
+        embed.add_field(name="Get mention policy", value="Use `bd!get_mention` to get the guild's mention policy.")
 
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)

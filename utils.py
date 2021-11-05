@@ -86,7 +86,8 @@ def create_embed(comic_details=None):
 
 # Sends comics info in a embed
 async def send_comic_info(ctx, strip_details):
-    embed = discord.Embed(title=f'{strip_details["Name"]} by {strip_details["Author"]}', url=strip_details["Main_website"],
+    embed = discord.Embed(title=f'{strip_details["Name"]} by {strip_details["Author"]}',
+                          url=strip_details["Main_website"],
                           description=strip_details["Description"], color=int(strip_details["Color"], 16))
     embed.set_thumbnail(url=strip_details["Image"])
     embed.add_field(name="Working type", value=strip_details["Working_type"], inline=True)
@@ -308,7 +309,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
 
             comList = []
             if use == aAll:
-                strips= Comics_details.comDetails.load_details()
+                strips = Comics_details.comDetails.load_details()
                 comList = [i for i in range(len(strips))]
                 print(comList)
             else:
@@ -431,7 +432,7 @@ def set_role(ctx, roleID):
                 "only_daily": 0
             })
         else:
-            data[gid]["role"] = roleID
+            data[gid]["role"] = roleID.id
 
         save(data)
 
@@ -458,6 +459,26 @@ def set_mention(ctx, choice):
     else:
         return "This guild is not subscribed to any comic! Please subscribe to a comic before deciding when you want " \
                "to be mentionned!"
+
+
+def get_mention(ctx):
+    gid = str(ctx.guild.id)
+    only_daily = "only_daily"
+    data = get_database_data()
+
+    if gid in data:
+        if only_daily in data[gid]:
+            men = "only for daily comics posts"
+            if data[gid][only_daily] == 0:
+                men = "for all comic posts"
+
+            return Success, men
+        else:
+            return "This guild has no role set up! Please use `bd!set_role <@role>` to add a role before deciding if " \
+                   "you want to be notified of all comic or only the daily ones.", ""
+    else:
+        return "This guild is not subscribed to any comic! Please subscribe to a comic before deciding when you want " \
+               "to be mentionned!", ""
 
 
 def remove_role(ctx):

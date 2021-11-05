@@ -123,6 +123,16 @@ class BDBot(commands.Cog):
             await ctx.send(status)
 
     @commands.command()
+    @commands.has_permissions(manage_guild=True)
+    async def get_mention(self, ctx):  # Get the mention policy
+        status, mention_policy = utils.get_mention(ctx)
+
+        if status == utils.Success:
+            await ctx.send(f"The bot will mention the role {mention_policy}!")
+        else:
+            await ctx.send(status)
+
+    @commands.command()
     async def vote(self, ctx):  # Links back to the github page
         await ctx.send(
             "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : "
@@ -175,12 +185,12 @@ class BDBot(commands.Cog):
                             })
 
             if len(comic_list) > 0:
-                comic_txt = ""
                 matching_date = utils.match_date
+                embed = discord.Embed(title="This guild is subscribed to:")
                 for comic in comic_list:
-                    comic_txt += f"\n> {comic['Name']} each {matching_date[comic['Date']]} at {comic['Hour']}h UTC " \
-                                 f"in channel {comic['Channel']}"
-                await ctx.send("This guild is subscribed to: " + comic_txt)
+                    embed.add_field(name=comic['Name'], value=f"Each {matching_date[comic['Date']]} at {comic['Hour']}h"
+                                                              f" UTC in channel {comic['Channel']}")
+                await ctx.send(embed=embed)
             else:
                 await ctx.send("This guild is not subscribed to any comic!")
         else:

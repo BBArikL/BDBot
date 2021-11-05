@@ -8,6 +8,7 @@ Adding a comic is super easy. It does not even takes knowledge in code to do it!
 ```
 "<The name of the comic>":{
         "Name": "<The name of the comic>",
+        "Author": "The name of the author(s).",
         "Web_name": "<The way the name is written on the url>",
         "Main_website": "<The main website you are taking the comic from>",
         "Working_type": "<The way the image should be extracted from the website. For Gocomics and Comics Kingdom: date. If unsure, mark UNSURE>",
