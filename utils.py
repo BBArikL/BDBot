@@ -39,6 +39,7 @@ def create_embed(comic_details=None):
         # Embeds the comic
         comic_name = comic_details["Name"]
         comic_title = comic_details["title"]
+        author = comic_details["author"]
         day = comic_details["day"]
         month = comic_details["month"]
         year = comic_details["year"]
@@ -64,7 +65,7 @@ def create_embed(comic_details=None):
             embed.set_thumbnail(url=thumbnail)
 
         if day is not None and day != "":
-            embed.add_field(name=comic_name, value=f"Date: {day}/{month}/{year}")
+            embed.add_field(name=f'{comic_name} by {author}', value=f"Date: {day}/{month}/{year}")
 
         embed.set_image(url=img_url)
 
@@ -85,7 +86,7 @@ def create_embed(comic_details=None):
 
 # Sends comics info in a embed
 async def send_comic_info(ctx, strip_details):
-    embed = discord.Embed(title=strip_details["Name"], url=strip_details["Main_website"],
+    embed = discord.Embed(title=f'{strip_details["Name"]} by {strip_details["Author"]}', url=strip_details["Main_website"],
                           description=strip_details["Description"], color=int(strip_details["Color"], 16))
     embed.set_thumbnail(url=strip_details["Image"])
     embed.add_field(name="Working type", value=strip_details["Working_type"], inline=True)

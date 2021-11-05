@@ -15,12 +15,12 @@ Discord bot that post bd strips. Simple as that!
 - Cyanide and Happines https://explosm.net/
 - Frazz https://www.gocomics.com/frazz
 - Garfield minus Garfield https://garfieldminusgarfield.net/
-- Jon
+- Jon (not ready)
 - Frank and Ernest https://www.gocomics.com/frank-and-ernest
 - Broom Hilda https://www.gocomics.com/broomhilda
 - Inspector Dangers Crime Quiz https://www.gocomics.com/inspector-dangers-crime-quiz
 - Cheer up emo kid https://www.gocomics.com/cheer-up-emo-kid
-- Catana Comics https://www.gocomics.com/
+- Catana Comics https://www.gocomics.com/ (not ready)
 - Brevity https://www.gocomics.com/brevity
 - Cats cafe https://www.gocomics.com/cats-cafe
 - Popeyes https://comicskingdom.com/popeye

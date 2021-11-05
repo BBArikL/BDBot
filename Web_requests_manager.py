@@ -11,7 +11,7 @@ import utils
 
 # Class that makes the web requests to have the fresh comic details
 
-ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "day": "", "month": "", "year": "",
+ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "author":"", "day": "", "month": "", "year": "",
                     "sub_img_url": "", "img_url": "", "alt": "", "color": 0}
 MAX_TRIES = 15
 
@@ -35,6 +35,7 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
     random_date = None
 
     details["Name"] = strip_details["Name"]
+    details["author"] = strip_details["Author"]
 
     if strip_details is not None:
         i = 0
@@ -155,6 +156,7 @@ def get_comic_info_number(strip_details, param=None):
     details = ORIGINAL_DETAILS.copy()
 
     details["Name"] = strip_details["Name"]
+    details["author"] = strip_details["Author"]
 
     if strip_details["Name"] is not None:
         main_website = strip_details["Main_website"]
@@ -240,6 +242,7 @@ def get_comic_info_rss(strip_details, param=None, comic_date=None):
     comic_nb = 0
 
     details["Name"] = strip_details["Name"]
+    details["author"] = strip_details["Author"]
     main_website = strip_details["Main_website"]
 
     if main_website == 'https://garfieldminusgarfield.net/':

@@ -1,6 +1,7 @@
 {
     "Garfield":{
         "Name": "Garfield",
+        "Author": "Jim Davis",
         "Web_name": "garfield",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -12,8 +13,9 @@
         "Aliases": "'Garfield', 'garfield' 'Garf', 'garf'",
         "Helptxt": "The only, the superb, Garfield!"
     },
-     "Garfield_Classics":{
-        "Name": "Garfield-Classics",
+    "Garfield_Classics":{
+        "Name": "Garfield Classics",
+        "Author": "Jim Davis",
         "Web_name": "garfield-classics",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -27,6 +29,7 @@
     },
     "CalvinandHobbes":{
         "Name": "Calvin and Hobbes",
+        "Author": "Bill Watterson",
         "Web_name": "calvinandhobbes",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -40,6 +43,7 @@
     },
     "XKCD":{
         "Name": "xkcd",
+        "Author": "Randall Munroe",
         "Web_name": "xkcd",
         "Main_website": "https://xkcd.com/",
         "Working_type": "number",
@@ -53,6 +57,7 @@
     },
     "Peanuts":{
         "Name": "Peanuts",
+        "Author": "Charles M. Schulz",
         "Web_name": "peanuts",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -66,6 +71,7 @@
     },
     "Peanuts_Begins":{
         "Name": "Peanuts Begins",
+        "Author": "Charles M. Schulz",
         "Web_name": "peanuts-begins",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -79,6 +85,7 @@
     },
     "Dilbert":{
         "Name": "Dilbert",
+        "Author": "Scott Adams",
         "Web_name": "dilbert",
         "Main_website": "https://dilbert.com/",
         "Working_type": "date",
@@ -92,6 +99,7 @@
     },
     "Dilbert-Classics":{
         "Name": "Dilbert Classics",
+        "Author": "Scott Adams",
         "Web_name": "dilbert-classics",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -105,6 +113,7 @@
     },
     "Cyanide_and_Happiness":{
         "Name": "Cyanide and Happiness",
+        "Author": "Dave McElfatrick, Kris Wilson and Rob DenBleyker",
         "Web_name": "Cyanide and Happiness",
         "Main_website": "https://explosm.net/comics/",
         "Working_type": "number",
@@ -118,6 +127,7 @@
     },
     "Frazz":{
         "Name": "Frazz",
+        "Author": "Jeff Mallett",
         "Web_name": "frazz",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -131,6 +141,7 @@
     },
     "Garfield_minus_Garfield":{
         "Name": "Garfield minus Garfield",
+        "Author": "Jim Davis",
         "Web_name": "Garfield minus Garfield",
         "Main_website": "https://garfieldminusgarfield.net/",
         "Working_type": "rss",
@@ -143,7 +154,8 @@
         "Helptxt": "Revisit Garfield without the iconic orange and black cat, to see how can loneliness reveal existential angst in a daily life."
     },
     "Frank-and-Ernest":{
-        "Name": "Frank and Ernest by Thaves",
+        "Name": "Frank and Ernest",
+        "Author": "Bob Thaves",
         "Web_name": "frank-and-ernest",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -157,6 +169,7 @@
     },
     "BroomHilda":{
         "Name": "Broom Hilda",
+        "Author": "Russell Myers",
         "Web_name": "broomhilda",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -170,6 +183,7 @@
     },
     "Inspector-Dangers-Crime-Quiz":{
         "Name": "Inspector Danger's Crime Quiz",
+        "Author": "Werner Wejp-Olsen",
         "Web_name": "inspector-dangers-crime-quiz",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -183,6 +197,7 @@
     },
     "Cheer-up-emo-kid":{
         "Name": "Cheer up Emo kid",
+        "Author": "Enzo comics",
         "Web_name": "cheer-up-emo-kid",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -196,6 +211,7 @@
     },
     "brevity":{
         "Name": "Brevity",
+        "Author": "Dan Thompson",
         "Web_name": "brevity",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -209,6 +225,7 @@
     },
     "Cats-Cafe":{
         "Name": "Cat's Cafe",
+        "Author": "Matt Tarpley",
         "Web_name": "cats-cafe",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
@@ -222,6 +239,7 @@
     },
     "Popeyes":{
         "Name": "Popeyes",
+        "Author": "Bud Sagendorf (Dailies) and Hy Eisman (Sundays)",
         "Web_name": "popeye",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
@@ -235,6 +253,7 @@
     },
     "Artic-Circle":{
         "Name": "Artic Circle",
+        "Author": "Alex Hallatt",
         "Web_name": "arctic-circle",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
@@ -248,6 +267,7 @@
     },
     "Lockhorns":{
         "Name": "The lockhorns",
+        "Author": "Bunny Hoest and John Reiner",
         "Web_name": "lockhorns",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
@@ -261,6 +281,7 @@
     },
     "Marvin":{
         "Name": "Marvin",
+        "Author": "Tom Armstrong",
         "Web_name": "marvin",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
@@ -274,6 +295,7 @@
     },
     "Zits":{
         "Name": "Zits",
+        "Author": "Jerry Scott and Jim Borgman",
         "Web_name": "zits",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
@@ -287,6 +309,7 @@
     },
     "Hi-and-Lois":{
         "Name": "Hi and Lois",
+        "Author": "Brian Walker, Greg Walker and Chance Browne",
         "Web_name": "hi-and-lois",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
@@ -300,6 +323,7 @@
     },
     "Safely-Endangered":{
         "Name": "Safely Endangered",
+        "Author": "Chris McCoy",
         "Web_name": "comedy/safely-endangered/list?title_no=352",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
@@ -313,6 +337,7 @@
     },
     "Carl":{
         "Name": "Carl",
+        "Author": "Hussein Traboulsi and Claudia Z.",
         "Web_name": "slice-of-life/carl/list?title_no=1216",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
@@ -326,6 +351,7 @@
     },
     "BlueChair":{
         "Name": "BlueChair",
+        "Author": "Shen",
         "Web_name": "slice-of-life/bluechair/list?title_no=199",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
@@ -339,6 +365,7 @@
     },
     "Adventures-of-God":{
         "Name": "Adventures of God",
+        "Author": "Teo and Corey",
         "Web_name": "comedy/adventures-of-god/list?title_no=853",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
@@ -352,6 +379,7 @@
     },
     "Live-with-yourself":{
         "Name": "Live with yourself",
+        "Author": "Shen and David Mercier",
         "Web_name": "comedy/live-with-yourself/list?title_no=919",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
@@ -365,6 +393,7 @@
     },
     "System32comics":{
         "Name": "System32Comics",
+        "Author": "System32",
         "Web_name": "challenge/system32comics/list?title_no=235074",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
@@ -378,6 +407,7 @@
     },
     "TheGamer":{
         "Name": "The Gamer",
+        "Author": "Sangyoung Seong and Sang-A",
         "Web_name": "action/the-gamer/list?title_no=88",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
