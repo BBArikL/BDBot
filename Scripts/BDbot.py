@@ -1,4 +1,5 @@
 import sys
+
 sys.path.insert(0, "./Scripts/")
 import discord
 from discord.ext import commands
@@ -56,17 +57,70 @@ class BDBot(commands.Cog):
         inv = discord.utils.oauth_url(os.getenv('CLIENT_ID'))
         await ctx.send(f'Share the bot! {inv}')
 
+    @commands.command()
+    @commands.has_permissions(manage_guild=True)  # Only mods can add comics
+    async def add_all(self, ctx, date=None, hour=None):  # Adds all comics to a specific channel
+        status = utils.add_all(ctx, date, hour)
+        if status == utils.Success:
+            await ctx.send("All comics added successfully!")
+        else:
+            await ctx.send(status)
+
     @commands.command(aliases=["remove_guild"])
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
     async def remove_all(self, ctx):  # Remove the guild from the database
-        utils.remove_guild(ctx)
-        await ctx.send("All daily comics removed successfully!")
+        status = utils.remove_guild(ctx)
+
+        if status == utils.Success:
+            await ctx.send("All daily comics removed successfully!")
+        else:
+            await ctx.send(status)
 
     @commands.command()
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the channel from the database
     async def remove_channel(self, ctx):  # Remove the channel from the database
-        utils.remove_channel(ctx)
-        await ctx.send("All daily comics removed successfully from this channel!")
+        status = utils.remove_channel(ctx)
+        if status == utils.Success:
+            await ctx.send("All daily comics removed successfully from this channel!")
+        else:
+            await ctx.send(status)
+
+    @commands.command()
+    @commands.has_permissions(manage_guild=True)  # Only mods can add a role
+    async def set_role(self, ctx, role: discord.Role):  # Add a role to be notified
+        if discord.Guild.get_role(ctx.guild, role.id) is not None:
+            status = utils.set_role(ctx, role)
+            if status == utils.Success:
+                await ctx.send("Role successfully added to be notified! "
+                               "This role will get mentioned at each comic post. "
+                               "If you wish to be only notified for daily comics happening at 6 AM UTC, use "
+                               "`bd!set_mention no`.")
+            else:
+                await ctx.send(status)
+        else:
+            await ctx.send("The role is invalid or not provided!")
+
+    @commands.command()
+    @commands.has_permissions(manage_guild=True)  # Only mods can delete the role
+    async def remove_role(self, ctx):  # Deletes the role mention
+        status = utils.remove_role(ctx)
+
+        if status == utils.Success:
+            await ctx.send("Role mention successfully removed!")
+        else:
+            await ctx.send(status)
+
+    @commands.command()
+    @commands.has_permissions(manage_guild=True)
+    async def set_mention(self, ctx, choice):  # Change the mention
+        choice = (0, 1)[choice.lower()[0] == "y"]
+
+        status = utils.set_mention(ctx, choice)
+
+        if status == utils.Success:
+            await ctx.send("Successfully changed the mention policy for this server!")
+        else:
+            await ctx.send(status)
 
     @commands.command()
     async def vote(self, ctx):  # Links back to the github page
@@ -126,7 +180,7 @@ class BDBot(commands.Cog):
                 for comic in comic_list:
                     comic_txt += f"\n> {comic['Name']} each {matching_date[comic['Date']]} at {comic['Hour']}h UTC " \
                                  f"in channel {comic['Channel']}"
-                await ctx.send("This guild is subscribed to: "+comic_txt)
+                await ctx.send("This guild is subscribed to: " + comic_txt)
             else:
                 await ctx.send("This guild is not subscribed to any comic!")
         else:

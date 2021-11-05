@@ -61,43 +61,73 @@ class DailyPosterHandler(commands.Cog):
         strip_details = self.strip_details
         NB_OF_COMICS = len(strip_details)
         comic_data = utils.get_database_data()
-        comic_list = [[] for i in range(NB_OF_COMICS)] # Thanks to Mark Beyers https://stackoverflow.com/questions/7745562/appending-to-2d-lists-in-python
+        comic_list = {}
         comic_keys = list(strip_details.keys())
         post_days = ["D", utils.get_today()]
         hour = utils.get_hour()
 
         # Construct the list of what comics need to be sent
-        for guild in comic_data:
-            for channel in comic_data[str(guild)]["channels"]:
-                for day in post_days:
-                    if day in comic_data[str(guild)]["channels"][str(channel)]["date"]:
-                        if hour in comic_data[str(guild)]["channels"][str(channel)]["date"][day]:
-                            for pos in range(NB_OF_COMICS):
-                                if pos in comic_data[str(guild)]["channels"][str(channel)]["date"][day][hour] \
-                                        and channel not in comic_list[pos]:
-                                    comic_list[pos].append(channel)
+        for pos in range(NB_OF_COMICS):
+            for guild in comic_data:
+                guild_data = comic_data[guild]
+                for channel in guild_data["channels"]:
+                    for day in post_days:
+                        if day in guild_data["channels"][str(channel)]["date"]:
+                            if hour in guild_data["channels"][str(channel)]["date"][day]:
+                                if pos in guild_data["channels"][str(channel)]["date"][day][hour]:
+                                    if channel not in comic_list:
+                                        role = None
+                                        if ('only_daily' in guild_data) and ((guild_data["only_daily"] == 0)
+                                                                             or (hour == "6")) and ("role" in guild_data):
+                                            role = discord.Guild.get_role(
+                                                self.client.get_guild(guild_data["server_id"]), guild_data["role"])
+
+                                        comic_list.update({
+                                            channel: {
+                                                "channel": channel,
+                                                "comics": [pos],
+                                                "role": role,
+                                                "hasBeenMentionned": 0
+                                            }
+                                        })
+                                    else:
+                                        comic_list[channel]["comics"].append(pos)
 
         # Check if any guild want the comic
-        for i in range(len(comic_list)):
-            if len(comic_list[i]) > 0:  # TODO check back on this
-                # Load the new details
-                try:
-                    comic_details = Web_requests_manager.get_new_comic_details(strip_details[comic_keys[i]], "today")
+        for i in range(len(strip_details)):
+            count = 0
+            for chan in comic_list:
+                if i in comic_list[chan]["comics"]:
+                    count += 1
+                    break
 
-                    embed = utils.create_embed(comic_details)  # Creates the embed
+            if count > 0:
+                comic_details = Web_requests_manager.get_new_comic_details(strip_details[comic_keys[i]], "today")
 
+                embed = utils.create_embed(comic_details)  # Creates the embed
+
+                for channel in comic_list:
+                    # Load the new details
                     # Sends the comic to all subbed guilds
-                    for channel in comic_list[i]:
-                        if channel is not None:
-                            channel = self.client.get_channel(int(channel))
+                    if i in comic_list[channel]["comics"]:
+                        chan = self.client.get_channel(int(comic_list[channel]["channel"]))
 
-                            try:
-                                await channel.send(embed=embed)
-                            except Exception:
-                                pass
+                        if chan is not None:
+                            # try:
+                            if comic_list[channel]["hasBeenMentionned"] == 0:
+                                if comic_list[channel]["role"] is not None:
+                                    role_mention = comic_list[channel]["role"].mention
+                                else:
+                                    role_mention = ""
 
-                except Exception:
-                    pass
+                                await chan.send(f"Comics for "
+                                                f"{datetime.utcnow().strftime('%A the %d %B %Y, %H h UTC')} "
+                                                f"{role_mention}")
+                                comic_list[channel]["hasBeenMentionned"] = 1
+
+                            await chan.send(embed=embed)
+                        # except Exception:
+                        #    pass
 
     @commands.command()
     async def updateDatabaseremove(self, ctx, *, number=None):
