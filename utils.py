@@ -4,7 +4,7 @@ import random
 from datetime import datetime, timedelta
 import json
 import os
-
+import re
 import Comics_details
 import Web_requests_manager
 
@@ -56,7 +56,7 @@ def create_embed(comic_details=None):
         else:
             thumbnail = ""
 
-        img_url = comic_details["img_url"]
+        img_url = clean_url(comic_details["img_url"])
 
         # Creates the embed
         embed = discord.Embed(title=comic_title, url=url, description=alt, colour=color)
@@ -585,3 +585,21 @@ def get_today():
 
 def get_hour():
     return str(datetime.utcnow().hour)
+
+def clean_url(url):
+    # Gives back a clean link for a file on the internet, without the arguments after a "?"
+    file_forms = ["png", "jpg", "jpeg", "gif", "jfif", "bmp", "tif", "tiff", "eps"]
+    
+    for file_form in file_forms:
+        try:
+            sub = f".{file_form}?{url[(url.rindex(f'.{file_form}')+(len(file_form)+2)):]}"
+        except ValueError:
+            sub = None
+        
+        if sub is not None and sub in url:
+            url = url.replace(sub, f".{file_form}")
+            break
+    
+    url = url.replace(" ", "%20")
+    
+    return url

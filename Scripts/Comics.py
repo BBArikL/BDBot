@@ -240,6 +240,14 @@ class Comic(commands.Cog):
         # Interprets the parameters given by the user
         await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
 
+    @commands.has_permissions(manage_guild=True)
+    @commands.command()
+    async def all(self, ctx, use=None, date=None, hour=None):
+        strp = self.strip_details
+        for com in strp:
+            # Interprets the parameters given by the user
+            await utils.parameters_interpreter(ctx, self.get_strip_details(com), param=use, date=date, hour=hour)
+    
     # Random comic
     @commands.command(aliases=['rand', 'rnd'])
     async def random(self, ctx, use=None, date=None, hour=None):
