@@ -4,7 +4,6 @@ import random
 from datetime import datetime, timedelta
 import json
 import os
-import re
 import Comics_details
 import Web_requests_manager
 
