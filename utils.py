@@ -473,7 +473,7 @@ def get_mention(ctx):
 
             return Success, men
         else:
-            return "This guild has no role set up! Please use `bd!set_role <@role>` to add a role before deciding if " \
+            return "This guild has no role set up! Please use `bd!set_role @<role>` to add a role before deciding if " \
                    "you want to be notified of all comic or only the daily ones.", ""
     else:
         return "This guild is not subscribed to any comic! Please subscribe to a comic before deciding when you want " \
@@ -584,6 +584,7 @@ def get_today():
 
 def get_hour():
     return str(datetime.utcnow().hour)
+
 
 def clean_url(url):
     # Gives back a clean link for a file on the internet, without the arguments after a "?"

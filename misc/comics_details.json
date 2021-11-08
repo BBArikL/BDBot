@@ -25,7 +25,7 @@
         "Color": "FFA202",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/gacl/mid_rec-201701251558.jpg",
         "Aliases": "'GarfieldClassics', 'GarfClassic', 'garfieldclass', 'GarfCl', 'garfcl'",
-        "Helptxt": "<TODO>"
+        "Helptxt": "Revisit the work of Jim Davis through the best garfield comics!"
     },
     "CalvinandHobbes":{
         "Name": "Calvin and Hobbes",
@@ -237,8 +237,8 @@
         "Aliases": "'Catscafe', 'catscafe', 'Cats', 'cats', 'cafe', 'cat'",
         "Helptxt": "Join Cat's cafe where wholesomeness and good vibes are always on the menu!"
     },
-    "Popeyes":{
-        "Name": "Popeyes",
+    "Popeye":{
+        "Name": "Popeye",
         "Author": "Bud Sagendorf (Dailies) and Hy Eisman (Sundays)",
         "Web_name": "popeye",
         "Main_website": "https://comicskingdom.com/",
@@ -248,8 +248,8 @@
         "First_date": "",
         "Color": "CD1C23",
         "Image": "https://api.kingdigital.com/img/features/232/logos/website.png",
-        "Aliases": "'Popeyes', 'popeyes', 'Pop', 'pop', 'Pops', 'Popeye', 'popeye'",
-        "Helptxt": "<TODO>!"
+        "Aliases": "'Popeye', 'popeye', 'Pop', 'pop', 'Pops'",
+        "Helptxt": "The iconic sailor is ready to roll on adventures with his incredible spinach strength!!"
     },
     "Artic-Circle":{
         "Name": "Artic Circle",
@@ -305,7 +305,7 @@
         "Color": "7F4B85",
         "Image": "https://api.kingdigital.com/img/features/642/logos/website.png",
         "Aliases": "'Zits', 'zits', 'Zit', 'zit'",
-        "Helptxt": "<TODO>!"
+        "Helptxt": "Follow Jeremy Duncan as he tries to balance family, school and social life, through high school and his band!"
     },
     "Hi-and-Lois":{
         "Name": "Hi and Lois",
@@ -319,7 +319,7 @@
         "Color": "CE552C",
         "Image": "https://api.kingdigital.com/img/features/242/logos/website.png",
         "Aliases": "'HiandLois', 'hiandlois', 'Hi', 'hi', 'Lois', 'lois'",
-        "Helptxt": "<TODO>!"
+        "Helptxt": "Follow the adventures of a little family who always know how to find humor into family life!"
     },
     "Safely-Endangered":{
         "Name": "Safely Endangered",

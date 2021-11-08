@@ -149,9 +149,9 @@ class Comic(commands.Cog):
         # Interprets the parameters given by the user
         await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
 
-    @commands.command(aliases=['pop', 'Pop', 'Pops', 'Popeye', 'Popeyes', 'popeye'])
-    async def popeyes(self, ctx, use=None, date=None, hour=None):
-        comic_name = 'Popeyes'
+    @commands.command(aliases=['pop', 'Pop', 'Pops', 'Popeye', 'popeye'])
+    async def popeye(self, ctx, use=None, date=None, hour=None):
+        comic_name = 'Popeye'
 
         # Interprets the parameters given by the user
         await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
