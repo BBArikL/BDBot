@@ -88,5 +88,5 @@ CalvinBot : https://github.com/wdr1/CalvinBot
     - The main branch is the current bot that is running on Discord.
     - Beta branch is for all experiments and additions waiting for approval to add to the current bot. This runs on a (for now) private bot upon completion of current goals.
     - More about branches: https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-branches
-  - Core features of the bot are done, and it is hosted on Replit.
+  - The bot is considered complete feature-wise (but not comic-wise).
   - The bot is on UTC time. The daily comic post happen at 6:00 AM UTC daily.
