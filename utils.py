@@ -298,7 +298,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             if channel_id in data[guild_id]["channels"]:
                 d[guild_id]["channels"][channel_id] = data[guild_id]["channels"][channel_id]
             else:
-                d[guild_id]["channels"].update({channel_id: {"channel_id": 0, "date": {}}})
+                d[guild_id]["channels"].update({channel_id: {"channel_id": int(channel_id), "date": {}}})
 
             if day is None:
                 day = "D"  # Default: Daily
