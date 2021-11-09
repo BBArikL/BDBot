@@ -21,10 +21,11 @@ class Errors(commands.Cog):
             await ctx.send('A required argument is needed. Try bd!help to see required arguments.')
         elif isinstance(error, commands.MissingPermissions):
             await ctx.send('You do not have the permission to do that.')
-        elif isinstance(error, commands.CommandNotFound):
-            pass  # Do nothing
+        elif isinstance(error, commands.RoleNotFound):
+            await ctx.send('The role is invalid or not provided!')
         else:  # Not supported errors
-            await ctx.send('Error not supported. Visit https://github.com/BBArikL/BDBot to report the issue.')
+            await ctx.send(f'Error not supported. Visit https://github.com/BBArikL/BDBot to report the issue. '
+                           f'The error is: {error}')
 
 
 def setup(client):  # Initialize the cog
