@@ -310,7 +310,6 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             if use == aAll:
                 strips = Comics_details.comDetails.load_details()
                 comList = [i for i in range(len(strips))]
-                print(comList)
             else:
                 comList = [comic_number]
 
@@ -325,7 +324,6 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
                 d[guild_id]["channels"][channel_id]["date"][day][hour].append(comic_number)
 
             elif len(comList) > 1:  # Add all comics command
-                print(comList)
                 d[guild_id]["channels"][channel_id]["date"][day][hour] = comList
 
             else:
