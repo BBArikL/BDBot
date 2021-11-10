@@ -338,7 +338,6 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             if use == aAll:
                 strips = Comics_details.comDetails.load_details()
                 comList = [i for i in range(len(strips))]
-                print(comList)
             else:
                 comList = [comic_number]
 
@@ -485,7 +484,6 @@ def remove_role(ctx):
     data = get_database_data()
 
     if gid in data:
-        print("a")
         if role in data[gid]:
 
             data[gid].pop(role)

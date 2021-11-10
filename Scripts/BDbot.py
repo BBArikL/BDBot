@@ -42,7 +42,6 @@ class BDBot(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         utils.remove_guild(guild, use="auto_remove_guild")
-        print(f"Bot got removed from {guild}")
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, deleted_channel):
