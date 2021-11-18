@@ -298,7 +298,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             if channel_id in data[guild_id]["channels"]:
                 d[guild_id]["channels"][channel_id] = data[guild_id]["channels"][channel_id]
             else:
-                d[guild_id]["channels"].update({channel_id: {"channel_id": 0, "date": {}}})
+                d[guild_id]["channels"].update({channel_id: {"channel_id": int(channel_id), "date": {}}})
 
             if day is None:
                 day = "D"  # Default: Daily
@@ -310,7 +310,6 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             if use == aAll:
                 strips = Comics_details.comDetails.load_details()
                 comList = [i for i in range(len(strips))]
-                print(comList)
             else:
                 comList = [comic_number]
 
@@ -325,7 +324,6 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
                 d[guild_id]["channels"][channel_id]["date"][day][hour].append(comic_number)
 
             elif len(comList) > 1:  # Add all comics command
-                print(comList)
                 d[guild_id]["channels"][channel_id]["date"][day][hour] = comList
 
             else:
@@ -340,7 +338,6 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             if use == aAll:
                 strips = Comics_details.comDetails.load_details()
                 comList = [i for i in range(len(strips))]
-                print(comList)
             else:
                 comList = [comic_number]
 
@@ -487,7 +484,6 @@ def remove_role(ctx):
     data = get_database_data()
 
     if gid in data:
-        print("a")
         if role in data[gid]:
 
             data[gid].pop(role)

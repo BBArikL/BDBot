@@ -42,7 +42,6 @@ class BDBot(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         utils.remove_guild(guild, use="auto_remove_guild")
-        print(f"Bot got removed from {guild}")
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, deleted_channel):
@@ -167,6 +166,7 @@ class BDBot(commands.Cog):
     @commands.command(aliases=["subs", "subscriptions", "subscription"])
     async def sub(self, ctx):  # Checks if the server is subbed to any comic
         guild_data = utils.get_specific_guild_data(ctx)
+        MAX_FIELDS = 25
 
         if guild_data is not None:
             comic_list = []
@@ -185,12 +185,19 @@ class BDBot(commands.Cog):
                             })
 
             if len(comic_list) > 0:
+                nbFields = 0
                 matching_date = utils.match_date
-                embed = discord.Embed(title="This guild is subscribed to:")
+                embeds = [discord.Embed(title="This guild is subscribed to:")]
                 for comic in comic_list:
-                    embed.add_field(name=comic['Name'], value=f"Each {matching_date[comic['Date']]} at {comic['Hour']}h"
-                                                              f" UTC in channel {comic['Channel']}")
-                await ctx.send(embed=embed)
+                    if nbFields > 25:
+                        nbFields = 0
+                        embeds.append(discord.Embed(title="This guild is subscribed to:"))
+
+                    embeds[-1].add_field(name=comic['Name'], value=f"Each {matching_date[comic['Date']]} at {comic['Hour']}"
+                                                              f"h UTC in channel {comic['Channel']}")
+                    nbFields += 1
+                for embed in embeds:
+                    await ctx.send(embed=embed)
             else:
                 await ctx.send("This guild is not subscribed to any comic!")
         else:
