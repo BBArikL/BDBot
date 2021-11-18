@@ -11,7 +11,7 @@ import utils
 
 # Class that makes the web requests to have the fresh comic details
 
-ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "author":"", "day": "", "month": "", "year": "",
+ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "author": "", "day": "", "month": "", "year": "",
                     "sub_img_url": "", "img_url": "", "alt": "", "color": 0}
 MAX_TRIES = 15
 
@@ -283,7 +283,8 @@ def get_comic_info_rss(strip_details, param=None, comic_date=None):
         tz = ""
         weekday = ""
         if strip_details["Main_website"] == 'https://www.webtoons.com/en/':
-            details["title"] = f"{feed.title}"
+            if feed.title != "":
+                details["title"] = f"{feed.title}"
             weekday = "A"
             tz = "Z"
         else:
