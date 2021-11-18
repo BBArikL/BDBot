@@ -127,7 +127,7 @@ class DailyPosterHandler(commands.Cog):
 
                                 await chan.send(embed=embed)
                             except Exception:
-                                pass
+                                continue
 
     @commands.command()
     async def updateDatabaseremove(self, ctx, *, number=None):
