@@ -1,4 +1,5 @@
 # Collection of static methods
+import re
 import discord
 import random
 from datetime import datetime, timedelta
@@ -582,20 +583,14 @@ def get_hour():
     return str(datetime.utcnow().hour)
 
 
-def clean_url(url):
+def clean_url(url, file_forms=None):
     # Gives back a clean link for a file on the internet, without the arguments after a "?"
-    file_forms = ["png", "jpg", "jpeg", "gif", "jfif", "bmp", "tif", "tiff", "eps"]
-    
+    if file_forms is None:
+        file_forms = ["png", "jpg", "jpeg", "gif", "jfif", "bmp", "tif", "tiff", "eps"]
+
     for file_form in file_forms:
-        try:
-            sub = f".{file_form}?{url[(url.rindex(f'.{file_form}')+(len(file_form)+2)):]}"
-        except ValueError:
-            sub = None
-        
-        if sub is not None and sub in url:
-            url = url.replace(sub, f".{file_form}")
-            break
-    
+        url = re.sub(f"\.{file_form}\?.*$", f".{file_form}", url)
+
     url = url.replace(" ", "%20")
-    
+
     return url

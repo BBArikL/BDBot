@@ -204,6 +204,8 @@ def get_comic_info_number(strip_details, param=None):
                 details["title"] = extract_meta_content(html, 'title')
 
                 details["img_url"] = extract_meta_content(html, 'image')
+
+                details = None # TODO fix CYANIDE AND HAPPINESS
             else:
                 return None
 
