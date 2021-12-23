@@ -247,7 +247,49 @@ class Comic(commands.Cog):
         for com in strp:
             # Interprets the parameters given by the user
             await utils.parameters_interpreter(ctx, self.get_strip_details(com), param=use, date=date, hour=hour)
-    
+
+    @commands.command(aliases=['bignate', 'Nate', 'nate'])
+    async def BigNate(self, ctx, use=None, date=None, hour=None):
+        comic_name = 'BigNate'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
+
+    @commands.command(aliases=['getfuzzy', 'Fuzzy', 'fuzzy', 'fuzz'])
+    async def GetFuzzy(self, ctx, use=None, date=None, hour=None):
+        comic_name = 'GetFuzzy'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
+
+    @commands.command(aliases=['beetle', 'Bailey', 'bailey'])
+    async def Beetle(self, ctx, use=None, date=None, hour=None):
+        comic_name = 'BeetleBailey'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
+
+    @commands.command(aliases=['boondocks', 'Boon', 'boon'])
+    async def Boondocks(self, ctx, use=None, date=None, hour=None):
+        comic_name = 'TheBoondocks'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
+
+    @commands.command(aliases=['pickles', 'pick'])
+    async def Pickles(self, ctx, use=None, date=None, hour=None):
+        comic_name = 'Pickles'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
+
+    @commands.command(aliases=['pearls', 'Swine', 'swine'])
+    async def Pearls(self, ctx, use=None, date=None, hour=None):
+        comic_name = 'PearlsBeforeSwine'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
+
     # Random comic
     @commands.command(aliases=['rand', 'rnd'])
     async def random(self, ctx, use=None, date=None, hour=None):

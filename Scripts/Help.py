@@ -106,7 +106,8 @@ class Help(commands.Cog):
         await self.website_specific_embed(ctx, website_name, website)
 
     # Create a embed with all the specific comics from a website
-    async def website_specific_embed(self, ctx, website_name, website, nb_per_embed=1000000):
+    async def website_specific_embed(self, ctx, website_name, website):
+        nb_per_embed = 25
         strips = self.strip_details
         i = 0
 
