@@ -79,7 +79,7 @@ CalvinBot : https://github.com/wdr1/CalvinBot
   - You want to do a pull request to add your favourite comic? 
     - Preferably, Gocomics and Comics Kingdom comics are the easiest to implement, so try to stick with that if your comic is hosted there. 
       - Steps:
-        1. Add a new value in misc/comics_details.json that specifies each value for the comic. (See [this README](misc/ADD_COMIC.md)).
+        1. Add a new value in misc/comics_details.json that specifies each value for the comic. (See [this README](src/misc/ADD_COMIC.md)).
         2. Add a command in Scripts/Comics.py under the latest comic with aliases that are the same that were added to the json file and change the value of 'comic_name' to the name of the comic added.
         3. That's it!
   - If the comic is NOT hosted on GoComics/Comics Kingdom, please open an issue on the git page (https://github.com/BBArikL/BDBot). 

@@ -1,7 +1,6 @@
 import random
 from discord.ext import commands
-from Comics_details import comDetails
-import utils
+from src import utils
 
 
 class Comic(commands.Cog):
@@ -11,7 +10,7 @@ class Comic(commands.Cog):
         # Constructor of the cog
         # Initialize all the properties of the cog
         self.client = client
-        self.strip_details = comDetails.load_details()
+        self.strip_details = utils.load_details()
 
     # --- Start of functions --- #
     # --- If you want to add another comic, add it here between this and the 'END OF COMICS PARAMETERS'. --- #

@@ -1,14 +1,13 @@
 import sys
 
-sys.path.insert(0, "./Scripts/")
+sys.path.insert(0, "./src/Scripts/")
 import discord
 from discord.ext import commands
 from datetime import datetime, timezone
 import os
 import topgg
-from Comics_details import comDetails
 from DailyPoster import DailyPosterHandler
-import utils
+from src import utils
 
 
 class BDBot(commands.Cog):
@@ -17,7 +16,7 @@ class BDBot(commands.Cog):
     def __init__(self, client):
         # Constructor of the cog
         # Initialize all the properties of the cog
-        self.strip_details = comDetails.load_details()
+        self.strip_details = utils.load_details()
         self.client = client
         dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
         self.topggpy = topgg.DBLClient(client, dbl_token)
@@ -189,12 +188,13 @@ class BDBot(commands.Cog):
                 matching_date = utils.match_date
                 embeds = [discord.Embed(title="This guild is subscribed to:")]
                 for comic in comic_list:
-                    if nbFields > 25:
+                    if nbFields > MAX_FIELDS:
                         nbFields = 0
                         embeds.append(discord.Embed(title="This guild is subscribed to:"))
 
-                    embeds[-1].add_field(name=comic['Name'], value=f"Each {matching_date[comic['Date']]} at {comic['Hour']}"
-                                                              f"h UTC in channel {comic['Channel']}")
+                    embeds[-1].add_field(name=comic['Name'], value=f"Each {matching_date[comic['Date']]} at "
+                                                                   f"{comic['Hour']} ih UTC in channel"
+                                                                   f" {comic['Channel']}")
                     nbFields += 1
                 for embed in embeds:
                     await ctx.send(embed=embed)

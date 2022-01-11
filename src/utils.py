@@ -5,10 +5,10 @@ import random
 from datetime import datetime, timedelta
 import json
 import os
-import Comics_details
 import Web_requests_manager
 
-FOOTERS_FILE_PATH = 'misc/random-footers.txt'
+DETAILS_PATH = "./src/misc/comics_details.json"
+FOOTERS_FILE_PATH = './src/misc/random-footers.txt'
 DATABASE_FILE_PATH = "data/data.json"
 date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 match_date = {
@@ -309,7 +309,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
 
             comList = []
             if use == aAll:
-                strips = Comics_details.comDetails.load_details()
+                strips = load_details()
                 comList = [i for i in range(len(strips))]
             else:
                 comList = [comic_number]
@@ -337,7 +337,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
 
             comList = []
             if use == aAll:
-                strips = Comics_details.comDetails.load_details()
+                strips = load_details()
                 comList = [i for i in range(len(strips))]
             else:
                 comList = [comic_number]
@@ -499,6 +499,15 @@ def remove_role(ctx):
         return "This guild is not subscribed to any comic! Please subscribe to a comic before managing the role " \
                "mentions!"
 
+
+def load_details():
+    print("Loading Details.....")
+    # Returns the comic details
+    # Loads the comic details file
+    with open(DETAILS_PATH, 'r', encoding='utf-8') as f:
+        com_data = json.load(f)
+
+    return com_data
 
 # Returns the ids and what need to be sent
 def get_database_data():

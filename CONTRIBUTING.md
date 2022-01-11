@@ -21,8 +21,8 @@ Adding a comic is super easy. It does not even takes knowledge in code to do it!
         "Helptxt": "<A very short description of the comic>"
     }
     ```
-    When you are done, paste the new information in the [configuration file](comics_details.json) under the last comic information.
-2. Add a new command in [Comics.py](../Scripts/Comics.py) with the name of the comic under the last command. Just change the aliases to the ones you specified in the config file and set the `comic_name` variable to the name of the first value. 
+    When you are done, paste the new information in the [configuration file](src/misc/comics_details.json) under the last comic information.
+2. Add a new command in [Comics.py](src/Scripts/Comics.py) with the name of the comic under the last command. Just change the aliases to the ones you specified in the config file and set the `comic_name` variable to the name of the first value. 
 3. All done! Thank you for contributing to BDBot!
 
-From [this file](misc/ADD_COMIC.md).
+From [this file](src/misc/ADD_COMIC.md).

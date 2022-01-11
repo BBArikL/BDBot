@@ -1,9 +1,7 @@
 from discord.ext import tasks, commands
 import discord
-from datetime import datetime, timedelta, time
-from Comics_details import comDetails
-import utils
-import Web_requests_manager
+from datetime import datetime, timedelta
+from src import utils, Web_requests_manager
 
 
 # Manages daily posting
@@ -12,7 +10,7 @@ class DailyPosterHandler(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.strip_details = comDetails.load_details()
+        self.strip_details = utils.load_details()
 
     @commands.command()
     async def start_daily(self, ctx):
