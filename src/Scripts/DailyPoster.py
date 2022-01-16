@@ -75,8 +75,9 @@ class DailyPosterHandler(commands.Cog):
                                 if pos in guild_data["channels"][str(channel)]["date"][day][hour]:
                                     if channel not in comic_list:
                                         role = None
-                                        if ('only_daily' in guild_data) and ((guild_data["only_daily"] == 0)
-                                                                             or (hour == "6")) and ("role" in guild_data):
+                                        if ('only_daily' in guild_data) and \
+                                                (not guild_data["only_daily"] or hour == "6") and \
+                                                ("role" in guild_data):
                                             role = discord.Guild.get_role(
                                                 self.client.get_guild(guild_data["server_id"]), guild_data["role"])
 

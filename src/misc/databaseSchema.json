@@ -1,0 +1,63 @@
+{
+  "title": "Schema of the database.",
+  "description": "Schema of guild data",
+  "type": "object",
+  "properties":{
+    "anyOf": {
+      "description": "The dictionary of server data.",
+      "type": "object",
+      "properties": {
+        "server_id": {
+          "description": "The unique identifier of the server.",
+          "type": "integer"
+        },
+        "channels": {
+          "description": "The dictionary of channels in this server that is subscribed to one or more comics.",
+          "type": "object",
+          "properties": {
+            "anyOf": {
+              "description": "The information about a channel",
+              "type": "object",
+              "properties": {
+                "channel_id": {
+                  "description": "The unique ID of the channel.",
+                  "type": "integer"
+                },
+                "date": {
+                  "description": "The dictionary containing the days the channel is subscribed to a comic",
+                  "type": "object",
+                  "properties": {
+                    "anyOf": {
+                      "description": "The date the channel is subscribed to a comic",
+                      "type": "object",
+                      "properties": {
+                        "anyOf": {
+                          "description": "The hour the channel is subscribed to a comic",
+                          "type": "array",
+                          "items": {
+                            "Description": "The ID of the comic",
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "required": ["channel_id", "date"]
+            }
+          }
+        },
+        "role": {
+          "description": "The ID of the role to be mentionned during comic posts.",
+          "type": "integer"
+        },
+        "only_daily": {
+          "description": "If the role has to be mentionned only during the daily comic post.",
+          "type": "boolean"
+        }
+      },
+      "required": ["server_id", "channels", "mention"]
+    }
+  }
+}

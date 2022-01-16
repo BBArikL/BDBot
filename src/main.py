@@ -10,7 +10,7 @@ client.remove_command("help")  # Removes the default "help" function to replace 
 print("Starting Bot...")
 
 # Loads all the cogs
-for filename in os.listdir('./src/Scripts'):
+for filename in os.listdir('./Scripts'):
     if filename.endswith('py'):
         client.load_extension(f'Scripts.{filename[:-3]}')
 

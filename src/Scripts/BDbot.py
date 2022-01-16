@@ -1,12 +1,10 @@
-import sys
-
-sys.path.insert(0, "./src/Scripts/")
+import math
 import discord
 from discord.ext import commands
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import os
 import topgg
-from DailyPoster import DailyPosterHandler
+from src.Scripts.DailyPoster import DailyPosterHandler
 from src import utils
 
 
@@ -20,6 +18,7 @@ class BDBot(commands.Cog):
         self.client = client
         dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
         self.topggpy = topgg.DBLClient(client, dbl_token)
+        self.start_time = datetime.utcnow()
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -91,8 +90,8 @@ class BDBot(commands.Cog):
             if status == utils.Success:
                 await ctx.send("Role successfully added to be notified! "
                                "This role will get mentioned at each comic post. "
-                               "If you wish to be only notified for daily comics happening at 6 AM UTC, use "
-                               "`bd!set_mention no`.")
+                               "If you wish to be notified only for daily comics happening at 6 AM UTC, use "
+                               "`bd!set_mention daily`.")
             else:
                 await ctx.send(status)
         else:
@@ -111,14 +110,19 @@ class BDBot(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_guild=True)
     async def set_mention(self, ctx, choice):  # Change the mention
-        choice = (0, 1)[choice.lower()[0] == "y"]
+        choice = choice.lower()
 
-        status = utils.set_mention(ctx, choice)
+        policy = (choice.lower() == "daily")
 
-        if status == utils.Success:
-            await ctx.send("Successfully changed the mention policy for this server!")
+        if policy or choice == "all":
+            status = utils.set_mention(ctx, policy)
+
+            if status == utils.Success:
+                await ctx.send("Successfully changed the mention policy for this server!")
+            else:
+                await ctx.send(status)
         else:
-            await ctx.send(status)
+            await ctx.send("Choose between `daily` and `all`to determine the mention policy for this server!")
 
     @commands.command()
     @commands.has_permissions(manage_guild=True)
@@ -150,7 +154,7 @@ class BDBot(commands.Cog):
     @commands.command()
     async def request(self, ctx, *, param=None):
         # Adds a request to the database
-        FILE_PATH = './data/requests.txt'
+        FILE_PATH = 'data/requests.txt'
 
         requests = open(FILE_PATH, 'a')
 
@@ -202,6 +206,58 @@ class BDBot(commands.Cog):
                 await ctx.send("This guild is not subscribed to any comic!")
         else:
             await ctx.send("This guild is not subscribed to any comic!")
+
+    @commands.command()
+    async def ping(self, ctx):
+        # Latency with discord API
+        await ctx.send("Pong! "+str(round(self.client.latency, 4))+"ms")
+
+    @commands.command()
+    async def uptime(self, ctx):
+        # Uptime
+        delta = (datetime.utcnow()-self.start_time)
+        hours = math.floor(delta.seconds / 3600)
+        minutes = math.floor((delta.seconds - hours * 3600)/60)
+        seconds = math.floor(delta.seconds - ((minutes*60) + (hours*3600)))
+        await ctx.send("The bot has been up for "+str(delta.days)+" days, "+str(hours)+" hours, "+
+                       str(minutes)+" minutes and "+str(seconds)+" seconds.")
+
+    @commands.command()
+    async def status(self, ctx):
+        # Status of the bot
+        await ctx.send("The bot is online, waiting for comics to send. Report any errors by git () or by "
+                       "`bd!request <your request>`.")
+
+    @commands.command()
+    async def vrequest(self, ctx):
+        # Verifies the requests
+        if utils.is_owner(ctx):
+            FILE_PATH = 'data/requests.txt'
+
+            r = ""
+            with open(FILE_PATH, 'r') as f:
+                r = f.readlines()
+
+            await ctx.send("Here are the requests:\n```\n"+"\n".join(r)+"\n```")
+        else:
+            raise commands.CommandNotFound
+
+    @commands.command()
+    async def verify_database(self, ctx):
+        # Verifies the database to be sure it still complies with the schema
+        if utils.is_owner(ctx):
+            await ctx.send("Verifying database....")
+            if utils.verify_json():
+                await ctx.send("Everything is perfect!")
+            else:
+                await ctx.send("The database is not good. Go make sure no server got wrongly written.")
+        else:
+            raise commands.CommandNotFound
+
+    @commands.command()
+    async def nb_active(self, ctx):
+        # Returns the number of servers using the hourly poster service
+        await ctx.send("There is "+str(len(utils.get_database_data()))+" servers using the hourly poster service.")
 
     @commands.command()
     async def kill(self, ctx):

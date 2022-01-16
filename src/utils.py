@@ -5,11 +5,17 @@ import random
 from datetime import datetime, timedelta
 import json
 import os
-import Web_requests_manager
 
-DETAILS_PATH = "./src/misc/comics_details.json"
-FOOTERS_FILE_PATH = './src/misc/random-footers.txt'
+import jsonschema
+
+import Web_requests_manager
+from jsonschema import validate
+
+
+DETAILS_PATH = "misc/comics_details.json"
+FOOTERS_FILE_PATH = 'misc/random-footers.txt'
 DATABASE_FILE_PATH = "data/data.json"
+JSON_SCHEMA_FILE_PATH = "misc/databaseSchema.json"
 date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 match_date = {
     "Mo": "Monday",
@@ -426,7 +432,7 @@ def set_role(ctx, roleID):
         if role not in data[gid]:
             data[gid].update({
                 "role": roleID.id,
-                "only_daily": 0
+                "only_daily": False
             })
         else:
             data[gid]["role"] = roleID.id
@@ -445,7 +451,7 @@ def set_mention(ctx, choice):
 
     if gid in data:
         if only_daily in data[gid]:
-            data[gid][only_daily] = (1, 0)[choice]
+            data[gid][only_daily] = choice
 
             save(data)
 
@@ -466,7 +472,7 @@ def get_mention(ctx):
     if gid in data:
         if only_daily in data[gid]:
             men = "only for daily comics posts"
-            if data[gid][only_daily] == 0:
+            if not data[gid][only_daily]:
                 men = "for all comic posts"
 
             return Success, men
@@ -509,6 +515,7 @@ def load_details():
 
     return com_data
 
+
 # Returns the ids and what need to be sent
 def get_database_data():
     # Loads the prefixes file
@@ -534,6 +541,22 @@ def save(data):
     # Saves the file
     with open(DATABASE_FILE_PATH, 'w') as f:
         json.dump(data, f, indent=4)
+
+
+def verify_json():
+    data = get_database_data()
+    schema = None
+
+    with open(JSON_SCHEMA_FILE_PATH, 'r') as f:
+        schema = json.load(f)
+
+    try:
+        validate(instance=data, schema=schema)
+        return True
+    except jsonschema.ValidationError as e:
+        print(e)
+        return False
+
 
 
 # Check if the comic is subscribed to this guild
