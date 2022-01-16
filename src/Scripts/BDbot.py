@@ -257,7 +257,10 @@ class BDBot(commands.Cog):
     @commands.command()
     async def nb_active(self, ctx):
         # Returns the number of servers using the hourly poster service
-        await ctx.send("There is "+str(len(utils.get_database_data()))+" servers using the hourly poster service.")
+        if utils.is_owner(ctx):
+            await ctx.send("There is "+str(len(utils.get_database_data()))+" servers using the hourly poster service.")
+        else:
+            raise commands.CommandNotFound
 
     @commands.command()
     async def kill(self, ctx):
