@@ -209,7 +209,7 @@ class BDBot(commands.Cog):
     @commands.command()
     async def ping(self, ctx):
         # Latency with discord API
-        await ctx.send("Pong! "+str(round(self.client.latency, 4))+"ms")
+        await ctx.send("Pong! "+str(round(self.client.latency * 1000))+"ms")
 
     @commands.command()
     async def uptime(self, ctx):

@@ -17,7 +17,7 @@ class PosterHandler(commands.Cog):
     async def start_hourly(self, ctx):
         # Starts the PosterHandler loop
         if utils.is_owner(ctx):
-            await ctx.send("Daily loop started! Daily comics are posted at 6:00 AM UTC each day.")
+            await ctx.send("Hourly loop started! Hourly comics are posted at each hour.")
 
             await PosterHandler.wait_for_next_hour(self)
         else:
