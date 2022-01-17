@@ -4,7 +4,7 @@ from discord.ext import commands
 from datetime import datetime, timezone, timedelta
 import os
 import topgg
-from src.Scripts.DailyPoster import DailyPosterHandler
+from src.Scripts.AutomaticPoster import PosterHandler
 from src import utils
 
 
@@ -35,7 +35,7 @@ class BDBot(commands.Cog):
         await channel.send(
             "Bot restarted. I will now try to restart the loop.")  # Sends this message whenever restarting the bot
 
-        await DailyPosterHandler.wait_for_daily(DailyPosterHandler(client=self.client))  # Wait for daily poster
+        await PosterHandler.wait_for_next_hour(PosterHandler(client=self.client))  # Wait for daily poster
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):

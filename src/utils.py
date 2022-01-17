@@ -2,7 +2,7 @@
 import re
 import discord
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 import os
 
@@ -11,11 +11,11 @@ import jsonschema
 import Web_requests_manager
 from jsonschema import validate
 
-
 DETAILS_PATH = "misc/comics_details.json"
 FOOTERS_FILE_PATH = 'misc/random-footers.txt'
 DATABASE_FILE_PATH = "data/data.json"
 JSON_SCHEMA_FILE_PATH = "misc/databaseSchema.json"
+BACKUP_FILE_PATH = "data/backups/BACKUP_DATABASE_"
 date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 match_date = {
     "Mo": "Monday",
@@ -536,6 +536,78 @@ def get_specific_guild_data(ctx):
         return None
 
 
+def clean_database(data=None, do_backup=True, strict=False):
+    # Cleans the database from inactive servers
+    if data is None:
+        data = get_database_data()
+
+    if do_backup:
+        save_backup(data)
+
+    guilds_to_clean = []
+    nb_removed = 0
+
+    for guild in data:
+        # To take in account or not if a server still has a role tied to their info
+        if "role" not in data[guild] or strict:
+            to_remove = True
+            channels = data[guild]["channels"]
+            for chan in channels:
+                dates = channels[chan]["date"]
+                for date in dates:
+                    hours = dates[date]
+                    for hour in hours:
+                        if len(hours[hour]) > 0:
+                            to_remove = False
+                            break
+                    if not to_remove:
+                        break
+                if not to_remove:
+                    break
+
+            if to_remove:
+                guilds_to_clean.append(guild)
+                nb_removed += 1
+
+    for guild in guilds_to_clean:
+        print(data.pop(guild))
+
+    if nb_removed > 0:
+        save(data)
+
+    return nb_removed
+
+
+def save_backup(data):
+    # Creates a new backup and saves it
+    backupfp = BACKUP_FILE_PATH + datetime.now(timezone.utc).strftime("%Y_%m_%d_%H") + ".json"
+
+    with open(backupfp, 'w') as f:
+        json.dump(data, f)
+
+
+def restore_backup():
+    # Restore a last used backup
+    utc_date = datetime.now(timezone.utc)
+    file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
+    database = ""
+    tries = 0
+
+    while not os.path.exists(file_path) and tries < 25:
+        tries += 1
+        utc_date = utc_date - timedelta(hours=1)
+        file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
+
+    if tries < 25:
+        with open(file_path, 'r') as f:
+            database = json.load(f)
+
+        if database != "":
+            save(database)
+    else:
+        raise Exception("No backup was found in the last 24 hours!!")
+
+
 # Save the database
 def save(data):
     # Saves the file
@@ -544,6 +616,7 @@ def save(data):
 
 
 def verify_json():
+    # Verifies the database according to a particular json schema to assure the integrity of it
     data = get_database_data()
     schema = None
 
@@ -556,7 +629,6 @@ def verify_json():
     except jsonschema.ValidationError as e:
         print(e)
         return False
-
 
 
 # Check if the comic is subscribed to this guild
