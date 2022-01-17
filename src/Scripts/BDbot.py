@@ -18,8 +18,7 @@ class BDBot(commands.Cog):
         self.client = client
         dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
         self.topggpy = topgg.DBLClient(client, dbl_token)
-        self.start_time = datetime.utcnow()
-
+        self.start_time = datetime.now(timezone.utc),
     @commands.Cog.listener()
     async def on_ready(self):
         # Change bot's activity
@@ -215,7 +214,7 @@ class BDBot(commands.Cog):
     @commands.command()
     async def uptime(self, ctx):
         # Uptime
-        delta = (datetime.utcnow()-self.start_time)
+        delta = (datetime.now(timezone.utc), self.start_time)
         hours = math.floor(delta.seconds / 3600)
         minutes = math.floor((delta.seconds - hours * 3600)/60)
         seconds = math.floor(delta.seconds - ((minutes*60) + (hours*3600)))

@@ -1,6 +1,6 @@
 from discord.ext import tasks, commands
 import discord
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from src import utils, Web_requests_manager
 
 
@@ -25,7 +25,7 @@ class PosterHandler(commands.Cog):
 
     # Wait for the time to restart the hourly loop
     async def wait_for_next_hour(self):
-        sleep_date = datetime.utcnow().replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+        sleep_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
         await discord.utils.sleep_until(sleep_date)
         await PosterHandler.post_hourly.start(self)
 
@@ -126,7 +126,7 @@ class PosterHandler(commands.Cog):
                                         role_mention = ""
 
                                     await chan.send(f"Comics for "
-                                                    f"{datetime.utcnow().strftime('%A the %d %B %Y, %H h UTC')} "
+                                                    f"{datetime.now(timezone.utc).strftime('%A the %d %B %Y, %H h UTC')} "
                                                     f"{role_mention}")
                                     comic_list[channel]["hasBeenMentionned"] = 1
 

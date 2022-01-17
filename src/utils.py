@@ -167,11 +167,11 @@ async def parameters_interpreter(ctx, strip_details, param=None, date=None, hour
                 try:
                     comic_date = datetime.strptime(param, "%d/%m/%Y")
                     first_date = datetime.strptime(get_first_date(strip_details), "%Y, %m, %d")
-                    if first_date <= comic_date <= datetime.utcnow():
+                    if first_date <= comic_date <= datetime.now(timezone.utc):
                         await comic_send(ctx, strip_details, "Specific_date", comic_date=comic_date)
                     else:
                         first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
-                        date_now_formatted = datetime.strftime(datetime.utcnow(), "%d/%m/%Y")
+                        date_now_formatted = datetime.strftime(datetime.now(timezone.utc), "%d/%m/%Y")
                         await ctx.send(
                             f"Invalid date. Try sending a date between {first_date_formatted} and "
                             f"{date_now_formatted}.")
@@ -680,11 +680,11 @@ def get_first_date(strip_details):
 
 
 def get_today():
-    return datetime.utcnow().today().strftime("%A")[0:2]
+    return datetime.now(timezone.utc).today().strftime("%A")[0:2]
 
 
 def get_hour():
-    return str(datetime.utcnow().hour)
+    return str(datetime.now(timezone.utc).hour)
 
 
 def clean_url(url, file_forms=None):
