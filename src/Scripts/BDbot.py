@@ -1,7 +1,7 @@
 import math
 import discord
 from discord.ext import commands
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 import os
 import topgg
 from src.Scripts.AutomaticPoster import PosterHandler
@@ -225,7 +225,7 @@ class BDBot(commands.Cog):
     @commands.command()
     async def uptime(self, ctx):
         # Uptime
-        delta = (datetime.now(timezone.utc), self.start_time)
+        delta = (datetime.now(timezone.utc) - self.start_time)
         hours = math.floor(delta.seconds / 3600)
         minutes = math.floor((delta.seconds - hours * 3600)/60)
         seconds = math.floor(delta.seconds - ((minutes*60) + (hours*3600)))
