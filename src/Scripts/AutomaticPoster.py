@@ -79,11 +79,13 @@ class PosterHandler(commands.Cog):
                         if day in guild_data["channels"][str(channel)]["date"]:
                             if hour in guild_data["channels"][str(channel)]["date"][day]:
                                 if pos in guild_data["channels"][str(channel)]["date"][day][hour]:
-                                    if channel not in comic_list:
+                                    if channel not in comic_list: # Asssure no duplicates
+                                        to_mention = comic_data["mention"]
                                         role = None
+
                                         if ('only_daily' in guild_data) and \
                                                 (not guild_data["only_daily"] or hour == "6") and \
-                                                ("role" in guild_data):
+                                                ("role" in guild_data) and to_mention:
                                             role = discord.Guild.get_role(
                                                 self.client.get_guild(guild_data["server_id"]), guild_data["role"])
 
@@ -92,7 +94,8 @@ class PosterHandler(commands.Cog):
                                                 "channel": channel,
                                                 "comics": [pos],
                                                 "role": role,
-                                                "hasBeenMentionned": 0
+                                                "hasBeenMentionned": 0,
+                                                "wantMention": to_mention
                                             }
                                         })
                                     else:
@@ -119,7 +122,8 @@ class PosterHandler(commands.Cog):
 
                         if chan is not None:
                             try:
-                                if comic_list[channel]["hasBeenMentionned"] == 0:
+                                if comic_list[channel]["hasBeenMentionned"] == 0 and \
+                                        comic_list[channel]["to_mention"]:
                                     if comic_list[channel]["role"] is not None:
                                         role_mention = comic_list[channel]["role"].mention
                                     else:

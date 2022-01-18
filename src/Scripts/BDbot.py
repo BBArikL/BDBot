@@ -18,7 +18,8 @@ class BDBot(commands.Cog):
         self.client = client
         dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
         self.topggpy = topgg.DBLClient(client, dbl_token)
-        self.start_time = datetime.now(timezone.utc),
+        self.start_time = datetime.now(timezone.utc)
+
     @commands.Cog.listener()
     async def on_ready(self):
         # Change bot's activity
@@ -130,6 +131,16 @@ class BDBot(commands.Cog):
 
         if status == utils.Success:
             await ctx.send(f"The bot will mention the role {mention_policy}!")
+        else:
+            await ctx.send(status)
+
+    @commands.command()
+    @commands.has_permissions(manage_guild=True)
+    async def post_mention(self, ctx):
+        status = utils.set_post_mention(ctx)
+
+        if status == utils.Success:
+            await ctx.send("Successfully changed the mention policy for this server!")
         else:
             await ctx.send(status)
 

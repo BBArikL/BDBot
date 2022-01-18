@@ -281,7 +281,8 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             guild_id: {
                 "server_id": 0,
                 "channels": {
-                }
+                },
+                "mention": True
             }
         }
 
@@ -426,9 +427,13 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
 def set_role(ctx, roleID):
     gid = str(ctx.guild.id)
     role = "role"
+    mention = "mention"
     data = get_database_data()
 
     if gid in data:
+        if not data[gid][mention]:
+            return "Please re-enable the mention before daily post bu using `bd!dailymention`!"
+
         if role not in data[gid]:
             data[gid].update({
                 "role": roleID.id,
@@ -447,9 +452,14 @@ def set_role(ctx, roleID):
 def set_mention(ctx, choice):
     gid = str(ctx.guild.id)
     only_daily = "only_daily"
+    mention = "mention"
     data = get_database_data()
 
     if gid in data:
+        if not data[gid][mention]:
+            return "The base mention is disabled in this guild! " \
+                   "Re-enable the mention before daily post by using `bd!dailymention`."
+
         if only_daily in data[gid]:
             data[gid][only_daily] = choice
 
@@ -467,9 +477,14 @@ def set_mention(ctx, choice):
 def get_mention(ctx):
     gid = str(ctx.guild.id)
     only_daily = "only_daily"
+    mention = "mention"
     data = get_database_data()
 
     if gid in data:
+        if not data[gid][mention]:
+            return "The base mention is disabled in this guild! " \
+                   "Re-enable the mention before daily post by using `bd!dailymention`."
+
         if only_daily in data[gid]:
             men = "only for daily comics posts"
             if not data[gid][only_daily]:
@@ -488,13 +503,18 @@ def remove_role(ctx):
     gid = str(ctx.guild.id)
     role = "role"
     only_daily = "only_daily"
+    mention = "mention"
     data = get_database_data()
 
     if gid in data:
+        if not data[gid][mention]:
+            return "Please re-enable the mention before daily post by using `bd!dailymention`!"
+
         if role in data[gid]:
 
             data[gid].pop(role)
             data[gid].pop(only_daily)
+
 
             save(data)
 
@@ -504,6 +524,26 @@ def remove_role(ctx):
     else:
         return "This guild is not subscribed to any comic! Please subscribe to a comic before managing the role " \
                "mentions!"
+
+
+# Change if the bot says a phrase before posting daily comics
+def set_post_mention(ctx):
+    gid = ctx.guild.id
+    mention = "mention"
+    role = "role"
+    data = get_database_data()
+
+    if gid in data:
+
+        if role not in data:
+            data[gid][mention] = not data[gid][mention]
+        else:
+            return "A role is already set up to be mentionned daily! Remove the role before changing the post mention" \
+                   " by using `bd!remove_role`."
+
+    save(data)
+
+    return Success
 
 
 def load_details():
