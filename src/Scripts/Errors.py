@@ -17,7 +17,7 @@ class Errors(commands.Cog):
         # Handles errors
         if isinstance(error, commands.CommandNotFound):  # Command not found
             await ctx.send('Invalid command. Try bd!help to search for usable commands.')
-        elif isinstance(error, commands.MissingRequiredArgument):  # Manque d'arguments
+        elif isinstance(error, commands.MissingRequiredArgument):  # Not enough arguments
             await ctx.send('A required argument is needed. Try bd!help to see required arguments.')
         elif isinstance(error, commands.MissingPermissions):
             await ctx.send('You do not have the permission to do that.')

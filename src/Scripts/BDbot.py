@@ -45,6 +45,10 @@ class BDBot(commands.Cog):
     async def on_guild_channel_delete(self, deleted_channel):
         utils.remove_channel(deleted_channel, use="auto_remove_channel")
 
+    @commands.Cog.listener()
+    async def on_private_channel_delete(self, deleted_channel):
+        utils.remove_channel(deleted_channel, use="auto_remove_channel")
+
     @commands.command(aliases=['Git', 'github', 'Github'])
     async def git(self, ctx):  # Links back to the github page
         await ctx.send("Want to help the bot? Go here: https://github.com/BBArikL/BDBot")
@@ -136,11 +140,11 @@ class BDBot(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_guild=True)
-    async def post_mention(self, ctx):
-        status = utils.set_post_mention(ctx)
+    async def post_mention(self, ctx, choice):
+        status = utils.set_post_mention(ctx, choice.lower() == "enable")
 
         if status == utils.Success:
-            await ctx.send("Successfully changed the mention policy for this server!")
+            await ctx.send("Successfully changed the mention policy for this server! ")
         else:
             await ctx.send(status)
 
@@ -190,11 +194,17 @@ class BDBot(commands.Cog):
                     for hour in guild_data["channels"][channel]["date"][day]:
                         for comic in guild_data["channels"][channel]["date"][day][hour]:
                             comic_name = comic_values[comic]["Name"]
+
+                            # Check if channel exist
+                            chan = self.client.get_channel(int(channel))
+                            if chan is not None:
+                                chan = chan.mention
+
                             comic_list.append({
                                 "Name": comic_name,
                                 "Hour": hour,
                                 "Date": day,
-                                "Channel": self.client.get_channel(int(channel)).mention
+                                "Channel": chan
                             })
 
             if len(comic_list) > 0:
@@ -207,7 +217,7 @@ class BDBot(commands.Cog):
                         embeds.append(discord.Embed(title="This guild is subscribed to:"))
 
                     embeds[-1].add_field(name=comic['Name'], value=f"Each {matching_date[comic['Date']]} at "
-                                                                   f"{comic['Hour']} ih UTC in channel"
+                                                                   f"{comic['Hour']} h UTC in channel"
                                                                    f" {comic['Channel']}")
                     nbFields += 1
                 for embed in embeds:
@@ -220,17 +230,17 @@ class BDBot(commands.Cog):
     @commands.command()
     async def ping(self, ctx):
         # Latency with discord API
-        await ctx.send("Pong! "+str(round(self.client.latency * 1000))+"ms")
+        await ctx.send("Pong! " + str(round(self.client.latency * 1000)) + "ms")
 
     @commands.command()
     async def uptime(self, ctx):
         # Uptime
         delta = (datetime.now(timezone.utc) - self.start_time)
         hours = math.floor(delta.seconds / 3600)
-        minutes = math.floor((delta.seconds - hours * 3600)/60)
-        seconds = math.floor(delta.seconds - ((minutes*60) + (hours*3600)))
-        await ctx.send("The bot has been up for "+str(delta.days)+" days, "+str(hours)+" hours, "+
-                       str(minutes)+" minutes and "+str(seconds)+" seconds.")
+        minutes = math.floor((delta.seconds - hours * 3600) / 60)
+        seconds = math.floor(delta.seconds - ((minutes * 60) + (hours * 3600)))
+        await ctx.send("The bot has been up for " + str(delta.days) + " days, " + str(hours) + " hours, " +
+                       str(minutes) + " minutes and " + str(seconds) + " seconds.")
 
     @commands.command()
     async def status(self, ctx):
@@ -248,7 +258,7 @@ class BDBot(commands.Cog):
             with open(FILE_PATH, 'r') as f:
                 r = f.readlines()
 
-            await ctx.send("Here are the requests:\n```\n"+"\n".join(r)+"\n```")
+            await ctx.send("Here are the requests:\n```\n" + "\n".join(r) + "\n```")
         else:
             raise commands.CommandNotFound
 
@@ -268,7 +278,8 @@ class BDBot(commands.Cog):
     async def nb_active(self, ctx):
         # Returns the number of servers using the hourly poster service
         if utils.is_owner(ctx):
-            await ctx.send("There is "+str(len(utils.get_database_data()))+" servers using the hourly poster service.")
+            await ctx.send(
+                "There is " + str(len(utils.get_database_data())) + " servers using the hourly poster service.")
         else:
             raise commands.CommandNotFound
 
