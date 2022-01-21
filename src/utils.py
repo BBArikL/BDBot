@@ -212,9 +212,7 @@ def new_change(ctx, strip_details, param, date=None, hour=None):
     return modify_database(ctx, param, comic_number=comic_number, day=final_date, hour=str(final_hour))
 
 
-def parse_all(date=None, hour=None):
-    default_date = "D"
-    default_hour = 6
+def parse_all(date=None, hour=None, default_date="D", default_hour=6):
     final_date = default_date
     final_hour = default_hour
 

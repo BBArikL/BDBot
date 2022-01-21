@@ -210,11 +210,11 @@ class BDBot(commands.Cog):
             if len(comic_list) > 0:
                 nbFields = 0
                 matching_date = utils.match_date
-                embeds = [discord.Embed(title="This guild is subscribed to:")]
+                embeds = [discord.Embed(title="This server is subscribed to:")]
                 for comic in comic_list:
                     if nbFields > MAX_FIELDS:
                         nbFields = 0
-                        embeds.append(discord.Embed(title="This guild is subscribed to:"))
+                        embeds.append(discord.Embed(title="This server is subscribed to:"))
 
                     embeds[-1].add_field(name=comic['Name'], value=f"Each {matching_date[comic['Date']]} at "
                                                                    f"{comic['Hour']} h UTC in channel"
