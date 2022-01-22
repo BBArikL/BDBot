@@ -502,5 +502,47 @@
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/pb/large_pb_rec_201804050954.jpg",
         "Aliases": "'Pearls', 'pearls', 'Swine', 'swine'",
         "Helptxt": "Join the chronicles of the daily lives of an ensemble cast of suburban anthropomorphic animals: Pig, Rat, Zebra, Goat, and a fraternity of crocodiles."
+    },
+    "Chibird": {
+	    "Name": "Chibird",
+	    "Author": "Chibird",
+	    "Web_name": "challenge/chibird/list?title_no=97265",
+	    "Main_website": "https://www.webtoons.com/en/",
+	    "Working_type": "rss",
+        "Description": "Positive, motivational drawings to brighten your day! Featuring everyday life with Jackie, Chibird, Motivational Penguin, Shy Ghost, Positive Bunny, Hedgehog, and more! Find Chibird at chibird.com or @ChibirdArt on Instagram and Facebook! :D (Under Creative Commons : https://creativecommons.org/licenses/by-nc-nd/4.0/)\nWebsite: https://chibird.com/\nPatreon: https://www.patreon.com/chibird\nShop: https://chibird.myshopify.com/\nFacebook: https://www.facebook.com/ChibirdArt/\nInstagram: https://www.instagram.com/chibirdart/\nTwitter: https://twitter.com/ChibirdArt\niMessage stickers: https://itunes.apple.com/us/app/chibird-penguin-stickers/id1173229367\nMore info: https://chibird.com/faq",
+	    "Position": 35,
+	    "First_date": "1",
+	    "Color": "FCF36B",
+	    "Image": "https://swebtoon-phinf.pstatic.net/20170718_237/1500327571879yzcBu_JPEG/988e7e1e-c286-4391-971c-b8f44cb497bb.jpg",
+	    "Aliases": "'Chibird', 'chibird', 'Chib', 'chib'",
+	    "Helptxt": "TODO"
+    },
+    "WarAndPeas":{
+        "Name": "War and Peas",
+        "Author": "Elizabeth and Jonathan",
+        "Web_name": "challenge/war-and-peas/list?title_no=63305",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "A robot hopelessly in love, a promiscuous yet self-assured witch, and a fatally laid-back grim reaper. This never-ending webcomic of woefully funny stories will leave you cry-laughing or the other way around.\nWebsite: https://warandpeas.com/\nShop: https://warandpeas.com/shop\nFacebook: https://www.facebook.com/warnpeas\nInstagram: https://www.instagram.com/war.and.peas\nTwitter: https://twitter.com/warandpeass\nMore info: https://warandpeas.com/about/",
+        "Position": 36,
+        "First_date": "1",
+        "Color": "FA8B5D",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210517_287/1621258998853tRgyE_JPEG/4479eb01-8495-47bf-8463-eb10967e3f32.jpg",
+        "Aliases": "'WarAndPeas', 'warandpeas', 'War', 'war', 'Peas', 'peas'",
+        "Helptxt": "TODO"
+    },
+    "Maximumble":{
+        "Name": "Maximumble",
+        "Author": "Chris Hallbeck",
+        "Web_name": "challenge/maximumble/list?title_no=10005",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "Comics for your brain machine.\nWebsite: https://warandpeas.com/\nShop: https://warandpeas.com/shop\nFacebook: https://www.facebook.com/warnpeas\nInstagram: https://www.instagram.com/war.and.peas\nTwitter: https://twitter.com/warandpeass\nMore info: https://warandpeas.com/about/",
+        "Position": 37,
+        "First_date": "1",
+        "Color": "FA8B5D",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210517_287/1621258998853tRgyE_JPEG/4479eb01-8495-47bf-8463-eb10967e3f32.jpg",
+        "Aliases": "'WarAndPeas', 'warandpeas', 'War', 'war', 'Peas', 'peas'",
+        "Helptxt": "TODO"
     }
 }
