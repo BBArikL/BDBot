@@ -138,7 +138,6 @@ def get_random_link(strip_details):  # Returns the random comic url
 def extract_meta_content(html, content):
     # Copied from CalvinBot : https://github.com/wdr1/CalvinBot/blob/master/CalvinBot.py
     # Extract the image source of the comic
-    # Problem : Since the bot is hosted on replit, the site can be at a date where the comic is not accessible
     soup = BeautifulSoup(html, "html.parser")
     content_meta = soup.find('meta', attrs={'property': f'og:{content}', 'content': True})
 
