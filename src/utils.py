@@ -541,7 +541,6 @@ def set_post_mention(ctx, choice):
 
 
 def load_details():
-    print("Loading Details.....")
     # Returns the comic details
     # Loads the comic details file
     with open(DETAILS_PATH, 'r', encoding='utf-8') as f:
@@ -603,9 +602,6 @@ def clean_database(data=None, do_backup=True, strict=False):
                 guilds_to_clean.append(guild)
                 nb_removed += 1
 
-    for guild in guilds_to_clean:
-        print(data.pop(guild))
-
     if nb_removed > 0:
         save(data)
 
@@ -660,8 +656,7 @@ def verify_json():
     try:
         validate(instance=data, schema=schema)
         return True
-    except jsonschema.ValidationError as e:
-        print(e)
+    except jsonschema.ValidationError:
         return False
 
 

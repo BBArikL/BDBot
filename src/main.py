@@ -1,11 +1,19 @@
 import os
+import logging
 from discord.ext import commands
 from dotenv import load_dotenv
+from datetime import datetime, timezone
 
 load_dotenv()
 
 client = commands.Bot(command_prefix='bd!')
 client.remove_command("help")  # Removes the default "help" function to replace it by our own
+
+logger = logging.getLogger('discord')
+logger.setLevel(logging.INFO)
+handler = logging.FileHandler(filename=f'data/logs/discord_{datetime.now().strftime("%Y_%H_%M")}.log',encoding='utf-8',mode='w' )
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 print("Starting Bot...")
 

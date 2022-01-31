@@ -1,3 +1,4 @@
+import logging
 import math
 import discord
 from discord.ext import commands
@@ -19,6 +20,7 @@ class BDBot(commands.Cog):
         dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
         self.topggpy = topgg.DBLClient(client, dbl_token)
         self.start_time = datetime.now(timezone.utc)
+        self.logger = logging.getLogger('discord')
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -27,7 +29,7 @@ class BDBot(commands.Cog):
                                           activity=discord.Activity(type=discord.ActivityType.listening,
                                                                     name='bd!help'))
 
-        print("Logged in as {0.user}".format(self.client))
+        self.logger.log(logging.INFO, "Logged in as {0.user}".format(self.client))
         channel_id = int(os.getenv('PRIVATE_CHANNEL_SUPPORT_ID'))
 
         channel = self.client.get_channel(channel_id)
