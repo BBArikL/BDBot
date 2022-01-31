@@ -42,10 +42,13 @@ class Help(commands.Cog):
                                               "=enhancement&template=comic-request.md&title=New+Comic+request "
                                               "for maximum visibility or use `bd!request <your request>` to "
                                               "leave a message to the developer!")
-        embed.add_field(name="Git", value="Gives the link of the git page.\nCommand:\n`bd!git`.")
-        embed.add_field(name="Invite", value="Gives a link to add the bot to your servers!\nCommand:\n`bd!invite`.")
+        embed.add_field(name="Status", value="Gives back the status of the bot.\nCommand:\n`bd!status`")
+        embed.add_field(name="Ping", value="Pong! Gives back the bot latency.\nCommand:\n`bd!ping`")
+        embed.add_field(name="Uptime", value="Gives back the uptime.\nCommand:\n`bd!up`")
+        embed.add_field(name="Git", value="Gives the link of the git page.\nCommand:\n`bd!git`")
+        embed.add_field(name="Invite", value="Gives a link to add the bot to your servers!\nCommand:\n`bd!invite`")
 
-        embed.add_field(name="Vote", value="Vote for the bot on Top.gg!\nCommand:\n`bd!vote`.")
+        embed.add_field(name="Vote", value="Vote for the bot on Top.gg!\nCommand:\n`bd!vote`")
 
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
@@ -56,7 +59,11 @@ class Help(commands.Cog):
                                                                    "specify when the the bot should send the comic. A "
                                                                    "date should be one of the seven days of the week"
                                                                    "and the hour a number representing the time in a "
-                                                                   "24h clock in UTC time.")
+                                                                   "24h clock in UTC time. If not specified, "
+                                                                   "defaults to the current time in UTC.")
+        embed.add_field(name="Post", value="The bot did not post the comics or you want to be sure that all comics "
+                                           "are correctly set up? Use `bd!post <date> <hour>` to force the post of "
+                                           "comics set at the specified time.")
         embed.add_field(name="Add", value="Use `bd!<name_of_comic> add <date> <hour>` to add the comic to the daily "
                                           "list of the channel.")
         embed.add_field(name="Add all", value="Use `bd!add_all <date> <hour>` to add all the comics to a specific day "
@@ -75,6 +82,8 @@ class Help(commands.Cog):
                                                          "posted at 6h AM UTC. If the mention policy is set to 'all',"
                                                          " the bot will mention the role at each comic post, otherwise"
                                                          " it will only mention the role at 6h AM UTC daily.")
+        embed.add_field(name="Enable/Disable mention", value="Use `bd!post_mention` to enable/disable server-wide the "
+                                                             "mention right before the automatic comic posts.")
         embed.add_field(name="Get mention policy", value="Use `bd!get_mention` to get the server's mention policy.")
 
         embed.set_footer(text=utils.get_random_footer())

@@ -247,7 +247,7 @@ class BDBot(commands.Cog):
     @commands.command()
     async def status(self, ctx):
         # Status of the bot
-        await ctx.send("The bot is online, waiting for comics to send. Report any errors by git () or by "
+        await ctx.send("The bot is online, waiting for comics to send. Report any errors by git (`bd!git`) or by "
                        "`bd!request <your request>`.")
 
     @commands.command()
