@@ -11,15 +11,17 @@ client.remove_command("help")  # Removes the default "help" function to replace 
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
-handler = logging.FileHandler(filename=f'data/logs/discord_{datetime.now().strftime("%Y_%H_%M")}.log',encoding='utf-8',mode='w' )
+handler = logging.FileHandler(filename=f'src/data/logs/discord_{datetime.now().strftime("%Y_%H_%M")}.log',encoding='utf-8',mode='w' )
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-print("Starting Bot...")
+logger.log(logging.INFO, "Starting Bot...")
 
 # Loads all the cogs
-for filename in os.listdir('./Scripts'):
+for filename in os.listdir('src/Scripts'):
     if filename.endswith('py'):
-        client.load_extension(f'Scripts.{filename[:-3]}')
+        client.load_extension(f'src.Scripts.{filename[:-3]}')
+
+logger.log(logging.INFO, "Cogs successfully loaded!")
 
 client.run(os.getenv('TOKEN'))  # Runs the bot with the private bot token

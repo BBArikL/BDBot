@@ -42,6 +42,7 @@ Discord bot that post bd strips. Simple as that!
 
 ## Related Github pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
+Robobert: https://github.com/JTexpo/Robobert
 
 ## What to learn from this project?
 - More about discord bots.

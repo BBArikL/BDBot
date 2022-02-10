@@ -1,3 +1,6 @@
+import json
+import random
+
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from datetime import date, timedelta, datetime
@@ -5,9 +8,7 @@ from bs4 import BeautifulSoup
 from rss_parser import Parser
 from requests import get
 from randomtimestamp import randomtimestamp
-import json
-import random
-import utils
+from src import utils
 
 # Class that makes the web requests to have the fresh comic details
 
@@ -182,34 +183,57 @@ def get_comic_info_number(strip_details, param=None):
             html = urlopen(main_website).read()
             details["url"] = extract_meta_content(html, 'url')
 
-        # Gets today date
-        if param == "today":
-            d = date.today()
-            details["day"] = d.strftime("%d")
-            details["month"] = d.strftime("%m")
-            details["year"] = d.strftime("%Y")
-
         # Get the html of the comic site
         try:
             html = urlopen(details["url"]).read()
         except HTTPError:
             html = None
 
-        if strip_details["Name"] != 'xkcd':
-            # General extractor
-            if html is not None:
-                details["url"] = extract_meta_content(html, 'url')
+        if html is not None:
+            if strip_details["Name"] == 'Cyanide and Happiness':
+                # Cyanide and Happiness special extractor
+                # heavily inspired by https://github.com/JTexpo/Robobert
+                # Parse the json that is embedded into the end of the page
+                soup = BeautifulSoup(html, 'html.parser')
+                dat = soup.find("script", id="__NEXT_DATA__").get_text()
 
-                details["title"] = extract_meta_content(html, 'title')
+                js = json.loads(dat)
 
-                details["img_url"] = extract_meta_content(html, 'image')
+                urqlStates = js["props"]["pageProps"]["urqlState"]
 
-                details = None # TODO fix CYANIDE AND HAPPINESS
-            else:
-                return None
+                for state_id in urqlStates:
+                    # Bruteforce the json entries to find the one contains the content of the comic
+                    state_data = urqlStates[state_id]
+                    middle_data = json.loads(state_data["data"])
 
-        else:
-            if html is not None:
+                    if "comic" in middle_data:
+                        comdata = middle_data["comic"]
+
+                        comic_det = comdata["comicDetails"]
+                        author_det = comic_det["author"]["authorDetails"]
+
+                        details["url"] = f"https://explosm.net/comics/{comdata['slug']}"
+
+                        details["title"] = comdata["title"]
+
+                        # Legacy comics
+                        if "comicmgurl" in comic_det:
+                            details["img_url"] = comic_det["comicmgurl"]
+                        else:
+                            # modern comics
+                            details["img_url"] = comic_det["comicimgstaticbucketurl"]["mediaItemUrl"]
+
+                        details["author"] = author_det["name"]
+                        details["sub_img_url"] = author_det["image"]["mediaItemUrl"]
+
+                        post_date = datetime.strptime(comdata["date"], "%Y-%m-%dT%H:%M:%S")
+
+                        details["day"] = post_date.day
+                        details["month"] = post_date.month
+                        details["year"] = post_date.year
+                        break
+
+            elif strip_details["Name"] == 'xkcd':
                 # XKCD special extractor
                 # We requested a json and not a html
                 json_details = json.loads(html)
@@ -222,7 +246,16 @@ def get_comic_info_number(strip_details, param=None):
                 details["month"] = json_details["month"]
                 details["year"] = json_details["year"]
             else:
-                return None
+                # General extractor
+
+                details["url"] = extract_meta_content(html, 'url')
+
+                details["title"] = extract_meta_content(html, 'title')
+
+                details["img_url"] = extract_meta_content(html, 'image')
+        else:
+            return None
+
         if details is not None:
             details["color"] = int(strip_details["Color"], 16)
     else:
@@ -279,7 +312,7 @@ def get_comic_info_rss(strip_details, param=None, comic_date=None):
             # Webtoon
             details["url"] = main_website + f"&episode_no={comic_date}"
     else:
-        feed = Parser(xml=get(rss_site).content, limit=comic_nb+1).parse().feed[comic_nb]
+        feed = Parser(xml=get(rss_site).content, limit=comic_nb + 1).parse().feed[comic_nb]
         # Get informations
         tz = ""
         weekday = ""

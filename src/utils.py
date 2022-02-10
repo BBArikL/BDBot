@@ -2,20 +2,18 @@
 import re
 import discord
 import random
-from datetime import datetime, timedelta, timezone
 import json
 import os
 
-import jsonschema
+from src import Web_requests_manager
+from jsonschema import validate, ValidationError
+from datetime import datetime, timedelta, timezone
 
-import Web_requests_manager
-from jsonschema import validate
-
-DETAILS_PATH = "misc/comics_details.json"
-FOOTERS_FILE_PATH = 'misc/random-footers.txt'
-DATABASE_FILE_PATH = "data/data.json"
-JSON_SCHEMA_FILE_PATH = "misc/databaseSchema.json"
-BACKUP_FILE_PATH = "data/backups/BACKUP_DATABASE_"
+DETAILS_PATH = "src/misc/comics_details.json"
+FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
+DATABASE_FILE_PATH = "src/data/data.json"
+JSON_SCHEMA_FILE_PATH = "src/misc/databaseSchema.json"
+BACKUP_FILE_PATH = "src/data/backups/BACKUP_DATABASE_"
 date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 match_date = {
     "Mo": "Monday",
@@ -656,7 +654,7 @@ def verify_json():
     try:
         validate(instance=data, schema=schema)
         return True
-    except jsonschema.ValidationError:
+    except ValidationError:
         return False
 
 
