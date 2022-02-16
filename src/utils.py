@@ -165,7 +165,7 @@ async def parameters_interpreter(ctx, strip_details, param=None, date=None, hour
                 try:
                     comic_date = datetime.strptime(param, "%d/%m/%Y")
                     first_date = datetime.strptime(get_first_date(strip_details), "%Y, %m, %d")
-                    if first_date <= comic_date <= datetime.now(timezone.utc):
+                    if first_date.timestamp() <= comic_date.timestamp() <= datetime.now(timezone.utc).timestamp():
                         await comic_send(ctx, strip_details, "Specific_date", comic_date=comic_date)
                     else:
                         first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
