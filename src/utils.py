@@ -8,6 +8,7 @@ import os
 from src import Web_requests_manager
 from jsonschema import validate, ValidationError
 from datetime import datetime, timedelta, timezone
+from randomtimestamp import randomtimestamp
 
 DETAILS_PATH = "src/misc/comics_details.json"
 FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
@@ -91,7 +92,7 @@ def create_embed(comic_details=None):
 # Sends comics info in a embed
 async def send_comic_info(ctx, strip_details):
     embed = discord.Embed(title=f'{strip_details["Name"]} by {strip_details["Author"]}',
-                          url=strip_details["Main_website"],
+                          url=get_link(strip_details),
                           description=strip_details["Description"], color=int(strip_details["Color"], 16))
     embed.set_thumbnail(url=strip_details["Image"])
     embed.add_field(name="Working type", value=strip_details["Working_type"], inline=True)
@@ -720,8 +721,49 @@ def clean_url(url, file_forms=None):
         file_forms = ["png", "jpg", "jpeg", "gif", "jfif", "bmp", "tif", "tiff", "eps"]
 
     for file_form in file_forms:
-        url = re.sub(f"\.{file_form}\?.*$", f".{file_form}", url)
+        url = re.sub(f"\\.{file_form}\\?.*$", f".{file_form}", url)
 
     url = url.replace(" ", "%20")
 
     return url
+
+
+def get_link(strip_details, day=None):  # Returns the comic url
+    date_formatted = ""
+    middle_params = ""
+    if strip_details["Main_website"] == "https://www.gocomics.com/":
+        date_formatted = get_date_formatted(day=day)
+        middle_params = strip_details["Web_name"]
+    elif strip_details["Main_website"] == "https://comicskingdom.com/":
+        date_formatted = get_date_formatted(day=day, form="-")
+        middle_params = strip_details["Web_name"]
+    elif strip_details["Main_website"] == "https://dilbert.com/":
+        date_formatted = day.strftime("%Y-%m-%d")
+        middle_params = "strip"
+
+    return f'{strip_details["Main_website"]}{middle_params}/{date_formatted}'
+
+
+def get_date_formatted(day=None, form="/"):
+    if day is not None:
+        return day.strftime(f"%Y{form}%m{form}%d")
+    else:
+        return ""
+
+
+def get_random_link(strip_details):  # Returns the random comic url
+    if strip_details["Main_website"] == "https://www.gocomics.com/":
+        return f'{strip_details["Main_website"]}random/{strip_details["Web_name"]}', None
+    else:
+        first_date = datetime.strptime(get_first_date(strip_details), "%Y, %m, %d")
+        random_date = randomtimestamp(start=first_date,
+                                      end=datetime.today().replace(hour=0, minute=0, second=0,
+                                                                   microsecond=0))
+        middle_params = ""
+        if strip_details["Main_website"] == "https://comicskingdom.com/":
+            middle_params = strip_details["Web_name"]
+        elif strip_details["Main_website"] == "https://dilbert.com/":
+            middle_params = "strip"
+
+        return f'{strip_details["Main_website"]}{middle_params}/{random_date.strftime("%Y-%m-%d")}', random_date
+

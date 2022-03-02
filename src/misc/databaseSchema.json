@@ -2,8 +2,8 @@
   "title": "Schema of the database.",
   "description": "Schema of guild data",
   "type": "object",
-  "properties":{
-    "anyOf": {
+  "patternProperties":{
+    "[0-9]+": {
       "description": "The dictionary of server data.",
       "type": "object",
       "properties": {
@@ -14,8 +14,8 @@
         "channels": {
           "description": "The dictionary of channels in this server that is subscribed to one or more comics.",
           "type": "object",
-          "properties": {
-            "anyOf": {
+          "patternProperties": {
+            "[0-9]+": {
               "description": "The information about a channel",
               "type": "object",
               "properties": {
@@ -27,11 +27,11 @@
                   "description": "The dictionary containing the days the channel is subscribed to a comic",
                   "type": "object",
                   "properties": {
-                    "anyOf": {
+                    "[D(MO)(Tu)(We)(Th)(Fr)(Sa)(Su)]": {
                       "description": "The date the channel is subscribed to a comic",
                       "type": "object",
                       "properties": {
-                        "anyOf": {
+                        "[0-24]": {
                           "description": "The hour the channel is subscribed to a comic",
                           "type": "array",
                           "items": {

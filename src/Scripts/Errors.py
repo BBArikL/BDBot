@@ -13,7 +13,7 @@ class Errors(commands.Cog):
     # terminal. But you should at least not forget to remove the comments when your bot goes live ;)
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
+    async def on_command_error(self, ctx, error: Exception):
         # Handles errors
         if isinstance(error, commands.CommandNotFound):  # Command not found
             await ctx.send('Invalid command. Try bd!help to search for usable commands.')

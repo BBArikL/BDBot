@@ -117,6 +117,14 @@ class Comic(commands.Cog):
     async def InspectorDanger(self, ctx, use=None, date=None, hour=None):
         comic_name = 'Inspector-Dangers-Crime-Quiz'
 
+        await ctx.send("""Without any notice, this comic has stopped being posted on GoComics. This command will then 
+        sunset during the next update. This is a particularly sad moment to see a comic like this disappear. You can 
+        still find the book online (Amazon or Apple books (I am not affiliated in any way)), but most of the 
+        documentation and newer comics are mostly gone. The wayback machine has some pages stored (
+        <https://web.archive.org/web/*/https://www.gocomics.com/inspector-dangers-crime-quiz*>) too. Finally, 
+        this incident wil give to this bot a new purpose (in the next update): Whenever a comic is requested at 6 AM 
+        UTC, the page will be saved and archived through the internet archive. Thank you for using BDBot!""")
+
         # Interprets the parameters given by the user
         await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
 
@@ -126,13 +134,6 @@ class Comic(commands.Cog):
 
         # Interprets the parameters given by the user
         await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)
-
-    """@commands.command(aliases=['Catana', 'littlemoments'])
-    async def catana(self, ctx, use=None, date=None, hour=None):
-        comic_name = 'little-moments-of-love'
-
-        # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, self.get_strip_details(comic_name), param=use, date=date, hour=hour)"""
 
     @commands.command(aliases=['brevity', 'brev'])
     async def Brevity(self, ctx, use=None, date=None, hour=None):
