@@ -5,6 +5,8 @@ from discord.ext import commands
 from datetime import datetime, timezone
 import os
 import topgg
+import re
+
 from src.Scripts.AutomaticPoster import PosterHandler
 from src import utils
 
@@ -170,16 +172,30 @@ class BDBot(commands.Cog):
     @commands.command()
     async def request(self, ctx, *, param=None):
         # Adds a request to the database
-        FILE_PATH = 'data/requests.txt'
 
-        requests = open(FILE_PATH, 'a')
-
-        requests.write(
-            f'Request: "{param}" by {ctx.author.name}#{ctx.author.discriminator} on {datetime.now(timezone.utc)}\n')
-
-        requests.close()
+        with open(utils.REQUEST_FILE_PATH, "at") as requests:
+            requests.write(f'Request: "{param}" by {ctx.author.name}#{ctx.author.discriminator} on '
+                           f'{datetime.now(timezone.utc)}\n')
 
         await ctx.send("Request saved! Thank you for using BDBot!")
+
+    @commands.command()
+    async def request_delete(self, ctx):  # TODO fix, currently deletes all requests
+        author = f"{ctx.author.name}#{ctx.author.discriminator}"
+
+        with open(utils.REQUEST_FILE_PATH, "w+t") as rq:
+            # Removes all lines matching with the username and discriminator
+            lines = rq.readlines()
+            for line in lines:
+                print(line)
+                print(re.match(f".*\".*\".*{author}[^\"]*", line))
+                if re.match(f".*\".*\".*{author}[^\"]*", line):
+                    # Tries to be sure that that request can't be used to delete another user's request
+                    lines.remove(line)
+            #rq.truncate(0)  # Deletes all lines
+            rq.writelines(lines)  # Rewrites all lines
+
+
 
     @commands.has_permissions(manage_guild=True)
     @commands.command(aliases=["subs", "subscriptions", "subscription"])

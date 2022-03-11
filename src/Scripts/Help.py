@@ -29,7 +29,7 @@ class Help(commands.Cog):
         for strip in strips:
             if strips[strip]["Main_website"] != "https://www.gocomics.com/" \
                     and strips[strip]["Main_website"] != "https://comicskingdom.com/" \
-                    and strips[strip]["Main_website"] != "https://www.webtoons.com/en/" :
+                    and strips[strip]["Main_website"] != "https://www.webtoons.com/en/":
                 embed.add_field(name=strips[strip]['Name'], value=f"{strips[strip]['Helptxt']}\nAliases: "
                                                                   f"{strips[strip]['Aliases']} / random "
                                                                   f"/ # or date of comic.")
@@ -86,6 +86,21 @@ class Help(commands.Cog):
                                                              "mention right before the automatic comic posts.")
         embed.add_field(name="Get mention policy", value="Use `bd!get_mention` to get the server's mention policy.")
 
+        embed.set_footer(text=utils.get_random_footer())
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    async def new(self, ctx):
+        embed = discord.Embed(title="New feature", description="")
+        embed.add_field(name="FAQ", value="Have any question on ")
+        embed.add_field(name="", value="")
+        embed.set_footer(text=utils.get_random_footer())
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    async def faq(self, ctx):
+        embed = discord.Embed(title="FAQ", description="")
+        embed.add_field(name="Why is the ", value="")
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
 

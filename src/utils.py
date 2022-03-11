@@ -15,6 +15,7 @@ FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
 DATABASE_FILE_PATH = "src/data/data.json"
 JSON_SCHEMA_FILE_PATH = "src/misc/databaseSchema.json"
 BACKUP_FILE_PATH = "src/data/backups/BACKUP_DATABASE_"
+REQUEST_FILE_PATH = "src/data/requests.txt"
 date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 match_date = {
     "Mo": "Monday",
