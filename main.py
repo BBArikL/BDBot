@@ -11,7 +11,7 @@ client.remove_command("help")  # Removes the default "help" function to replace 
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
-handler = logging.FileHandler(filename=f'src/data/logs/discord_{datetime.now().strftime("%Y_%H_%M")}.log',encoding='utf-8',mode='w' )
+handler = logging.FileHandler(filename=f'src/data/logs/discord_{datetime.now().strftime("%Y_%m_%d_1%H_%M")}.log',encoding='utf-8',mode='w' )
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
