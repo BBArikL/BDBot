@@ -184,7 +184,7 @@ class BDBot(commands.Cog):
         await ctx.send("Request saved! Thank you for using BDBot!")
 
     @commands.command()
-    async def request_delete(self, ctx):  # TODO fix, currently deletes all requests
+    async def request_delete(self, ctx):
         author = f"{ctx.author.name}#{ctx.author.discriminator}"
         output = []
         count = 0
