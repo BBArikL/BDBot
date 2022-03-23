@@ -280,10 +280,7 @@ class BDBot(commands.Cog):
     async def vrequest(self, ctx):
         # Verifies the requests
         if utils.is_owner(ctx):
-            FILE_PATH = 'data/requests.txt'
-
-            r = ""
-            with open(FILE_PATH, 'r') as f:
+            with open(utils.REQUEST_FILE_PATH, 'rt') as f:
                 r = f.readlines()
 
             await ctx.send("Here are the requests:\n```\n" + "\n".join(r) + "\n```")
