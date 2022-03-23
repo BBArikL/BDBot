@@ -173,6 +173,10 @@ class BDBot(commands.Cog):
     async def request(self, ctx, *, param=None):
         # Adds a request to the database
 
+        # Tries to get rid of ANSI codes while not destroying the comment itself
+        param = re.escape(param)
+        param = re.sub("[\\^]*\\\\\\[*", "", param)
+
         with open(utils.REQUEST_FILE_PATH, "at") as requests:
             requests.write(f'Request: "{param}" by {ctx.author.name}#{ctx.author.discriminator} on '
                            f'{datetime.now(timezone.utc)}\n')
@@ -182,20 +186,26 @@ class BDBot(commands.Cog):
     @commands.command()
     async def request_delete(self, ctx):  # TODO fix, currently deletes all requests
         author = f"{ctx.author.name}#{ctx.author.discriminator}"
+        output = []
+        count = 0
 
-        with open(utils.REQUEST_FILE_PATH, "w+t") as rq:
+        with open(utils.REQUEST_FILE_PATH, "rt") as rq:
             # Removes all lines matching with the username and discriminator
             lines = rq.readlines()
-            for line in lines:
-                print(line)
-                print(re.match(f".*\".*\".*{author}[^\"]*", line))
-                if re.match(f".*\".*\".*{author}[^\"]*", line):
-                    # Tries to be sure that that request can't be used to delete another user's request
-                    lines.remove(line)
-            #rq.truncate(0)  # Deletes all lines
-            rq.writelines(lines)  # Rewrites all lines
 
+        for line in lines:
+            if not re.match(f".*\".*\"[^\"]+{author}[^\"]+", line):
+                # Tries to be sure that that request can't be used to delete another user's request
+                output.append(line)
+            else:
+                count += 1
 
+        if count > 0:
+            with open(utils.REQUEST_FILE_PATH, "wt") as rq:
+                rq.writelines("".join(output))  # Rewrites all lines
+            await ctx.send(f"Deleted {count} request(s)!")
+        else:
+            await ctx.send("No requests to delete!")
 
     @commands.has_permissions(manage_guild=True)
     @commands.command(aliases=["subs", "subscriptions", "subscription"])
