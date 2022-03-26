@@ -83,7 +83,6 @@ Robobert: https://github.com/JTexpo/Robobert
   - Tell me if I forgot some commands here!
 
 - Bugs
-  - Replit might not save correctly the requests and daily comics. This will be resolved during the next update.
   - None for the moment. Open a issue if you find any! :)
 
 - TODO
