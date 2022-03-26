@@ -52,6 +52,25 @@ Robobert: https://github.com/JTexpo/Robobert
 - Database support.
 - Github version handling.
 
+## Usage
+- Get help about the bot
+![Help embed](https://github.com/BBArikL/BDBot/blob/assets/help.png)
+
+- Get a comic info
+![Comic info](https://github.com/BBArikL/BDBot/blob/assets/comic-info.png)
+
+- Get today's comic
+![today's comic](https://github.com/BBArikL/BDBot/blob/assets/comic-demo-1.png)
+
+- Get a random comic
+![random comic](https://github.com/BBArikL/BDBot/blob/assets/comic-demo-2.png)
+
+- Get a specific comic
+![specific comic](https://github.com/BBArikL/BDBot/blob/assets/comic-demo-3.png)
+
+- Subscribe to a comic
+![comic subscription](https://github.com/BBArikL/BDBot/blob/assets/comic-demo-4.png)
+
 ## Current state of the project
 - Functionalities
   - 'bd!<comic_name>' Information embed on the requested comic.
