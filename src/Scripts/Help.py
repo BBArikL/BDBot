@@ -54,7 +54,7 @@ class Help(commands.Cog):
         await ctx.send(embed=embed)
 
     @help.command()
-    async def daily(self, ctx):  # help for daily commands
+    async def daily(self, ctx):  # help for daily commands # todo revise command name
         embed = discord.Embed(title="Daily commands!", description="Date and hour are optional arguments that can "
                                                                    "specify when the the bot should send the comic. A "
                                                                    "date should be one of the seven days of the week"
@@ -93,14 +93,27 @@ class Help(commands.Cog):
     async def new(self, ctx):
         embed = discord.Embed(title="New feature", description="")
         embed.add_field(name="FAQ", value="Have any question on ")
-        embed.add_field(name="", value="")
+
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
 
     @commands.command()
     async def faq(self, ctx):
         embed = discord.Embed(title="FAQ", description="")
-        embed.add_field(name="Why is the ", value="")
+        embed.add_field(name="What is this bot?", value="This bot is a helper to keep up with your favorite comics! It "
+                                                        "search each hour more than 40+ pages to fetch the most up to "
+                                                        "date comics for your eyes only!")
+        embed.add_field(name="Why can I only go up to 7 comics in the past for ComicKingdom's comics?",
+                        value="ComicKingdom use a premium membership to view older comics. You can go on their site to "
+                              "get one and see the comics directly on your browser.")
+        embed.add_field(name="How can I support the project?", value="You can vote for the bot on top.gg (`bd!vote`) "
+                                                                     "or star the project on github (`bd!git`). If "
+                                                                     "you want to support one of the comics that are "
+                                                                     "presented through this bot, go on their page to "
+                                                                     "see how to support them directly!")
+        embed.add_field(name="How can I request comics?", value="You can use `bd!request <request>` to request comics "
+                                                                "or features directly to the developer.")
+        embed.add_field(name="How can I receive scheduled comics?", value="You can use `bd!daily help` to get help on how to schedule comics.")
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
 
