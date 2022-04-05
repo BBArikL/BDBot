@@ -1,3 +1,4 @@
+import logging
 from discord.ext import tasks, commands
 import discord
 from datetime import datetime, timedelta, timezone
@@ -12,6 +13,7 @@ class PosterHandler(commands.Cog):
         self.client = client
         self.strip_details = utils.load_details()
         self.do_cleanup = True
+        self.logger = logging.getLogger('discord')
 
     @commands.command()
     async def start_hourly(self, ctx):
@@ -57,6 +59,7 @@ class PosterHandler(commands.Cog):
     # Post hourly comics
     async def hourly(self):
         # Daily loop
+        self.logger.info("Starting automatic poster...")
         strip_details = self.strip_details
         NB_OF_COMICS = len(strip_details)
         comic_data = utils.get_database_data()
@@ -77,6 +80,8 @@ class PosterHandler(commands.Cog):
                 self.get_comic_info_for_guild(guild_data, comic_list, comic_number, post_days, hour)
 
         await self.check_comics_and_post(comic_list, strip_details, comic_keys)
+
+        self.logger.info("Finished automatic poster.")
 
     def get_comic_info_for_guild(self, guild_data, comic_list, comic_number, post_days, hour):
         for channel in guild_data["channels"]:
@@ -152,7 +157,8 @@ class PosterHandler(commands.Cog):
                                     comic_list[channel]["hasBeenMentionned"] = 1
 
                                 await chan.send(embed=embed)
-                            except Exception:
+                            except Exception as e:
+                                self.logger.error(e)
                                 continue
                         else:
                             if ctx is not None:
@@ -164,6 +170,8 @@ class PosterHandler(commands.Cog):
                                 not_available_channels.append(chanid)
 
                                 await ctx.send(f"Could not send message to channel {chan}")
+                            else:
+                                self.logger.info("A comic could not be posted to a channel.")
 
     @commands.command()
     @commands.has_permissions(manage_guild=True)

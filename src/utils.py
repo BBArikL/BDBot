@@ -1,4 +1,5 @@
 # Collection of static methods
+import logging
 import re
 import discord
 import random
@@ -28,6 +29,7 @@ match_date = {
     "D": "day"
 }
 Success = "Success"
+logger = logging.getLogger('discord')
 
 
 # Get a random footer
@@ -570,6 +572,7 @@ def get_specific_guild_data(ctx):
 
 
 def clean_database(data=None, do_backup=True, strict=False):
+    logger.info("Running database clean...")
     # Cleans the database from inactive servers
     if data is None:
         data = get_database_data()
@@ -605,15 +608,19 @@ def clean_database(data=None, do_backup=True, strict=False):
     if nb_removed > 0:
         save(data)
 
+    logger.info(f"Cleaned the database from {nb_removed} servers")
     return nb_removed
 
 
 def save_backup(data):
+    logger.info("Running backup...")
     # Creates a new backup and saves it
     backupfp = BACKUP_FILE_PATH + datetime.now(timezone.utc).strftime("%Y_%m_%d_%H") + ".json"
 
     with open(backupfp, 'w') as f:
         json.dump(data, f)
+
+    logger.info("Backup successfully done")
 
 
 def restore_backup():
@@ -767,4 +774,3 @@ def get_random_link(strip_details):  # Returns the random comic url
             middle_params = "strip"
 
         return f'{strip_details["Main_website"]}{middle_params}/{random_date.strftime("%Y-%m-%d")}', random_date
-
