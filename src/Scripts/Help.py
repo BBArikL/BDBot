@@ -45,9 +45,11 @@ class Help(commands.Cog):
         embed.add_field(name="Status", value="Gives back the status of the bot.\nCommand:\n`bd!status`")
         embed.add_field(name="Ping", value="Pong! Gives back the bot latency.\nCommand:\n`bd!ping`")
         embed.add_field(name="Uptime", value="Gives back the uptime.\nCommand:\n`bd!up`")
+        embed.add_field(name="FAQ", value="Have any question on the bot? This FAQ (`bd!faq`) might have the response "
+                                          "you need!")
+        embed.add_field(name="New commands", value="See the the newly added commands by using `bd!new`")
         embed.add_field(name="Git", value="Gives the link of the git page.\nCommand:\n`bd!git`")
         embed.add_field(name="Invite", value="Gives a link to add the bot to your servers!\nCommand:\n`bd!invite`")
-
         embed.add_field(name="Vote", value="Vote for the bot on Top.gg!\nCommand:\n`bd!vote`")
 
         embed.set_footer(text=utils.get_random_footer())
@@ -91,15 +93,35 @@ class Help(commands.Cog):
 
     @commands.command()
     async def new(self, ctx):
-        embed = discord.Embed(title="New feature", description="")
-        embed.add_field(name="FAQ", value="Have any question on ")
-
+        embed = discord.Embed(title="New feature", description="Find out what new features have been implemented since "
+                                                               "the last update!")
+        embed.add_field(name="Thanks", value="First, I want to take a moment to thank all of you who use BDBot to "
+                                             "view your favorite comics! It recently got approved by Discord and also "
+                                             "has exceeded the 100 server limit which is phenomenal! Thank you again "
+                                             "for your trust into this project! :)")
+        embed.add_field(name="New comics", value="The new comics are: .....")
+        embed.add_field(name="Post", value="Missed your comics or just want to test that the bot can properly send "
+                                           "all comics for a given time? Use `bd!post <date> <time>` to test it!")
+        embed.add_field(name="Enable/Disable post annoucement", value="Tired of seeing the annoucement of the bot "
+                                                                      "before it post scheduled comics? Use "
+                                                                      "`bd!post_mention enable/disable` to change if "
+                                                                      "the bot should announce when scheduled comics "
+                                                                      "are posted.")
+        embed.add_field(name="Status", value="Get the status of the bot with these 3 new commands: `bd!ping`, "
+                                             "`bd!uptime` and `bd!status`.")
+        embed.add_field(name="Delete requests", value="Want to delete previous requests that that you sent? Use "
+                                                      "`bd!request_delete` to delete all your previous requests.`")
+        embed.add_field(name="FAQ", value="Have any question on the bot? This FAQ (`bd!faq`) might have the response "
+                                          "you need!")
+        embed.add_field(name="Optimizations", value="Under the hood, optimizations have been made to the bot to make "
+                                                    "it more responsive and support the growth!")
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
 
     @commands.command()
     async def faq(self, ctx):
-        embed = discord.Embed(title="FAQ", description="")
+        embed = discord.Embed(title="FAQ", description="Have a question on the bot? This is the place you are looking "
+                                                       "for!")
         embed.add_field(name="What is this bot?", value="This bot is a helper to keep up with your favorite comics! It "
                                                         "search each hour more than 40+ pages to fetch the most up to "
                                                         "date comics for your eyes only!")
@@ -107,13 +129,41 @@ class Help(commands.Cog):
                         value="ComicKingdom use a premium membership to view older comics. You can go on their site to "
                               "get one and see the comics directly on your browser.")
         embed.add_field(name="How can I support the project?", value="You can vote for the bot on top.gg (`bd!vote`) "
-                                                                     "or star the project on github (`bd!git`). If "
+                                                                     "or star the project on GitHub (`bd!git`). If "
                                                                      "you want to support one of the comics that are "
                                                                      "presented through this bot, go on their page to "
                                                                      "see how to support them directly!")
         embed.add_field(name="How can I request comics?", value="You can use `bd!request <request>` to request comics "
                                                                 "or features directly to the developer.")
-        embed.add_field(name="How can I receive scheduled comics?", value="You can use `bd!daily help` to get help on how to schedule comics.")
+        embed.add_field(name="How can I receive scheduled comics?", value="You can use `bd!help daily` to get help on "
+                                                                          "how to schedule comics.")
+        embed.add_field(name="What information is collected by using this bot?", value="No personal information is "
+                                                                                       "used by this bot if you only "
+                                                                                       "use it to read comics. The "
+                                                                                       "information collected by the "
+                                                                                       "bot when a comic is scheduled "
+                                                                                       "is: the ID of the server, "
+                                                                                       "the ID of the channel, "
+                                                                                       "the ID of the role to "
+                                                                                       "mention, the server's mention "
+                                                                                       "policy and the information "
+                                                                                       "about the scheduled comic "
+                                                                                       "itself. This information is "
+                                                                                       "deleted when the bot loses "
+                                                                                       "access to the server or when "
+                                                                                       "all comics of the server have "
+                                                                                       "been unscheduled. When you "
+                                                                                       "use `bd!request`, "
+                                                                                       "your username, "
+                                                                                       "your discriminator, "
+                                                                                       "the time of the message and "
+                                                                                       "the message itself is logged "
+                                                                                       "to prevent abuse and "
+                                                                                       "relevance of the request. To "
+                                                                                       "delete this personal "
+                                                                                       "information (and get rid of "
+                                                                                       "the requests sent), "
+                                                                                       "use `bd!request_delete`.")
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
 
