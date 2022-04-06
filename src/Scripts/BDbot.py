@@ -26,7 +26,7 @@ class BDBot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        # Change bot's activity
+        # Change the bot activity
         await self.client.change_presence(status=discord.Status.online,
                                           activity=discord.Activity(type=discord.ActivityType.listening,
                                                                     name='bd!help'))
@@ -54,11 +54,11 @@ class BDBot(commands.Cog):
         utils.remove_channel(deleted_channel, use="auto_remove_channel")
 
     @commands.command(aliases=['Git', 'github', 'Github'])
-    async def git(self, ctx):  # Links back to the github page
+    async def git(self, ctx):  # Links back to the GitHub page
         await ctx.send("Want to help the bot? Go here: https://github.com/BBArikL/BDBot")
 
     @commands.command(aliases=['inv'])
-    async def invite(self, ctx):  # Creates a Oauth2 link to share the bot
+    async def invite(self, ctx):  # Creates an Oauth2 link to share the bot
         inv = discord.utils.oauth_url(os.getenv('CLIENT_ID'))
         await ctx.send(f'Share the bot! {inv}')
 
@@ -153,14 +153,14 @@ class BDBot(commands.Cog):
             await ctx.send(status)
 
     @commands.command()
-    async def vote(self, ctx):  # Links back to the github page
+    async def vote(self, ctx):  # Links back to the Topgg page
         await ctx.send(
             "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : "
             "https://discordbotlist.com/bots/bdbot")
 
     @commands.command()
     async def nb_guild(self, ctx):  # Gets the number of guilds that the bot is in (for analytics)
-        if ctx.message.author.id == int(os.getenv('BOT_OWNER_ID')):
+        if utils.is_owner(ctx):
             await ctx.send(f"The bot is in {len(self.client.guilds)} guilds. Trying to update status on Top.gg.....")
 
             try:
