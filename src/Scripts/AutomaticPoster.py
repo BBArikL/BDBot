@@ -61,7 +61,7 @@ class PosterHandler(commands.Cog):
         # Daily loop
         self.logger.info("Starting automatic poster...")
         strip_details = self.strip_details
-        NB_OF_COMICS = len(strip_details)
+        nb_of_comics = len(strip_details)
         comic_data = utils.get_database_data()
         comic_list = {}
         comic_keys = list(strip_details.keys())
@@ -74,7 +74,7 @@ class PosterHandler(commands.Cog):
             utils.save_backup(comic_data)
 
         # Construct the list of what comics need to be sent
-        for comic_number in range(NB_OF_COMICS):
+        for comic_number in range(nb_of_comics):
             for guild in comic_data:
                 guild_data = comic_data[guild]
                 self.get_comic_info_for_guild(guild_data, comic_list, comic_number, post_days, hour)
@@ -152,7 +152,7 @@ class PosterHandler(commands.Cog):
                                         role_mention = ""
 
                                     await chan.send(f"Comics for "
-                                                    f"{datetime.now(timezone.utc).strftime('%A the %d %B %Y, %H h UTC')}"
+                                                    f"{datetime.now(timezone.utc).strftime('%A %B %dth %Y, %H h UTC')}"
                                                     f" {role_mention}")
                                     comic_list[channel]["hasBeenMentioned"] = 1
 
@@ -177,7 +177,7 @@ class PosterHandler(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def post(self, ctx, date=None, hour=None):
         strip_details = self.strip_details
-        NB_OF_COMICS = len(strip_details)
+        nb_of_comics = len(strip_details)
         comic_data = utils.get_database_data()
         comic_list = {}
         comic_keys = list(strip_details.keys())
@@ -190,7 +190,7 @@ class PosterHandler(commands.Cog):
 
             final_hour = str(final_hour)
 
-            for comic_number in range(NB_OF_COMICS):
+            for comic_number in range(nb_of_comics):
                 self.get_comic_info_for_guild(comic_data[guild_id], comic_list, comic_number, post_days, final_hour)
 
             if len(comic_list) > 0:

@@ -266,15 +266,15 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
     # Adds or delete the guild_id, the channel id and the comic_strip data
     # All use cases
     add = "add"
-    aAll = "add_all"
-    removeC = "remove"
-    removeG = "remove_guild"
-    fremoveG = "auto_remove_guild"
-    removeChan = "remove_channel"
-    fremoveChan = "auto_remove_guild"
+    a_all = "add_all"
+    remove_c = "remove"
+    remove_g = "remove_guild"
+    fremove_g = "auto_remove_guild"
+    remove_chan = "remove_channel"
+    fremove_chan = "auto_remove_guild"
     data = get_database_data()
 
-    if use == add or use == aAll:
+    if use == add or use == a_all:
         guild_id = str(ctx.guild.id)
         channel_id = str(ctx.channel.id)
         d = {
@@ -314,25 +314,25 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             if hour is None:
                 hour = "6"  # Default: 6 AM UTC
 
-            comList = []
-            if use == aAll:
+            com_list = []
+            if use == a_all:
                 strips = load_details()
-                comList = [i for i in range(len(strips))]
+                com_list = [i for i in range(len(strips))]
             else:
-                comList = [comic_number]
+                com_list = [comic_number]
 
             # Checks if the day, the hour and the comic was already set for the channel
             if day not in d[guild_id]["channels"][channel_id]["date"]:
-                d[guild_id]["channels"][channel_id]["date"].update({day: {hour: comList}})
+                d[guild_id]["channels"][channel_id]["date"].update({day: {hour: com_list}})
 
             elif hour not in d[guild_id]["channels"][channel_id]["date"][day]:
-                d[guild_id]["channels"][channel_id]["date"][day].update({hour: comList})
+                d[guild_id]["channels"][channel_id]["date"][day].update({hour: com_list})
 
-            elif comic_number not in d[guild_id]["channels"][channel_id]["date"][day][hour] and len(comList) == 1:
+            elif comic_number not in d[guild_id]["channels"][channel_id]["date"][day][hour] and len(com_list) == 1:
                 d[guild_id]["channels"][channel_id]["date"][day][hour].append(comic_number)
 
-            elif len(comList) > 1:  # Add all comics command
-                d[guild_id]["channels"][channel_id]["date"][day][hour] = comList
+            elif len(com_list) > 1:  # Add all comics command
+                d[guild_id]["channels"][channel_id]["date"][day][hour] = com_list
 
             else:
                 return "This comic is already set at this time!"
@@ -342,12 +342,12 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             # Add a comic to the list of comics
             d[guild_id]["server_id"] = int(guild_id)
 
-            comList = []
-            if use == aAll:
+            com_list = []
+            if use == a_all:
                 strips = load_details()
-                comList = [i for i in range(len(strips))]
+                com_list = [i for i in range(len(strips))]
             else:
-                comList = [comic_number]
+                com_list = [comic_number]
 
             if day is None:
                 day = "D"
@@ -356,11 +356,11 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
                 hour = "6"
 
             d[guild_id]["channels"].update({channel_id: {"channel_id": int(channel_id),
-                                                         "date": {day: {hour: comList}}}})
+                                                         "date": {day: {hour: com_list}}}})
         # Update the main database
         data.update(d)
 
-    elif use == removeC:
+    elif use == remove_c:
         guild_id = str(ctx.guild.id)
         channel_id = str(ctx.channel.id)
         # Remove comic
@@ -388,7 +388,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
         else:
             return "This guild or channel is not registered for scheduled comics!"
 
-    elif use == removeG or use == fremoveG:
+    elif use == remove_g or use == fremove_g:
         guild_id = ""
         if use == 'remove_guild':
             guild_id = str(ctx.guild.id)
@@ -401,7 +401,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
         else:
             return "This guild is not registered for any scheduled comics!"
 
-    elif use == removeChan or use == fremoveChan:
+    elif use == remove_chan or use == fremove_chan:
         guild_id = str(ctx.guild.id)
         channel_id = ""
         if use == 'remove_channel':
@@ -424,7 +424,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
     return Success
 
 
-def set_role(ctx, roleID):
+def set_role(ctx, role_id):
     gid = str(ctx.guild.id)
     role = "role"
     mention = "mention"
@@ -436,11 +436,11 @@ def set_role(ctx, roleID):
 
         if role not in data[gid]:
             data[gid].update({
-                "role": roleID.id,
+                "role": role_id.id,
                 "only_daily": False
             })
         else:
-            data[gid]["role"] = roleID.id
+            data[gid]["role"] = role_id.id
 
         save(data)
 

@@ -211,7 +211,7 @@ class BDBot(commands.Cog):
     @commands.command(aliases=["subs", "subscriptions", "subscription"])
     async def sub(self, ctx):  # Checks if the server is subbed to any comic
         guild_data = utils.get_specific_guild_data(ctx)
-        MAX_FIELDS = 25
+        max_fields = 25
 
         if guild_data is not None:
             comic_list = []
@@ -236,18 +236,18 @@ class BDBot(commands.Cog):
                             })
 
             if len(comic_list) > 0:
-                nbFields = 0
+                nb_fields = 0
                 matching_date = utils.match_date
                 embeds = [discord.Embed(title="This server is subscribed to:")]
                 for comic in comic_list:
-                    if nbFields > MAX_FIELDS:
-                        nbFields = 0
+                    if nb_fields > max_fields:
+                        nb_fields = 0
                         embeds.append(discord.Embed(title="This server is subscribed to:"))
 
                     embeds[-1].add_field(name=comic['Name'], value=f"Each {matching_date[comic['Date']]} at "
                                                                    f"{comic['Hour']} h UTC in channel"
                                                                    f" {comic['Channel']}")
-                    nbFields += 1
+                    nb_fields += 1
                 for embed in embeds:
                     await ctx.send(embed=embed)
             else:
