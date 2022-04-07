@@ -49,11 +49,11 @@
           }
         },
         "role": {
-          "description": "The ID of the role to be mentionned during comic posts.",
+          "description": "The ID of the role to be mentioned during comic posts.",
           "type": "integer"
         },
         "only_daily": {
-          "description": "If the role has to be mentionned only during the daily comic post.",
+          "description": "If the role has to be mentioned only during the daily comic post.",
           "type": "boolean"
         }
       },

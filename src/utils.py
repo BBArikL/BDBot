@@ -92,7 +92,7 @@ def create_embed(comic_details=None):
         return embed
 
 
-# Sends comics info in a embed
+# Sends comics info in an embed
 async def send_comic_info(ctx, strip_details):
     embed = discord.Embed(title=f'{strip_details["Name"]} by {strip_details["Author"]}',
                           url=get_link(strip_details),
@@ -195,7 +195,7 @@ async def parameters_interpreter(ctx, strip_details, param=None, date=None, hour
                 except ValueError:
                     await ctx.send('This is not a valid comic number!')
     else:
-        # If the user didn't send any parameters, return informations the comic requested
+        # If the user didn't send any parameters, return the information the comic requested
         await send_comic_info(ctx, strip_details)
 
 
@@ -262,7 +262,7 @@ def remove_channel(ctx, use=None):
 
 
 def modify_database(ctx, use, day=None, hour=None, comic_number=None):
-    # Saves the new informations in the database
+    # Saves the new information in the database
     # Adds or delete the guild_id, the channel id and the comic_strip data
     # All use cases
     add = "add"
@@ -288,7 +288,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
 
         """
         Example of a specific channel data:
-        channel_specifc_data = {
+        channel_specific_data = {
             channel_id: {
                 "channel_id": 0,
                 "date": {
@@ -471,7 +471,7 @@ def set_mention(ctx, choice):
                    "you want to be notified of all comic or only the daily ones."
     else:
         return "This guild is not subscribed to any comic! Please subscribe to a comic before deciding when you want " \
-               "to be mentionned!"
+               "to be mentioned!"
 
 
 def get_mention(ctx):
@@ -496,7 +496,7 @@ def get_mention(ctx):
                    "you want to be notified of all comic or only the daily ones.", ""
     else:
         return "This guild is not subscribed to any comic! Please subscribe to a comic before deciding when you want " \
-               "to be mentionned!", ""
+               "to be mentioned!", ""
 
 
 def remove_role(ctx):

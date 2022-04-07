@@ -89,7 +89,7 @@ class PosterHandler(commands.Cog):
                 if day in guild_data["channels"][str(channel)]["date"]:
                     if hour in guild_data["channels"][str(channel)]["date"][day]:
                         if comic_number in guild_data["channels"][str(channel)]["date"][day][hour]:
-                            if channel not in comic_list:  # Asssure no duplicates
+                            if channel not in comic_list:  # Assure no duplicates
                                 to_mention = guild_data["mention"]
                                 role = None
 
@@ -104,7 +104,7 @@ class PosterHandler(commands.Cog):
                                         "channel": channel,
                                         "comics": [comic_number],
                                         "role": role,
-                                        "hasBeenMentionned": 0,
+                                        "hasBeenMentioned": 0,
                                         "wantMention": to_mention
                                     }
                                 })
@@ -144,7 +144,7 @@ class PosterHandler(commands.Cog):
                                 and chanid not in not_available_channels and \
                                 chan.permissions_for(chan.guild.get_member(self.client.user.id)).send_messages:
                             try:
-                                if comic_list[channel]["hasBeenMentionned"] == 0 and \
+                                if comic_list[channel]["hasBeenMentioned"] == 0 and \
                                         comic_list[channel]["wantMention"]:
                                     if comic_list[channel]["role"] is not None:
                                         role_mention = comic_list[channel]["role"].mention
@@ -154,7 +154,7 @@ class PosterHandler(commands.Cog):
                                     await chan.send(f"Comics for "
                                                     f"{datetime.now(timezone.utc).strftime('%A the %d %B %Y, %H h UTC')}"
                                                     f" {role_mention}")
-                                    comic_list[channel]["hasBeenMentionned"] = 1
+                                    comic_list[channel]["hasBeenMentioned"] = 1
 
                                 await chan.send(embed=embed)
                             except Exception as e:

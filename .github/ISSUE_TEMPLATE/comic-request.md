@@ -1,6 +1,6 @@
 ---
 name: Comic request
-about: Suggest an comic for this project
+about: Suggest a comic for this project
 title: New Comic request
 labels: enhancement
 assignees: ''

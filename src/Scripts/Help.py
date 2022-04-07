@@ -102,11 +102,11 @@ class Help(commands.Cog):
         embed.add_field(name="New comics", value="The new comics are: .....")
         embed.add_field(name="Post", value="Missed your comics or just want to test that the bot can properly send "
                                            "all comics for a given time? Use `bd!post <date> <time>` to test it!")
-        embed.add_field(name="Enable/Disable post annoucement", value="Tired of seeing the annoucement of the bot "
-                                                                      "before it post scheduled comics? Use "
-                                                                      "`bd!post_mention enable/disable` to change if "
-                                                                      "the bot should announce when scheduled comics "
-                                                                      "are posted.")
+        embed.add_field(name="Enable/Disable post announcement", value="Tired of seeing the announcement of the bot "
+                                                                       "before it post scheduled comics? Use "
+                                                                       "`bd!post_mention enable/disable` to change if "
+                                                                       "the bot should announce when scheduled comics "
+                                                                       "are posted.")
         embed.add_field(name="Status", value="Get the status of the bot with these 3 new commands: `bd!ping`, "
                                              "`bd!uptime` and `bd!status`.")
         embed.add_field(name="Delete requests", value="Want to delete previous requests that that you sent? Use "
@@ -191,7 +191,7 @@ class Help(commands.Cog):
 
         await self.website_specific_embed(ctx, website_name, website)
 
-    # Create a embed with all the specific comics from a website
+    # Create an embed with all the specific comics from a website
     async def website_specific_embed(self, ctx, website_name, website):
         nb_per_embed = 25
         strips = self.strip_details

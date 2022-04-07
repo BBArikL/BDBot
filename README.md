@@ -7,12 +7,12 @@ Discord bot that post bd strips. Simple as that!
 - Garfield https://www.gocomics.com/garfield/
 - Calvin and Hobbes https://www.gocomics.com/calvinandhobbes/
 - XKCD https://xkcd.com/
-- Garfield classics https://www.gocomics.com/garfield-classics
+- Garfield's classics https://www.gocomics.com/garfield-classics
 - Peanuts https://www.gocomics.com/peanuts
 - Peanuts Begins https://www.gocomics.com/peanuts-begins
 - Dilbert https://dilbert.com/
 - Dilbert classics https://www.gocomics.com/dilbert-classics
-- Cyanide and Happines https://explosm.net/
+- Cyanide and Happiness https://explosm.net/
 - Frazz https://www.gocomics.com/frazz
 - Garfield minus Garfield https://garfieldminusgarfield.net/
 - Jon (not ready)
@@ -40,7 +40,7 @@ Discord bot that post bd strips. Simple as that!
 - Poorly drawn lines https://poorlydrawnlines.com/
 - War and peas https://warandpeas.com/
 
-## Related Github pages: 
+## Related GitHub pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
 Robobert: https://github.com/JTexpo/Robobert
 
@@ -50,7 +50,7 @@ Robobert: https://github.com/JTexpo/Robobert
 - Looking for content in web pages.
 - Parsing Date.
 - Database support.
-- Github version handling.
+- GitHub version handling.
 
 ## Usage
 - Get help about the bot
@@ -75,7 +75,7 @@ Robobert: https://github.com/JTexpo/Robobert
 - Functionalities
   - 'bd!<comic_name>' Information embed on the requested comic.
   - 'bd!help' : Help embed
-  - 'bd!git' command : Redirects to this github page
+  - 'bd!git' command : Redirects to this GitHub page
   - 'bd!invite' command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
   - Daily Command: use 'bd!<name_of_comic> add/remove' to add or remove a comic from the daily list for the server.
   - Use 'bd!remove_all' to remove all comics from the daily list for the server.
@@ -83,7 +83,7 @@ Robobert: https://github.com/JTexpo/Robobert
   - Tell me if I forgot some commands here!
 
 - Bugs
-  - None for the moment. Open a issue if you find any! :)
+  - None for the moment. Open an issue if you find any! :)
 
 - TODO
   - Sites to add support:
@@ -102,7 +102,7 @@ Robobert: https://github.com/JTexpo/Robobert
         2. Add a command in Scripts/Comics.py under the latest comic with aliases that are the same that were added to the json file and change the value of 'comic_name' to the name of the comic added.
         3. That's it!
   - If the comic is NOT hosted on GoComics/Comics Kingdom, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
-  - Any pull requests that was not approved from another site will be automatically rejected and you will be asked to follow the procedure cited.
+  - Any pull requests that was not approved from another site will be automatically rejected, and you will be asked to follow the procedure cited.
   - 'Beta' and 'main'?
     - The main branch is the current bot that is running on Discord.
     - Beta branch is for all experiments and additions waiting for approval to add to the current bot. This runs on a (for now) private bot upon completion of current goals.

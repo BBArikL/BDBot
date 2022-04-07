@@ -165,11 +165,11 @@ def get_comic_info_number(strip_details, param=None):
 
                 js = json.loads(dat)
 
-                urqlStates = js["props"]["pageProps"]["urqlState"]
+                urql_states = js["props"]["pageProps"]["urqlState"]
 
-                for state_id in urqlStates:
+                for state_id in urql_states:
                     # Bruteforce the json entries to find the one contains the content of the comic
-                    state_data = urqlStates[state_id]
+                    state_data = urql_states[state_id]
                     middle_data = json.loads(state_data["data"])
 
                     if "comic" in middle_data:
@@ -279,7 +279,7 @@ def get_comic_info_rss(strip_details, param=None, comic_date=None):
             details["url"] = main_website + f"&episode_no={comic_date}"
     else:
         feed = Parser(xml=get(rss_site).content, limit=comic_nb + 1).parse().feed[comic_nb]
-        # Get informations
+        # Get information
         tz = ""
         weekday = ""
         if strip_details["Main_website"] == 'https://www.webtoons.com/en/':
