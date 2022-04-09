@@ -117,7 +117,7 @@
         "Web_name": "Cyanide and Happiness",
         "Main_website": "https://explosm.net/comics/",
         "Working_type": "number",
-        "Description": "----------------DUE TO THE RECENT LAYOUT CHANGE IN EXPLOSM'S WEBSITE, CYANIDE AND HAPPINNESS WILL BE DEACTIVATED UNTIL FURTHER NOTICE---------------\nCyanide & Happiness (C&H) is a webcomic created by Rob DenBleyker, Kris Wilson, Dave McElfatrick and Matt Melvin. The comic has been running since 2005 and is published on the website explosm.net along with animated shorts in the same style. Matt Melvin left C&H in 2014, and several other people have contributed to the comic and to the animated shorts.\n\nDisclaimer: **Comics might contain sensitive / mature content, which might not be advised for persons under 18 of age.**\n\nWebsite: https://explosm.net/\nComic generator: https://explosm.net/rcg\nFacebook: https://www.facebook.com/explosm\nTwitter: https://twitter.com/Explosm\nYoutube: https://www.youtube.com/user/ExplosmEntertainment\nInstagram: https://instagram.com/explosmofficial",
+        "Description": "Cyanide & Happiness (C&H) is a webcomic created by Rob DenBleyker, Kris Wilson, Dave McElfatrick and Matt Melvin. The comic has been running since 2005 and is published on the website explosm.net along with animated shorts in the same style. Matt Melvin left C&H in 2014, and several other people have contributed to the comic and to the animated shorts.\n\nDisclaimer: **Comics might contain sensitive / mature content, which might not be advised for persons under 18 of age.**\n\nWebsite: https://explosm.net/\nComic generator: https://explosm.net/rcg\nFacebook: https://www.facebook.com/explosm\nTwitter: https://twitter.com/Explosm\nYoutube: https://www.youtube.com/user/ExplosmEntertainment\nInstagram: https://instagram.com/explosmofficial",
         "Position": 8,
         "First_date": "2012, 6, 13",
         "Color": "FFFFFF",
@@ -504,18 +504,18 @@
         "Helptxt": "Join the chronicles of the daily lives of an ensemble cast of suburban anthropomorphic animals: Pig, Rat, Zebra, Goat, and a fraternity of crocodiles."
     },
     "Chibird": {
-	    "Name": "Chibird",
-	    "Author": "Chibird",
-	    "Web_name": "challenge/chibird/list?title_no=97265",
-	    "Main_website": "https://www.webtoons.com/en/",
-	    "Working_type": "rss",
+	"Name": "Chibird",
+	"Author": "Chibird",
+	"Web_name": "challenge/chibird/list?title_no=97265",
+	"Main_website": "https://www.webtoons.com/en/",
+	"Working_type": "rss",
         "Description": "Positive, motivational drawings to brighten your day! Featuring everyday life with Jackie, Chibird, Motivational Penguin, Shy Ghost, Positive Bunny, Hedgehog, and more! Find Chibird at chibird.com or @ChibirdArt on Instagram and Facebook! :D (Under Creative Commons : https://creativecommons.org/licenses/by-nc-nd/4.0/)\nWebsite: https://chibird.com/\nPatreon: https://www.patreon.com/chibird\nShop: https://chibird.myshopify.com/\nFacebook: https://www.facebook.com/ChibirdArt/\nInstagram: https://www.instagram.com/chibirdart/\nTwitter: https://twitter.com/ChibirdArt\niMessage stickers: https://itunes.apple.com/us/app/chibird-penguin-stickers/id1173229367\nMore info: https://chibird.com/faq",
-	    "Position": 35,
-	    "First_date": "1",
-	    "Color": "FCF36B",
-	    "Image": "https://swebtoon-phinf.pstatic.net/20170718_237/1500327571879yzcBu_JPEG/988e7e1e-c286-4391-971c-b8f44cb497bb.jpg",
-	    "Aliases": "'Chibird', 'chibird', 'Chib', 'chib'",
-	    "Helptxt": "TODO"
+	"Position": 35,
+	"First_date": "1",
+	"Color": "FCF36B",
+	"Image": "https://swebtoon-phinf.pstatic.net/20170718_237/1500327571879yzcBu_JPEG/988e7e1e-c286-4391-971c-b8f44cb497bb.jpg",
+	"Aliases": "'Chibird', 'chibird', 'Chib', 'chib'",
+	"Helptxt": "TODO"
     },
     "WarAndPeas":{
         "Name": "War and Peas",
@@ -530,6 +530,19 @@
         "Image": "https://swebtoon-phinf.pstatic.net/20210517_287/1621258998853tRgyE_JPEG/4479eb01-8495-47bf-8463-eb10967e3f32.jpg",
         "Aliases": "'WarAndPeas', 'warandpeas', 'War', 'war', 'Peas', 'peas'",
         "Helptxt": "TODO"
+    },
+    "HumansAreStupid":{
+	"Name": "Humans are stupid",
+	"Author": "Bino Comics",
+	"Web_name": "challenge/humans-are-stupid/list?title_no=54265",
+	"Main_website": "https://www.webtoons.com/en/",
+	"Working_type": "rss",
+	"Description": "",
+	"Position": 37,
+	"Color": "TODO",
+	"Image": "https://swebtoon-phinf.pstatic.net/20210513_36/1620913677460o0T8F_JPEG/d77a8b51-cd85-4aad-a0c5-1c8481a93834.jpg",
+	"Aliases": "TODO",
+	"Helptxt": "TODO"
     },
     "Maximumble":{
         "Name": "Maximumble",

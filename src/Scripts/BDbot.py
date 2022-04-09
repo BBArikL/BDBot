@@ -17,7 +17,7 @@ class BDBot(commands.Cog):
     def __init__(self, client):
         # Constructor of the cog
         # Initialize all the properties of the cog
-        self.strip_details = utils.load_details()
+        self.strip_details = utils.load_json(utils.DETAILS_PATH)
         self.client = client
         dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
         self.topggpy = topgg.DBLClient(client, dbl_token)
@@ -304,7 +304,8 @@ class BDBot(commands.Cog):
         # Returns the number of servers using the hourly poster service
         if utils.is_owner(ctx):
             await ctx.send(
-                "There is " + str(len(utils.get_database_data())) + " servers using the hourly poster service.")
+                "There is " + str(len(utils.load_json(utils.DATABASE_FILE_PATH))) + "servers using the hourly poster "
+                                                                                    "service.")
         else:
             raise commands.CommandNotFound
 

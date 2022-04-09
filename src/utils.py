@@ -14,9 +14,10 @@ from randomtimestamp import randomtimestamp
 DETAILS_PATH = "src/misc/comics_details.json"
 FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
 DATABASE_FILE_PATH = "src/data/data.json"
-JSON_SCHEMA_FILE_PATH = "src/misc/databaseSchema.json"
+JSON_SCHEMA_PATH = "src/misc/databaseSchema.json"
 BACKUP_FILE_PATH = "src/data/backups/BACKUP_DATABASE_"
 REQUEST_FILE_PATH = "src/data/requests.txt"
+COMIC_LATEST_LINKS_PATH = "src/data/latest_comics.json"
 date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 match_date = {
     "Mo": "Monday",
@@ -272,7 +273,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
     fremove_g = "auto_remove_guild"
     remove_chan = "remove_channel"
     fremove_chan = "auto_remove_guild"
-    data = get_database_data()
+    data = load_json(DATABASE_FILE_PATH)
 
     if use == add or use == a_all:
         guild_id = str(ctx.guild.id)
@@ -316,7 +317,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
 
             com_list = []
             if use == a_all:
-                strips = load_details()
+                strips = load_json(DETAILS_PATH)
                 com_list = [i for i in range(len(strips))]
             else:
                 com_list = [comic_number]
@@ -344,7 +345,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
 
             com_list = []
             if use == a_all:
-                strips = load_details()
+                strips = load_json(DETAILS_PATH)
                 com_list = [i for i in range(len(strips))]
             else:
                 com_list = [comic_number]
@@ -428,7 +429,7 @@ def set_role(ctx, role_id):
     gid = str(ctx.guild.id)
     role = "role"
     mention = "mention"
-    data = get_database_data()
+    data = load_json(DATABASE_FILE_PATH)
 
     if gid in data:
         if not data[gid][mention]:
@@ -453,7 +454,7 @@ def set_mention(ctx, choice):
     gid = str(ctx.guild.id)
     only_daily = "only_daily"
     mention = "mention"
-    data = get_database_data()
+    data = load_json(DATABASE_FILE_PATH)
 
     if gid in data:
         if not data[gid][mention]:
@@ -478,7 +479,7 @@ def get_mention(ctx):
     gid = str(ctx.guild.id)
     only_daily = "only_daily"
     mention = "mention"
-    data = get_database_data()
+    data = load_json(DATABASE_FILE_PATH)
 
     if gid in data:
         if not data[gid][mention]:
@@ -503,7 +504,7 @@ def remove_role(ctx):
     gid = str(ctx.guild.id)
     role = "role"
     only_daily = "only_daily"
-    data = get_database_data()
+    data = load_json(DATABASE_FILE_PATH)
 
     if gid in data:
         if role in data[gid]:
@@ -526,7 +527,7 @@ def set_post_mention(ctx, choice):
     gid = str(ctx.guild.id)
     mention = "mention"
     role = "role"
-    data = get_database_data()
+    data = load_json(DATABASE_FILE_PATH)
 
     if gid in data:
         if role not in data[gid]:
@@ -542,27 +543,26 @@ def set_post_mention(ctx, choice):
         return "This server is not registered for any comics!"
 
 
-def load_details():
-    # Returns the comic details
-    # Loads the comic details file
-    with open(DETAILS_PATH, 'r', encoding='utf-8') as f:
-        com_data = json.load(f)
+def load_json(json_path: str) -> dict:
+    """
+    Load a json.
+    DETAILS_PATH -> The comic details.
+    DATABASE_FILE_PATH -> The database.
+    JSON_SCHEMA_PATH -> The schema of the database.
+    BACKUP_FILE_PATH -> The default backup.
+    COMIC_LATEST_LINKS_PATH -> The latest links to the images of the comics.
+    :param json_path: The path to the json file.
+    :return: The json as a dict.
+    """
+    with open(json_path, 'r', encoding='utf-8') as f:
+        json_file = json.load(f)
 
-    return com_data
-
-
-# Returns the ids and what need to be sent
-def get_database_data():
-    # Loads the prefixes file
-    with open(DATABASE_FILE_PATH, 'r') as f:
-        data = json.load(f)
-
-    return data
+    return json_file
 
 
 # Returns a specific guild's data
 def get_specific_guild_data(ctx):
-    database = get_database_data()
+    database = load_json(DATABASE_FILE_PATH)
     guild_id = str(ctx.guild.id)
 
     if guild_id in database:
@@ -575,7 +575,7 @@ def clean_database(data=None, do_backup=True, strict=False):
     logger.info("Running database clean...")
     # Cleans the database from inactive servers
     if data is None:
-        data = get_database_data()
+        data = load_json(DATABASE_FILE_PATH)
 
     if do_backup:
         save_backup(data)
@@ -654,11 +654,8 @@ def save(data):
 
 def verify_json():
     # Verifies the database according to a particular json schema to assure the integrity of it
-    data = get_database_data()
-    schema = None
-
-    with open(JSON_SCHEMA_FILE_PATH, 'r') as f:
-        schema = json.load(f)
+    data = load_json(DATABASE_FILE_PATH)
+    schema = load_json(JSON_SCHEMA_PATH)
 
     try:
         validate(instance=data, schema=schema)
@@ -670,7 +667,7 @@ def verify_json():
 # Check if the comic is subscribed to this guild
 def get_sub_status(ctx, position, database=None):
     if database is None:  # Gets database if needed
-        database = get_database_data()
+        database = load_json(DATABASE_FILE_PATH)
 
     guild_id = str(ctx.guild.id)
 

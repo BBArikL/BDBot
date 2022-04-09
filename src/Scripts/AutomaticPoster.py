@@ -11,7 +11,7 @@ class PosterHandler(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.strip_details = utils.load_details()
+        self.strip_details = utils.load_json(utils.DETAILS_PATH)
         self.do_cleanup = True
         self.logger = logging.getLogger('discord')
 
@@ -62,7 +62,7 @@ class PosterHandler(commands.Cog):
         self.logger.info("Starting automatic poster...")
         strip_details = self.strip_details
         nb_of_comics = len(strip_details)
-        comic_data = utils.get_database_data()
+        comic_data = utils.load_json(utils.DATABASE_FILE_PATH)
         comic_list = {}
         comic_keys = list(strip_details.keys())
         post_days = ["D", utils.get_today()]
@@ -178,7 +178,7 @@ class PosterHandler(commands.Cog):
     async def post(self, ctx, date=None, hour=None):
         strip_details = self.strip_details
         nb_of_comics = len(strip_details)
-        comic_data = utils.get_database_data()
+        comic_data = utils.load_json(utils.DATABASE_FILE_PATH)
         comic_list = {}
         comic_keys = list(strip_details.keys())
         guild_id = str(ctx.guild.id)
@@ -210,7 +210,7 @@ class PosterHandler(commands.Cog):
                 ctx.send("This is not a valid comic number!")
                 return
 
-            data = utils.get_database_data()
+            data = utils.load_json(utils.DATABASE_FILE_PATH)
             if 0 <= number <= len(self.strip_details):
                 for guild in data:
                     channels = data[guild]["channels"]
@@ -256,7 +256,7 @@ class PosterHandler(commands.Cog):
     async def do_backup(self, ctx):
         if utils.is_owner(ctx):
             # Force a backup
-            utils.save_backup(utils.get_database_data())
+            utils.save_backup(utils.load_json(utils.DATABASE_FILE_PATH))
             await ctx.send("Backup done!")
         else:
             raise commands.CommandNotFound

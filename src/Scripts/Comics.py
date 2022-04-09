@@ -10,7 +10,7 @@ class Comic(commands.Cog):
         # Constructor of the cog
         # Initialize all the properties of the cog
         self.client = client
-        self.strip_details = utils.load_details()
+        self.strip_details = utils.load_json(utils.DETAILS_PATH)
 
     # --- Start of functions --- #
     # --- If you want to add another comic, add it here between this and the 'END OF COMICS PARAMETERS'. --- #
