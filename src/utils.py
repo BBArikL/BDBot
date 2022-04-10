@@ -12,6 +12,7 @@ from datetime import datetime, timedelta, timezone
 from randomtimestamp import randomtimestamp
 
 DETAILS_PATH = "src/misc/comics_details.json"
+RETIRED_COMICS_PATH = "src/misc/retired_comics.json"
 FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
 DATABASE_FILE_PATH = "src/data/data.json"
 JSON_SCHEMA_PATH = "src/misc/databaseSchema.json"
@@ -420,7 +421,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             return "This guild is not registered for any scheduled comics!"
 
     # Save the database
-    save(data)
+    save_json(data)
 
     return Success
 
@@ -443,7 +444,7 @@ def set_role(ctx, role_id):
         else:
             data[gid]["role"] = role_id.id
 
-        save(data)
+        save_json(data)
 
         return Success
     else:
@@ -464,7 +465,7 @@ def set_mention(ctx, choice):
         if only_daily in data[gid]:
             data[gid][only_daily] = choice
 
-            save(data)
+            save_json(data)
 
             return Success
         else:
@@ -512,7 +513,7 @@ def remove_role(ctx):
             data[gid].pop(role)
             data[gid].pop(only_daily)
 
-            save(data)
+            save_json(data)
 
             return Success
         else:
@@ -536,7 +537,7 @@ def set_post_mention(ctx, choice):
             return "A role is already set up to be mentioned daily! Remove the role before changing the post mention" \
                    " by using `bd!remove_role`."
 
-        save(data)
+        save_json(data)
 
         return Success
     else:
@@ -606,7 +607,7 @@ def clean_database(data=None, do_backup=True, strict=False):
                 nb_removed += 1
 
     if nb_removed > 0:
-        save(data)
+        save_json(data)
 
     logger.info(f"Cleaned the database from {nb_removed} servers")
     return nb_removed
@@ -640,16 +641,15 @@ def restore_backup():
             database = json.load(f)
 
         if database != "":
-            save(database)
+            save_json(database)
     else:
         raise Exception("No backup was found in the last 24 hours!!")
 
 
-# Save the database
-def save(data):
-    # Saves the file
-    with open(DATABASE_FILE_PATH, 'w') as f:
-        json.dump(data, f, indent=4)
+def save_json(json_file, file_path=DATABASE_FILE_PATH):
+    # Saves the json file
+    with open(file_path, 'w') as f:
+        json.dump(json_file, f, indent=4)
 
 
 def verify_json():

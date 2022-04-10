@@ -222,7 +222,7 @@ class PosterHandler(commands.Cog):
                                 if number in hours[hour]:
                                     data[guild]["channels"][chan]["date"][date][hour].pop(hours[hour].index(number))
 
-                utils.save(data)
+                utils.save_json(data)
 
                 await ctx.send("Updated the database by removing 1 comic to all servers.")
 
