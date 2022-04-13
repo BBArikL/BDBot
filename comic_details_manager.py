@@ -6,7 +6,8 @@ from InquirerPy import inquirer
 from src.utils import load_json, DETAILS_PATH, save_json
 from typing import Union
 
-TEMP_FILE_PATH = "src\\misc\\temp_comic_details.json"
+TEMP_FILE_PATH = "src/misc/comics_not_ready.json"
+RETIRED_COMICS_PATH = "src/misc/retired_comics.json"
 
 
 def main():

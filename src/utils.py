@@ -12,7 +12,6 @@ from datetime import datetime, timedelta, timezone
 from randomtimestamp import randomtimestamp
 
 DETAILS_PATH = "src/misc/comics_details.json"
-RETIRED_COMICS_PATH = "src/misc/retired_comics.json"
 FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
 DATABASE_FILE_PATH = "src/data/data.json"
 JSON_SCHEMA_PATH = "src/misc/databaseSchema.json"
