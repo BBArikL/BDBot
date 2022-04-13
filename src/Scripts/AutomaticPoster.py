@@ -11,7 +11,6 @@ class PosterHandler(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.strip_details = utils.load_json(utils.DETAILS_PATH)
         self.do_cleanup = True
         self.logger = logging.getLogger('discord')
 
@@ -60,7 +59,7 @@ class PosterHandler(commands.Cog):
     async def hourly(self):
         # Daily loop
         self.logger.info("Starting automatic poster...")
-        strip_details = self.strip_details
+        strip_details = utils.strip_details
         nb_of_comics = len(strip_details)
         comic_data = utils.load_json(utils.DATABASE_FILE_PATH)
         comic_list = {}
@@ -176,7 +175,7 @@ class PosterHandler(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_guild=True)
     async def post(self, ctx, date=None, hour=None):
-        strip_details = self.strip_details
+        strip_details = utils.strip_details
         nb_of_comics = len(strip_details)
         comic_data = utils.load_json(utils.DATABASE_FILE_PATH)
         comic_list = {}
@@ -211,7 +210,7 @@ class PosterHandler(commands.Cog):
                 return
 
             data = utils.load_json(utils.DATABASE_FILE_PATH)
-            if 0 <= number <= len(self.strip_details):
+            if 0 <= number <= len(utils.strip_details):
                 for guild in data:
                     channels = data[guild]["channels"]
                     for chan in channels:

@@ -32,19 +32,26 @@ match_date = {
 }
 Success = "Success"
 logger = logging.getLogger('discord')
+strip_details: dict = {}
+random_footers: list[str] = []
 
 
 # Get a random footer
 def get_random_footer():
-    footers = open(FOOTERS_FILE_PATH, 'r')
-
-    rnd_footer = random.choice(footers.readlines())
+    rnd_footer = random.choice(get_footers())
 
     return rnd_footer.replace('\n', '')
 
 
+def get_footers() -> list[str]:
+    if random_footers is None or random_footers == []:
+        return open(FOOTERS_FILE_PATH, 'r').readlines()
+    else:
+        return random_footers
+
+
 # Create a comic embed with the given details
-def create_embed(comic_details=None):
+def create_embed(comic_details: dict = None):
     if comic_details is not None:
         # Embeds the comic
         comic_name = comic_details["Name"]
@@ -95,18 +102,18 @@ def create_embed(comic_details=None):
 
 
 # Sends comics info in an embed
-async def send_comic_info(ctx, strip_details):
-    embed = discord.Embed(title=f'{strip_details["Name"]} by {strip_details["Author"]}',
-                          url=get_link(strip_details),
-                          description=strip_details["Description"], color=int(strip_details["Color"], 16))
-    embed.set_thumbnail(url=strip_details["Image"])
-    embed.add_field(name="Working type", value=strip_details["Working_type"], inline=True)
+async def send_comic_info(ctx, comic: dict):
+    embed = discord.Embed(title=f'{comic["Name"]} by {comic["Author"]}',
+                          url=get_link(comic),
+                          description=comic["Description"], color=int(comic["Color"], 16))
+    embed.set_thumbnail(url=comic["Image"])
+    embed.add_field(name="Working type", value=comic["Working_type"], inline=True)
 
-    if strip_details["Working_type"] == "date":
-        embed.add_field(name="First apparition", value=get_date(get_first_date(strip_details)), inline=True)
-    embed.add_field(name="Aliases", value=strip_details["Aliases"], inline=True)
+    if comic["Working_type"] == "date":
+        embed.add_field(name="First apparition", value=get_date(get_first_date(comic)), inline=True)
+    embed.add_field(name="Aliases", value=comic["Aliases"], inline=True)
 
-    if get_sub_status(ctx, int(strip_details["Position"])):
+    if get_sub_status(ctx, int(comic["Position"])):
         sub_stat = "Yes"
     else:
         sub_stat = "No"
@@ -119,8 +126,8 @@ async def send_comic_info(ctx, strip_details):
 
 
 # Post the strip (with the given parameters)
-async def comic_send(ctx, strip_details, param, comic_date=None):
-    comic_details = Web_requests_manager.get_new_comic_details(strip_details, param, comic_date=comic_date)
+async def comic_send(ctx, comic: dict, param: str, comic_date=None):
+    comic_details = Web_requests_manager.get_new_comic_details(comic, param, comic_date=comic_date)
 
     # Sends the comic
     await send_comic_embed(ctx, comic_details)
@@ -208,10 +215,10 @@ def add_all(ctx, date=None, hour=None):
 
 
 # Make a change in the database
-def new_change(ctx, strip_details, param, date=None, hour=None):
+def new_change(ctx, comic, param, date=None, hour=None):
     final_date, final_hour = parse_all(date, hour)
 
-    comic_number = int(strip_details["Position"])
+    comic_number = int(comic["Position"])
 
     return modify_database(ctx, param, comic_number=comic_number, day=final_date, hour=str(final_hour))
 
@@ -248,7 +255,7 @@ def parse_try(to_parse, final_date, final_hour):
 
 
 # Removes a guild from the database
-def remove_guild(guild, use=None):
+def remove_guild(guild, use: str = None):
     if use is None:
         use = 'remove_guild'
 
@@ -552,6 +559,7 @@ def load_json(json_path: str) -> dict:
     JSON_SCHEMA_PATH -> The schema of the database.
     BACKUP_FILE_PATH -> The default backup.
     COMIC_LATEST_LINKS_PATH -> The latest links to the images of the comics.
+
     :param json_path: The path to the json file.
     :return: The json as a dict.
     """
@@ -572,7 +580,7 @@ def get_specific_guild_data(ctx):
         return None
 
 
-def clean_database(data=None, do_backup=True, strict=False):
+def clean_database(data: dict = None, do_backup: bool = True, strict: bool = False):
     logger.info("Running database clean...")
     # Cleans the database from inactive servers
     if data is None:
@@ -628,7 +636,6 @@ def restore_backup():
     # Restore a last used backup
     utc_date = datetime.now(timezone.utc)
     file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
-    database = ""
     tries = 0
 
     while not os.path.exists(file_path) and tries < 25:
@@ -646,7 +653,7 @@ def restore_backup():
         raise Exception("No backup was found in the last 24 hours!!")
 
 
-def save_json(json_file, file_path=DATABASE_FILE_PATH):
+def save_json(json_file: dict, file_path: str = DATABASE_FILE_PATH):
     # Saves the json file
     with open(file_path, 'w') as f:
         json.dump(json_file, f, indent=4)
@@ -665,7 +672,7 @@ def verify_json():
 
 
 # Check if the comic is subscribed to this guild
-def get_sub_status(ctx, position, database=None):
+def get_sub_status(ctx, position: int, database: dict = None):
     if database is None:  # Gets database if needed
         database = load_json(DATABASE_FILE_PATH)
 
@@ -700,16 +707,16 @@ def is_owner(ctx):  # Returns if it is the owner who did the command
 
 
 # Reformat the date
-def get_date(date):
+def get_date(date: str):
     return datetime.strptime(date, "%Y, %m, %d").strftime("%A %d, %Y")
 
 
-def get_first_date(strip_details):
-    if strip_details["Main_website"] == "https://comicskingdom.com/":
+def get_first_date(comic: dict):
+    if comic["Main_website"] == "https://comicskingdom.com/":
         # Comics kingdom only lets us go back 7 days in the past
         return (datetime.today() - timedelta(days=7)).strftime("%Y, %m, %d")
     else:
-        return strip_details["First_date"]
+        return comic["First_date"]
 
 
 def get_today():
@@ -720,7 +727,7 @@ def get_hour():
     return str(datetime.now(timezone.utc).hour)
 
 
-def clean_url(url, file_forms=None):
+def clean_url(url: str, file_forms: list = None):
     # Gives back a clean link for a file on the internet, without the arguments after a "?"
     if file_forms is None:
         file_forms = ["png", "jpg", "jpeg", "gif", "jfif", "bmp", "tif", "tiff", "eps"]
@@ -733,41 +740,69 @@ def clean_url(url, file_forms=None):
     return url
 
 
-def get_link(strip_details, day=None):  # Returns the comic url
+def get_link(comic: dict, day: datetime = None):  # Returns the comic url
     date_formatted = ""
     middle_params = ""
-    if strip_details["Main_website"] == "https://www.gocomics.com/":
+    if comic["Main_website"] == "https://www.gocomics.com/":
         date_formatted = get_date_formatted(day=day)
-        middle_params = strip_details["Web_name"]
-    elif strip_details["Main_website"] == "https://comicskingdom.com/":
+        middle_params = comic["Web_name"]
+    elif comic["Main_website"] == "https://comicskingdom.com/":
         date_formatted = get_date_formatted(day=day, form="-")
-        middle_params = strip_details["Web_name"]
-    elif strip_details["Main_website"] == "https://dilbert.com/":
+        middle_params = comic["Web_name"]
+    elif comic["Main_website"] == "https://dilbert.com/":
         date_formatted = day.strftime("%Y-%m-%d")
         middle_params = "strip"
 
-    return f'{strip_details["Main_website"]}{middle_params}/{date_formatted}'
+    return f'{comic["Main_website"]}{middle_params}/{date_formatted}'
 
 
-def get_date_formatted(day=None, form="/"):
+def get_date_formatted(day: datetime = None, form="/"):
     if day is not None:
         return day.strftime(f"%Y{form}%m{form}%d")
     else:
         return ""
 
 
-def get_random_link(strip_details):  # Returns the random comic url
-    if strip_details["Main_website"] == "https://www.gocomics.com/":
-        return f'{strip_details["Main_website"]}random/{strip_details["Web_name"]}', None
+def get_random_link(comic):  # Returns the random comic url
+    if comic["Main_website"] == "https://www.gocomics.com/":
+        return f'{comic["Main_website"]}random/{comic["Web_name"]}', None
     else:
-        first_date = datetime.strptime(get_first_date(strip_details), "%Y, %m, %d")
+        first_date = datetime.strptime(get_first_date(comic), "%Y, %m, %d")
         random_date = randomtimestamp(start=first_date,
                                       end=datetime.today().replace(hour=0, minute=0, second=0,
                                                                    microsecond=0))
         middle_params = ""
-        if strip_details["Main_website"] == "https://comicskingdom.com/":
-            middle_params = strip_details["Web_name"]
-        elif strip_details["Main_website"] == "https://dilbert.com/":
+        if comic["Main_website"] == "https://comicskingdom.com/":
+            middle_params = comic["Web_name"]
+        elif comic["Main_website"] == "https://dilbert.com/":
             middle_params = "strip"
 
-        return f'{strip_details["Main_website"]}{middle_params}/{random_date.strftime("%Y-%m-%d")}', random_date
+        return f'{comic["Main_website"]}{middle_params}/{random_date.strftime("%Y-%m-%d")}', random_date
+
+
+def get_strip_details(comic_name):
+    return strip_details[comic_name]
+
+
+async def website_specific_embed(ctx, website_name, website):
+    nb_per_embed = 25
+    strips = strip_details
+    i = 0
+
+    embed = discord.Embed(title=f"{website_name}!")
+    embed.set_footer(text=get_random_footer())
+    for strip in strips:
+        if strips[strip]["Main_website"] == website:
+            i += 1
+
+            embed.add_field(name=strips[strip]['Name'], value=f"{strips[strip]['Helptxt']}\nAliases: "
+                                                              f"{strips[strip]['Aliases']}")
+            if i == nb_per_embed:
+                await ctx.send(embed=embed)
+                i = 0
+                # Reset the embed to create a new one
+                embed = discord.Embed(title=f"{website_name}!")
+                embed.set_footer(text=get_random_footer())
+
+    if i != 0:
+        await ctx.send(embed=embed)

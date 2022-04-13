@@ -10,11 +10,10 @@ class Help(commands.Cog):
         # Constructor of the cog
         # Initialize all the properties of the cog
         self.client = client
-        self.strip_details = utils.load_json(utils.DETAILS_PATH)
 
     @commands.group(invoke_without_command=True, case_insensitive=True)
     async def help(self, ctx):  # Custom Help command
-        strips = self.strip_details
+        strips = utils.strip_details
         embed = discord.Embed(title="BDBot!")
 
         embed.add_field(name="Gocomics",
@@ -173,7 +172,7 @@ class Help(commands.Cog):
         website_name = "Gocomics"
         website = "https://www.gocomics.com/"
 
-        await self.website_specific_embed(ctx, website_name, website)
+        await  utils.website_specific_embed(ctx, website_name, website)
 
     # Comics Kingdom help embed
     @help.command()
@@ -181,7 +180,7 @@ class Help(commands.Cog):
         website_name = "Comics Kingdom"
         website = "https://comicskingdom.com/"
 
-        await self.website_specific_embed(ctx, website_name, website)
+        await utils.website_specific_embed(ctx, website_name, website)
 
     # Webtoons help embed
     @help.command()
@@ -189,31 +188,9 @@ class Help(commands.Cog):
         website_name = "Webtoons"
         website = "https://www.webtoons.com/en/"
 
-        await self.website_specific_embed(ctx, website_name, website)
+        await utils.website_specific_embed(ctx, website_name, website)
 
     # Create an embed with all the specific comics from a website
-    async def website_specific_embed(self, ctx, website_name, website):
-        nb_per_embed = 25
-        strips = self.strip_details
-        i = 0
-
-        embed = discord.Embed(title=f"{website_name}!")
-        embed.set_footer(text=utils.get_random_footer())
-        for strip in strips:
-            if strips[strip]["Main_website"] == website:
-                i += 1
-
-                embed.add_field(name=strips[strip]['Name'], value=f"{strips[strip]['Helptxt']}\nAliases: "
-                                                                  f"{strips[strip]['Aliases']}")
-                if i == nb_per_embed:
-                    await ctx.send(embed=embed)
-                    i = 0
-                    # Reset the embed to create a new one
-                    embed = discord.Embed(title=f"{website_name}!")
-                    embed.set_footer(text=utils.get_random_footer())
-
-        if i != 0:
-            await ctx.send(embed=embed)
 
 
 def setup(client):  # Initialize the cog

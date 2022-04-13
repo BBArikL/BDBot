@@ -215,7 +215,7 @@ class BDBot(commands.Cog):
 
         if guild_data is not None:
             comic_list = []
-            comic_values = list(self.strip_details.values())
+            comic_values = list(utils.strip_details.values())
 
             for channel in guild_data["channels"]:
                 for day in guild_data["channels"][channel]["date"]:
@@ -318,6 +318,20 @@ class BDBot(commands.Cog):
             await self.client.close()
         else:
             raise discord.ext.commands.CommandNotFound
+
+    @commands.command()
+    async def reload(self, ctx: discord.ext.commands.Context):
+        """
+        Reload comics.
+
+        :param ctx: Discord message context.
+        """
+        if utils.is_owner(ctx):
+            await ctx.send("Reloading comics....")
+            utils.strip_details = utils.load_json(utils.DETAILS_PATH)
+            await ctx.send("Reloaded comics!")
+        else:
+            raise commands.CommandNotFound
 
     # ---- End of commands ----#
     # ---- End of BDBot ----#

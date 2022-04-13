@@ -3,6 +3,7 @@ import logging
 from discord.ext import commands
 from dotenv import load_dotenv
 from datetime import datetime
+from src import utils
 
 load_dotenv()
 
@@ -23,6 +24,14 @@ for filename in os.listdir('src/Scripts'):
     if filename.endswith('py'):
         client.load_extension(f'src.Scripts.{filename[:-3]}')
 
-logger.log(logging.INFO, "Cogs successfully loaded!")
+logger.info("Cogs successfully loaded!")
+
+logger.info("Loading comic details...")
+utils.strip_details = utils.load_json(utils.DETAILS_PATH)
+logger.info("Loaded comic details!")
+
+logger.info("Loading random footers...")
+utils.random_footers = utils.get_footers()
+logger.info("Loaded random footers!")
 
 client.run(os.getenv('TOKEN'))  # Runs the bot with the private bot token
