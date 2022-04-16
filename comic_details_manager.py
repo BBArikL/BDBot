@@ -52,44 +52,45 @@ def add_comic(comics: dict):
     websites = {"Gocomics": None, "ComicsKingdom": None, "Webtoon": None}
     socials = ["Website", "Facebook", "Twitter", "Youtube", "Patreon", "About"]
     first_date = {"Year": 0, "Month": 0, "Day": 0}
-    name = inquirer.text(message="What is the name of the comic? ").execute()
-    author = inquirer.text(message="Who is the creator of the comic? ").execute()
+    name = inquirer.text(message="What is the name of the comic? ", mandatory=False).execute()
+    author = inquirer.text(message="Who is the creator of the comic? ", mandatory=False).execute()
     web_name = inquirer.text(message="Enter the name of the comic as it is written in the link to its main "
-                                     "page: ").execute()
+                                     "page: ", mandatory=False).execute()
     main_website = inquirer.text(message="What is the main website of the comic?",
-                                 completer={"Gocomics": None, "ComicsKingdom": None, "Webtoon": None}).execute()
+                                 completer={"Gocomics": None, "ComicsKingdom": None, "Webtoon": None},
+                                 mandatory=False).execute()
     if main_website not in websites:
         working_type = inquirer.select(message="What is the working type of the comic? (For exemplee,are comics "
                                                "accessible by specifying a date, a number or is there a rss "
                                                "available?)\nIf you do not know, please choose other. ",
-                                       choices=["date", "number", "rss", "other"]).execute()
+                                       choices=["date", "number", "rss", "other"], mandatory=False).execute()
     elif main_website == "Gocomics" or main_website == "ComicsKingdom":
         working_type = "date"
     else:
         working_type = "rss"
 
-    description = inquirer.text(message="Enter a long description of the comic: ").execute()
+    description = inquirer.text(message="Enter a long description of the comic: ", mandatory=False).execute()
     for social in socials:
         social_link = inquirer.text(
-            message=f"Does this comic has a {social} page? (leave blank if not applicable) ").execute()
+            message=f"Does this comic has a {social} page? (leave blank if not applicable) ", mandatory=False).execute()
         if social_link != "":
             description += f"\n{social}: {social_link}"
 
     if working_type == "date":
         for date in first_date:
             first_date[date] = inquirer.number(message=f"What is the first date of the comic? "
-                                                       f"Please enter the {date}: ").execute()
+                                                       f"Please enter the {date}: ", mandatory=False).execute()
     elif working_type == "number" or working_type == "rss":
         first_date = "1"
     else:
         first_date = ""
     color = inquirer.text(message="Enter the hexadecimal code of the most represented color in this comic "
                                   "(without the 0x)",
-                          validate=lambda x: re.match("[1-9|A-f]{6}", x) is not None).execute()
+                          validate=lambda x: re.match("[0-9A-F]{6}", x) is not None, mandatory=False).execute()
     image = inquirer.text(message="Enter the link of a public image that represents well the comic: ").execute()
     helptxt = inquirer.text(message="Write in one phrase a description of the comic.",
                             validate=lambda x: 50 > len(x),
-                            invalid_message="This short description must be less than 50 characters!").execute()
+                            invalid_message="This short description must be less than 50 characters!", mandatory=False).execute()
     final_comic_dict = process_inputs(name, author, web_name, main_website, working_type, description, len(comics) + 1,
                                       first_date, color, image, helptxt)
     print("Final comic data:")
@@ -101,10 +102,14 @@ def add_comic(comics: dict):
         save_json(comics, file_path=DETAILS_PATH)
         print("Update done!")
 
-        print("Creating ")
-
+        # Create a command
+        print("Creating command...")
+        command = create_command(final_comic_dict)
+        print("Here is your command:\n'''")
+        print(command)
+        print(f"'''\nAdd it to the end of {os.getcwd()}/src/Scripts/Comic.py to make the comic executable.")
     else:  # Adds the details to a temporary file
-        absolute_path = os.getcwd() + "\\" + TEMP_FILE_PATH
+        absolute_path = os.getcwd() + "/" + TEMP_FILE_PATH
         temp_comic_data = {}
         print(f"Writing dictionary to a temporary location.... ({absolute_path})")
         if os.path.exists(absolute_path):
@@ -113,7 +118,7 @@ def add_comic(comics: dict):
             open(absolute_path, 'x').close()
         temp_comic_data.update(final_comic_dict)
         save_json(temp_comic_data, absolute_path)
-        print("Wrote the details to the temporary file! You can edit this file manually or still with this tool!")
+        print("Wrote the details to the temporary file! You can edit this file manually or with this tool!")
 
 
 def process_inputs(name: str, author: str, web_name: str, main_website: str, working_type: str, descritption: str,
@@ -129,7 +134,7 @@ def process_inputs(name: str, author: str, web_name: str, main_website: str, wor
             "Name": name,
             "Author": author,
             "Web_name": web_name,
-            "Main_website": getattr(websites, main_website, main_website),
+            "Main_website": websites[main_website] if main_website in websites else main_website,
             "Working_type": working_type,
             "Description": descritption,
             "Position": position,
@@ -144,8 +149,17 @@ def process_inputs(name: str, author: str, web_name: str, main_website: str, wor
     }
 
 
-def create_command():
-    pass
+def create_command(cmc: dict):
+    comic = cmc.get(list(cmc.keys())[0])
+    normalized_name = comic['Name'].replace(" ", "")
+    return f"""
+    @commands.command(aliases=[{comic['Aliases']}])
+    async def {normalized_name}(self, ctx, use=None, date=None, hour=None):
+        comic_name = '{normalized_name}'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+    """
 
 
 def delete(comics: dict, comic: str):
