@@ -236,7 +236,6 @@ def database_update(comic_number: int):
                 date_data = channel_data["date"][date]
                 for hour in date_data:
                     hour_data: list = date_data[hour]
-                    print(hour_data)
                     if comic_number_remove in hour_data:
                         hour_data.remove(comic_number_remove)
 
