@@ -3,7 +3,7 @@ import os
 import re
 
 from InquirerPy import inquirer
-from src.utils import load_json, DETAILS_PATH, save_json
+from src.utils import load_json, DETAILS_PATH, save_json, DATABASE_FILE_PATH, save_backup
 from typing import Union
 
 TEMP_FILE_PATH = "src/misc/comics_not_ready.json"
@@ -14,18 +14,22 @@ def main():
     """
     Add, delete or modify comics in the comic details file.
     """
+    os.chdir(os.path.dirname(__file__))  # Force the current working directory
+
     print("Loading comics....")
     comics = load_json(DETAILS_PATH)
     print("Comics loaded!")
     action = None
-    while action is None:
+    while action != "Exit":
         action = inquirer.select(
             message="What do you want to do with the comics?",
-            choices=["Add", "Delete", "Modify", "Exit"]
+            choices=["Add", "Delete", "Modify", "Setup Bot", "Exit"]
         ).execute()
-        if action != "Exit":
+
+        if action == "Delete" or action == "Modify":
             choose_comic(action, comics)
-            action = None
+        elif action == "Setup Bot":
+            setup_bot()
 
 
 def choose_comic(action: str, comics: dict):
@@ -34,10 +38,13 @@ def choose_comic(action: str, comics: dict):
     else:
         comic = inquirer.fuzzy(
             message=f"What comic do you want to {action.lower()}?",
-            choices=[f"{comics[x]['Position']}. {comics[x]['Name']}" for x in comics]
+            choices=[f"{comics[x]['Position']}. {comics[x]['Name']}" for x in comics],
+            mandatory=False
         ).execute()
 
-        if action == "Delete":
+        if comic is None:
+            return
+        elif action == "Delete":
             delete(comics, comic)
         else:
             modify(comics, comic)
@@ -90,7 +97,8 @@ def add_comic(comics: dict):
     image = inquirer.text(message="Enter the link of a public image that represents well the comic: ").execute()
     helptxt = inquirer.text(message="Write in one phrase a description of the comic.",
                             validate=lambda x: 50 > len(x),
-                            invalid_message="This short description must be less than 50 characters!", mandatory=False).execute()
+                            invalid_message="This short description must be less than 50 characters!",
+                            mandatory=False).execute()
     final_comic_dict = process_inputs(name, author, web_name, main_website, working_type, description, len(comics) + 1,
                                       first_date, color, image, helptxt)
     print("Final comic data:")
@@ -110,12 +118,8 @@ def add_comic(comics: dict):
         print(f"'''\nAdd it to the end of {os.getcwd()}/src/Scripts/Comic.py to make the comic executable.")
     else:  # Adds the details to a temporary file
         absolute_path = os.getcwd() + "/" + TEMP_FILE_PATH
-        temp_comic_data = {}
         print(f"Writing dictionary to a temporary location.... ({absolute_path})")
-        if os.path.exists(absolute_path):
-            temp_comic_data = load_json(absolute_path)
-        else:
-            open(absolute_path, 'x').close()
+        temp_comic_data = open_json_if_exist(absolute_path)
         temp_comic_data.update(final_comic_dict)
         save_json(temp_comic_data, absolute_path)
         print("Wrote the details to the temporary file! You can edit this file manually or with this tool!")
@@ -163,10 +167,96 @@ def create_command(cmc: dict):
 
 
 def delete(comics: dict, comic: str):
-    pass
+    """
+    Removes a comic from the main configuration file and move it to a retired configuration file.
+
+    :param comics: Main configuration dictionary.
+    :param comic: The comic to remove.
+    """
+    comic_number, comic_name = comic.split(". ")
+    comic_number = int(comic_number)
+    confirm = inquirer.confirm(message=f"Are you sure you want to delete {comic_name}?").execute()
+
+    if confirm:
+        abs_path = os.getcwd() + "/" + RETIRED_COMICS_PATH
+        print(f"Moving comic to {abs_path} ...")
+        # Retires the comic from the main config file
+        comic_name = list(comics.keys())[comic_number]
+        retired_comic: dict = comics.pop(comic_name)
+
+        print("Changing positions of the next comics...")
+        for cmc in comics:
+            pos = comics[cmc]["Position"]
+            comics[cmc]["Position"] = pos - 1 if pos > comic_number else pos
+
+        save_json(comics, DETAILS_PATH)
+
+        retired_comics = open_json_if_exist(abs_path)  # Moves the comic
+        retired_comics.update({comic_name: retired_comic})
+        save_json(retired_comics, abs_path)
+        print("Deletion successful in the details file!")
+
+        update_database = inquirer.confirm(message="Do you want to update the database as well? (Note: A backup will "
+                                                   "be made in case this step breaks the database.)").execute()
+        if update_database:
+            database_update(comic_number)
+        else:
+            print("The database has not been modified.")
+
+    else:
+        print("Deletion aborted.")
+
+
+def open_json_if_exist(absolute_path: str):
+    """
+    Load a json from a file if it exists, create it otherwise.
+
+    :param absolute_path: The path to the
+    :return: The dictionary of data in the json file
+    """
+    temp_comic_data = {}
+    if os.path.exists(absolute_path):
+        return load_json(absolute_path)
+    else:
+        open(absolute_path, 'x').close()
+        return temp_comic_data
+
+
+def database_update(comic_number: int):
+    print("Updating database....")
+    data = open_json_if_exist(DATABASE_FILE_PATH)
+    comic_number_remove = comic_number  # the comic number to remove
+    save_backup(data)
+    # Removes a comic permanently
+    for gid in data:
+        guild = data[gid]
+        for channel in guild["channels"]:
+            channel_data = guild["channels"][channel]
+            for date in channel_data["date"]:
+                date_data = channel_data["date"][date]
+                for hour in date_data:
+                    hour_data: list = date_data[hour]
+                    print(hour_data)
+                    if comic_number_remove in hour_data:
+                        hour_data.remove(comic_number_remove)
+
+                    new_hour_data = []
+                    for cmc_nb in hour_data:
+                        if cmc_nb > comic_number_remove:
+                            new_hour_data.append(cmc_nb - 1)
+                        else:
+                            new_hour_data.append(cmc_nb)
+                    data[gid]["channels"][channel]["date"][date][hour] = new_hour_data
+
+    save_json(data)
+    print("Database update done!")
 
 
 def modify(comics: dict, comic: str):
+    pass
+
+
+def setup_bot():
     pass
 
 
