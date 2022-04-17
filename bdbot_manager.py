@@ -3,7 +3,7 @@ import os
 import re
 
 from InquirerPy import inquirer
-from src.utils import load_json, DETAILS_PATH, save_json, DATABASE_FILE_PATH, save_backup
+from src.utils import load_json, DETAILS_PATH, save_json, DATABASE_FILE_PATH, save_backup, create_link_cache
 from typing import Union
 
 TEMP_FILE_PATH = "src/misc/comics_not_ready.json"
@@ -15,7 +15,31 @@ def main():
     Add, delete or modify comics in the comic details file.
     """
     os.chdir(os.path.dirname(__file__))  # Force the current working directory
+    action = ""
+    while action != "Exit":
+        action = inquirer.select(message="What do you want to do?", choices=["Manage bot", "Manage comics",
+                                                                             "Exit"]).execute()
 
+        if action == "Manage bot":
+            manage_bot()
+        elif action == "Manage comics":
+            manage_comics()
+
+
+def manage_bot():
+    action = inquirer.select(message="What do you want to do?",
+                             choices=["Verify Database", "Verify requests", "Create image link cache", "Setup Bot"],
+                             mandatory=False).execute()
+
+    if action == "Create image link cache":
+        print("Running link cache, please wait up to 1-2 minutes...")
+        create_link_cache()
+        print("Link cache created!")
+    if action == "Setup Bot":
+        setup_bot()
+
+
+def manage_comics():
     print("Loading comics....")
     comics = load_json(DETAILS_PATH)
     print("Comics loaded!")
@@ -23,13 +47,11 @@ def main():
     while action != "Exit":
         action = inquirer.select(
             message="What do you want to do with the comics?",
-            choices=["Add", "Delete", "Modify", "Setup Bot", "Exit"]
+            choices=["Add", "Delete", "Modify", "Exit"]
         ).execute()
 
         if action == "Delete" or action == "Modify":
             choose_comic(action, comics)
-        elif action == "Setup Bot":
-            setup_bot()
 
 
 def choose_comic(action: str, comics: dict):

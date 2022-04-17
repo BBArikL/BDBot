@@ -278,7 +278,7 @@ def get_comic_info_rss(strip_details, param=None, comic_date=None):
             # Webtoon
             details["url"] = main_website + f"&episode_no={comic_date}"
     else:
-        feed = Parser(xml=get(rss_site).content, limit=comic_nb + 1).parse().feed[comic_nb]
+        feed = Parser(xml=get(rss_site).text, limit=comic_nb + 1).parse().feed[comic_nb]
         # Get information
         tz = ""
         weekday = ""

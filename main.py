@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 from src import utils
 
+os.chdir(os.path.dirname(__file__))  # Force the current working directory
 load_dotenv()
 
 client = commands.Bot(command_prefix='bd!')

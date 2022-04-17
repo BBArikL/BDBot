@@ -32,6 +32,7 @@ match_date = {
 Success = "Success"
 logger = logging.getLogger('discord')
 strip_details: dict = {}
+link_cache: dict = {}
 random_footers: list[str] = []
 
 
@@ -805,3 +806,16 @@ async def website_specific_embed(ctx, website_name, website):
 
     if i != 0:
         await ctx.send(embed=embed)
+
+
+def create_link_cache():
+    logger.debug("Running link cache...")
+    comics = load_json(DETAILS_PATH)
+
+    for comic in comics:
+        logger.debug(f"Getting image link for comic {comic} ...")
+        comic_url = Web_requests_manager.get_new_comic_details(comics[comic], param="today")
+        link_cache.update({comic: comic_url["img_url"] if comic_url is not None else ""})
+
+    logger.debug("Saving comics link")
+    save_json(link_cache, COMIC_LATEST_LINKS_PATH)
