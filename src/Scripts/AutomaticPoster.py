@@ -14,7 +14,8 @@ class PosterHandler(commands.Cog):
         self.do_cleanup = True
         self.logger = logging.getLogger('discord')
 
-    @commands.command()
+    @commands.hybrid_command()
+    @commands.check(lambda interaction: utils.is_owner(interaction))
     async def start_hourly(self, ctx):
         # Starts the PosterHandler loop
         if utils.is_owner(ctx):
@@ -31,7 +32,8 @@ class PosterHandler(commands.Cog):
         await PosterHandler.post_hourly.start(self)
 
     # Checks if the hourly loop is running
-    @commands.command()
+    @commands.hybrid_command()
+    @commands.check(lambda interaction: utils.is_owner(interaction))
     async def is_hourly_running(self, ctx):  # Checks the PosterHandler loop
         if utils.is_owner(ctx):
             if PosterHandler.post_hourly.is_running():
@@ -43,7 +45,8 @@ class PosterHandler(commands.Cog):
             raise commands.CommandNotFound
 
     # Force the push of comics to all subscribed guilds
-    @commands.command()
+    @commands.hybrid_command()
+    @commands.check(lambda interaction: utils.is_owner(interaction))
     async def force_hourly(self, ctx):
         if utils.is_owner(ctx):
             await self.hourly()
@@ -172,9 +175,10 @@ class PosterHandler(commands.Cog):
                             else:
                                 self.logger.info("A comic could not be posted to a channel.")
 
-    @commands.command()
-    @commands.has_permissions(manage_guild=True)
-    async def post(self, ctx, date=None, hour=None):
+    @commands.hybrid_command()
+    # @commands.has_permissions(manage_guild=True)
+    # @commands.check()
+    async def post(self, ctx, date: str = None, hour: str = None):
         strip_details = utils.strip_details
         nb_of_comics = len(strip_details)
         comic_data = utils.load_json(utils.DATABASE_FILE_PATH)
@@ -199,14 +203,15 @@ class PosterHandler(commands.Cog):
         else:
             await ctx.send("This guild is not subscribed to any comic!")
 
-    @commands.command()
-    async def update_database_remove(self, ctx, number=None):
+    @commands.hybrid_command()
+    @commands.check(lambda interaction: utils.is_owner(interaction))
+    async def update_database_remove(self, inter: discord.Interaction, number: str=None):
         # Remove the comic from all the servers
-        if utils.is_owner(ctx):
+        if utils.is_owner(inter):
             try:
                 number = int(number)
             except ValueError or TypeError:
-                ctx.send("This is not a valid comic number!")
+                inter.response.send_message("This is not a valid comic number!")
                 return
 
             data = utils.load_json(utils.DATABASE_FILE_PATH)
@@ -223,43 +228,46 @@ class PosterHandler(commands.Cog):
 
                 utils.save_json(data)
 
-                await ctx.send("Updated the database by removing 1 comic to all servers.")
+                await inter.response.send_message("Updated the database by removing 1 comic to all servers.")
 
             else:
-                await ctx.send('Cannot find the index of the comic to remove!')
+                await inter.response.send_message('Cannot find the index of the comic to remove!')
         else:
             raise commands.CommandNotFound
 
-    @commands.command()
-    async def update_database_clean(self, ctx):
+    @commands.hybrid_command()
+    @commands.check(lambda interaction: utils.is_owner(interaction))
+    async def update_database_clean(self, inter: discord.Interaction):
         # Clean the database from servers that don't have any comics saved
-        if utils.is_owner(ctx):
+        if utils.is_owner(inter):
             nb_removed = utils.clean_database(strict=True)
 
-            await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
+            await inter.response.send_message(f'Cleaned the database from {nb_removed} inactive server(s).')
         else:
             raise commands.CommandNotFound
 
-    @commands.command()
-    async def restore_last_backup(self, ctx):
-        if utils.is_owner(ctx):
+    @commands.hybrid_command()
+    async def restore_last_backup(self, inter: discord.Interaction):
+        if utils.is_owner(inter):
             # Stops the database cleaning and restore the last backup
             self.do_cleanup = False
             utils.restore_backup()
 
-            await ctx.send("Last backup restored! Please reboot the bot to re-enable automatic cleanups!")
+            await inter.response.send_message("Last backup restored! Please reboot the bot to re-enable automatic "
+                                              "cleanups!")
         else:
             raise commands.CommandNotFound
 
-    @commands.command()
-    async def do_backup(self, ctx):
-        if utils.is_owner(ctx):
+    @commands.hybrid_command()
+    @commands.check(lambda interaction: utils.is_owner(interaction))
+    async def do_backup(self, inter: discord.Interaction):
+        if utils.is_owner(inter):
             # Force a backup
             utils.save_backup(utils.load_json(utils.DATABASE_FILE_PATH))
-            await ctx.send("Backup done!")
+            inter.response.send_message("Backup done!")
         else:
             raise commands.CommandNotFound
 
 
-def setup(client):  # Initialize the cog
-    client.add_cog(PosterHandler(client))
+async def setup(client):  # Initialize the cog
+    await client.add_cog(PosterHandler(client))

@@ -10,6 +10,7 @@ from src import Web_requests_manager
 from jsonschema import validate, ValidationError
 from datetime import datetime, timedelta, timezone
 from randomtimestamp import randomtimestamp
+from discord.ext import commands
 
 DETAILS_PATH = "src/misc/comics_details.json"
 FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
@@ -34,20 +35,6 @@ logger = logging.getLogger('discord')
 strip_details: dict = {}
 link_cache: dict = {}
 random_footers: list[str] = []
-
-
-# Get a random footer
-def get_random_footer():
-    rnd_footer = random.choice(get_footers())
-
-    return rnd_footer.replace('\n', '')
-
-
-def get_footers() -> list[str]:
-    if random_footers is None or random_footers == []:
-        return open(FOOTERS_FILE_PATH, 'r').readlines()
-    else:
-        return random_footers
 
 
 # Create a comic embed with the given details
@@ -102,7 +89,7 @@ def create_embed(comic_details: dict = None):
 
 
 # Sends comics info in an embed
-async def send_comic_info(ctx, comic: dict):
+async def send_comic_info(ctx: commands.Context, comic: dict):
     embed = discord.Embed(title=f'{comic["Name"]} by {comic["Author"]}',
                           url=get_link(comic),
                           description=comic["Description"], color=int(comic["Color"], 16))
@@ -126,7 +113,7 @@ async def send_comic_info(ctx, comic: dict):
 
 
 # Post the strip (with the given parameters)
-async def comic_send(ctx, comic: dict, param: str, comic_date=None):
+async def comic_send(ctx: commands.Context, comic: dict, param: str, comic_date=None):
     comic_details = Web_requests_manager.get_new_comic_details(comic, param, comic_date=comic_date)
 
     # Sends the comic
@@ -134,7 +121,7 @@ async def comic_send(ctx, comic: dict, param: str, comic_date=None):
 
 
 # Interprets the parameters given by the user
-async def parameters_interpreter(ctx, strip_details, param=None, date=None, hour=None):
+async def parameters_interpreter(ctx: commands.Context, comic_details, param=None, date=None, hour=None):
     if param is not None:
         """ Parameters:
             today -> Today's comic
@@ -146,16 +133,16 @@ async def parameters_interpreter(ctx, strip_details, param=None, date=None, hour
 
         if param == "today" or param == "tod":
             # Sends the website of today's comic
-            await comic_send(ctx, strip_details, "today")
+            await comic_send(ctx, comic_details, "today")
         elif param == "random" or param == "rand" or param == "rnd":
             # Random comic
-            await comic_send(ctx, strip_details, "random")
+            await comic_send(ctx, comic_details, "random")
         elif param == "add":
             # Add the comic to the daily list for a guild
             if ctx.message.author.guild_permissions.manage_guild:
-                status = new_change(ctx, strip_details, "add", date=date, hour=hour)
+                status = new_change(ctx, comic_details, "add", date=date, hour=hour)
                 if status == Success:
-                    await ctx.send(f"{strip_details['Name']} added successfully as a daily comic!")
+                    await ctx.send(f"{comic_details['Name']} added successfully as a daily comic!")
                 else:
                     await ctx.send(status)
             else:
@@ -163,23 +150,24 @@ async def parameters_interpreter(ctx, strip_details, param=None, date=None, hour
         elif param == "remove":
             # Remove the comic to the daily list for a guild
             if ctx.message.author.guild_permissions.manage_guild:
-                status = new_change(ctx, strip_details, "remove", date=date, hour=hour)
+                status = new_change(ctx, comic_details, "remove", date=date, hour=hour)
                 if status == Success:
-                    await ctx.send(f"{strip_details['Name']} removed successfully from the daily list!")
+                    await ctx.send(
+                        f"{comic_details['Name']} removed successfully from the daily list!")
                 else:
                     await ctx.send(status)
             else:
                 await ctx.send("You need `manage_guild` permission to do that!")
         else:
             # Tries to parse date / number of comic
-            working_type = strip_details["Working_type"]
-            if working_type == "date" or strip_details["Main_website"] == 'https://garfieldminusgarfield.net/':
+            working_type = comic_details["Working_type"]
+            if working_type == "date" or comic_details["Main_website"] == 'https://garfieldminusgarfield.net/':
                 # Works by date
                 try:
                     comic_date = datetime.strptime(param, "%d/%m/%Y")
-                    first_date = datetime.strptime(get_first_date(strip_details), "%Y, %m, %d")
+                    first_date = datetime.strptime(get_first_date(comic_details), "%Y, %m, %d")
                     if first_date.timestamp() <= comic_date.timestamp() <= datetime.now(timezone.utc).timestamp():
-                        await comic_send(ctx, strip_details, "Specific_date", comic_date=comic_date)
+                        await comic_send(ctx, comic_details, "Specific_date", comic_date=comic_date)
                     else:
                         first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
                         date_now_formatted = datetime.strftime(datetime.now(timezone.utc), "%d/%m/%Y")
@@ -192,12 +180,12 @@ async def parameters_interpreter(ctx, strip_details, param=None, date=None, hour
                 # Works by number of comic
                 try:
                     number = int(param.split(" ")[0])
-                    if number >= int(get_first_date(strip_details)):
+                    if number >= int(get_first_date(comic_details)):
                         if working_type == "number":
-                            strip_details["Main_website"] = strip_details["Main_website"] + str(number) + '/'
-                            await comic_send(ctx, strip_details, param=param)
+                            comic_details["Main_website"] = comic_details["Main_website"] + str(number) + '/'
+                            await comic_send(ctx, comic_details, param=param)
                         else:
-                            await comic_send(ctx, strip_details, "Specific_date", comic_date=number)
+                            await comic_send(ctx, comic_details, "Specific_date", comic_date=number)
                     else:
                         await ctx.send("There is no comics with such values!")
 
@@ -205,72 +193,35 @@ async def parameters_interpreter(ctx, strip_details, param=None, date=None, hour
                     await ctx.send('This is not a valid comic number!')
     else:
         # If the user didn't send any parameters, return the information the comic requested
-        await send_comic_info(ctx, strip_details)
+        await send_comic_info(ctx, comic_details)
 
 
-def add_all(ctx, date=None, hour=None):
+def add_all(ctx: commands.Context, date=None, hour=None):
     final_date, final_hour = parse_all(date, hour)
 
     return modify_database(ctx, "add_all", day=final_date, hour=str(final_hour))
 
 
 # Make a change in the database
-def new_change(ctx, comic, param, date=None, hour=None):
+def new_change(ctx: commands.Context, comic, param, date=None, hour=None):
     final_date, final_hour = parse_all(date, hour)
 
     comic_number = int(comic["Position"])
 
-    return modify_database(ctx, param, comic_number=comic_number, day=final_date, hour=str(final_hour))
-
-
-def parse_all(date=None, hour=None, default_date="D", default_hour=6):
-    final_date = default_date
-    final_hour = default_hour
-
-    final_date, final_hour = parse_try(date, final_date, final_hour)
-    final_date, final_hour = parse_try(hour, final_date, final_hour)
-
-    return final_date, final_hour
-
-
-def parse_try(to_parse, final_date, final_hour):
-    if to_parse is not None:
-        if len(str(to_parse)) >= 2:
-            date = to_parse[0:1].capitalize() + to_parse[1:2].lower()
-
-            if date in date_tries:
-                final_date = date
-            else:
-                try:
-                    final_hour = int(to_parse)
-                except ValueError:
-                    pass
-        else:
-            try:
-                final_hour = int(to_parse)
-            except ValueError:
-                pass
-
-    return final_date, final_hour
+    return modify_database(ctx, param, day=final_date, hour=str(final_hour), comic_number=comic_number)
 
 
 # Removes a guild from the database
-def remove_guild(guild, use: str = None):
-    if use is None:
-        use = 'remove_guild'
-
-    return modify_database(guild, use)
-
-
-# Removes a channel from the database
-def remove_channel(ctx, use=None):
-    if use is None:
-        use = "remove_channel"
-
+def remove_guild(ctx: commands.Context, use: str = 'remove_guild'):
     return modify_database(ctx, use)
 
 
-def modify_database(ctx, use, day=None, hour=None, comic_number=None):
+# Removes a channel from the database
+def remove_channel(ctx: commands.Context, use="remove_channel"):
+    return modify_database(ctx, use)
+
+
+def modify_database(ctx: commands.Context, use: str, day: str = None, hour: str = None, comic_number: int = None):
     # Saves the new information in the database
     # Adds or delete the guild_id, the channel id and the comic_strip data
     # All use cases
@@ -323,7 +274,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
             if hour is None:
                 hour = "6"  # Default: 6 AM UTC
 
-            com_list = []
+            com_list: list[int] = []
             if use == a_all:
                 strips = load_json(DETAILS_PATH)
                 com_list = [i for i in range(len(strips))]
@@ -402,7 +353,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
         if use == 'remove_guild':
             guild_id = str(ctx.guild.id)
         elif use == 'auto_remove_guild':
-            guild_id = str(ctx.id)
+            guild_id = str(ctx.id)  # it is a guild
 
         # Remove a guild from the list
         if guild_id in data:
@@ -416,7 +367,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
         if use == 'remove_channel':
             channel_id = str(ctx.channel.id)
         elif use == 'auto_remove_channel':
-            channel_id = str(ctx.id)
+            channel_id = str(ctx.id)  # it is a channel
 
         # Remove a guild from the list
         if guild_id in data:
@@ -433,7 +384,7 @@ def modify_database(ctx, use, day=None, hour=None, comic_number=None):
     return Success
 
 
-def set_role(ctx, role_id):
+def set_role(ctx: commands.Context, role_id):
     gid = str(ctx.guild.id)
     role = "role"
     mention = "mention"
@@ -458,7 +409,7 @@ def set_role(ctx, role_id):
         return "This guild is not subscribed to any comic! Please subscribe to a comic before entering a role to add."
 
 
-def set_mention(ctx, choice):
+def set_mention(ctx: commands.Context, choice):
     gid = str(ctx.guild.id)
     only_daily = "only_daily"
     mention = "mention"
@@ -570,7 +521,7 @@ def load_json(json_path: str) -> dict:
 
 
 # Returns a specific guild's data
-def get_specific_guild_data(ctx):
+def get_specific_guild_data(ctx: discord.Interaction):
     database = load_json(DATABASE_FILE_PATH)
     guild_id = str(ctx.guild.id)
 
@@ -691,20 +642,46 @@ def get_sub_status(ctx, position: int, database: dict = None):
 
 
 # Send a comic embed
-async def send_comic_embed(ctx, comic_details):
+async def send_comic_embed(ctx: commands.Context, comic_details):
     embed = create_embed(comic_details=comic_details)  # Creates the embed
 
     await ctx.send(embed=embed)  # Send the comic
 
 
 # If the request is not understood
-async def send_request_error(ctx):
+async def send_request_error(ctx: commands.Context):
     await ctx.send('Request not understood. Try bd!help for usable commands.')
 
 
-def is_owner(ctx):  # Returns if it is the owner who did the command
+def is_owner(ctx: commands.Context):  # Returns if it is the owner who did the command
     return ctx.message.author.id == int(os.getenv('BOT_OWNER_ID'))
 
+
+async def website_specific_embed(ctx: commands.Context, website_name, website):
+    nb_per_embed = 25
+    strips = strip_details
+    i = 0
+
+    embed = discord.Embed(title=f"{website_name}!")
+    embed.set_footer(text=get_random_footer())
+    for strip in strips:
+        if strips[strip]["Main_website"] == website:
+            i += 1
+
+            embed.add_field(name=strips[strip]['Name'], value=f"{strips[strip]['Helptxt']}\nAliases: "
+                                                              f"{strips[strip]['Aliases']}")
+            if i == nb_per_embed:
+                await ctx.send(embed=embed)
+                i = 0
+                # Reset the embed to create a new one
+                embed = discord.Embed(title=f"{website_name}!")
+                embed.set_footer(text=get_random_footer())
+
+    if i != 0:
+        await ctx.send(embed=embed)
+
+
+# -------------------------------------------------------------------------------------------------------------------
 
 # Reformat the date
 def get_date(date: str):
@@ -763,7 +740,7 @@ def get_date_formatted(day: datetime = None, form="/"):
         return ""
 
 
-def get_random_link(comic):  # Returns the random comic url
+def get_random_link(comic: dict):  # Returns the random comic url
     if comic["Main_website"] == "https://www.gocomics.com/":
         return f'{comic["Main_website"]}random/{comic["Web_name"]}', None
     else:
@@ -780,32 +757,8 @@ def get_random_link(comic):  # Returns the random comic url
         return f'{comic["Main_website"]}{middle_params}/{random_date.strftime("%Y-%m-%d")}', random_date
 
 
-def get_strip_details(comic_name):
+def get_strip_details(comic_name: str):
     return strip_details[comic_name]
-
-
-async def website_specific_embed(ctx, website_name, website):
-    nb_per_embed = 25
-    strips = strip_details
-    i = 0
-
-    embed = discord.Embed(title=f"{website_name}!")
-    embed.set_footer(text=get_random_footer())
-    for strip in strips:
-        if strips[strip]["Main_website"] == website:
-            i += 1
-
-            embed.add_field(name=strips[strip]['Name'], value=f"{strips[strip]['Helptxt']}\nAliases: "
-                                                              f"{strips[strip]['Aliases']}")
-            if i == nb_per_embed:
-                await ctx.send(embed=embed)
-                i = 0
-                # Reset the embed to create a new one
-                embed = discord.Embed(title=f"{website_name}!")
-                embed.set_footer(text=get_random_footer())
-
-    if i != 0:
-        await ctx.send(embed=embed)
 
 
 def create_link_cache():
@@ -819,3 +772,48 @@ def create_link_cache():
 
     logger.debug("Saving comics link")
     save_json(link_cache, COMIC_LATEST_LINKS_PATH)
+
+
+# Get a random footer
+def get_random_footer():
+    rnd_footer = random.choice(get_footers())
+
+    return rnd_footer.replace('\n', '')
+
+
+def get_footers() -> list[str]:
+    if random_footers is None or random_footers == []:
+        return open(FOOTERS_FILE_PATH, 'r').readlines()
+    else:
+        return random_footers
+
+
+def parse_all(date=None, hour=None, default_date="D", default_hour=6) -> (str, str):
+    final_date = default_date
+    final_hour = default_hour
+
+    final_date, final_hour = parse_try(date, final_date, final_hour)
+    final_date, final_hour = parse_try(hour, final_date, final_hour)
+
+    return final_date, final_hour
+
+
+def parse_try(to_parse, final_date, final_hour) -> (str, str):
+    if to_parse is not None:
+        if len(str(to_parse)) >= 2:
+            date = to_parse[0:1].capitalize() + to_parse[1:2].lower()
+
+            if date in date_tries:
+                final_date = date
+            else:
+                try:
+                    final_hour = int(to_parse)
+                except ValueError:
+                    pass
+        else:
+            try:
+                final_hour = int(to_parse)
+            except ValueError:
+                pass
+
+    return final_date, final_hour

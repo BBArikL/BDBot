@@ -11,7 +11,8 @@ class Help(commands.Cog):
         # Initialize all the properties of the cog
         self.client = client
 
-    @commands.group(invoke_without_command=True, case_insensitive=True)
+    # @commands.command(invoke_without_command=True, case_insensitive=True)
+    @commands.hybrid_group()
     async def help(self, ctx):  # Custom Help command
         strips = utils.strip_details
         embed = discord.Embed(title="BDBot!")
@@ -167,15 +168,15 @@ class Help(commands.Cog):
         await ctx.send(embed=embed)
 
     # Gocomics help embed
-    @help.command()
+    @help.command(name="gocomics")
     async def gocomics(self, ctx):
         website_name = "Gocomics"
         website = "https://www.gocomics.com/"
 
-        await  utils.website_specific_embed(ctx, website_name, website)
+        await utils.website_specific_embed(ctx, website_name, website)
 
     # Comics Kingdom help embed
-    @help.command()
+    @help.command(name="comicskingdom")
     async def comicskingdom(self, ctx):
         website_name = "Comics Kingdom"
         website = "https://comicskingdom.com/"
@@ -183,8 +184,8 @@ class Help(commands.Cog):
         await utils.website_specific_embed(ctx, website_name, website)
 
     # Webtoons help embed
-    @help.command()
-    async def webtoons(self, ctx):
+    @help.command(name="webtoons")
+    async def webtoons(self, ctx: discord.ext.commands.Context):
         website_name = "Webtoons"
         website = "https://www.webtoons.com/en/"
 
@@ -193,5 +194,5 @@ class Help(commands.Cog):
     # Create an embed with all the specific comics from a website
 
 
-def setup(client):  # Initialize the cog
-    client.add_cog(Help(client))
+async def setup(client):  # Initialize the cog
+    await client.add_cog(Help(client))

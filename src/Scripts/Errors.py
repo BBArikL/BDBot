@@ -1,4 +1,6 @@
+import discord
 from discord.ext import commands
+from discord import app_commands
 
 
 class Errors(commands.Cog):
@@ -13,20 +15,22 @@ class Errors(commands.Cog):
     # terminal. But you should at least not forget to remove the comments when your bot goes live ;)
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error: Exception):
+    async def on_command_error(self, ctx: discord.ext.commands.Context, error: Exception):
         # Handles errors
-        if isinstance(error, commands.CommandNotFound):  # Command not found
+        if isinstance(error, app_commands.CommandNotFound):  # Command not found
             await ctx.send('Invalid command. Try bd!help to search for usable commands.')
-        elif isinstance(error, commands.MissingRequiredArgument):  # Not enough arguments
-            await ctx.send('A required argument is needed. Try bd!help to see required arguments.')
-        elif isinstance(error, commands.MissingPermissions):
+        elif isinstance(error, app_commands.MissingPermissions):
             await ctx.send('You do not have the permission to do that.')
-        elif isinstance(error, commands.RoleNotFound):
-            await ctx.send('The role is invalid or not provided!')
         else:  # Not supported errors
-            await ctx.send(f'Error not supported. Visit https://github.com/BBArikL/BDBot to report the issue. '
-                           f'The error is: {error}')
+            await ctx.send(f'Error not supported. Visit https://github.com/BBArikL/BDBot to report '
+                           f'the issue. The error is: {error}')
 
 
-def setup(client):  # Initialize the cog
-    client.add_cog(Errors(client))
+"""elif isinstance(error, app_commands.MissingRequiredArgument):  # Not enough arguments
+            await ctx.send('A required argument is needed. Try bd!help to see required arguments.')"""
+"""elif isinstance(error, app_commands.RoleNotFound):
+            await ctx.send('The role is invalid or not provided!')"""
+
+
+async def setup(client):  # Initialize the cog
+    await client.add_cog(Errors(client))
