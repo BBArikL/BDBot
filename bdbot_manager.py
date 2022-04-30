@@ -274,7 +274,41 @@ def database_update(comic_number: int):
 
 
 def modify(comics: dict, comic: str):
-    pass
+    property: str = ""
+    comic_number, comic_name = comic.split(". ")
+    comic_number = int(comic_number)
+    comic_dict_key = list(comics.keys())[comic_number]
+    comic_dict = comics[comic_dict_key]   
+    
+    while property != "Return":
+        property = inquirer.select(message=f"Which property of the comic {comic_name} do you want to edit?", choices=[prop for prop in comic_dict, "Return"], mandatory=False).execute()
+        
+        if property == "":
+            property = "Return"
+        else:
+            comic_dict = modify_property(comic_dict, property)
+    
+    # Saves the modifications
+    comic_dict.update({comic_dict_key: comic_dict})
+    save_json(comic_dict, file_path=DETAILS_PATH)
+
+
+def modify_property(comic_dict: dict, property: str) -> dict:
+    print(f"Current {property!r} value:\n`\n{comic_dict[property]}\n`")
+    new_value = inquirer.text(message="What new value do you want to give this property?", mandatory=False, completer={word:None for word in comic[property]}).execute()
+    
+    if new_value == "":
+        print(f"{property!r} has not been changed.")
+    else:
+        confirm = inquirer.confirm(message=f"Are you sure your want to set {property!r} to \n`{new_value}\n` ?").execute()
+        
+        if confirm:
+            print(f"Updating comic {property!r}")
+            comic_dict.update({property: new_value})
+        else:
+            print(f"{property!r} has not been changed.")
+    
+    return comic_dict
 
 
 def setup_bot():
