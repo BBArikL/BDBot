@@ -4,7 +4,7 @@ import re
 
 from InquirerPy import inquirer
 from src.utils import load_json, DETAILS_PATH, save_json, DATABASE_FILE_PATH, save_backup, create_link_cache
-from typing import Union
+from typing import Union, Optional
 
 TEMP_FILE_PATH = "src/misc/comics_not_ready.json"
 RETIRED_COMICS_PATH = "src/misc/retired_comics.json"
@@ -44,32 +44,35 @@ def manage_comics():
     comics = load_json(DETAILS_PATH)
     print("Comics loaded!")
     action = None
-    while action != "Exit":
+    while action != "Return":
         action = inquirer.select(
             message="What do you want to do with the comics?",
-            choices=["Add", "Delete", "Modify", "Exit"]
+            choices=["Add", "Delete", "Modify", "Return"],
+            mandatory=False
         ).execute()
 
         if action == "Delete" or action == "Modify":
             choose_comic(action, comics)
+        elif action == "Add":
+            add_comic(comics)
+        elif action is None or action == "":
+            action = "Return"
 
 
 def choose_comic(action: str, comics: dict):
-    if action == "Add":
-        add_comic(comics)
-    else:
-        comic = inquirer.fuzzy(
-            message=f"What comic do you want to {action.lower()}?",
-            choices=[f"{comics[x]['Position']}. {comics[x]['Name']}" for x in comics],
-            mandatory=False
-        ).execute()
 
-        if comic is None:
-            return
-        elif action == "Delete":
-            delete(comics, comic)
-        else:
-            modify(comics, comic)
+    comic = inquirer.fuzzy(
+        message=f"What comic do you want to {action.lower()}?",
+        choices=[f"{comics[x]['Position']}. {comics[x]['Name']}" for x in comics] + ["Return"],
+        mandatory=False
+    ).execute()
+
+    if comic is None or comic == "Return":
+        return
+    elif action == "Delete":
+        delete(comics, comic)
+    else:
+        modify(comics, comic)
 
 
 def add_comic(comics: dict):
@@ -102,7 +105,7 @@ def add_comic(comics: dict):
     for social in socials:
         social_link = inquirer.text(
             message=f"Does this comic has a {social} page? (leave blank if not applicable) ", mandatory=False).execute()
-        if social_link != "":
+        if social_link != "" or social_link is not None:
             description += f"\n{social}: {social_link}"
 
     if working_type == "date":
@@ -278,36 +281,43 @@ def modify(comics: dict, comic: str):
     comic_number, comic_name = comic.split(". ")
     comic_number = int(comic_number)
     comic_dict_key = list(comics.keys())[comic_number]
-    comic_dict = comics[comic_dict_key]   
-    
+    comic_dict = comics[comic_dict_key]
+
     while property != "Return":
-        property = inquirer.select(message=f"Which property of the comic {comic_name} do you want to edit?", choices=[prop for prop in comic_dict, "Return"], mandatory=False).execute()
-        
-        if property == "":
-            property = "Return"
-        else:
+        property = inquirer.select(message=f"Which property of the comic {comic_name} do you want to edit?",
+                                   choices=[prop for prop in comic_dict]+["Return"], mandatory=False).execute()
+
+        if property != "" and property != "Return":
             comic_dict = modify_property(comic_dict, property)
-    
+
     # Saves the modifications
-    comic_dict.update({comic_dict_key: comic_dict})
-    save_json(comic_dict, file_path=DETAILS_PATH)
+    comics.update({comic_dict_key: comic_dict})
+    save_json(comics, file_path=DETAILS_PATH)
 
 
 def modify_property(comic_dict: dict, property: str) -> dict:
+    property_value = comic_dict[property]
     print(f"Current {property!r} value:\n`\n{comic_dict[property]}\n`")
-    new_value = inquirer.text(message="What new value do you want to give this property?", mandatory=False, completer={word:None for word in comic[property]}).execute()
-    
+
+    completer: Optional[dict] = None
+    if type(property_value) is str:
+        completer = {word: None for word in property_value}
+
+    new_value = inquirer.text(message="What new value do you want to give this property?", mandatory=False,
+                              completer=completer).execute()
+
     if new_value == "":
         print(f"{property!r} has not been changed.")
     else:
-        confirm = inquirer.confirm(message=f"Are you sure your want to set {property!r} to \n`{new_value}\n` ?").execute()
-        
+        confirm = inquirer.confirm(message=f"Are you sure your want to set "
+                                   f"{property!r} to \n`\n{new_value}\n` ?").execute()
+
         if confirm:
-            print(f"Updating comic {property!r}")
+            print(f"Updating property {property!r}...")
             comic_dict.update({property: new_value})
         else:
             print(f"{property!r} has not been changed.")
-    
+
     return comic_dict
 
 

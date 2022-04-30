@@ -761,21 +761,24 @@ def get_strip_details(comic_name: str):
     return strip_details[comic_name]
 
 
-def create_link_cache():
+def create_link_cache() -> None:
     logger.debug("Running link cache...")
     comics = load_json(DETAILS_PATH)
-
     for comic in comics:
         logger.debug(f"Getting image link for comic {comic} ...")
-        comic_url = Web_requests_manager.get_new_comic_details(comics[comic], param="today")
+        try:
+            comic_url = Web_requests_manager.get_new_comic_details(comics[comic], param="today")
+        except (ValueError, AttributeError) as e:
+            logger.error(f"An error occurred for comic {comic}: {e}")
+            comic_url = None
         link_cache.update({comic: comic_url["img_url"] if comic_url is not None else ""})
 
-    logger.debug("Saving comics link")
+    logger.debug("Saving comics link...")
     save_json(link_cache, COMIC_LATEST_LINKS_PATH)
 
 
 # Get a random footer
-def get_random_footer():
+def get_random_footer() -> str:
     rnd_footer = random.choice(get_footers())
 
     return rnd_footer.replace('\n', '')
@@ -783,7 +786,7 @@ def get_random_footer():
 
 def get_footers() -> list[str]:
     if random_footers is None or random_footers == []:
-        return open(FOOTERS_FILE_PATH, 'r').readlines()
+        return open(FOOTERS_FILE_PATH, 'rt').readlines()
     else:
         return random_footers
 
