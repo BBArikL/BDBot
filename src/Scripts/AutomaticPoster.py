@@ -83,40 +83,59 @@ class PosterHandler(commands.Cog):
 
         await self.check_comics_and_post(comic_list, strip_details, comic_keys)
 
+        utils.save_json(utils.link_cache, utils.COMIC_LATEST_LINKS_PATH)  # Saves the links
+
         self.logger.info("Finished automatic poster.")
 
     def get_comic_info_for_guild(self, guild_data, comic_list, comic_number, post_days, hour):
         for channel in guild_data["channels"]:
+
+            # First check if it wants only the latest comics
+            if "latest" in guild_data["channels"][channel]:
+                if comic_number in guild_data["channels"][channel]["latest"]:
+                    comic_list = self.set_comic_to_post(guild_data, channel, comic_list, comic_number, hour)
+                    latest_comics = comic_list[channel]["latest_comics"] if "latest_comics" in comic_list[channel] \
+                        else []
+                    latest_comics.append(comic_number)
+                    comic_list[channel].update({"latest_comics": latest_comics})
+                    print(comic_list[channel]["latest_comics"])
+
             for day in post_days:
                 if day in guild_data["channels"][str(channel)]["date"]:
                     if hour in guild_data["channels"][str(channel)]["date"][day]:
                         if comic_number in guild_data["channels"][str(channel)]["date"][day][hour]:
-                            if channel not in comic_list:  # Assure no duplicates
-                                to_mention = guild_data["mention"]
-                                role = None
+                            comic_list = self.set_comic_to_post(guild_data, channel, comic_list, comic_number, hour)
 
-                                if ('only_daily' in guild_data) and \
-                                        (not guild_data["only_daily"] or hour == "6") and \
-                                        ("role" in guild_data) and to_mention:
-                                    role = discord.Guild.get_role(
-                                        self.client.get_guild(guild_data["server_id"]), guild_data["role"])
+    def set_comic_to_post(self, guild_data: dict, channel: str, comic_list: dict, comic_number: int, hour: str):
+        if channel not in comic_list:  # Assure no duplicates
+            to_mention = guild_data["mention"]
+            role = None
 
-                                comic_list.update({
-                                    channel: {
-                                        "channel": channel,
-                                        "comics": [comic_number],
-                                        "role": role,
-                                        "hasBeenMentioned": 0,
-                                        "wantMention": to_mention
-                                    }
-                                })
-                            else:
-                                if comic_number not in comic_list[channel]["comics"]:
-                                    comic_list[channel]["comics"].append(comic_number)
+            if ('only_daily' in guild_data) and \
+                    (not guild_data["only_daily"] or hour == "6") and \
+                    ("role" in guild_data) and to_mention:
+                role = discord.Guild.get_role(
+                    self.client.get_guild(guild_data["server_id"]), guild_data["role"])
+
+            comic_list.update({
+                channel: {
+                    "channel": channel,
+                    "comics": [comic_number],
+                    "role": role,
+                    "hasBeenMentioned": False,
+                    "wantMention": to_mention
+                }
+            })
+        else:
+            if comic_number not in comic_list[channel]["comics"]:
+                comic_list[channel]["comics"].append(comic_number)
+        return comic_list
 
     async def check_comics_and_post(self, comic_list, strip_details, comic_keys, ctx=None):
         available_channels = {}
         not_available_channels = []
+        nb_of_comics_posted = 0
+        print(comic_list)
         # Check if any guild want the comic
         for i in range(len(strip_details)):
             count = 0
@@ -126,14 +145,23 @@ class PosterHandler(commands.Cog):
                     break
 
             if count > 0:
-                comic_details = Web_requests_manager.get_new_comic_details(strip_details[comic_keys[i]], "today")
+                comic_details = Web_requests_manager.get_new_comic_details(strip_details[comic_keys[i]], "today",
+                                                                           latest_check=True)
 
                 embed = utils.create_embed(comic_details)  # Creates the embed
+
+                is_latest = comic_details["is_latest"]
+
+                if is_latest and ctx is None:
+                    utils.link_cache[comic_list["Name"]] = comic_list["img_url"]
 
                 for channel in comic_list:
                     # Load the new details
                     # Sends the comic to all subbed guilds
-                    if i in comic_list[channel]["comics"]:
+                    latest_comics = comic_list[channel]["latest_comics"] if "latest_comics" in comic_list[channel] \
+                        else []
+                    if i in comic_list[channel]["comics"] and (i not in latest_comics or
+                                                               (i in latest_comics and is_latest)):
                         chanid = int(comic_list[channel]["channel"])
 
                         if chanid not in available_channels:
@@ -146,7 +174,7 @@ class PosterHandler(commands.Cog):
                                 and chanid not in not_available_channels and \
                                 chan.permissions_for(chan.guild.get_member(self.client.user.id)).send_messages:
                             try:
-                                if comic_list[channel]["hasBeenMentioned"] == 0 and \
+                                if not comic_list[channel]["hasBeenMentioned"] and \
                                         comic_list[channel]["wantMention"]:
                                     if comic_list[channel]["role"] is not None:
                                         role_mention = comic_list[channel]["role"].mention
@@ -156,9 +184,10 @@ class PosterHandler(commands.Cog):
                                     await chan.send(f"Comics for "
                                                     f"{datetime.now(timezone.utc).strftime('%A %B %dth %Y, %H h UTC')}"
                                                     f" {role_mention}")
-                                    comic_list[channel]["hasBeenMentioned"] = 1
+                                    comic_list[channel]["hasBeenMentioned"] = True
 
                                 await chan.send(embed=embed)
+                                nb_of_comics_posted += 1
                             except Exception as e:
                                 self.logger.error(e)
                                 continue
@@ -174,6 +203,9 @@ class PosterHandler(commands.Cog):
                                 await ctx.send(f"Could not send message to channel {chan}")
                             else:
                                 self.logger.info("A comic could not be posted to a channel.")
+
+        if ctx is not None and nb_of_comics_posted == 0:
+            await ctx.send("No comics to send!")
 
     @commands.hybrid_command()
     # @commands.has_permissions(manage_guild=True)
@@ -205,7 +237,7 @@ class PosterHandler(commands.Cog):
 
     @commands.hybrid_command()
     @commands.check(lambda interaction: utils.is_owner(interaction))
-    async def update_database_remove(self, inter: discord.Interaction, number: str=None):
+    async def update_database_remove(self, inter: discord.Interaction, number: str = None):
         # Remove the comic from all the servers
         if utils.is_owner(inter):
             try:

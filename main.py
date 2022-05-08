@@ -41,6 +41,10 @@ async def run():
     utils.random_footers = utils.get_footers()
     logger.info("Loaded random footers!")
 
+    logger.info("Loading latest comic links...")
+    utils.link_cache = utils.load_json(utils.COMIC_LATEST_LINKS_PATH)
+    logger.info("Loaded comic links!")
+
     async with bot:
         await bot.start(os.getenv('TOKEN'))
 

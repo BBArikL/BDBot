@@ -26,11 +26,5 @@ class Errors(commands.Cog):
                            f'the issue. The error is: {error}')
 
 
-"""elif isinstance(error, app_commands.MissingRequiredArgument):  # Not enough arguments
-            await ctx.send('A required argument is needed. Try bd!help to see required arguments.')"""
-"""elif isinstance(error, app_commands.RoleNotFound):
-            await ctx.send('The role is invalid or not provided!')"""
-
-
 async def setup(client):  # Initialize the cog
     await client.add_cog(Errors(client))

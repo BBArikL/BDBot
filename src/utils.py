@@ -28,7 +28,8 @@ match_date = {
     "Fr": "Friday",
     "Sa": "Saturday",
     "Su": "Sunday",
-    "D": "day"
+    "D": "day",
+    "La": "Latest"
 }
 Success = "Success"
 logger = logging.getLogger('discord')
@@ -771,7 +772,7 @@ def create_link_cache() -> None:
         except (ValueError, AttributeError) as e:
             logger.error(f"An error occurred for comic {comic}: {e}")
             comic_url = None
-        link_cache.update({comic: comic_url["img_url"] if comic_url is not None else ""})
+        link_cache.update({comics[comic]["Name"]: comic_url["img_url"] if comic_url is not None else ""})
 
     logger.debug("Saving comics link...")
     save_json(link_cache, COMIC_LATEST_LINKS_PATH)
@@ -820,3 +821,7 @@ def parse_try(to_parse, final_date, final_hour) -> (str, str):
                 pass
 
     return final_date, final_hour
+
+
+def check_if_latest_link(comic_name: str, current_link: str) -> bool:
+    return current_link != link_cache[comic_name]

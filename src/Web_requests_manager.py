@@ -12,16 +12,17 @@ from src import utils
 # Class that makes the web requests to have the fresh comic details
 
 ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "author": "", "day": "", "month": "", "year": "",
-                    "sub_img_url": "", "img_url": "", "alt": "", "color": 0}
+                    "sub_img_url": "", "img_url": "", "alt": "", "color": 0, "is_latest": False}
 MAX_TRIES = 15
 
 
 # Only gets the new comic details
-def get_new_comic_details(strip_details, param, comic_date=None):
+def get_new_comic_details(strip_details, param, comic_date=None, latest_check=False):
     working_type = strip_details["Working_type"]
     if working_type == 'date':
         # Specific manager for date comics website
-        comic_details = get_comic_info_date(strip_details, param=param, comic_date=comic_date)
+        comic_details = get_comic_info_date(strip_details, param=param, comic_date=comic_date,
+                                            latest_check=latest_check)
     elif working_type == 'rss':
         comic_details = get_comic_info_rss(strip_details, param=param, comic_date=comic_date)
     else:  # Works by number
@@ -30,7 +31,7 @@ def get_new_comic_details(strip_details, param, comic_date=None):
 
 
 # Get the details of comics which site works by date
-def get_comic_info_date(strip_details, param=None, comic_date=None):
+def get_comic_info_date(strip_details, param=None, comic_date=None, latest_check=False):
     details = ORIGINAL_DETAILS.copy()
     random_date = None
 
@@ -80,11 +81,11 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
                 return None
 
         if details is not None:
-            details["color"] = int(strip_details["Color"], 16)
+            finalize_comic(strip_details, details, latest_check)
 
             # Finds the date of the random comic
             if details['day'] == "":
-                final_date = None
+                final_date: datetime
                 if random_date is None:
                     # We have to parse the string (Only gocomics)
                     final_date = datetime.strptime(
@@ -117,7 +118,7 @@ def extract_meta_content(html, content):
 
 
 # For sites which works by number
-def get_comic_info_number(strip_details, param=None):
+def get_comic_info_number(strip_details, param=None, latest_check=False):
     # Details of the comic
     details = ORIGINAL_DETAILS.copy()
 
@@ -223,7 +224,8 @@ def get_comic_info_number(strip_details, param=None):
             return None
 
         if details is not None:
-            details["color"] = int(strip_details["Color"], 16)
+            finalize_comic(strip_details, details, latest_check)
+
     else:
         return None
 
@@ -233,10 +235,10 @@ def get_comic_info_number(strip_details, param=None):
 
 
 # For comics which can only be found by rss
-def get_comic_info_rss(strip_details, param=None, comic_date=None):
+def get_comic_info_rss(strip_details, param=None, comic_date=None, latest_check=False):
     # Details of the comic
-    fall_back_img = ""
-    rss_site = ""
+    fall_back_img: str
+    rss_site: str
     max_entries = 19  # Max entries for rss files : 20
     details = ORIGINAL_DETAILS.copy()
     comic_nb = 0
@@ -280,8 +282,8 @@ def get_comic_info_rss(strip_details, param=None, comic_date=None):
     else:
         feed = Parser(xml=get(rss_site).text, limit=comic_nb + 1).parse().feed[comic_nb]
         # Get information
-        tz = ""
-        weekday = ""
+        tz: str
+        weekday: str
         if strip_details["Main_website"] == 'https://www.webtoons.com/en/':
             if feed.title != "":
                 details["title"] = f"{feed.title}"
@@ -306,6 +308,12 @@ def get_comic_info_rss(strip_details, param=None, comic_date=None):
         details["img_url"] = feed.description_images[img_index].source
 
     if details is not None:
-        details["color"] = int(strip_details["Color"], 16)
+        finalize_comic(strip_details, details, latest_check)
 
     return details
+
+
+def finalize_comic(strip_details: dict, details: dict, latest_link: bool):
+    details["color"] = int(strip_details["Color"], 16)
+    if latest_link:
+        details["is_latest"] = utils.check_if_latest_link(details["Name"], details["img_url"])
