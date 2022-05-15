@@ -3,7 +3,8 @@ import os
 import re
 
 from InquirerPy import inquirer
-from src.utils import load_json, DETAILS_PATH, REQUEST_FILE_PATH, DATABASE_FILE_PATH, save_json, save_backup, create_link_cache
+from src.utils import load_json, DETAILS_PATH, REQUEST_FILE_PATH, DATABASE_FILE_PATH, save_json, save_backup, \
+    create_link_cache
 from typing import Union, Optional
 
 TEMP_FILE_PATH = "src/misc/comics_not_ready.json"
@@ -71,7 +72,7 @@ def setup_bot():
             f.write("{}")
 
     if not os.path.exists(REQUEST_FILE_PATH):
-        with open(REQUEST_FILE_PATH, "xt") as f:
+        with open(REQUEST_FILE_PATH, "xt"):
             pass
 
     print("Creating link cache, this might take some time...")
@@ -335,9 +336,9 @@ def modify(comics: dict, comic: str):
     save_json(comics, file_path=DETAILS_PATH)
 
 
-def modify_property(comic_dict: dict, property: str) -> dict:
-    property_value = comic_dict[property]
-    print(f"Current {property!r} value:\n`\n{comic_dict[property]}\n`")
+def modify_property(comic_dict: dict, comic_property: str) -> dict:
+    property_value = comic_dict[comic_property]
+    print(f"Current {comic_property!r} value:\n`\n{comic_dict[comic_property]}\n`")
 
     completer: Optional[dict] = None
     if type(property_value) is str:
@@ -347,16 +348,16 @@ def modify_property(comic_dict: dict, property: str) -> dict:
                               completer=completer).execute()
 
     if new_value == "":
-        print(f"{property!r} has not been changed.")
+        print(f"{comic_property!r} has not been changed.")
     else:
         confirm = inquirer.confirm(message=f"Are you sure your want to set "
-                                   f"{property!r} to \n`\n{new_value}\n` ?").execute()
+                                   f"{comic_property!r} to \n`\n{new_value}\n` ?").execute()
 
         if confirm:
-            print(f"Updating property {property!r}...")
-            comic_dict.update({property: new_value})
+            print(f"Updating property {comic_property!r}...")
+            comic_dict.update({comic_property: new_value})
         else:
-            print(f"{property!r} has not been changed.")
+            print(f"{comic_property!r} has not been changed.")
 
     return comic_dict
 
