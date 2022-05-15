@@ -3,7 +3,7 @@ import os
 import re
 
 from InquirerPy import inquirer
-from src.utils import load_json, DETAILS_PATH, save_json, DATABASE_FILE_PATH, save_backup, create_link_cache
+from src.utils import load_json, DETAILS_PATH, REQUEST_FILE_PATH, DATABASE_FILE_PATH, save_json, save_backup, create_link_cache
 from typing import Union, Optional
 
 TEMP_FILE_PATH = "src/misc/comics_not_ready.json"
@@ -28,7 +28,7 @@ def main():
 
 def manage_bot():
     action = inquirer.select(message="What do you want to do?",
-                             choices=["Verify Database", "Verify requests", "Create image link cache", "Setup Bot"],
+                             choices=["Database tools", "Verify requests", "Create image link cache", "Setup Bot"],
                              mandatory=False).execute()
 
     if action == "Create image link cache":
@@ -37,6 +37,47 @@ def manage_bot():
         print("Link cache created!")
     if action == "Setup Bot":
         setup_bot()
+
+
+def setup_bot():
+    """Sets up the bot to be able to be launched"""
+
+    print("Setting up environnement variables...")
+    environnement_variables = {
+        "TOKEN": {"value": "", "description": "The bot discord token"},
+        "CLIENT_ID": {"value": "", "description": "The bot's client ID. To get a invite for the bot"},
+        "PRIVATE_CHANNEL_SUPPORT_ID": {"value": "", "description": "The ID of the channel where the bot can print "
+                                                                   "debugging information"},
+        "DEBUG": {"value": "", "description": "If the bot is in debug mode (Should be False if the bot is supposed to "
+                                              "serve multiple servers)"}
+    }
+
+    for envv in environnement_variables:
+        environnement_variables[envv]["value"] = inquirer.secret(
+            message=f"Enter the {envv} ({environnement_variables[envv]['description']}):"
+        ).execute()
+
+    output = "\n".join([f"{envv}={environnement_variables[envv]['value'] }" for envv in environnement_variables])
+    usage = "w" if os.path.exists(".env") else "x"
+    with open(".env", f"{usage}t") as f:
+        f.write(output)
+
+    print("Creating folders and files...")
+    os.makedirs("src/data/backups", exist_ok=True)
+    os.makedirs("src/data/logs", exist_ok=True)
+
+    if not os.path.exists(DATABASE_FILE_PATH):
+        with open(DATABASE_FILE_PATH, "xt") as f:
+            f.write("{}")
+
+    if not os.path.exists(REQUEST_FILE_PATH):
+        with open(REQUEST_FILE_PATH, "xt") as f:
+            pass
+
+    print("Creating link cache, this might take some time...")
+    create_link_cache()
+
+    print("All done! You can start the bot with 'python main.py'!")
 
 
 def manage_comics():
@@ -79,7 +120,6 @@ def add_comic(comics: dict):
     """Add a comic to the list of comics.
 
     :param comics: The dictionary of comics
-    :return:
     """
     websites = {"Gocomics": None, "ComicsKingdom": None, "Webtoon": None}
     socials = ["Website", "Facebook", "Twitter", "Youtube", "Patreon", "About"]
@@ -277,18 +317,18 @@ def database_update(comic_number: int):
 
 
 def modify(comics: dict, comic: str):
-    property: str = ""
+    comic_property: str = ""
     comic_number, comic_name = comic.split(". ")
     comic_number = int(comic_number)
     comic_dict_key = list(comics.keys())[comic_number]
     comic_dict = comics[comic_dict_key]
 
-    while property != "Return":
-        property = inquirer.select(message=f"Which property of the comic {comic_name} do you want to edit?",
-                                   choices=[prop for prop in comic_dict]+["Return"], mandatory=False).execute()
+    while comic_property != "Return":
+        comic_property = inquirer.select(message=f"Which comic_property of the comic {comic_name} do you want to edit?",
+                                         choices=[prop for prop in comic_dict]+["Return"], mandatory=False).execute()
 
-        if property != "" and property != "Return":
-            comic_dict = modify_property(comic_dict, property)
+        if comic_property != "" and comic_property != "Return":
+            comic_dict = modify_property(comic_dict, comic_property)
 
     # Saves the modifications
     comics.update({comic_dict_key: comic_dict})
@@ -319,10 +359,6 @@ def modify_property(comic_dict: dict, property: str) -> dict:
             print(f"{property!r} has not been changed.")
 
     return comic_dict
-
-
-def setup_bot():
-    pass
 
 
 if __name__ == "__main__":
