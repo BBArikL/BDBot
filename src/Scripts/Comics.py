@@ -18,7 +18,7 @@ class Comic(commands.Cog):
     # --- If you want to add another comic, add it here between this and the 'END OF COMICS PARAMETERS'. --- #
 
     @commands.hybrid_command()
-    async def garf(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
+    async def garfield(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
         """Garfield"""
         comic_name = 'Garfield'
 
