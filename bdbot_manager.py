@@ -155,9 +155,11 @@ def add_comic(comics: dict):
 
     description = inquirer.text(message="Enter a long description of the comic: ", mandatory=False).execute()
     for social in socials:
-        social_link = inquirer.text(
-            message=f"Does this comic has a {social} page? (leave blank if not applicable) ", mandatory=False).execute()
-        if social_link != "" or social_link is not None:
+        social_link: str = inquirer.text(
+            message=f"Does this comic has a {social} page? (leave blank if not applicable) ",
+            mandatory=False,
+            default="").execute()
+        if social_link.strip():
             description += f"\n{social}: {social_link}"
 
     if working_type == "date":
