@@ -19,7 +19,7 @@ def main():
     """Add, delete or modify comics in the comic details file"""
     os.chdir(os.path.dirname(__file__))  # Force the current working directory
 
-    # Set the looging handler
+    # Set the logging handler
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
 
@@ -51,8 +51,8 @@ def manage_bot():
 def setup_bot():
     """Sets up the bot to be able to be launched"""
 
-    logger.info("Setting up environnement variables...")
-    environnement_variables = {
+    logger.info("Setting up environment variables...")
+    environment_variables = {
         "TOKEN": {"value": "", "inquiry": inquirer.secret(message="Enter the token (The bot discord token):")},
         "CLIENT_ID": {"value": "", "inquiry": inquirer.secret(message="Enter the client ID (The bot's client ID. "
                                                                       "To get a invite for the bot):")},
@@ -60,16 +60,16 @@ def setup_bot():
                                                                                        "private channel (The ID of the "
                                                                                        "channel where the bot can print"
                                                                                        " debugging information):")},
-        "DEBUG": {"value": "", "inquiry": inquirer.select(message="Is the bot used for developement purposes? (If the "
+        "DEBUG": {"value": "", "inquiry": inquirer.select(message="Is the bot used for development purposes? (If the "
                                                                   "bot is in debug mode (Should be False if the bot "
                                                                   "is supposed to serve multiple servers)):",
                                                           choices=["True", "False"])}
     }
 
-    for envv in environnement_variables:
-        environnement_variables[envv]["value"] = environnement_variables[envv]["inquiry"].execute()
+    for envv in environment_variables:
+        environment_variables[envv]["value"] = environment_variables[envv]["inquiry"].execute()
 
-    output = "\n".join([f"{envv}={environnement_variables[envv]['value']}" for envv in environnement_variables])
+    output = "\n".join([f"{envv}={environment_variables[envv]['value']}" for envv in environment_variables])
     usage = "w" if os.path.exists(".env") else "x"
     with open(".env", f"{usage}t") as f:
         f.write(output)
@@ -144,7 +144,7 @@ def add_comic(comics: dict):
                                  completer={"Gocomics": None, "ComicsKingdom": None, "Webtoon": None},
                                  mandatory=False).execute()
     if main_website not in websites:
-        working_type = inquirer.select(message="What is the working type of the comic? (For exemplee,are comics "
+        working_type = inquirer.select(message="What is the working type of the comic? (For example,are comics "
                                                "accessible by specifying a date, a number or is there a rss "
                                                "available?)\nIf you do not know, please choose other. ",
                                        choices=["date", "number", "rss", "other"], mandatory=False).execute()
@@ -202,7 +202,7 @@ def add_comic(comics: dict):
         logger.info("Wrote the details to the temporary file! You can edit this file manually or with this tool!")
 
 
-def process_inputs(name: str, author: str, web_name: str, main_website: str, working_type: str, descritption: str,
+def process_inputs(name: str, author: str, web_name: str, main_website: str, working_type: str, description: str,
                    position: int, first_date: Union[str, dict], color: str, image: str, helptxt: str) -> dict:
     """
 
@@ -211,7 +211,7 @@ def process_inputs(name: str, author: str, web_name: str, main_website: str, wor
     :param web_name:
     :param main_website:
     :param working_type:
-    :param descritption:
+    :param description:
     :param position:
     :param first_date:
     :param color:
@@ -221,7 +221,7 @@ def process_inputs(name: str, author: str, web_name: str, main_website: str, wor
     """
     websites = {
         "Gocomics": "https://www.gocomics.com/",
-        "ComicsKngdom": "https://comicskingdom.com/",
+        "ComicsKingdom": "https://comicskingdom.com/",
         "Webtoon": "https://www.webtoons.com/en/"
     }
     normalized_name = name.replace(" ", "")
@@ -232,7 +232,7 @@ def process_inputs(name: str, author: str, web_name: str, main_website: str, wor
             "Web_name": web_name,
             "Main_website": websites[main_website] if main_website in websites else main_website,
             "Working_type": working_type,
-            "Description": descritption,
+            "Description": description,
             "Position": position,
             "First_date": first_date if type(first_date) is str else f"{first_date['Year']}, {first_date['Month']}, "
                                                                      f"{first_date['Day']}",
