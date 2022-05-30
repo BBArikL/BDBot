@@ -54,7 +54,7 @@ class BDBot(commands.Cog):
         await channel.send("Finished syncing commands. An hour might be needed for global commands to be available!")
 
         async with self.bot:
-            await PosterHandler.wait_for_next_hour(PosterHandler(client=self.bot))  # Wait for daily poster
+            await PosterHandler.wait_for_next_hour(PosterHandler(self.bot))  # Wait for daily poster
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
