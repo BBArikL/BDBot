@@ -311,6 +311,15 @@ class Comic(commands.Cog):
         # Interprets the parameters given by the user
         await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
 
+    @commands.hybrid_command()
+    async def heathcliff(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
+                         hour: str = None):
+        """Heathcliff"""
+        comic_name = 'Heathcliff'
+
+        # Interprets the parameters given by the user
+        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+
     # Special comic commands
     @commands.has_permissions(manage_guild=True)
     @commands.hybrid_command()
