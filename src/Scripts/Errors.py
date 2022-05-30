@@ -17,14 +17,19 @@ class Errors(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx: discord.ext.commands.Context, error: Exception):
         # Handles errors
-        if isinstance(error, app_commands.CommandNotFound):  # Command not found
-            await ctx.send('Invalid command. Try bd!help to search for usable commands.')
-        elif isinstance(error, app_commands.MissingPermissions):
-            await ctx.send('You do not have the permission to do that.')
+        channel = ctx.channel
+        if isinstance(error, commands.errors.CommandNotFound):  # Command not found
+            await channel.send('Invalid command. Try bd!help to search for usable commands.')
+        elif isinstance(error, commands.errors.MissingPermissions):
+            await channel.send('You do not have the permission to do that.')
+        elif isinstance(error, commands.errors.HybridCommandError):
+            await channel.send('The command failed. Please report this issue on Github here: '
+                               'https://github.com/BBArikL/BDBot ')
+        elif isinstance(error, commands.errors.NotOwner):
+            await channel.send('You do not own this bot.')
         else:  # Not supported errors
-            await ctx.send(f'Error not supported. Visit https://github.com/BBArikL/BDBot to report '
-                           f'the issue. The error is: {error}')
-
+            await channel.send(f'Error not supported. Visit https://github.com/BBArikL/BDBot to report '
+                               f'the issue. The error is: {error.__class__}: {error}')
 
 async def setup(client):  # Initialize the cog
     await client.add_cog(Errors(client))
