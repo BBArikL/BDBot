@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import re
+import sys
 
 from InquirerPy import inquirer
 from src.utils import load_json, DETAILS_PATH, REQUEST_FILE_PATH, DATABASE_FILE_PATH, save_json, save_backup, \
@@ -17,6 +18,11 @@ logger = logging.Logger("manager_logger", logging.INFO)
 def main():
     """Add, delete or modify comics in the comic details file"""
     os.chdir(os.path.dirname(__file__))  # Force the current working directory
+
+    # Set the looging handler
+    handler = logging.StreamHandler(stream=sys.stdout)
+    logger.addHandler(handler)
+
     action = ""
     while action != "Exit":
         action = inquirer.select(message="What do you want to do?", choices=["Manage bot", "Manage comics",
