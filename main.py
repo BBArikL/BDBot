@@ -38,6 +38,14 @@ async def run(bot: commands.Bot, logger: logging.Logger):
     :param bot: The bot
     :param logger: The logging object
     """
+    logger.info("Setting up private server object")
+    try:
+        utils.SERVER = discord.Object(id=os.getenv("PRIVATE_SERVER_SUPPORT_ID"))
+        logger.info("Private server set!")
+    except TypeError:
+        logger.info("Could not set private server object, please be wary that owner commands are usable everywhere")
+        utils.SERVER = None
+
     for filename in os.listdir('src/Scripts'):
         if filename.endswith('py'):
             await bot.load_extension(f'src.Scripts.{filename[:-3]}')

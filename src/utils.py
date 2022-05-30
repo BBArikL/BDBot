@@ -37,7 +37,7 @@ logger = logging.getLogger('discord')
 strip_details: dict = {}
 link_cache: dict = {}
 random_footers: list[str] = []
-SERVER = discord.Object(id=getenv("PRIVATE_SERVER_SUPPORT_ID"))
+SERVER = None
 
 
 # Create a comic embed with the given details
