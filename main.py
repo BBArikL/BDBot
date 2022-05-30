@@ -7,26 +7,37 @@ from dotenv import load_dotenv
 from datetime import datetime
 from src import utils
 
-os.chdir(os.path.dirname(__file__))  # Force the current working directory
-load_dotenv()
 
-intents = discord.Intents.default()
-intents.message_content = True
-bot: discord.ext.commands.Bot = commands.Bot(intents=intents, command_prefix="bd!")
-bot.remove_command("help")  # Removes the default "help" function to replace it by our own
+def main():
+    """
+    Main entry point for the bot
+    """
+    os.chdir(os.path.dirname(__file__))  # Force the current working directory
+    load_dotenv()
 
-logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-handler = logging.FileHandler(filename=f'src/data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
-                              encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
+    intents = discord.Intents.default()
+    intents.message_content = True
+    bot: discord.ext.commands.Bot = commands.Bot(intents=intents, command_prefix="bd!")
+    bot.remove_command("help")  # Removes the default "help" function to replace it by our own
 
-logger.info("Starting Bot...")
+    logger = logging.getLogger('discord')
+    logger.setLevel(logging.DEBUG)
+    handler = logging.FileHandler(filename=f'src/data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
+                                  encoding='utf-8', mode='w')
+    handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+    logger.addHandler(handler)
+
+    logger.info("Starting Bot...")
+
+    asyncio.run(run(bot, logger))  # Runs the bot with the private bot token
 
 
-async def run():
-    # Loads all the cogs
+async def run(bot: commands.Bot, logger: logging.Logger):
+    """Loads all the cogs and start the bot
+
+    :param bot: The bot
+    :param logger: The logging object
+    """
     for filename in os.listdir('src/Scripts'):
         if filename.endswith('py'):
             await bot.load_extension(f'src.Scripts.{filename[:-3]}')
@@ -48,5 +59,5 @@ async def run():
     async with bot:
         await bot.start(os.getenv('TOKEN'))
 
-
-asyncio.run(run())  # Runs the bot with the private bot token
+if __name__ == "__main__":
+    main()
