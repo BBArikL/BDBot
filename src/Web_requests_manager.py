@@ -24,9 +24,9 @@ def get_new_comic_details(strip_details, param, comic_date=None, latest_check=Fa
         comic_details = get_comic_info_date(strip_details, param=param, comic_date=comic_date,
                                             latest_check=latest_check)
     elif working_type == 'rss':
-        comic_details = get_comic_info_rss(strip_details, param=param, comic_date=comic_date)
+        comic_details = get_comic_info_rss(strip_details, param=param, comic_date=comic_date, latest_check=latest_check)
     else:  # Works by number
-        comic_details = get_comic_info_number(strip_details, param=param)
+        comic_details = get_comic_info_number(strip_details, param=param, latest_check=latest_check)
     return comic_details
 
 

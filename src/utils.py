@@ -4,13 +4,14 @@ import re
 import discord
 import random
 import json
-import os
 
 from src import Web_requests_manager
 from jsonschema import validate, ValidationError
 from datetime import datetime, timedelta, timezone
 from randomtimestamp import randomtimestamp
 from discord.ext import commands
+from typing import Union
+from os import getenv, path
 
 DETAILS_PATH = "src/misc/comics_details.json"
 FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
@@ -19,7 +20,7 @@ JSON_SCHEMA_PATH = "src/misc/databaseSchema.json"
 BACKUP_FILE_PATH = "src/data/backups/BACKUP_DATABASE_"
 REQUEST_FILE_PATH = "src/data/requests.txt"
 COMIC_LATEST_LINKS_PATH = "src/data/latest_comics.json"
-date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su", "La"]
 match_date = {
     "Mo": "Monday",
     "Tu": "Tuesday",
@@ -36,6 +37,7 @@ logger = logging.getLogger('discord')
 strip_details: dict = {}
 link_cache: dict = {}
 random_footers: list[str] = []
+SERVER = discord.Object(id=getenv("PRIVATE_SERVER_SUPPORT_ID"))
 
 
 # Create a comic embed with the given details
@@ -222,7 +224,8 @@ def remove_channel(ctx: commands.Context, use="remove_channel"):
     return modify_database(ctx, use)
 
 
-def modify_database(ctx: commands.Context, use: str, day: str = None, hour: str = None, comic_number: int = None):
+def modify_database(ctx: Union[commands.Context, discord.TextChannel, discord.Guild], use: str, day: str = None,
+                    hour: str = None, comic_number: int = None):
     # Saves the new information in the database
     # Adds or delete the guild_id, the channel id and the comic_strip data
     # All use cases
@@ -275,35 +278,46 @@ def modify_database(ctx: commands.Context, use: str, day: str = None, hour: str 
             if hour is None:
                 hour = "6"  # Default: 6 AM UTC
 
-            com_list: list[int] = []
+            com_list: list[int]
             if use == a_all:
                 strips = load_json(DETAILS_PATH)
                 com_list = [i for i in range(len(strips))]
             else:
                 com_list = [comic_number]
 
-            # Checks if the day, the hour and the comic was already set for the channel
-            if day not in d[guild_id]["channels"][channel_id]["date"]:
-                d[guild_id]["channels"][channel_id]["date"].update({day: {hour: com_list}})
+            if day != "La":
+                # Checks if the day, the hour and the comic was already set for the channel
+                if day not in d[guild_id]["channels"][channel_id]["date"]:
+                    d[guild_id]["channels"][channel_id]["date"].update({day: {hour: com_list}})
 
-            elif hour not in d[guild_id]["channels"][channel_id]["date"][day]:
-                d[guild_id]["channels"][channel_id]["date"][day].update({hour: com_list})
+                elif hour not in d[guild_id]["channels"][channel_id]["date"][day]:
+                    d[guild_id]["channels"][channel_id]["date"][day].update({hour: com_list})
 
-            elif comic_number not in d[guild_id]["channels"][channel_id]["date"][day][hour] and len(com_list) == 1:
-                d[guild_id]["channels"][channel_id]["date"][day][hour].append(comic_number)
+                elif comic_number not in d[guild_id]["channels"][channel_id]["date"][day][hour] and len(com_list) == 1:
+                    d[guild_id]["channels"][channel_id]["date"][day][hour].extend(comic_number)
 
-            elif len(com_list) > 1:  # Add all comics command
-                d[guild_id]["channels"][channel_id]["date"][day][hour] = com_list
+                elif len(com_list) > 1:  # Add all comics command
+                    d[guild_id]["channels"][channel_id]["date"][day][hour] = com_list
 
+                else:
+                    return "This comic is already set at this time!"
             else:
-                return "This comic is already set at this time!"
+                # Add a comic to be only latest
+                if "latest" not in d[guild_id]["channels"][channel_id]:
+                    d[guild_id]["channels"][channel_id].update({"latest": com_list})
+                elif comic_number not in d[guild_id]["channels"][channel_id]["latest"] and len(com_list) == 1:
+                    d[guild_id]["channels"][channel_id]["latest"].extend(com_list)
+                elif len(com_list) > 1:
+                    d[guild_id]["channels"][channel_id]["latest"] = com_list
+                else:
+                    return "This comic is already set at this time!"
 
         else:
             # If there was no comic data stored for this guild
             # Add a comic to the list of comics
             d[guild_id]["server_id"] = int(guild_id)
 
-            com_list = []
+            com_list: list
             if use == a_all:
                 strips = load_json(DETAILS_PATH)
                 com_list = [i for i in range(len(strips))]
@@ -316,8 +330,11 @@ def modify_database(ctx: commands.Context, use: str, day: str = None, hour: str 
             if hour is None:
                 hour = "6"
 
-            d[guild_id]["channels"].update({channel_id: {"channel_id": int(channel_id),
-                                                         "date": {day: {hour: com_list}}}})
+            if day != "La":
+                d[guild_id]["channels"].update({channel_id: {"channel_id": int(channel_id),
+                                                             "date": {day: {hour: com_list}}}})
+            else:
+                d[guild_id]["channels"].update({channel_id: {"channel_id": int(channel_id), "latest": com_list}})
         # Update the main database
         data.update(d)
 
@@ -332,20 +349,28 @@ def modify_database(ctx: commands.Context, use: str, day: str = None, hour: str 
             if hour is None:
                 hour = "6"
 
-            # Verifies that the day and time was set
-            if day in data[guild_id]["channels"][channel_id]["date"] and hour in \
-                    data[guild_id]["channels"][channel_id]["date"][day]:
-                comic_list = data[guild_id]["channels"][channel_id]["date"][day][hour]
+            if day != "La":
+                # Verifies that the day and time was set
+                if day in data[guild_id]["channels"][channel_id]["date"] and hour in \
+                        data[guild_id]["channels"][channel_id]["date"][day]:
+                    comic_list: list[int] = data[guild_id]["channels"][channel_id]["date"][day][hour]
 
-                # Verifies if the comic is in the list
-                if comic_number in comic_list:
-                    comic_list.remove(comic_number)
-                    data[guild_id]["channels"][channel_id]["date"][day][hour] = comic_list
+                    # Verifies if the comic is in the list
+                    if comic_number in comic_list:
+                        comic_list.remove(comic_number)
+                        data[guild_id]["channels"][channel_id]["date"][day][hour] = comic_list
 
+                    else:
+                        return "This comic is not registered for scheduled posts!"
                 else:
                     return "This comic is not registered for scheduled posts!"
             else:
-                return "This comic is not registered for scheduled posts!"
+                comic_list: list[int] = data[guild_id]["channels"][channel_id]["latest"]
+                if comic_number in comic_list:
+                    comic_list.remove(comic_number)
+                    data[guild_id]["channels"][channel_id]["latest"] = comic_list
+                else:
+                    return "This comic is not registered for scheduled posts!"
         else:
             return "This guild or channel is not registered for scheduled comics!"
 
@@ -590,7 +615,7 @@ def restore_backup():
     file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
     tries = 0
 
-    while not os.path.exists(file_path) and tries < 25:
+    while not path.exists(file_path) and tries < 25:
         tries += 1
         utc_date = utc_date - timedelta(hours=1)
         file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
@@ -655,7 +680,7 @@ async def send_request_error(ctx: commands.Context):
 
 
 def is_owner(ctx: commands.Context):  # Returns if it is the owner who did the command
-    return ctx.message.author.id == int(os.getenv('BOT_OWNER_ID'))
+    return ctx.message.author.id == int(getenv('BOT_OWNER_ID'))
 
 
 async def website_specific_embed(ctx: commands.Context, website_name, website):
