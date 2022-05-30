@@ -117,6 +117,7 @@ async def send_comic_info(ctx: commands.Context, comic: dict):
 
 # Post the strip (with the given parameters)
 async def comic_send(ctx: commands.Context, comic: dict, param: str, comic_date=None):
+    await ctx.defer()  # Defers the return, so Discord cna wait longer
     comic_details = Web_requests_manager.get_new_comic_details(comic, param, comic_date=comic_date)
 
     # Sends the comic
