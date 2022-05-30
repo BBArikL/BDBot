@@ -60,7 +60,6 @@ class PosterHandler(commands.Cog):
         """Post hourly comics"""
         self.logger.info("Starting automatic poster...")
         strip_details: dict = utils.strip_details
-        nb_of_comics: int = len(strip_details)
         comic_data: dict = utils.load_json(utils.DATABASE_FILE_PATH)
         comic_list: dict = {}
         comic_keys: list[str] = list(strip_details.keys())
@@ -156,8 +155,6 @@ class PosterHandler(commands.Cog):
         :param called_channel: The channel of where the command was sent from (Should be None for the hourly poster
         and filled when called manually)
         """
-        print(comic_list)
-        print(utils.link_cache)
         available_channels = {}
         not_available_channels = {}
         nb_of_comics_posted = 0
@@ -178,9 +175,8 @@ class PosterHandler(commands.Cog):
 
                 is_latest = comic_details["is_latest"]
 
-                print(comic_details)
-
-                if is_latest and called_channel is None:  # Only updates the link cache if it is done during the hourly loop
+                if is_latest and called_channel is None:
+                    # Only updates the link cache if it is done during the hourly loop
                     utils.link_cache[comic_details["Name"]] = comic_details["img_url"]
 
                 for channel in comic_list:  # Finally, sends the comic
@@ -214,8 +210,6 @@ class PosterHandler(commands.Cog):
         """
         # First, check that the comic is the latest and if that channel only wants the latest (for this comic)
         latest_comics = comic_list[channel]["latest_comics"] if "latest_comics" in comic_list[channel] else []
-        print(comic_number in comic_list[channel]["comics"] and (comic_number not in latest_comics
-                                                                 or (comic_number in latest_comics and is_latest)))
         if comic_number in comic_list[channel]["comics"] and (comic_number not in latest_comics
                                                               or (comic_number in latest_comics and is_latest)):
             # Then, gets the channel object by its ID
@@ -253,7 +247,7 @@ class PosterHandler(commands.Cog):
                     error_msg = f"An error occurred in the hourly poster: {e.__class__.__name__}: {e}"
                     self.logger.error(error_msg)
 
-                    if called_channel is not None:  # Send the error message to the chaannel too
+                    if called_channel is not None:  # Send the error message to the channel too
                         await called_channel.send(error_msg)
             else:
                 not_available_channels.update({channel_id: None})  # Remembers that the channel is not available
@@ -281,7 +275,6 @@ class PosterHandler(commands.Cog):
         :param hour: The hour to simulate
         """
         strip_details: dict = utils.strip_details
-        nb_of_comics: int = len(strip_details)
         comic_data: dict = utils.load_json(utils.DATABASE_FILE_PATH)
         comic_list: dict = {}
         comic_keys: list[str] = list(strip_details.keys())
