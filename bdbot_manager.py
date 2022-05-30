@@ -252,11 +252,13 @@ def create_command(cmc: dict) -> str:
     :return:
     """
     comic = cmc.get(list(cmc.keys())[0])
-    normalized_name = comic['Name'].replace(" ", "")
+    normalized_name = comic['Name'].replace(" ", "_").lower()
     return f"""
-    @commands.command(aliases=[{comic['Aliases']}])
-    async def {normalized_name}(self, ctx, use=None, date=None, hour=None):
-        comic_name = '{normalized_name}'
+    @commands.hybrid_command()
+    async def {normalized_name}(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
+                                hour: str = None):
+        \"\"\"{comic['Name']}\"\"\"
+        comic_name = '{comic['Name'].replace(" ", "")}'
 
         # Interprets the parameters given by the user
         await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
