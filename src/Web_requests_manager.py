@@ -8,30 +8,46 @@ from bs4 import BeautifulSoup
 from rss_parser import Parser
 from requests import get
 from src import utils
+from typing import Optional, Union
 
-# Class that makes the web requests to have the fresh comic details
+# Utilities for web requests to have the fresh comic details
 
 ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "author": "", "day": "", "month": "", "year": "",
                     "sub_img_url": "", "img_url": "", "alt": "", "color": 0, "is_latest": False}
 MAX_TRIES = 15
 
 
-# Only gets the new comic details
-def get_new_comic_details(strip_details, param, comic_date=None, latest_check=False):
+def get_new_comic_details(strip_details: dict, param: str, comic_date: Optional[Union[datetime, int]] = None,
+                          latest_check: Optional[bool] = False) -> Optional[dict[str, str]]:
+    """Gets the comics details from the internet
+
+    :param strip_details:
+    :param param:
+    :param comic_date:
+    :param latest_check:
+    :return:
+    """
     working_type = strip_details["Working_type"]
-    if working_type == 'date':
-        # Specific manager for date comics website
+    comic_details: Optional[dict[str, str]]
+    if working_type == 'date':  # Specific manager for date comics website
         comic_details = get_comic_info_date(strip_details, param=param, comic_date=comic_date,
                                             latest_check=latest_check)
-    elif working_type == 'rss':
+    elif working_type == 'rss':  # Works by rss
         comic_details = get_comic_info_rss(strip_details, param=param, comic_date=comic_date, latest_check=latest_check)
     else:  # Works by number
         comic_details = get_comic_info_number(strip_details, param=param, latest_check=latest_check)
     return comic_details
 
 
-# Get the details of comics which site works by date
-def get_comic_info_date(strip_details, param=None, comic_date=None, latest_check=False):
+def get_comic_info_date(strip_details, param=None, comic_date=None, latest_check=False) -> Optional[dict[str, str]]:
+    """Get the details of comics which site works by date
+
+    :param strip_details:
+    :param param:
+    :param comic_date:
+    :param latest_check:
+    :return:
+    """
     details = ORIGINAL_DETAILS.copy()
     random_date = None
 
@@ -103,9 +119,15 @@ def get_comic_info_date(strip_details, param=None, comic_date=None, latest_check
     return details
 
 
-def extract_meta_content(html, content):
-    # Copied from CalvinBot : https://github.com/wdr1/CalvinBot/blob/master/CalvinBot.py
-    # Extract the image source of the comic
+def extract_meta_content(html, content) -> Optional[str]:
+    """Extract the image source of the comic
+
+    Copied from CalvinBot : https://github.com/wdr1/CalvinBot/blob/master/CalvinBot.py
+
+    :param html:
+    :param content:
+    :return:
+    """
     soup = BeautifulSoup(html, "html.parser")
     content_meta = soup.find('meta', attrs={'property': f'og:{content}', 'content': True})
 
@@ -117,9 +139,14 @@ def extract_meta_content(html, content):
         return None
 
 
-# For sites which works by number
 def get_comic_info_number(strip_details, param=None, latest_check=False):
-    # Details of the comic
+    """For sites which works by number
+
+    :param strip_details:
+    :param param:
+    :param latest_check:
+    :return:
+    """
     details = ORIGINAL_DETAILS.copy()
 
     details["Name"] = strip_details["Name"]
@@ -231,11 +258,16 @@ def get_comic_info_number(strip_details, param=None, latest_check=False):
 
     return details
 
-    # --- End of OtherSiteManager ---#
 
+def get_comic_info_rss(strip_details, param=None, comic_date=None, latest_check=False) -> Optional[dict[str, str]]:
+    """For comics which can only be found by rss
 
-# For comics which can only be found by rss
-def get_comic_info_rss(strip_details, param=None, comic_date=None, latest_check=False):
+    :param strip_details:
+    :param param:
+    :param comic_date:
+    :param latest_check:
+    :return:
+    """
     # Details of the comic
     fall_back_img: str
     rss_site: str
@@ -313,7 +345,14 @@ def get_comic_info_rss(strip_details, param=None, comic_date=None, latest_check=
     return details
 
 
-def finalize_comic(strip_details: dict, details: dict, latest_link: bool):
+def finalize_comic(strip_details: dict, details: dict, latest_link: bool) -> None:
+    """
+
+    :param strip_details:
+    :param details:
+    :param latest_link:
+    :return:
+    """
     details["color"] = int(strip_details["Color"], 16)
     if latest_link:
         details["is_latest"] = utils.check_if_latest_link(details["Name"], details["img_url"])

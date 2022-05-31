@@ -10,8 +10,8 @@ from jsonschema import validate, ValidationError
 from datetime import datetime, timedelta, timezone
 from randomtimestamp import randomtimestamp
 from discord.ext import commands
-from typing import Union
-from os import getenv, path
+from typing import Union, Optional
+from os import path
 
 DETAILS_PATH = "src/misc/comics_details.json"
 FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
@@ -40,8 +40,12 @@ random_footers: list[str] = []
 SERVER = None
 
 
-# Create a comic embed with the given details
 def create_embed(comic_details: dict = None):
+    """Create a comic embed with the given details
+
+    :param comic_details:
+    :return:
+    """
     if comic_details is not None:
         # Embeds the comic
         comic_name = comic_details["Name"]
@@ -91,11 +95,16 @@ def create_embed(comic_details: dict = None):
         return embed
 
 
-# Sends comics info in an embed
 async def send_comic_info(ctx: commands.Context, comic: dict):
-    embed = discord.Embed(title=f'{comic["Name"]} by {comic["Author"]}',
-                          url=get_link(comic),
-                          description=comic["Description"], color=int(comic["Color"], 16))
+    """Sends comics info in an embed
+
+    :param ctx:
+    :param comic:
+    :return:
+    """
+    embed: discord.Embed = discord.Embed(title=f'{comic["Name"]} by {comic["Author"]}',
+                                         url=get_link(comic),
+                                         description=comic["Description"], color=int(comic["Color"], 16))
     embed.set_thumbnail(url=comic["Image"])
     embed.add_field(name="Working type", value=comic["Working_type"], inline=True)
 
@@ -115,8 +124,15 @@ async def send_comic_info(ctx: commands.Context, comic: dict):
     await ctx.send(embed=embed)
 
 
-# Post the strip (with the given parameters)
-async def comic_send(ctx: commands.Context, comic: dict, param: str, comic_date=None):
+async def comic_send(ctx: commands.Context, comic: dict, param: str, comic_date: Optional[Union[datetime, int]] = None):
+    """Post the strip (with the given parameters)
+
+    :param ctx:
+    :param comic:
+    :param param:
+    :param comic_date:
+    :return:
+    """
     await ctx.defer()  # Defers the return, so Discord cna wait longer
     comic_details = Web_requests_manager.get_new_comic_details(comic, param, comic_date=comic_date)
 
@@ -124,8 +140,16 @@ async def comic_send(ctx: commands.Context, comic: dict, param: str, comic_date=
     await send_comic_embed(ctx, comic_details)
 
 
-# Interprets the parameters given by the user
 async def parameters_interpreter(ctx: commands.Context, comic_details, param=None, date=None, hour=None):
+    """Interprets the parameters given by the user
+
+    :param ctx:
+    :param comic_details:
+    :param param:
+    :param date:
+    :param hour:
+    :return:
+    """
     if param is not None:
         """ Parameters:
             today -> Today's comic
@@ -200,14 +224,29 @@ async def parameters_interpreter(ctx: commands.Context, comic_details, param=Non
         await send_comic_info(ctx, comic_details)
 
 
-def add_all(ctx: commands.Context, date=None, hour=None):
+def add_all(ctx: commands.Context, date: Optional[str] = None, hour: Optional[str] = None):
+    """Add all comics to a channel
+
+    :param ctx:
+    :param date:
+    :param hour:
+    :return:
+    """
     final_date, final_hour = parse_all(date, hour)
 
     return modify_database(ctx, "add_all", day=final_date, hour=str(final_hour))
 
 
-# Make a change in the database
 def new_change(ctx: commands.Context, comic, param, date=None, hour=None):
+    """Make a change in the database
+
+    :param ctx:
+    :param comic:
+    :param param:
+    :param date:
+    :param hour:
+    :return:
+    """
     final_date, final_hour = parse_all(date, hour)
 
     comic_number = int(comic["Position"])
@@ -215,21 +254,40 @@ def new_change(ctx: commands.Context, comic, param, date=None, hour=None):
     return modify_database(ctx, param, day=final_date, hour=str(final_hour), comic_number=comic_number)
 
 
-# Removes a guild from the database
-def remove_guild(ctx: commands.Context, use: str = 'remove_guild'):
+def remove_guild(ctx: Union[commands.Context, discord.Guild], use: str = 'remove_guild'):
+    """Removes a guild from the database
+
+    :param ctx:
+    :param use:
+    :return:
+    """
     return modify_database(ctx, use)
 
 
-# Removes a channel from the database
-def remove_channel(ctx: commands.Context, use="remove_channel"):
+def remove_channel(ctx: Union[commands.Context, discord.abc.GuildChannel], use="remove_channel"):
+    """Removes a channel from the database
+
+    :param ctx:
+    :param use:
+    :return:
+    """
     return modify_database(ctx, use)
 
 
-def modify_database(ctx: Union[commands.Context, discord.TextChannel, discord.Guild], use: str, day: str = None,
+def modify_database(ctx: Union[commands.Context, discord.abc.GuildChannel, discord.Guild], use: str, day: str = None,
                     hour: str = None, comic_number: int = None):
-    # Saves the new information in the database
-    # Adds or delete the guild_id, the channel id and the comic_strip data
-    # All use cases
+    """
+    Saves the new information in the database
+
+    Adds or delete the guild_id, the channel id and the comic_strip data
+
+    :param ctx:
+    :param use:
+    :param day:
+    :param hour:
+    :param comic_number:
+    :return:
+    """
     add = "add"
     a_all = "add_all"
     remove_c = "remove"
@@ -411,7 +469,13 @@ def modify_database(ctx: Union[commands.Context, discord.TextChannel, discord.Gu
     return Success
 
 
-def set_role(ctx: commands.Context, role_id):
+def set_role(ctx: commands.Context, role_id) -> str:
+    """
+
+    :param ctx:
+    :param role_id:
+    :return:
+    """
     gid = str(ctx.guild.id)
     role = "role"
     mention = "mention"
@@ -436,7 +500,13 @@ def set_role(ctx: commands.Context, role_id):
         return "This server is not subscribed to any comic! Please subscribe to a comic before entering a role to add."
 
 
-def set_mention(ctx: commands.Context, choice):
+def set_mention(ctx: commands.Context, choice) -> str:
+    """
+
+    :param ctx:
+    :param choice:
+    :return:
+    """
     gid = str(ctx.guild.id)
     only_daily = "only_daily"
     mention = "mention"
@@ -461,7 +531,13 @@ def set_mention(ctx: commands.Context, choice):
                " when you want to be mentioned!"
 
 
-def get_mention(ctx):
+def get_mention(ctx: commands.Context, bot: commands.Bot) -> (str, str):
+    """
+
+    :param ctx:
+    :param bot:
+    :return:
+    """
     gid = str(ctx.guild.id)
     only_daily = "only_daily"
     mention = "mention"
@@ -471,11 +547,17 @@ def get_mention(ctx):
         if not data[gid][mention]:
             return "The base mention is disabled in this server! " \
                    "Re-enable the mention before hourly post by using `bd!post_mention enable`.", ""
+        role: discord.Role = discord.Guild.get_role(bot.get_guild(data[gid]["server_id"]), int(data[gid]["Role"]))
+        role_mention: str
+        if role is not None:
+            role_mention = role.name
+        else:
+            role_mention = data[gid]["Role"]
 
         if only_daily in data[gid]:
-            men = "only for daily comics posts"
+            men = f"{role_mention} only for daily comics posts"
             if not data[gid][only_daily]:
-                men = "for all comic posts"
+                men = f"{role_mention} for all comic posts"
 
             return Success, men
         else:
@@ -487,6 +569,11 @@ def get_mention(ctx):
 
 
 def remove_role(ctx):
+    """
+
+    :param ctx:
+    :return:
+    """
     gid = str(ctx.guild.id)
     role = "role"
     only_daily = "only_daily"
@@ -508,8 +595,13 @@ def remove_role(ctx):
                "mentions!"
 
 
-# Change if the bot says a phrase before posting daily comics
 def set_post_mention(ctx, choice):
+    """Change if the bot says a phrase before posting daily comics
+
+    :param ctx:
+    :param choice:
+    :return:
+    """
     gid = str(ctx.guild.id)
     mention = "mention"
     role = "role"
@@ -547,8 +639,8 @@ def load_json(json_path: str) -> dict:
     return json_file
 
 
-# Returns a specific guild's data
-def get_specific_guild_data(ctx: discord.Interaction):
+def get_specific_guild_data(ctx: commands.Context) -> Optional[dict]:
+    """Returns a specific guild's data"""
     database = load_json(DATABASE_FILE_PATH)
     guild_id = str(ctx.guild.id)
 
@@ -559,6 +651,13 @@ def get_specific_guild_data(ctx: discord.Interaction):
 
 
 def clean_database(data: dict = None, do_backup: bool = True, strict: bool = False):
+    """
+
+    :param data:
+    :param do_backup:
+    :param strict:
+    :return:
+    """
     logger.info("Running database clean...")
     # Cleans the database from inactive servers
     if data is None:
@@ -600,6 +699,11 @@ def clean_database(data: dict = None, do_backup: bool = True, strict: bool = Fal
 
 
 def save_backup(data):
+    """
+
+    :param data:
+    :return:
+    """
     logger.info("Running backup...")
     # Creates a new backup and saves it
     backupfp = BACKUP_FILE_PATH + datetime.now(timezone.utc).strftime("%Y_%m_%d_%H") + ".json"
@@ -611,7 +715,8 @@ def save_backup(data):
 
 
 def restore_backup():
-    # Restore a last used backup
+    """Restore a last used backup"""
+
     utc_date = datetime.now(timezone.utc)
     file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
     tries = 0
@@ -632,13 +737,18 @@ def restore_backup():
 
 
 def save_json(json_file: dict, file_path: str = DATABASE_FILE_PATH):
-    # Saves the json file
+    """Saves the json file
+
+    :param json_file:
+    :param file_path:
+    :return:
+    """
     with open(file_path, 'w') as f:
         json.dump(json_file, f, indent=4)
 
 
 def verify_json():
-    # Verifies the database according to a particular json schema to assure the integrity of it
+    """Verifies the database according to a particular json schema to assure the integrity of it"""
     data = load_json(DATABASE_FILE_PATH)
     schema = load_json(JSON_SCHEMA_PATH)
 
@@ -649,8 +759,8 @@ def verify_json():
         return False
 
 
-# Check if the comic is subscribed to this guild
-def get_sub_status(ctx, position: int, database: dict = None):
+def get_sub_status(ctx, position: int, database: Optional[dict] = None):
+    """Check if the comic is subscribed to this guild"""
     if database is None:  # Gets database if needed
         database = load_json(DATABASE_FILE_PATH)
 
@@ -668,23 +778,28 @@ def get_sub_status(ctx, position: int, database: dict = None):
         return False
 
 
-# Send a comic embed
-async def send_comic_embed(ctx: commands.Context, comic_details):
+async def send_comic_embed(ctx: commands.Context, comic_details: dict):
+    """Send a comic embed
+
+    :param ctx:
+    :param comic_details:
+    :return:
+    """
     embed = create_embed(comic_details=comic_details)  # Creates the embed
 
     await ctx.send(embed=embed)  # Send the comic
 
 
-# If the request is not understood
 async def send_request_error(ctx: commands.Context):
-    await ctx.send('Request not understood. Try bd!help for usable commands.')
+    """If the request is not understood
+
+    :param ctx:
+    :return:
+    """
+    await ctx.send("Request not understood. Try '/help' for usable commands.")
 
 
-def is_owner(ctx: commands.Context):  # Returns if it is the owner who did the command
-    return ctx.message.author.id == int(getenv('BOT_OWNER_ID'))
-
-
-async def website_specific_embed(ctx: commands.Context, website_name, website):
+async def website_specific_embed(ctx: commands.Context, website_name: str, website: str):
     """Create an embed with all the specific comics from a website
 
     :param ctx:
@@ -717,12 +832,21 @@ async def website_specific_embed(ctx: commands.Context, website_name, website):
 
 # -------------------------------------------------------------------------------------------------------------------
 
-# Reformat the date
 def get_date(date: str):
+    """Reformat the date from 'YYYY, mm, dd' -> '<Weekday> dd, YYYY'
+
+    :param date:
+    :return:
+    """
     return datetime.strptime(date, "%Y, %m, %d").strftime("%A %d, %Y")
 
 
-def get_first_date(comic: dict):
+def get_first_date(comic: dict) -> str:
+    """Get the first date of the comic
+
+    :param comic:
+    :return:
+    """
     if comic["Main_website"] == "https://comicskingdom.com/":
         # Comics kingdom only lets us go back 7 days in the past
         return (datetime.today() - timedelta(days=7)).strftime("%Y, %m, %d")
@@ -730,16 +854,29 @@ def get_first_date(comic: dict):
         return comic["First_date"]
 
 
-def get_today():
+def get_today() -> str:
+    """Get the first two letters of the current weekday in UTC
+
+    :return: The first two letters of the weekday
+    """
     return datetime.now(timezone.utc).today().strftime("%A")[0:2]
 
 
-def get_hour():
+def get_hour() -> str:
+    """Get the current UTC hour
+
+    :return: Current UTC hour
+    """
     return str(datetime.now(timezone.utc).hour)
 
 
-def clean_url(url: str, file_forms: list = None):
-    # Gives back a clean link for a file on the internet, without the arguments after a "?"
+def clean_url(url: str, file_forms: Optional[list] = None) -> str:
+    """Gives back a clean link for a file on the internet, without the arguments after a '?'
+
+    :param url:
+    :param file_forms:
+    :return:
+    """
     if file_forms is None:
         file_forms = ["png", "jpg", "jpeg", "gif", "jfif", "bmp", "tif", "tiff", "eps"]
 
@@ -751,7 +888,13 @@ def clean_url(url: str, file_forms: list = None):
     return url
 
 
-def get_link(comic: dict, day: datetime = None):  # Returns the comic url
+def get_link(comic: dict, day: Optional[datetime] = None) -> str:
+    """Returns the comic url
+
+    :param comic:
+    :param day:
+    :return:
+    """
     date_formatted = ""
     middle_params = ""
     if comic["Main_website"] == "https://www.gocomics.com/":
@@ -767,21 +910,32 @@ def get_link(comic: dict, day: datetime = None):  # Returns the comic url
     return f'{comic["Main_website"]}{middle_params}/{date_formatted}'
 
 
-def get_date_formatted(day: datetime = None, form="/"):
+def get_date_formatted(day: Optional[datetime] = None, form: str = "/") -> str:
+    """Get the date formatted separated by a string format
+
+    :param day:
+    :param form:
+    :return:
+    """
     if day is not None:
         return day.strftime(f"%Y{form}%m{form}%d")
     else:
         return ""
 
 
-def get_random_link(comic: dict):  # Returns the random comic url
+def get_random_link(comic: dict) -> (str, Optional[datetime]):
+    """Returns a random comic url
+
+    :param comic:
+    :return:
+    """
     if comic["Main_website"] == "https://www.gocomics.com/":
         return f'{comic["Main_website"]}random/{comic["Web_name"]}', None
     else:
         first_date = datetime.strptime(get_first_date(comic), "%Y, %m, %d")
-        random_date = randomtimestamp(start=first_date,
-                                      end=datetime.today().replace(hour=0, minute=0, second=0,
-                                                                   microsecond=0))
+        random_date: datetime = randomtimestamp(start=first_date,
+                                                end=datetime.today().replace(hour=0, minute=0, second=0,
+                                                                             microsecond=0))
         middle_params = ""
         if comic["Main_website"] == "https://comicskingdom.com/":
             middle_params = comic["Web_name"]
@@ -792,14 +946,24 @@ def get_random_link(comic: dict):  # Returns the random comic url
 
 
 def get_strip_details(comic_name: str):
+    """Get the details of a specific comic
+
+    :param comic_name:
+    :return:
+    """
     return strip_details[comic_name]
 
 
 def create_link_cache() -> None:
+    """Create a cache of links containing the latest comics links
+
+    :return:
+    """
     logger.debug("Running link cache...")
-    comics = load_json(DETAILS_PATH)
+    comics: dict = load_json(DETAILS_PATH)
     for comic in comics:
         logger.debug(f"Getting image link for comic {comic} ...")
+        comic_url: Optional[dict[str, str]]
         try:
             comic_url = Web_requests_manager.get_new_comic_details(comics[comic], param="today")
         except (ValueError, AttributeError) as e:
