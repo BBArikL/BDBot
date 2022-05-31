@@ -60,6 +60,10 @@ def setup_bot():
                                                                                        "private channel (The ID of the "
                                                                                        "channel where the bot can print"
                                                                                        " debugging information):")},
+        "PRIVATE_SERVER_SUPPORT_ID": {"value": "", "inquiry": inquirer.secret(message="Enter the ID of the "
+                                                                                      "private server (The ID of the "
+                                                                                      "server where the bot can allow"
+                                                                                      " owner commands):")},
         "DEBUG": {"value": "", "inquiry": inquirer.select(message="Is the bot used for development purposes? (If the "
                                                                   "bot is in debug mode (Should be False if the bot "
                                                                   "is supposed to serve multiple servers)):",
