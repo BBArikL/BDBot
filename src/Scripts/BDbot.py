@@ -30,7 +30,7 @@ class BDBot(commands.Cog):
         # Change the bot activity
         await self.bot.change_presence(status=discord.Status.online,
                                        activity=discord.Activity(type=discord.ActivityType.listening,
-                                                                 name='bd!help'))
+                                                                 name='/help'))
 
         self.logger.log(logging.INFO, "Logged in as {0.user}".format(self.bot))
         channel_id = int(os.getenv('PRIVATE_CHANNEL_SUPPORT_ID'))
@@ -115,7 +115,7 @@ class BDBot(commands.Cog):
                 await ctx.send("Role successfully added to be notified! "
                                "This role will get mentioned at each comic post. "
                                "If you wish to be notified only for daily comics happening at 6 AM "
-                               "UTC, use `bd!set_mention daily`.")
+                               "UTC, use `/set_mention daily`.")
             else:
                 await ctx.send(status)
         else:
@@ -296,7 +296,7 @@ class BDBot(commands.Cog):
     async def status(self, ctx: discord.ext.commands.Context):
         # Status of the bot
         await ctx.send(
-            "The bot is online, waiting for comics to send. Report any errors by git (`bd!git`) or by `bd!request "
+            "The bot is online, waiting for comics to send. Report any errors by git (`/git`) or by `/request "
             "<your request>`.")
 
     @commands.hybrid_command()

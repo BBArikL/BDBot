@@ -19,7 +19,7 @@ class Errors(commands.Cog):
         # Handles errors
         channel = ctx.channel
         if isinstance(error, commands.errors.CommandNotFound):  # Command not found
-            await channel.send('Invalid command. Try bd!help to search for usable commands.')
+            await channel.send('Invalid command. Try /help to search for usable commands.')
         elif isinstance(error, commands.errors.MissingPermissions):
             await channel.send('You do not have the permission to do that.')
         elif isinstance(error, commands.errors.HybridCommandError):

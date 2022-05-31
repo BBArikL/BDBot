@@ -18,14 +18,14 @@ class Help(commands.Cog):
         embed = discord.Embed(title="BDBot!")
 
         embed.add_field(name="Gocomics",
-                        value="Use bd!help gocomics to get all comics that are supported on the Gocomics "
-                              "website.\nCommands:\n`bd!<name-of-comic> today / random / dd/mm/YYY`.")
+                        value="Use /help gocomics to get all comics that are supported on the Gocomics "
+                              "website.\nCommands:\n`/<name-of-comic> today / random / dd/mm/YYY`.")
         embed.add_field(name="Comics Kingdom",
-                        value="Use bd!help comicskingdom to get all comics that are supported on the Comics Kingdom "
-                              "website.\nCommands:\n`bd!<name-of-comic> today / random / dd/mm/YYY`.")
+                        value="Use /help comicskingdom to get all comics that are supported on the Comics Kingdom "
+                              "website.\nCommands:\n`/<name-of-comic> today / random / dd/mm/YYY`.")
         embed.add_field(name="Webtoons",
-                        value="Use bd!help webtoons to get all comics that are supported on the Webtoons "
-                              "website.\nCommands:\n`bd!<name-of-comic> today / random / dd/mm/YYY`.")
+                        value="Use /help webtoons to get all comics that are supported on the Webtoons "
+                              "website.\nCommands:\n`/<name-of-comic> today / random / dd/mm/YYY`.")
         for strip in strips:
             if strips[strip]["Main_website"] != "https://www.gocomics.com/" \
                     and strips[strip]["Main_website"] != "https://comicskingdom.com/" \
@@ -34,23 +34,23 @@ class Help(commands.Cog):
                                                                   f"{strips[strip]['Aliases']} / random "
                                                                   f"/ # or date of comic.")
         embed.add_field(name="Daily comics commands.",
-                        value="Use bd!help daily to see available commands for daily comics. "
+                        value="Use /help daily to see available commands for daily comics. "
                               "Post daily at 6:00 AM UTC.")
 
         embed.add_field(name="Request", value="Have a request for the bot? Post your request at "
                                               "https://github.com/BBArikL/BDBot/issues/new?assignees=&labels"
                                               "=enhancement&template=comic-request.md&title=New+Comic+request "
-                                              "for maximum visibility or use `bd!request <your request>` to "
+                                              "for maximum visibility or use `/request <your request>` to "
                                               "leave a message to the developer!")
-        embed.add_field(name="Status", value="Gives back the status of the bot.\nCommand:\n`bd!status`")
-        embed.add_field(name="Ping", value="Pong! Gives back the bot latency.\nCommand:\n`bd!ping`")
-        embed.add_field(name="Uptime", value="Gives back the uptime.\nCommand:\n`bd!up`")
-        embed.add_field(name="FAQ", value="Have any question on the bot? This FAQ (`bd!faq`) might have the response "
+        embed.add_field(name="Status", value="Gives back the status of the bot.\nCommand:\n`/status`")
+        embed.add_field(name="Ping", value="Pong! Gives back the bot latency.\nCommand:\n`/ping`")
+        embed.add_field(name="Uptime", value="Gives back the uptime.\nCommand:\n`/up`")
+        embed.add_field(name="FAQ", value="Have any question on the bot? This FAQ (`/faq`) might have the response "
                                           "you need!")
-        embed.add_field(name="New commands", value="See the the newly added commands by using `bd!new`")
-        embed.add_field(name="Git", value="Gives the link of the git page.\nCommand:\n`bd!git`")
-        embed.add_field(name="Invite", value="Gives a link to add the bot to your servers!\nCommand:\n`bd!invite`")
-        embed.add_field(name="Vote", value="Vote for the bot on Top.gg!\nCommand:\n`bd!vote`")
+        embed.add_field(name="New commands", value="See the the newly added commands by using `/new`")
+        embed.add_field(name="Git", value="Gives the link of the git page.\nCommand:\n`/git`")
+        embed.add_field(name="Invite", value="Gives a link to add the bot to your servers!\nCommand:\n`/invite`")
+        embed.add_field(name="Vote", value="Vote for the bot on Top.gg!\nCommand:\n`/vote`")
 
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
@@ -64,29 +64,29 @@ class Help(commands.Cog):
                                                                    "24h clock in UTC time. If not specified, "
                                                                    "defaults to the current time in UTC.")
         embed.add_field(name="Post", value="The bot did not post the comics or you want to be sure that all comics "
-                                           "are correctly set up? Use `bd!post <date> <hour>` to force the post of "
+                                           "are correctly set up? Use `/post <date> <hour>` to force the post of "
                                            "comics set at the specified time.")
-        embed.add_field(name="Add", value="Use `bd!<name_of_comic> add <date> <hour>` to add the comic to the daily "
+        embed.add_field(name="Add", value="Use `/<name_of_comic> add <date> <hour>` to add the comic to the daily "
                                           "list of the channel.")
-        embed.add_field(name="Add all", value="Use `bd!add_all <date> <hour>` to add all the comics to a specific day "
+        embed.add_field(name="Add all", value="Use `/add_all <date> <hour>` to add all the comics to a specific day "
                                               "of the week and hour.")
-        embed.add_field(name="Remove", value="Use `bd!<name_of_comic> remove <date> <hour>` to remove the comic "
+        embed.add_field(name="Remove", value="Use `/<name_of_comic> remove <date> <hour>` to remove the comic "
                                              "from the daily list.")
-        embed.add_field(name="Remove channel", value="Use `bd!remove_channel` to unsubscribe your channel from all the "
+        embed.add_field(name="Remove channel", value="Use `/remove_channel` to unsubscribe your channel from all the "
                                                      "comics")
-        embed.add_field(name="Remove all", value="Use `bd!remove_all` to unsubscribe your server from all the comics "
+        embed.add_field(name="Remove all", value="Use `/remove_all` to unsubscribe your server from all the comics "
                                                  "in all the channels.")
-        embed.add_field(name="Subscriptions", value="Use `bd!sub` to view all subscribed comics for this server.")
-        embed.add_field(name="Set role mention", value="Use `bd!set_role @<role>` to add a role to mention for "
-                                                       "comics posts. To remove, use `bd!remove_role`.")
-        embed.add_field(name="Mange role mention", value="Use `bd!set_mention daily/all` to change the mention policy "
+        embed.add_field(name="Subscriptions", value="Use `/sub` to view all subscribed comics for this server.")
+        embed.add_field(name="Set role mention", value="Use `/set_role @<role>` to add a role to mention for "
+                                                       "comics posts. To remove, use `/remove_role`.")
+        embed.add_field(name="Mange role mention", value="Use `/set_mention daily/all` to change the mention policy "
                                                          "for the bot in the server. This does not affect daily comics "
                                                          "posted at 6h AM UTC. If the mention policy is set to 'all',"
                                                          " the bot will mention the role at each comic post, otherwise"
                                                          " it will only mention the role at 6h AM UTC daily.")
-        embed.add_field(name="Enable/Disable mention", value="Use `bd!post_mention` to enable/disable server-wide the "
+        embed.add_field(name="Enable/Disable mention", value="Use `/post_mention` to enable/disable server-wide the "
                                                              "mention right before the automatic comic posts.")
-        embed.add_field(name="Get mention policy", value="Use `bd!get_mention` to get the server's mention policy.")
+        embed.add_field(name="Get mention policy", value="Use `/get_mention` to get the server's mention policy.")
 
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
@@ -101,17 +101,17 @@ class Help(commands.Cog):
                                              "for your trust into this project! :)")
         embed.add_field(name="New comics", value="The new comics are: .....")
         embed.add_field(name="Post", value="Missed your comics or just want to test that the bot can properly send "
-                                           "all comics for a given time? Use `bd!post <date> <time>` to test it!")
+                                           "all comics for a given time? Use `/post <date> <time>` to test it!")
         embed.add_field(name="Enable/Disable post announcement", value="Tired of seeing the announcement of the bot "
                                                                        "before it post scheduled comics? Use "
-                                                                       "`bd!post_mention enable/disable` to change if "
+                                                                       "`/post_mention enable/disable` to change if "
                                                                        "the bot should announce when scheduled comics "
                                                                        "are posted.")
-        embed.add_field(name="Status", value="Get the status of the bot with these 3 new commands: `bd!ping`, "
-                                             "`bd!uptime` and `bd!status`.")
+        embed.add_field(name="Status", value="Get the status of the bot with these 3 new commands: `/ping`, "
+                                             "`/uptime` and `/status`.")
         embed.add_field(name="Delete requests", value="Want to delete previous requests that that you sent? Use "
-                                                      "`bd!request_delete` to delete all your previous requests.`")
-        embed.add_field(name="FAQ", value="Have any question on the bot? This FAQ (`bd!faq`) might have the response "
+                                                      "`/request_delete` to delete all your previous requests.`")
+        embed.add_field(name="FAQ", value="Have any question on the bot? This FAQ (`/faq`) might have the response "
                                           "you need!")
         embed.add_field(name="Optimizations", value="Under the hood, optimizations have been made to the bot to make "
                                                     "it more responsive and support the growth!")
@@ -128,14 +128,14 @@ class Help(commands.Cog):
         embed.add_field(name="Why can I only go up to 7 comics in the past for ComicKingdom's comics?",
                         value="ComicKingdom use a premium membership to view older comics. You can go on their site to "
                               "get one and see the comics directly on your browser.")
-        embed.add_field(name="How can I support the project?", value="You can vote for the bot on top.gg (`bd!vote`) "
-                                                                     "or star the project on GitHub (`bd!git`). If "
+        embed.add_field(name="How can I support the project?", value="You can vote for the bot on top.gg (`/vote`) "
+                                                                     "or star the project on GitHub (`/git`). If "
                                                                      "you want to support one of the comics that are "
                                                                      "presented through this bot, go on their page to "
                                                                      "see how to support them directly!")
-        embed.add_field(name="How can I request comics?", value="You can use `bd!request <request>` to request comics "
+        embed.add_field(name="How can I request comics?", value="You can use `/request <request>` to request comics "
                                                                 "or features directly to the developer.")
-        embed.add_field(name="How can I receive scheduled comics?", value="You can use `bd!help daily` to get help on "
+        embed.add_field(name="How can I receive scheduled comics?", value="You can use `/help daily` to get help on "
                                                                           "how to schedule comics.")
         embed.add_field(name="What information is collected by using this bot?", value="No personal information is "
                                                                                        "used by this bot if you only "
@@ -153,7 +153,7 @@ class Help(commands.Cog):
                                                                                        "access to the server or when "
                                                                                        "all comics of the server have "
                                                                                        "been unscheduled. When you "
-                                                                                       "use `bd!request`, "
+                                                                                       "use `/request`, "
                                                                                        "your username, "
                                                                                        "your discriminator, "
                                                                                        "the time of the message and "
@@ -163,7 +163,7 @@ class Help(commands.Cog):
                                                                                        "delete this personal "
                                                                                        "information (and get rid of "
                                                                                        "the requests sent), "
-                                                                                       "use `bd!request_delete`.")
+                                                                                       "use `/request_delete`.")
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
 
