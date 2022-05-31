@@ -178,7 +178,7 @@ def add_comic(comics: dict):
                             validate=lambda x: 50 > len(x),
                             invalid_message="This short description must be less than 50 characters!",
                             mandatory=False).execute()
-    final_comic_dict = process_inputs(name, author, web_name, main_website, working_type, description, len(comics) + 1,
+    final_comic_dict = process_inputs(name, author, web_name, main_website, working_type, description, len(comics),
                                       first_date, color, image, helptxt)
     logger.info("Final comic data:")
     logger.info(json.dumps(final_comic_dict, indent=4))
