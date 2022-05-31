@@ -322,7 +322,7 @@ class Comic(commands.Cog):
 
     @commands.hybrid_command()
     async def andy_capp(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
-                                hour: str = None):
+                        hour: str = None):
         """Andy Capp"""
         comic_name = 'AndyCapp'
 
