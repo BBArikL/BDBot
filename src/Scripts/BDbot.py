@@ -13,33 +13,35 @@ from src import utils
 
 
 class BDBot(commands.Cog):
-    # Class responsible for main functions of the bot
+    """Class responsible for main functions of the bot"""
 
-    def __init__(self, bot):
-        # Constructor of the cog
-        # Initialize all the properties of the cog
-        self.strip_details = utils.load_json(utils.DETAILS_PATH)
-        self.bot: discord.ext.commands.Bot = bot
-        dbl_token = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
+    def __init__(self, bot: commands.Bot):
+        """Constructor of the cog
+
+        Initialize all the properties of the cog"""
+        self.strip_details: dict = utils.load_json(utils.DETAILS_PATH)
+        self.bot: commands.Bot = bot
+        dbl_token: str = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
         # self.topggpy = topgg.DBLClient(bot, dbl_token)
-        self.start_time = datetime.now(timezone.utc)
-        self.logger = logging.getLogger('discord')
+        self.start_time: datetime = datetime.now(timezone.utc)
+        self.logger: logging.Logger = logging.getLogger('discord')
 
     @commands.Cog.listener()
     async def on_ready(self):
-        # Change the bot activity
+        """Change the bot activity"""
         await self.bot.change_presence(status=discord.Status.online,
                                        activity=discord.Activity(type=discord.ActivityType.listening,
-                                                                 name='/help'))
+                                                                 name=f'/help in {len(self.bot.guilds)} servers'))
 
         self.logger.log(logging.INFO, "Logged in as {0.user}".format(self.bot))
-        channel_id = int(os.getenv('PRIVATE_CHANNEL_SUPPORT_ID'))
+        channel_id: int = int(os.getenv('PRIVATE_CHANNEL_SUPPORT_ID'))
 
         channel: discord.TextChannel = self.bot.get_channel(channel_id)
 
         await channel.send(
             "Bot restarted. I will now try to sync the commands.")  # Sends this message whenever restarting the bot
 
+        # Sync the commands
         guild: Union[None, discord.Guild] = None
         command_tree: discord.app_commands.CommandTree = self.bot.tree
         if os.getenv('DEBUG') == "True":
@@ -57,39 +59,47 @@ class BDBot(commands.Cog):
             await PosterHandler.wait_for_next_hour(PosterHandler(self.bot))  # Wait for daily poster
 
     @commands.Cog.listener()
-    async def on_guild_remove(self, guild):
+    async def on_guild_remove(self, guild: discord.Guild):
+        """When the bot is removed from a server"""
         utils.remove_guild(guild, use="auto_remove_guild")
 
     @commands.Cog.listener()
-    async def on_guild_channel_delete(self, deleted_channel):
+    async def on_guild_channel_delete(self, deleted_channel: discord.abc.GuildChannel):
+        """When a guild channel is deleted"""
         utils.remove_channel(deleted_channel, use="auto_remove_channel")
 
     @commands.Cog.listener()
     async def on_private_channel_delete(self, deleted_channel: discord.abc.GuildChannel):
+        """When a private channel is deleted"""
         utils.remove_channel(deleted_channel, use="auto_remove_channel")
 
-    @commands.hybrid_command()  # aliases=['Git', 'github', 'Github'])
-    async def git(self, ctx: discord.ext.commands.Context):  # Links back to the GitHub page
+    @commands.hybrid_command()
+    async def git(self, ctx: discord.ext.commands.Context):
+        """GitHub page"""
         await ctx.send("Want to help the bot? Go here: https://github.com/BBArikL/BDBot")
 
-    @commands.hybrid_command()  # aliases=['inv'])
-    async def invite(self, ctx: discord.ext.commands.Context):  # Creates an Oauth2 link to share the bot
-        inv = discord.utils.oauth_url(os.getenv('CLIENT_ID'))
+    @commands.hybrid_command()
+    async def invite(self, ctx: discord.ext.commands.Context):
+        """Get a link to invite the bot"""
+        # inv = discord.utils.oauth_url(os.getenv('CLIENT_ID'))
+        inv = "https://discord.com/api/oauth2/authorize?client_id=837828249467093032&permissions=311385253888&scope" \
+              "=bot%20applications.commands "
         await ctx.send(f'Share the bot! {inv}')
 
     @commands.hybrid_command()
-    # @commands.has_permissions(manage_guild=True)  # Only mods can add comics
+    @commands.has_permissions(manage_guild=True)  # Only mods can add comics
     async def add_all(self, ctx: discord.ext.commands.Context, date: str = "", hour: str = ""):
-        # Adds all comics to a specific channel
+        """Adds all comics to a specific channel. Preferred way to add all comics instead of using /all. Mods only"""
         status = utils.add_all(ctx, date, hour)
         if status == utils.Success:
             await ctx.send("All comics added successfully!")
         else:
             await ctx.send(status)
 
-    @commands.hybrid_command()  # aliases=["remove_guild"])
-    # @commands.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
-    async def remove_all(self, ctx: discord.ext.commands.Context):  # Remove the guild from the database
+    @commands.hybrid_command()
+    @commands.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
+    async def remove_all(self, ctx: discord.ext.commands.Context):
+        """Remove the guild from the database. Mods only"""
         status = utils.remove_guild(ctx)
 
         if status == utils.Success:
@@ -98,8 +108,9 @@ class BDBot(commands.Cog):
             await ctx.send(status)
 
     @commands.hybrid_command()
-    # @commands.has_permissions(manage_guild=True)  # Only mods can delete the channel from the database
-    async def remove_channel(self, ctx: discord.ext.commands.Context):  # Remove the channel from the database
+    @commands.has_permissions(manage_guild=True)  # Only mods can delete the channel from the database
+    async def remove_channel(self, ctx: discord.ext.commands.Context):
+        """Remove the channel from the database. Mods only"""
         status = utils.remove_channel(ctx)
         if status == utils.Success:
             await ctx.send("All daily comics removed successfully from this channel!")
@@ -107,8 +118,9 @@ class BDBot(commands.Cog):
             await ctx.send(status)
 
     @commands.hybrid_command()
-    # @commands.has_permissions(manage_guild=True)  # Only mods can add a role
-    async def set_role(self, ctx: discord.ext.commands.Context, role: discord.Role):  # Add a role to be notified
+    @commands.has_permissions(manage_guild=True)  # Only mods can add a role
+    async def set_role(self, ctx: discord.ext.commands.Context, role: discord.Role):
+        """Add a role to be notified. Mods only"""
         if discord.Guild.get_role(ctx.guild, role.id) is not None:
             status = utils.set_role(ctx, role)
             if status == utils.Success:
@@ -122,8 +134,9 @@ class BDBot(commands.Cog):
             await ctx.send("The role is invalid or not provided!")
 
     @commands.hybrid_command()
-    # @commands.has_permissions(manage_guild=True)  # Only mods can delete the role
-    async def remove_role(self, ctx: discord.ext.commands.Context):  # Deletes the role mention
+    @commands.has_permissions(manage_guild=True)  # Only mods can delete the role
+    async def remove_role(self, ctx: discord.ext.commands.Context):
+        """Deletes the role mention. Mods only"""
         status = utils.remove_role(ctx)
 
         if status == utils.Success:
@@ -132,8 +145,9 @@ class BDBot(commands.Cog):
             await ctx.send(status)
 
     @commands.hybrid_command()
-    # @commands.has_permissions(manage_guild=True)
-    async def set_mention(self, ctx: discord.ext.commands.Context, choice: str = ""):  # Change the mention
+    @commands.has_permissions(manage_guild=True)
+    async def set_mention(self, ctx: discord.ext.commands.Context, choice: str = ""):
+        """Set the role mention policy. Mods only"""
         choice = choice.lower()
 
         policy = (choice.lower() == "daily")
@@ -150,9 +164,10 @@ class BDBot(commands.Cog):
                 "Choose between `daily` and `all`to determine the mention policy for this server!")
 
     @commands.hybrid_command()
-    # @commands.has_permissions(manage_guild=True)
-    async def get_mention(self, ctx: discord.ext.commands.Context):  # Get the mention policy
-        status, mention_policy = utils.get_mention(ctx)
+    @commands.has_permissions(manage_guild=True)
+    async def get_mention(self, ctx: discord.ext.commands.Context):
+        """Get the server's mention policy. Mods only"""
+        status, mention_policy = utils.get_mention(ctx, self.bot)
 
         if status == utils.Success:
             await ctx.send(f"The bot will mention the role {mention_policy}!")
@@ -160,8 +175,9 @@ class BDBot(commands.Cog):
             await ctx.send(status)
 
     @commands.hybrid_command()
-    # @commands.has_permissions(manage_guild=True)
+    @commands.has_permissions(manage_guild=True)
     async def post_mention(self, ctx: discord.ext.commands.Context, choice: str):
+        """Change the mention policy for the server. Mods only"""
         status = utils.set_post_mention(ctx, choice.lower() == "enable")
 
         if status == utils.Success:
@@ -170,24 +186,30 @@ class BDBot(commands.Cog):
             await ctx.send(status)
 
     @commands.hybrid_command()
-    async def vote(self, ctx: discord.ext.commands.Context):  # Links back to the Topgg page
+    async def vote(self, ctx: discord.ext.commands.Context):
+        """Vote for the bot!"""
         await ctx.send(
             "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : "
             "https://discordbotlist.com/bots/bdbot")
 
-    @commands.hybrid_command()
-    @commands.check(lambda interaction: utils.is_owner(interaction))
+    @commands.hybrid_command(hidden=True, guilds=utils.SERVER)
+    @commands.is_owner()
     async def nb_guild(self, ctx: discord.ext.commands.Context):
-        # Gets the number of guilds that the bot is in (for analytics)
-        if utils.is_owner(ctx):
-            await ctx.send(
-                f"The bot is in {len(self.bot.guilds)} servers. Trying to update status on Top.gg.....")
+        """Gets the number of guilds that the bot is in (for analytics)"""
 
-            """try:
-                await self.topggpy.post_guild_count()
-                await ctx.send(f'Posted server count ({self.topggpy.guild_count})')
-            except Exception as e:
-                await ctx.send('Failed to post server count\n{}: {}'.format(type(e).__name__, e))"""
+        await ctx.send(
+            f"The bot is in {len(self.bot.guilds)} servers. Trying to update status on Top.gg.....")
+
+        """try:
+            await self.topggpy.post_guild_count()
+            await ctx.send(f'Posted server count ({self.topggpy.guild_count})')
+        except Exception as e:
+            await ctx.send('Failed to post server count\n{}: {}'.format(type(e).__name__, e))"""
+
+        await ctx.send("Updating status...")
+        await self.bot.change_presence(status=discord.Status.online,
+                                       activity=discord.Activity(type=discord.ActivityType.listening,
+                                                                 name=f'/help in {len(self.bot.guilds)} servers'))
 
     @commands.hybrid_command()
     async def request(self, ctx: discord.ext.commands.Context, *, param: str = ""):
@@ -206,6 +228,11 @@ class BDBot(commands.Cog):
 
     @commands.hybrid_command()
     async def request_delete(self, ctx: discord.ext.commands.Context):
+        """
+
+        :param ctx:
+        :return:
+        """
         author = f"{ctx.message.author.name}#{ctx.message.author.discriminator}"
         output = []
         count = 0
@@ -228,9 +255,10 @@ class BDBot(commands.Cog):
         else:
             await ctx.send("No requests to delete!")
 
-    @commands.hybrid_command()  # aliases=["subs", "subscriptions", "subscription"])
-    # @commands.has_permissions(manage_guild=True)
-    async def sub(self, ctx: discord.ext.commands.Context):  # Checks if the server is subbed to any comic
+    @commands.hybrid_command()
+    @commands.has_permissions(manage_guild=True)
+    async def sub(self, ctx: discord.ext.commands.Context):
+        """Checks if the server is subbed to any comic"""
         guild_data = utils.get_specific_guild_data(ctx)
         max_fields = 25
 
@@ -278,12 +306,12 @@ class BDBot(commands.Cog):
 
     @commands.hybrid_command()
     async def ping(self, ctx: discord.ext.commands.Context):
-        # Latency with discord API
+        """Get bot's latency with discord API"""
         await ctx.send("Pong! " + str(round(self.bot.latency * 1000)) + "ms")
 
     @commands.hybrid_command()
     async def uptime(self, ctx: discord.ext.commands.Context):
-        # Uptime
+        """Get the bot's uptime"""
         delta = (datetime.now(timezone.utc) - self.start_time)
         hours = math.floor(delta.seconds / 3600)
         minutes = math.floor((delta.seconds - hours * 3600) / 60)
@@ -299,68 +327,52 @@ class BDBot(commands.Cog):
             "The bot is online, waiting for comics to send. Report any errors by git (`/git`) or by `/request "
             "<your request>`.")
 
-    @commands.hybrid_command()
-    @commands.check(lambda interaction: utils.is_owner(interaction))
+    @commands.hybrid_command(hidden=True, server=utils.SERVER)
+    @commands.is_owner()
     async def vrequest(self, ctx: discord.ext.commands.Context):
         # Verifies the requests
-        if utils.is_owner(ctx):
-            with open(utils.REQUEST_FILE_PATH, 'rt') as f:
-                r = f.readlines()
+        with open(utils.REQUEST_FILE_PATH, 'rt') as f:
+            r = f.readlines()
 
-            await ctx.send("Here are the requests:\n```\n" + "\n".join(r) + "\n```")
-        else:
-            raise commands.CommandNotFound
+        await ctx.send("Here are the requests:\n```\n" + "\n".join(r) + "\n```")
 
-    @commands.hybrid_command()
-    @commands.check(lambda interaction: utils.is_owner(interaction))
+    @commands.hybrid_command(hidden=True, server=utils.SERVER)
+    @commands.is_owner()
     async def verify_database(self, ctx: discord.ext.commands.Context):
-        # Verifies the database to be sure it still complies with the schema
-        if utils.is_owner(ctx):
-            await ctx.send("Verifying database....")
-            if utils.verify_json():
-                await ctx.send("Everything is perfect!")
-            else:
-                await ctx.send("The database is not good. Go make sure no server got wrongly "
-                               "written.")
+        """Verifies the database to be sure it still complies with the schema"""
+        await ctx.send("Verifying database....")
+        if utils.verify_json():
+            await ctx.send("Everything is perfect!")
         else:
-            raise commands.CommandNotFound
+            await ctx.send("The database is not good. Go make sure no server got wrongly "
+                           "written.")
 
-    @commands.hybrid_command()
-    @commands.check(lambda interaction: utils.is_owner(interaction))
+    @commands.hybrid_command(hidden=True, server=utils.SERVER)
+    @commands.is_owner()
     async def nb_active(self, ctx: discord.ext.commands.Context):
-        # Returns the number of servers using the hourly poster service
-        if utils.is_owner(ctx):
-            await ctx.send(
-                "There is " + str(len(utils.load_json(utils.DATABASE_FILE_PATH))) + "servers using the hourly poster "
-                                                                                    "service.")
-        else:
-            raise commands.CommandNotFound
+        """Returns the number of servers using the hourly poster service"""
+        await ctx.send("There is " + str(len(utils.load_json(utils.DATABASE_FILE_PATH))) + "servers using the hourly "
+                                                                                           "poster service.")
 
-    @commands.hybrid_command()
-    @commands.check(lambda interaction: utils.is_owner(interaction))
+    @commands.hybrid_command(hidden=True, server=utils.SERVER)
+    @commands.is_owner()
     async def kill(self, ctx: discord.ext.commands.Context):
-        if utils.is_owner(ctx):
-            # Close the bot connection
-            await ctx.send("Closing bot....")
+        """Close the bot connection"""
+        await ctx.send("Closing bot....")
 
-            await self.bot.close()
-        else:
-            raise commands.CommandNotFound
+        await self.bot.close()
 
-    @commands.hybrid_command()
+    @commands.hybrid_command(hidden=True, server=utils.SERVER)
+    @commands.is_owner()
     async def reload(self, ctx: discord.ext.commands.Context):
         """
         Reload comics.
 
         :param ctx: Discord message context.
         """
-        if utils.is_owner(ctx):
-            await ctx.send("Reloading comics....")
-            utils.strip_details = utils.load_json(utils.DETAILS_PATH)
-            await ctx.send("Reloaded comics!")
-        else:
-            raise commands.CommandNotFound
-
+        await ctx.send("Reloading comics....")
+        utils.strip_details = utils.load_json(utils.DETAILS_PATH)
+        await ctx.send("Reloaded comics!")
     # ---- End of commands ----#
     # ---- End of BDBot ----#
 
