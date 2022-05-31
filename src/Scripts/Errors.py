@@ -1,15 +1,14 @@
 import discord
 from discord.ext import commands
-from discord import app_commands
 
 
 class Errors(commands.Cog):
-    # Class responsible for handling errors
+    """Class responsible for handling errors"""
 
-    def __init__(self, client):
+    def __init__(self, bot: commands.Bot):
         # Constructor of the cog
         # Initialize all the properties of the cog
-        self.client = client
+        self.bot: commands.Bot = bot
 
     # For debugging purposes, you can make multi-line comments around this function to clearly see the errors in the
     # terminal. But you should at least not forget to remove the comments when your bot goes live ;)
@@ -31,5 +30,7 @@ class Errors(commands.Cog):
             await channel.send(f'Error not supported. Visit https://github.com/BBArikL/BDBot to report '
                                f'the issue. The error is: {error.__class__}: {error}')
 
-async def setup(client):  # Initialize the cog
-    await client.add_cog(Errors(client))
+
+async def setup(bot: commands.Bot):
+    """Initialize the cog"""
+    await bot.add_cog(Errors(bot))
