@@ -42,7 +42,7 @@ class PosterHandler(commands.Cog):
     @commands.hybrid_command(hidden=True, guilds=utils.SERVER)
     @commands.is_owner()
     async def force_hourly(self, ctx: commands.Context):
-        """Force the push of comics to all subscribed guilds
+        """Force the push of comics to all subscribed servers
 
         :param ctx: The context of the where the command was called.
         """
@@ -84,9 +84,9 @@ class PosterHandler(commands.Cog):
         self.logger.info("Finished automatic poster.")
 
     def get_comic_info_for_guild(self, guild_data: dict, comic_list: dict, post_days: list[str], hour: str):
-        """Get the comic info for each guild. This method mutate 'comic_list' for each comic.
+        """Get the comic info for each server. This method mutate 'comic_list' for each comic.
 
-        :param guild_data: All the information of the guild
+        :param guild_data: All the information of the server
         :param comic_list: The information about where to post each comic and how
         :param post_days: The days to check for
         :param hour: The current hour
@@ -111,7 +111,7 @@ class PosterHandler(commands.Cog):
                           hour: str) -> dict:
         """Set one comic to post on one channel
 
-        :param guild_data: All the information of the guild
+        :param guild_data: All the information of the server
         :param channel: The string of the ID of the channel to post the comics
         :param comic_list: The information about where to post each comic and how
         :param comics_to_add: The comic number to check for
@@ -299,7 +299,7 @@ class PosterHandler(commands.Cog):
             else:
                 await ctx.send("No comics to send!")
         else:  # Warns that no comic are available
-            await ctx.send("This guild is not subscribed to any comic!")
+            await ctx.send("This server is not subscribed to any comic!")
 
     @commands.hybrid_command(hidden=True, guilds=utils.SERVER)
     @commands.is_owner()

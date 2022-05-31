@@ -373,7 +373,7 @@ def modify_database(ctx: Union[commands.Context, discord.TextChannel, discord.Gu
                 else:
                     return "This comic is not registered for scheduled posts!"
         else:
-            return "This guild or channel is not registered for scheduled comics!"
+            return "This server or channel is not registered for scheduled comics!"
 
     elif use == remove_g or use == fremove_g:
         guild_id = ""
@@ -386,7 +386,7 @@ def modify_database(ctx: Union[commands.Context, discord.TextChannel, discord.Gu
         if guild_id in data:
             data.pop(guild_id)
         else:
-            return "This guild is not registered for any scheduled comics!"
+            return "This server is not registered for any scheduled comics!"
 
     elif use == remove_chan or use == fremove_chan:
         guild_id = str(ctx.guild.id)
@@ -403,7 +403,7 @@ def modify_database(ctx: Union[commands.Context, discord.TextChannel, discord.Gu
             else:
                 return "This channel is not registered for any scheduled comics!"
         else:
-            return "This guild is not registered for any scheduled comics!"
+            return "This server is not registered for any scheduled comics!"
 
     # Save the database
     save_json(data)
@@ -433,7 +433,7 @@ def set_role(ctx: commands.Context, role_id):
 
         return Success
     else:
-        return "This guild is not subscribed to any comic! Please subscribe to a comic before entering a role to add."
+        return "This server is not subscribed to any comic! Please subscribe to a comic before entering a role to add."
 
 
 def set_mention(ctx: commands.Context, choice):
@@ -444,7 +444,7 @@ def set_mention(ctx: commands.Context, choice):
 
     if gid in data:
         if not data[gid][mention]:
-            return "The base mention is disabled in this guild! " \
+            return "The base mention is disabled in this server! " \
                    "Re-enable the mention before daily post by using `bd!post_mention enable`."
 
         if only_daily in data[gid]:
@@ -454,11 +454,11 @@ def set_mention(ctx: commands.Context, choice):
 
             return Success
         else:
-            return "This guild has no role set up! Please use `bd!set_up <role>` to add a role before deciding if " \
+            return "This server has no role set up! Please use `bd!set_up <role>` to add a role before deciding if " \
                    "you want to be notified of all comic or only the daily ones."
     else:
-        return "This guild is not subscribed to any comic! Please subscribe to a comic before deciding when you want " \
-               "to be mentioned!"
+        return "This server is not subscribed to any comic! Please subscribe to a comic before deciding" \
+               " when you want to be mentioned!"
 
 
 def get_mention(ctx):
@@ -469,7 +469,7 @@ def get_mention(ctx):
 
     if gid in data:
         if not data[gid][mention]:
-            return "The base mention is disabled in this guild! " \
+            return "The base mention is disabled in this server! " \
                    "Re-enable the mention before hourly post by using `bd!post_mention enable`.", ""
 
         if only_daily in data[gid]:
@@ -479,11 +479,11 @@ def get_mention(ctx):
 
             return Success, men
         else:
-            return "This guild has no role set up! Please use `bd!set_role @<role>` to add a role before deciding if " \
-                   "you want to be notified of all comic or only the daily ones.", ""
+            return "This server has no role set up! Please use `bd!set_role @<role>` to add a role " \
+                   "before deciding if you want to be notified of all comic or only the daily ones.", ""
     else:
-        return "This guild is not subscribed to any comic! Please subscribe to a comic before deciding when you want " \
-               "to be mentioned!", ""
+        return "This server is not subscribed to any comic! Please subscribe to a comic before " \
+               "deciding when you want to be mentioned!", ""
 
 
 def remove_role(ctx):
@@ -502,9 +502,9 @@ def remove_role(ctx):
 
             return Success
         else:
-            return "This guild is not set to mention any role!"
+            return "This server is not set to mention any role!"
     else:
-        return "This guild is not subscribed to any comic! Please subscribe to a comic before managing the role " \
+        return "This server is not subscribed to any comic! Please subscribe to a comic before managing the role " \
                "mentions!"
 
 

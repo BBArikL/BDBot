@@ -45,7 +45,7 @@ class BDBot(commands.Cog):
         if os.getenv('DEBUG') == "True":
             guild = channel.guild
             command_tree.copy_global_to(guild=guild)
-            await channel.send(f"Syncing commands to guild {guild.name} ...")
+            await channel.send(f"Syncing commands to server {guild.name} ...")
         else:
             await channel.send("Syncing global commands...")
 
@@ -181,7 +181,7 @@ class BDBot(commands.Cog):
         # Gets the number of guilds that the bot is in (for analytics)
         if utils.is_owner(ctx):
             await ctx.send(
-                f"The bot is in {len(self.bot.guilds)} guilds. Trying to update status on Top.gg.....")
+                f"The bot is in {len(self.bot.guilds)} servers. Trying to update status on Top.gg.....")
 
             """try:
                 await self.topggpy.post_guild_count()
@@ -191,6 +191,7 @@ class BDBot(commands.Cog):
 
     @commands.hybrid_command()
     async def request(self, ctx: discord.ext.commands.Context, *, param: str = ""):
+        """Request something from the developer!"""
         # Adds a request to the database
 
         # Tries to get rid of ANSI codes while not destroying the comment itself
@@ -271,9 +272,9 @@ class BDBot(commands.Cog):
                 for embed in embeds:
                     await ctx.send(embed=embed)
             else:
-                await ctx.send("This guild is not subscribed to any comic!")
+                await ctx.send("This server is not subscribed to any comic!")
         else:
-            await ctx.send("This guild is not subscribed to any comic!")
+            await ctx.send("This server is not subscribed to any comic!")
 
     @commands.hybrid_command()
     async def ping(self, ctx: discord.ext.commands.Context):
