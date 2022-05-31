@@ -4,16 +4,17 @@ from src import utils
 
 
 class Help(commands.Cog):
-    # Class responsible for sending help embeds
+    """Class responsible for sending help embeds"""
 
-    def __init__(self, client):
-        # Constructor of the cog
-        # Initialize all the properties of the cog
-        self.client = client
+    def __init__(self, bot: commands.Bot):
+        """Constructor of the cog
 
-    # @commands.command(invoke_without_command=True, case_insensitive=True)
+        Initialize all the properties of the cog"""
+        self.client = bot
+
     @commands.hybrid_group()
-    async def help(self, ctx):  # Custom Help command
+    async def help(self, ctx):
+        """Help for BDBot"""
         strips = utils.strip_details
         embed = discord.Embed(title="BDBot!")
 
@@ -33,8 +34,8 @@ class Help(commands.Cog):
                 embed.add_field(name=strips[strip]['Name'], value=f"{strips[strip]['Helptxt']}\nAliases: "
                                                                   f"{strips[strip]['Aliases']} / random "
                                                                   f"/ # or date of comic.")
-        embed.add_field(name="Daily comics commands.",
-                        value="Use /help daily to see available commands for daily comics. "
+        embed.add_field(name="Hourly comics commands.",
+                        value="Use /help hourly to see available commands for daily comics. "
                               "Post daily at 6:00 AM UTC.")
 
         embed.add_field(name="Request", value="Have a request for the bot? Post your request at "
@@ -56,7 +57,8 @@ class Help(commands.Cog):
         await ctx.send(embed=embed)
 
     @help.command()
-    async def daily(self, ctx):  # help for daily commands # todo revise command name
+    async def hourly(self, ctx):
+        """Help for hourly commands"""
         embed = discord.Embed(title="Daily commands!", description="Date and hour are optional arguments that can "
                                                                    "specify when the the bot should send the comic. A "
                                                                    "date should be one of the seven days of the week"
@@ -91,15 +93,22 @@ class Help(commands.Cog):
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.hybrid_command()
     async def new(self, ctx):
+        """New features of the bot"""
         embed = discord.Embed(title="New feature", description="Find out what new features have been implemented since "
                                                                "the last update!")
         embed.add_field(name="Thanks", value="First, I want to take a moment to thank all of you who use BDBot to "
                                              "view your favorite comics! It recently got approved by Discord and also "
                                              "has exceeded the 100 server limit which is phenomenal! Thank you again "
                                              "for your trust into this project! :)")
-        embed.add_field(name="New comics", value="The new comics are: .....")
+        embed.add_field(name="New comics", value="The new comics are: Pearls before Swine, Chibird, War and Peas, "
+                                                 "Humans are stupid, Maximumble, Poorly Drawn Lines, Heathcliff, "
+                                                 "Andy Capp")
+        embed.add_field(name="Latest comics", value="You want to have only the latest comics? Put 'latest' in the "
+                                                    "date parameter of any comic when adding it to the subscription "
+                                                    "list and the bot will aunly give you back the latest comics when "
+                                                    "they are available!")
         embed.add_field(name="Post", value="Missed your comics or just want to test that the bot can properly send "
                                            "all comics for a given time? Use `/post <date> <time>` to test it!")
         embed.add_field(name="Enable/Disable post announcement", value="Tired of seeing the announcement of the bot "
@@ -118,8 +127,9 @@ class Help(commands.Cog):
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.hybrid_command()
     async def faq(self, ctx):
+        """FAQ of the bot"""
         embed = discord.Embed(title="FAQ", description="Have a question on the bot? This is the place you are looking "
                                                        "for!")
         embed.add_field(name="What is this bot?", value="This bot is a helper to keep up with your favorite comics! It "
@@ -167,32 +177,31 @@ class Help(commands.Cog):
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
 
-    # Gocomics help embed
     @help.command(name="gocomics")
     async def gocomics(self, ctx):
+        """Gocomics help"""
         website_name = "Gocomics"
         website = "https://www.gocomics.com/"
 
         await utils.website_specific_embed(ctx, website_name, website)
 
-    # Comics Kingdom help embed
     @help.command(name="comicskingdom")
     async def comicskingdom(self, ctx):
+        """Comics Kingdom help"""
         website_name = "Comics Kingdom"
         website = "https://comicskingdom.com/"
 
         await utils.website_specific_embed(ctx, website_name, website)
 
-    # Webtoons help embed
     @help.command(name="webtoons")
     async def webtoons(self, ctx: discord.ext.commands.Context):
+        """Webtoons help"""
         website_name = "Webtoons"
         website = "https://www.webtoons.com/en/"
 
         await utils.website_specific_embed(ctx, website_name, website)
 
-    # Create an embed with all the specific comics from a website
 
-
-async def setup(client):  # Initialize the cog
-    await client.add_cog(Help(client))
+async def setup(bot: commands.Bot):
+    """Initialize the cog"""
+    await bot.add_cog(Help(bot))

@@ -685,6 +685,13 @@ def is_owner(ctx: commands.Context):  # Returns if it is the owner who did the c
 
 
 async def website_specific_embed(ctx: commands.Context, website_name, website):
+    """Create an embed with all the specific comics from a website
+
+    :param ctx:
+    :param website_name:
+    :param website:
+    :return:
+    """
     nb_per_embed = 25
     strips = strip_details
     i = 0
