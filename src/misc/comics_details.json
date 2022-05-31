@@ -571,5 +571,19 @@
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/crhea/large_rec-201701251555.jpg",
         "Aliases": "'Heathcliff', 'heathcliff', 'Hea', 'hea'",
         "Helptxt": "Follow Heathcliff, the first internet orange cat!"
+    },
+    "AndyCapp": {
+        "Name": "Andy Capp",
+        "Author": "Reg Smythe",
+        "Web_name": "andycapp",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Andy and his wife, Flo, live out the epitome of functional dysfunction. From the pub to the bedroom, Andy\u2019s misadventures paint an indelible portrait of an extremely British battle of the sexes. Join Andy and Flo as they bicker their way through life. Their banter can be hostile, caring, sarcastic and adorable: the perfect ingredients for a lasting marriage.\nWebsite: https://www.creators.com/read/andy-capp\nFacebook: https://www.facebook.com/WorldofAndyCapp/\nTwitter: https://twitter.com/WorldofAndyCapp\nTumblr: https://starmirrorcartoons.tumblr.com/\nAbout: https://www.gocomics.com/andycapp/about",
+        "Position": 41,
+        "First_date": "2002, 1, 1",
+        "Color": "249E44",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/crcap/large_rec-201701251555.jpg",
+        "Aliases": "'AndyCapp', 'andycapp', 'And', 'and'",
+        "Helptxt": "Join Andy and Flo Capp through their adventures!"
     }
 }
