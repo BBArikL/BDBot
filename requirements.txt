@@ -4,6 +4,6 @@ InquirerPy==0.3.3
 jsonschema==3.2.0
 python-dotenv==0.20.0
 randomtimestamp==2.2
-requests==2.25.1
+requests==2.27.1
 rss_parser==0.2.3
 topggpy==1.4.0
