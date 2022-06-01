@@ -1,6 +1,7 @@
 import logging
 import math
 import discord
+from discord import ui
 from discord.ext import commands
 from datetime import datetime, timezone
 import os
@@ -27,11 +28,11 @@ class BDBot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        """Change the bot activity"""
+        """On start of the bot"""
+        # Change the bot activity
         await self.bot.change_presence(status=discord.Status.online,
                                        activity=discord.Activity(type=discord.ActivityType.listening,
                                                                  name=f'/help in {len(self.bot.guilds)} servers'))
-
         self.logger.log(logging.INFO, "Logged in as {0.user}".format(self.bot))
         channel_id: int = int(os.getenv('PRIVATE_CHANNEL_SUPPORT_ID'))
 
@@ -213,20 +214,11 @@ class BDBot(commands.Cog):
                                        activity=discord.Activity(type=discord.ActivityType.listening,
                                                                  name=f'/help in {len(self.bot.guilds)} servers'))
 
-    @commands.hybrid_command()
-    async def request(self, ctx: discord.ext.commands.Context, *, param: str = ""):
+    @discord.app_commands.command()
+    async def request(self, ctx: discord.Interaction):
         """Request something from the developer!"""
         # Adds a request to the database
-
-        # Tries to get rid of ANSI codes while not destroying the comment itself
-        param = re.escape(param)
-        param = re.sub("[\\^]*\\\\\\[*", "", param)
-
-        with open(utils.REQUEST_FILE_PATH, "at") as requests:
-            requests.write(f'Request: "{param}" by {ctx.message.author.name}#{ctx.message.author.discriminator} on '
-                           f'{datetime.now(timezone.utc)}\n')
-
-        await ctx.send("Request saved! Thank you for using BDBot!")
+        await ctx.response.send_modal(BotRequest())
 
     @commands.hybrid_command()
     async def request_delete(self, ctx: discord.ext.commands.Context):
@@ -382,6 +374,16 @@ class BDBot(commands.Cog):
         await ctx.send("Reloaded comics!")
     # ---- End of commands ----#
     # ---- End of BDBot ----#
+
+
+class BotRequest(ui.Modal, title="Request"):
+    """Request for the bot"""
+    request = ui.TextInput(label="Request")
+
+    async def on_submit(self, interaction: discord.Interaction) -> None:
+        utils.save_request(self.request.value, interaction.user.name,
+                           interaction.user.discriminator)
+        await interaction.response.send_message("Request saved! Thank you for using BDBot!")
 
 
 async def setup(client):  # Initialize the cog
