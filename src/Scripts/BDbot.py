@@ -376,6 +376,9 @@ class BDBot(commands.Cog):
         """
         await ctx.send("Reloading comics....")
         utils.strip_details = utils.load_json(utils.DETAILS_PATH)
+        utils.GOCOMICS_EMBED = None
+        utils.KINGDOM_EMBED = None
+        utils.WEBTOONS_EMBED = None
         await ctx.send("Reloaded comics!")
     # ---- End of commands ----#
     # ---- End of BDBot ----#

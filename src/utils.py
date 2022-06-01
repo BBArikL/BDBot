@@ -1,4 +1,5 @@
 # Collection of static methods
+import asyncio
 import logging
 import os
 import re
@@ -39,9 +40,16 @@ strip_details: dict = {}
 link_cache: dict = {}
 random_footers: list[str] = []
 SERVER = None
+HELP_EMBED: Optional[discord.Embed] = None
+HOURLY_EMBED: Optional[discord.Embed] = None
+NEW_EMBED: Optional[discord.Embed] = None
+FAQ_EMBED: Optional[discord.Embed] = None
+GOCOMICS_EMBED: Optional[list[discord.Embed]] = None
+KINGDOM_EMBED: Optional[list[discord.Embed]] = None
+WEBTOONS_EMBED: Optional[list[discord.Embed]] = None
 
 
-def create_embed(comic_details: dict = None):
+def create_embed(comic_details: Optional[dict] = None):
     """Create a comic embed with the given details
 
     :param comic_details:
@@ -800,20 +808,20 @@ async def send_request_error(ctx: commands.Context):
     await ctx.send("Request not understood. Try '/help' for usable commands.")
 
 
-async def website_specific_embed(ctx: commands.Context, website_name: str, website: str):
-    """Create an embed with all the specific comics from a website
+def website_specific_embed(website_name: str, website: str, nb_per_embed=5) -> list[discord.Embed]:
+    """Create embeds with all the specific comics from a website
 
-    :param ctx:
+    :param nb_per_embed:
     :param website_name:
     :param website:
-    :return:
+    :return: The list of embeds
     """
-    nb_per_embed = 25
     strips = strip_details
     i = 0
+    embeds: list[discord.Embed] = []
 
     embed = discord.Embed(title=f"{website_name}!")
-    embed.set_footer(text=get_random_footer())
+    embeds.append(embed)
     for strip in strips:
         if strips[strip]["Main_website"] == website:
             i += 1
@@ -821,14 +829,62 @@ async def website_specific_embed(ctx: commands.Context, website_name: str, websi
             embed.add_field(name=strips[strip]['Name'], value=f"{strips[strip]['Helptxt']}\nAliases: "
                                                               f"{strips[strip]['Aliases']}")
             if i == nb_per_embed:
-                await ctx.send(embed=embed)
                 i = 0
                 # Reset the embed to create a new one
                 embed = discord.Embed(title=f"{website_name}!")
-                embed.set_footer(text=get_random_footer())
+                embeds.append(embed)
 
-    if i != 0:
-        await ctx.send(embed=embed)
+    return embeds
+
+
+async def send_website_embed(ctx: commands.Context, bot: commands.Bot, embeds: list[discord.Embed], buttons=None):
+    """Send the embeds
+
+    From https://stackoverflow.com/questions/61787520/i-want-to-make-a-multi-page-help-command-using-discord-py
+
+    :param bot:
+    :param buttons:
+    :param ctx: Discord context
+    :param embeds: The list of embeds to send
+    """
+    if buttons is None:
+        buttons = ["\u25c0", "\u25b6"]
+    pages = len(embeds)
+    current = 1
+
+    map(lambda embed: embed.add_field(text=get_random_footer()), embeds)
+
+    msg = await ctx.send(embed=embeds[current-1])
+    await msg.add_reaction(buttons[0])
+    await msg.add_reaction(buttons[1])
+
+    def check(react, usr):
+        return usr == ctx.message.author and str(react) in buttons
+
+    while True:
+        try:
+            reaction, user = await bot.wait_for("reaction_add", timeout=60, check=check)
+            # waiting for a reaction to be added - times out after x seconds, 60 in this
+            # example
+
+            if str(reaction.emoji) == buttons[1] and current != pages:
+                current += 1
+                await msg.edit(embed=embeds[current-1])
+                await msg.remove_reaction(reaction, user)
+
+            elif str(reaction.emoji) == buttons[0] and current > 1:
+                current -= 1
+                await msg.edit(embed=embeds[current-1])
+                await msg.remove_reaction(reaction, user)
+
+            else:
+                await msg.remove_reaction(reaction, user)
+                # removes reactions if the user tries to go forward on the last page or
+                # backwards on the first page
+        except asyncio.TimeoutError:
+            await msg.delete()
+            break
+            # ending the loop if user doesn't react after x seconds
 
 
 # -------------------------------------------------------------------------------------------------------------------
