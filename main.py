@@ -17,8 +17,8 @@ def main():
 
     intents = discord.Intents.default()
     intents.message_content = True
-    bot: discord.ext.commands.Bot = commands.Bot(intents=intents, command_prefix="bd!")
-    bot.remove_command("help")  # Removes the default "help" function to replace it by our own
+    bot: discord.ext.commands.Bot = commands.Bot(intents=intents, command_prefix="bd!",
+                                                 help_command=None)
 
     logger = logging.getLogger('discord')
     logger.setLevel(logging.DEBUG if os.getenv('DEBUG') == "True" else logging.INFO)
