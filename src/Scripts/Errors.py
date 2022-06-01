@@ -23,7 +23,7 @@ class Errors(commands.Cog):
             await channel.send('You do not have the permission to do that.')
         elif isinstance(error, commands.errors.HybridCommandError):
             await channel.send('The command failed. Please report this issue on Github here: '
-                               'https://github.com/BBArikL/BDBot ')
+                               f'https://github.com/BBArikL/BDBot . The error is: {error.__class__}: {error}')
         elif isinstance(error, commands.errors.NotOwner):
             await channel.send('You do not own this bot.')
         else:  # Not supported errors
