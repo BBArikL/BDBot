@@ -21,8 +21,7 @@ class BDBot(commands.Cog):
         Initialize all the properties of the cog"""
         self.strip_details: dict = utils.load_json(utils.DETAILS_PATH)
         self.bot: commands.Bot = bot
-        dbl_token: str = str(os.getenv('TOP_GG_TOKEN'))  # top.gg token
-        # self.topggpy = topgg.DBLClient(bot, dbl_token)
+        self.topggpy = None
         self.start_time: datetime = datetime.now(timezone.utc)
         self.logger: logging.Logger = logging.getLogger('discord')
 
@@ -200,11 +199,14 @@ class BDBot(commands.Cog):
         await ctx.send(
             f"The bot is in {len(self.bot.guilds)} servers. Trying to update status on Top.gg.....")
 
-        """try:
+        if self.topggpy is None:
+            self.topggpy = topgg.DBLClient(self.bot, str(os.getenv('TOP_GG_TOKEN')))
+
+        try:
             await self.topggpy.post_guild_count()
             await ctx.send(f'Posted server count ({self.topggpy.guild_count})')
         except Exception as e:
-            await ctx.send('Failed to post server count\n{}: {}'.format(type(e).__name__, e))"""
+            await ctx.send('Failed to post server count\n{}: {}'.format(type(e).__name__, e))
 
         await ctx.send("Updating status...")
         await self.bot.change_presence(status=discord.Status.online,
@@ -265,6 +267,7 @@ class BDBot(commands.Cog):
         if guild_data is not None:
             comic_list = []
             comic_values = list(utils.strip_details.values())
+            print(comic_values)
 
             for channel in guild_data["channels"]:
                 for day in guild_data["channels"][channel]["date"]:
