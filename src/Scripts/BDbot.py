@@ -87,8 +87,8 @@ class BDBot(commands.Cog):
 
     @commands.hybrid_command()
     @commands.has_permissions(manage_guild=True)  # Only mods can add comics
-    async def add_all(self, ctx: discord.ext.commands.Context, date: str = "", hour: str = ""):
-        """Adds all comics to a specific channel. Preferred way to add all comics instead of using /all. Mods only"""
+    async def add_all(self, ctx: discord.ext.commands.Context, date: str = None, hour: str = None):
+        """Add all comics to a specific channel. Preferred way to add all comics. Mods only"""
         status = utils.add_all(ctx, date, hour)
         if status == utils.Success:
             await ctx.send("All comics added successfully!")
@@ -98,7 +98,7 @@ class BDBot(commands.Cog):
     @commands.hybrid_command()
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
     async def remove_all(self, ctx: discord.ext.commands.Context):
-        """Remove the guild from the database. Mods only"""
+        """Remove the guild from the database. Preferred way to remove all comics. Mods only"""
         status = utils.remove_guild(ctx)
 
         if status == utils.Success:
@@ -266,8 +266,7 @@ class BDBot(commands.Cog):
 
         if guild_data is not None:
             comic_list = []
-            comic_values = list(utils.strip_details.values())
-            print(comic_values)
+            comic_values: list[dict] = list(utils.strip_details.values())
 
             for channel in guild_data["channels"]:
                 for day in guild_data["channels"][channel]["date"]:
@@ -327,7 +326,7 @@ class BDBot(commands.Cog):
 
     @commands.hybrid_command()
     async def status(self, ctx: discord.ext.commands.Context):
-        # Status of the bot
+        """Get status of the bot"""
         await ctx.send(
             "The bot is online, waiting for comics to send. Report any errors by git (`/git`) or by `/request "
             "<your request>`.")
@@ -335,7 +334,7 @@ class BDBot(commands.Cog):
     @commands.hybrid_command(hidden=True, server=utils.SERVER)
     @commands.is_owner()
     async def vrequest(self, ctx: discord.ext.commands.Context):
-        # Verifies the requests
+        """Verifies the requests"""
         with open(utils.REQUEST_FILE_PATH, 'rt') as f:
             r = f.readlines()
 
