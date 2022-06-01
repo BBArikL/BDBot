@@ -276,6 +276,8 @@ class BDBot(commands.Cog):
                             chan = self.bot.get_channel(int(channel))
                             if chan is not None:
                                 chan = chan.mention
+                            else:
+                                chan = channel
 
                             comic_list.append({
                                 "Name": comic_name,
