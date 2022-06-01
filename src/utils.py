@@ -1,5 +1,6 @@
 # Collection of static methods
 import logging
+import os
 import re
 import discord
 import random
@@ -975,14 +976,21 @@ def create_link_cache() -> None:
     save_json(link_cache, COMIC_LATEST_LINKS_PATH)
 
 
-# Get a random footer
 def get_random_footer() -> str:
+    """Get a random footer
+
+    :return:
+    """
     rnd_footer = random.choice(get_footers())
 
     return rnd_footer.replace('\n', '')
 
 
 def get_footers() -> list[str]:
+    """
+
+    :return:
+    """
     if random_footers is None or random_footers == []:
         return open(FOOTERS_FILE_PATH, 'rt').readlines()
     else:
@@ -990,6 +998,14 @@ def get_footers() -> list[str]:
 
 
 def parse_all(date=None, hour=None, default_date="D", default_hour=6) -> (str, str):
+    """
+
+    :param date:
+    :param hour:
+    :param default_date:
+    :param default_hour:
+    :return:
+    """
     final_date = default_date
     final_hour = default_hour
 
@@ -1000,6 +1016,13 @@ def parse_all(date=None, hour=None, default_date="D", default_hour=6) -> (str, s
 
 
 def parse_try(to_parse, final_date, final_hour) -> (str, str):
+    """
+
+    :param to_parse:
+    :param final_date:
+    :param final_hour:
+    :return:
+    """
     if to_parse is not None:
         if len(str(to_parse)) >= 2:
             date = to_parse[0:1].capitalize() + to_parse[1:2].lower()
@@ -1021,4 +1044,19 @@ def parse_try(to_parse, final_date, final_hour) -> (str, str):
 
 
 def check_if_latest_link(comic_name: str, current_link: str) -> bool:
+    """
+
+    :param comic_name:
+    :param current_link:
+    :return:
+    """
     return current_link != link_cache[comic_name]
+
+
+def write_pid(file_path: str):
+    """Write pid to a file
+
+    :param file_path: The path to the pid file
+    """
+    with open(file_path, "xt") as f:
+        f.write(str(os.getpid()))

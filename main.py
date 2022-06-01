@@ -27,6 +27,14 @@ def main():
     handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
     logger.addHandler(handler)
 
+    logger.info("Writing pid file...")
+    pid_file = "bdbot.pid"
+    try:
+        utils.write_pid(pid_file)
+        logger.info(f"Wrote pid to file {pid_file}")
+    except OSError:
+        logger.info(f"Could not write to pid file {pid_file}")
+
     logger.info("Starting Bot...")
 
     asyncio.run(run(bot, logger))  # Runs the bot with the private bot token
