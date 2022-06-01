@@ -1121,7 +1121,7 @@ def write_pid(file_path: str):
 def save_request(req: str, author: str, discriminator: Optional[str] = ""):
     # Tries to get rid of ANSI codes while not destroying the comment itself
     param = re.escape(req)
-    param = re.sub("[\\^^]*\\\\\\[*", "", param)
+    param = re.sub("[\\^]*\\\\\\[*", "", param)
 
     with open(REQUEST_FILE_PATH, "at") as requests:
         requests.write(f'Request: "{param}" by {author}#{discriminator} on '
