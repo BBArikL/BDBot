@@ -99,8 +99,6 @@ def create_embed(comic_details: Optional[dict] = None):
         embed.add_field(name="We could not find a comic at this date / number :thinking:....",
                         value="Try another date / number!")
 
-        embed.set_footer(text=get_random_footer())
-
         return embed
 
 
@@ -796,7 +794,7 @@ async def send_comic_embed(ctx: commands.Context, comic_details: dict):
     """
     embed = create_embed(comic_details=comic_details)  # Creates the embed
 
-    await ctx.send(embed=embed)  # Send the comic
+    await send_embed(ctx, None, [embed])  # Send the comic
 
 
 async def send_request_error(ctx: commands.Context):
@@ -826,8 +824,7 @@ def website_specific_embed(website_name: str, website: str, nb_per_embed=5) -> l
         if strips[strip]["Main_website"] == website:
             i += 1
 
-            embed.add_field(name=strips[strip]['Name'], value=f"{strips[strip]['Helptxt']}\nAliases: "
-                                                              f"{strips[strip]['Aliases']}")
+            embed.add_field(name=strips[strip]['Name'], value=strips[strip]['Helptxt'])
             if i == nb_per_embed:
                 i = 0
                 # Reset the embed to create a new one
@@ -837,54 +834,69 @@ def website_specific_embed(website_name: str, website: str, nb_per_embed=5) -> l
     return embeds
 
 
-async def send_website_embed(ctx: commands.Context, bot: commands.Bot, embeds: list[discord.Embed], buttons=None):
-    """Send the embeds
+async def send_embed(ctx: Union[commands.Context, discord.abc.GuildChannel], bot: Optional[commands.Bot],
+                     embeds: list[discord.Embed], btn_left: str = "\u25c0", btn_right: str = "\u25b6",
+                     btn_cancel: str = "\u274C", remove_after: bool = True):
+    """Send embeds, can be of multiple pages
 
     From https://stackoverflow.com/questions/61787520/i-want-to-make-a-multi-page-help-command-using-discord-py
 
-    :param bot:
-    :param buttons:
     :param ctx: Discord context
+    :param bot:
     :param embeds: The list of embeds to send
+    :param btn_left:
+    :param btn_right:
+    :param btn_cancel:
+    :param remove_after:
     """
-    if buttons is None:
-        buttons = ["\u25c0", "\u25b6"]
+    buttons = [btn_right, btn_cancel, btn_left]
     pages = len(embeds)
     current = 1
 
-    map(lambda embed: embed.add_field(text=get_random_footer()), embeds)
+    for embed in embeds:
+        embed.set_footer(text=get_random_footer())
 
     msg = await ctx.send(embed=embeds[current-1])
-    await msg.add_reaction(buttons[0])
-    await msg.add_reaction(buttons[1])
 
-    def check(react, usr):
-        return usr == ctx.message.author and str(react) in buttons
+    if pages > 1:  # For more than one embed
+        await msg.add_reaction(btn_left)
+        await msg.add_reaction(btn_right)
+        await msg.add_reaction(btn_cancel)
 
-    while True:
-        try:
-            reaction, user = await bot.wait_for("reaction_add", timeout=60, check=check)
-            # waiting for a reaction to be added - times out after x seconds, 60 in this
-            # example
+        def check(react, usr):
+            return usr == ctx.message.author and str(react) in buttons
 
-            if str(reaction.emoji) == buttons[1] and current != pages:
-                current += 1
-                await msg.edit(embed=embeds[current-1])
-                await msg.remove_reaction(reaction, user)
+        while True:
+            try:
+                reaction, user = await bot.wait_for("reaction_add", timeout=60, check=check)
+                # waiting for a reaction to be added - times out after x seconds, 60 in this example
 
-            elif str(reaction.emoji) == buttons[0] and current > 1:
-                current -= 1
-                await msg.edit(embed=embeds[current-1])
-                await msg.remove_reaction(reaction, user)
+                if str(reaction.emoji) == btn_right and current != pages:
+                    current += 1
+                    await msg.edit(embed=embeds[current-1])
+                    await msg.remove_reaction(reaction, user)
 
-            else:
-                await msg.remove_reaction(reaction, user)
-                # removes reactions if the user tries to go forward on the last page or
-                # backwards on the first page
-        except asyncio.TimeoutError:
-            await msg.delete()
-            break
-            # ending the loop if user doesn't react after x seconds
+                elif str(reaction.emoji) == btn_left and current > 1:
+                    current -= 1
+                    await msg.edit(embed=embeds[current-1])
+                    await msg.remove_reaction(reaction, user)
+
+                elif str(reaction.emoji) == btn_cancel:
+                    await msg.remove_reaction(reaction, user)
+                    await msg.delete()
+                    break
+                else:
+                    await msg.remove_reaction(reaction, user)
+                    # removes reactions if the user tries to go forward on the last page or
+                    # backwards on the first page
+            except asyncio.TimeoutError:
+                if remove_after:
+                    await msg.delete()
+                else:
+                    for button in buttons:
+                        await msg.remove_reaction(button, bot.user)
+                break
+                # ending the loop if user doesn't react after x seconds
 
 
 # -------------------------------------------------------------------------------------------------------------------

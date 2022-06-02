@@ -230,7 +230,7 @@ class Help(commands.Cog):
         else:
             embeds = utils.GOCOMICS_EMBED
 
-        await utils.send_website_embed(ctx, self.bot, embeds)
+        await utils.send_embed(ctx, self.bot, embeds)
 
     @help.command(name="comicskingdom")
     async def comicskingdom(self, ctx: commands.Context):
@@ -245,7 +245,7 @@ class Help(commands.Cog):
         else:
             embeds = utils.KINGDOM_EMBED
 
-        await utils.send_website_embed(ctx, self.bot, embeds)
+        await utils.send_embed(ctx, self.bot, embeds)
 
     @help.command(name="webtoons")
     async def webtoons(self, ctx: discord.ext.commands.Context):
@@ -260,7 +260,7 @@ class Help(commands.Cog):
         else:
             embeds = utils.WEBTOONS_EMBED
 
-        await utils.send_website_embed(ctx, self.bot, embeds)
+        await utils.send_embed(ctx, self.bot, embeds)
 
 
 async def setup(bot: commands.Bot):

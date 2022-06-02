@@ -18,7 +18,7 @@ MAX_TRIES = 15
 
 
 def get_new_comic_details(strip_details: dict, param: str, comic_date: Optional[Union[datetime, int]] = None,
-                          latest_check: Optional[bool] = False) -> Optional[dict[str, str]]:
+                          latest_check: Optional[bool] = False) -> Optional[dict[str, Union[str, int, bool]]]:
     """Gets the comics details from the internet
 
     :param strip_details:

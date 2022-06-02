@@ -240,7 +240,7 @@ class PosterHandler(commands.Cog):
                                         f" {role_mention}")
                         comic_list[channel]["hasBeenMentioned"] = True  # Sets the channel as already mentioned
 
-                    await chan.send(embed=embed)  # Sends the comic embed (most important)
+                    await utils.send_embed(chan, None, [embed])  # Sends the comic embed (most important)
                     return 1
                 except Exception as e:
                     # There is too many things that can go wrong here, just catch everything
@@ -284,7 +284,7 @@ class PosterHandler(commands.Cog):
             # Gets date and hour of force post
             final_date, final_hour = utils.parse_all(date, hour, default_date=utils.get_today(),
                                                      default_hour=utils.get_hour())
-            await ctx.send(f"Looking for comics to post for date {utils.match_date[final_date]} at "
+            await ctx.send(f"Looking for comics to post for date: {utils.match_date[final_date]} at "
                            f"{final_hour}h UTC")
             post_days = ["D", final_date]
 
