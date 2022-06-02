@@ -1114,7 +1114,7 @@ def write_pid(file_path: str):
 
     :param file_path: The path to the pid file
     """
-    with open(file_path, "xt") as f:
+    with open(file_path, "wt") as f:
         f.write(str(os.getpid()))
 
 
