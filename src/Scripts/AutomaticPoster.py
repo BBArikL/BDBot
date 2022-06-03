@@ -26,12 +26,9 @@ class PosterHandler(commands.Cog):
     @commands.is_owner()
     async def start_hourly(self, ctx: commands.Context):
         """Starts the PosterHandler loop"""
-        if utils.is_owner(ctx):
-            await ctx.send("Hourly loop started! Hourly comics are posted at each hour.")
+        await ctx.send("Hourly loop started! Hourly comics are posted at each hour.")
 
-            await PosterHandler.wait_for_next_hour(self)
-        else:
-            raise commands.CommandNotFound
+        await PosterHandler.wait_for_next_hour(self)
 
     async def wait_for_next_hour(self):
         """Wait for the time to restart the hourly loop"""
@@ -46,10 +43,7 @@ class PosterHandler(commands.Cog):
 
         :param ctx: The context of the where the command was called.
         """
-        if utils.is_owner(ctx):
-            await self.hourly()
-        else:
-            raise commands.CommandNotFound
+        await self.hourly()
 
     @tasks.loop(hours=1)
     async def post_hourly(self):
@@ -308,12 +302,9 @@ class PosterHandler(commands.Cog):
 
         :param ctx: The context of the where the command was called.
         """
-        if utils.is_owner(ctx):
-            nb_removed = utils.clean_database(strict=True)
+        nb_removed = utils.clean_database(strict=True)
 
-            await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
-        else:
-            raise commands.CommandNotFound
+        await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
 
     @commands.hybrid_command(hidden=True, guilds=utils.SERVER)
     @commands.is_owner()
