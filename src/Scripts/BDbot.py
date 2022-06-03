@@ -328,17 +328,6 @@ class BDBot(commands.Cog):
 
     @commands.hybrid_command(hidden=True, server=utils.SERVER)
     @commands.is_owner()
-    async def verify_database(self, ctx: discord.ext.commands.Context):
-        """Verifies the database to be sure it still complies with the schema"""
-        await ctx.send("Verifying database....")
-        if utils.verify_json():
-            await ctx.send("Everything is perfect!")
-        else:
-            await ctx.send("The database is not good. Go make sure no server got wrongly "
-                           "written.")
-
-    @commands.hybrid_command(hidden=True, server=utils.SERVER)
-    @commands.is_owner()
     async def nb_active(self, ctx: discord.ext.commands.Context):
         """Returns the number of servers using the hourly poster service"""
         await ctx.send("There is " + str(len(utils.load_json(utils.DATABASE_FILE_PATH))) + "servers using the hourly "

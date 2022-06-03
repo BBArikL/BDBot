@@ -18,7 +18,6 @@ from os import path
 DETAILS_PATH = "src/misc/comics_details.json"
 FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
 DATABASE_FILE_PATH = "src/data/data.json"
-JSON_SCHEMA_PATH = "src/misc/databaseSchema.json"
 BACKUP_FILE_PATH = "src/data/backups/BACKUP_DATABASE_"
 REQUEST_FILE_PATH = "src/data/requests.txt"
 COMIC_LATEST_LINKS_PATH = "src/data/latest_comics.json"
@@ -752,18 +751,6 @@ def save_json(json_file: dict, file_path: str = DATABASE_FILE_PATH):
     """
     with open(file_path, 'w') as f:
         json.dump(json_file, f, indent=4)
-
-
-def verify_json():
-    """Verifies the database according to a particular json schema to assure the integrity of it"""
-    data = load_json(DATABASE_FILE_PATH)
-    schema = load_json(JSON_SCHEMA_PATH)
-
-    try:
-        validate(instance=data, schema=schema)
-        return True
-    except ValidationError:
-        return False
 
 
 def get_sub_status(ctx, position: int, database: Optional[dict] = None):
