@@ -254,31 +254,23 @@ class BDBot(commands.Cog):
     async def sub(self, ctx: discord.ext.commands.Context):
         """Checks if the server is subbed to any comic"""
         guild_data = utils.get_specific_guild_data(ctx)
-        max_fields = 25
-
+        max_fields = 5
+        hr = "Hour"
         if guild_data is not None:
             comic_list = []
             comic_values: list[dict] = list(utils.strip_details.values())
 
             for channel in guild_data["channels"]:
+
+                if "latest" in guild_data["channels"][channel]:
+                    for comic in guild_data["channels"][channel]["latest"]:
+                        comic_list = utils.add_comic_to_list(comic_values, comic, self.bot, channel, comic_list)
+
                 for day in guild_data["channels"][channel]["date"]:
                     for hour in guild_data["channels"][channel]["date"][day]:
                         for comic in guild_data["channels"][channel]["date"][day][hour]:
-                            comic_name = comic_values[comic]["Name"]
-
-                            # Check if channel exist
-                            chan = self.bot.get_channel(int(channel))
-                            if chan is not None:
-                                chan = chan.mention
-                            else:
-                                chan = channel
-
-                            comic_list.append({
-                                "Name": comic_name,
-                                "Hour": hour,
-                                "Date": day,
-                                "Channel": chan
-                            })
+                            comic_list = utils.add_comic_to_list(comic_values, comic, self.bot, channel, comic_list,
+                                                                 hour, day)
 
             if len(comic_list) > 0:
                 nb_fields = 0
@@ -289,12 +281,14 @@ class BDBot(commands.Cog):
                         nb_fields = 0
                         embeds.append(discord.Embed(title="This server is subscribed to:"))
 
-                    embeds[-1].add_field(name=comic['Name'], value=f"Each {matching_date[comic['Date']]} at "
-                                                                   f"{comic['Hour']} h UTC in channel"
-                                                                   f" {comic['Channel']}")
+                    mtch_date = matching_date[comic['Date']]
+                    embeds[-1].add_field(name=comic['Name'],
+                                         value=f"{'Each ' if mtch_date != 'Latest' else ''}{mtch_date}"
+                                               f"{f' at {comic[hr]} h UTC' if mtch_date != 'Latest' else ''} in "
+                                               f"channel {comic['Channel']}")
                     nb_fields += 1
-                for embed in embeds:
-                    await ctx.send(embed=embed)
+
+                await utils.send_embed(ctx, self.bot, embeds, remove_after=False)
             else:
                 await ctx.send("This server is not subscribed to any comic!")
         else:

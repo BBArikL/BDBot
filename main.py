@@ -48,7 +48,7 @@ async def run(bot: commands.Bot, logger: logging.Logger):
     """
     logger.info("Setting up private server object")
     try:
-        utils.SERVER = discord.Object(id=os.getenv("PRIVATE_SERVER_SUPPORT_ID"))
+        utils.SERVER = discord.Object(id=int(os.getenv("PRIVATE_SERVER_SUPPORT_ID")))
         logger.info("Private server set!")
     except TypeError:
         logger.info("Could not set private server object, please be wary that owner commands are usable everywhere")

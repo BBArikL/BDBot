@@ -767,7 +767,13 @@ def verify_json():
 
 
 def get_sub_status(ctx, position: int, database: Optional[dict] = None):
-    """Check if the comic is subscribed to this guild"""
+    """Check if the comic is subscribed to this guild
+
+    :param ctx:
+    :param position:
+    :param database:
+    :return:
+    """
     if database is None:  # Gets database if needed
         database = load_json(DATABASE_FILE_PATH)
 
@@ -776,6 +782,11 @@ def get_sub_status(ctx, position: int, database: Optional[dict] = None):
     if guild_id in database:
         guild_data = database[guild_id]
         for channel in guild_data["channels"]:
+
+            if "latest" in guild_data["channels"][channel]:
+                if position in guild_data["channels"][channel]["latest"]:
+                    return True
+
             for day in guild_data["channels"][channel]["date"]:
                 for hour in guild_data["channels"][channel]["date"][day]:
                     if position in guild_data["channels"][channel]["date"][day][hour]:
@@ -783,6 +794,27 @@ def get_sub_status(ctx, position: int, database: Optional[dict] = None):
         return False
     else:
         return False
+
+
+def add_comic_to_list(comic_values: list[dict], comic: int, bot: commands.Bot, channel: str, comic_list: list[dict],
+                      hour: str = "", day: str = "La") -> list[dict]:
+    comic_name = comic_values[comic]["Name"]
+
+    # Check if channel exist
+    chan = bot.get_channel(int(channel))
+    if chan is not None:
+        chan = chan.mention
+    else:
+        chan = channel
+
+    comic_list.append({
+        "Name": comic_name,
+        "Hour": hour,
+        "Date": day,
+        "Channel": chan
+    })
+
+    return comic_list
 
 
 async def send_comic_embed(ctx: commands.Context, comic_details: dict):
@@ -856,7 +888,7 @@ async def send_embed(ctx: Union[commands.Context, discord.abc.GuildChannel], bot
     for embed in embeds:
         embed.set_footer(text=get_random_footer())
 
-    msg = await ctx.send(embed=embeds[current-1])
+    msg = await ctx.send(embed=embeds[current - 1])
 
     if pages > 1:  # For more than one embed
         await msg.add_reaction(btn_left)
@@ -873,12 +905,12 @@ async def send_embed(ctx: Union[commands.Context, discord.abc.GuildChannel], bot
 
                 if str(reaction.emoji) == btn_right and current != pages:
                     current += 1
-                    await msg.edit(embed=embeds[current-1])
+                    await msg.edit(embed=embeds[current - 1])
                     await msg.remove_reaction(reaction, user)
 
                 elif str(reaction.emoji) == btn_left and current > 1:
                     current -= 1
-                    await msg.edit(embed=embeds[current-1])
+                    await msg.edit(embed=embeds[current - 1])
                     await msg.remove_reaction(reaction, user)
 
                 elif str(reaction.emoji) == btn_cancel:
