@@ -1,9 +1,8 @@
-import logging
 import discord
 
 from datetime import datetime, timedelta, timezone
 from discord.ext import tasks, commands
-from src import utils, Web_requests_manager
+from src import utils, Web_requests_manager, discord_utils
 from typing import Optional
 
 
@@ -20,9 +19,8 @@ class PosterHandler(commands.Cog):
         """
         self.bot: commands.Bot = bot
         self.do_cleanup: bool = True
-        self.logger: logging.Logger = logging.getLogger('discord')
 
-    @commands.hybrid_command(hidden=True, guilds=utils.SERVER)
+    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
     @commands.is_owner()
     async def start_hourly(self, ctx: commands.Context):
         """Starts the PosterHandler loop"""
@@ -36,13 +34,14 @@ class PosterHandler(commands.Cog):
         await discord.utils.sleep_until(sleep_date)
         await PosterHandler.post_hourly.start(self)
 
-    @commands.hybrid_command(hidden=True, guilds=utils.SERVER)
+    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
     @commands.is_owner()
     async def force_hourly(self, ctx: commands.Context):
         """Force the push of comics to all subscribed servers
 
         :param ctx: The context of the where the command was called.
         """
+        await ctx.send(f'Trying to force the hourly post for hour {utils.get_hour()}h UTC')
         await self.hourly()
 
     @tasks.loop(hours=1)
@@ -52,7 +51,7 @@ class PosterHandler(commands.Cog):
 
     async def hourly(self):
         """Post hourly comics"""
-        self.logger.info("Starting automatic poster...")
+        discord_utils.logger.info("Starting automatic poster...")
         strip_details: dict = utils.strip_details
         comic_data: dict = utils.load_json(utils.DATABASE_FILE_PATH)
         comic_list: dict = {}
@@ -61,10 +60,10 @@ class PosterHandler(commands.Cog):
         hour: str = utils.get_hour()
 
         if hour == "6":
-            utils.save_backup(comic_data)
+            utils.save_backup(comic_data, discord_utils.logger)
 
             if self.do_cleanup:
-                utils.clean_database(data=comic_data)
+                utils.clean_database(data=comic_data, logger=discord_utils.logger)
 
         # Construct the list of what comics need to be sent
         for guild in comic_data:
@@ -75,7 +74,7 @@ class PosterHandler(commands.Cog):
 
         utils.save_json(utils.link_cache, utils.COMIC_LATEST_LINKS_PATH)  # Saves the link cache
 
-        self.logger.info("Finished automatic poster.")
+        discord_utils.logger.info("Finished automatic poster.")
 
     def get_comic_info_for_guild(self, guild_data: dict, comic_list: dict, post_days: list[str], hour: str):
         """Get the comic info for each server. This method mutate 'comic_list' for each comic.
@@ -165,7 +164,7 @@ class PosterHandler(commands.Cog):
                 comic_details = Web_requests_manager.get_new_comic_details(strip_details[comic_keys[i]], "today",
                                                                            latest_check=True)
 
-                embed = utils.create_embed(comic_details)  # Creates the embed
+                embed = discord_utils.create_embed(comic_details)  # Creates the embed
 
                 is_latest = comic_details["is_latest"]
 
@@ -178,7 +177,7 @@ class PosterHandler(commands.Cog):
                                                                             available_channels, not_available_channels,
                                                                             called_channel)
         if called_channel is None:  # Only logs the hourly loop at the end
-            self.logger.info(f"The hourly loop sent {nb_of_comics_posted} the {datetime.now().strftime('%')}")
+            discord_utils.logger.info(f"The hourly loop sent {nb_of_comics_posted} the {datetime.now().strftime('%')}")
         if called_channel is not None and nb_of_comics_posted == 0:
             # If it was called manually ('post' command), and there is no comics to post anywhere in the guild,
             # it will warn in the channel that no comics needed to be sent, and it will conclude
@@ -234,12 +233,12 @@ class PosterHandler(commands.Cog):
                                         f" {role_mention}")
                         comic_list[channel]["hasBeenMentioned"] = True  # Sets the channel as already mentioned
 
-                    await utils.send_embed(chan, None, [embed])  # Sends the comic embed (most important)
+                    await discord_utils.send_embed(chan, None, [embed])  # Sends the comic embed (most important)
                     return 1
                 except Exception as e:
                     # There is too many things that can go wrong here, just catch everything
                     error_msg = f"An error occurred in the hourly poster: {e.__class__.__name__}: {e}"
-                    self.logger.error(error_msg)
+                    discord_utils.logger.error(error_msg)
 
                     if called_channel is not None:  # Send the error message to the channel too
                         await called_channel.send(error_msg)
@@ -254,7 +253,7 @@ class PosterHandler(commands.Cog):
                     await called_channel.send(f"Could not send message to channel {chan}")
                 else:
                     # Logs that a channel is not available but still signed up for a comic
-                    self.logger.warning("A comic could not be posted to a channel.")
+                    discord_utils.logger.warning("A comic could not be posted to a channel.")
 
         return 0  # If it encountered an issue or there is no comic to send, return 0
 
@@ -295,18 +294,18 @@ class PosterHandler(commands.Cog):
         else:  # Warns that no comic are available
             await ctx.send("This server is not subscribed to any comic!")
 
-    @commands.hybrid_command(hidden=True, guilds=utils.SERVER)
+    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
     @commands.is_owner()
     async def update_database_clean(self, ctx: commands.Context):
         """Clean the database from servers that don't have any comics saved
 
         :param ctx: The context of the where the command was called.
         """
-        nb_removed = utils.clean_database(strict=True)
+        nb_removed = utils.clean_database(strict=True, logger=discord_utils.logger)
 
         await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
 
-    @commands.hybrid_command(hidden=True, guilds=utils.SERVER)
+    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
     @commands.is_owner()
     async def restore_last_backup(self, ctx: commands.Context):
         """Restore a previous backup
@@ -319,7 +318,7 @@ class PosterHandler(commands.Cog):
 
         await ctx.send("Last backup restored! Please reboot the bot to re-enable automatic cleanups!")
 
-    @commands.hybrid_command(hidden=True, guilds=utils.SERVER)
+    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
     @commands.is_owner()
     async def do_backup(self, ctx: commands.Context):
         """Force a backup
@@ -327,7 +326,7 @@ class PosterHandler(commands.Cog):
         :param ctx: The context of the where the command was called.
         """
         # Force a backup
-        utils.save_backup(utils.load_json(utils.DATABASE_FILE_PATH))
+        utils.save_backup(utils.load_json(utils.DATABASE_FILE_PATH), discord_utils.logger)
 
         await ctx.send("Backup done!")
 

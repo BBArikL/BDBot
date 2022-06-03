@@ -1,7 +1,7 @@
 import discord
 import random
 from discord.ext import commands
-from src import utils
+from src import utils, discord_utils
 
 
 class Comic(commands.Cog):
@@ -23,7 +23,8 @@ class Comic(commands.Cog):
         comic_name = 'Garfield'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def garfield_classics(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -32,7 +33,8 @@ class Comic(commands.Cog):
         comic_name = 'Garfield_Classics'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def calvin_and_hobbes(self, ctx: discord.ext.commands.Context, use: str = None,
@@ -41,7 +43,8 @@ class Comic(commands.Cog):
         comic_name = 'CalvinandHobbes'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def xkcd(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -49,7 +52,8 @@ class Comic(commands.Cog):
         comic_name = 'XKCD'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def peanuts(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -57,7 +61,8 @@ class Comic(commands.Cog):
         comic_name = 'Peanuts'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def peanuts_begins(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -66,7 +71,8 @@ class Comic(commands.Cog):
         comic_name = 'Peanuts_Begins'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def dilbert(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -74,7 +80,8 @@ class Comic(commands.Cog):
         comic_name = 'Dilbert'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def dilbert_classics(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -83,7 +90,8 @@ class Comic(commands.Cog):
         comic_name = 'Dilbert-Classics'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def cyanide_and_happinness(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -92,7 +100,8 @@ class Comic(commands.Cog):
         comic_name = 'Cyanide_and_Happiness'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def frazz(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -100,7 +109,8 @@ class Comic(commands.Cog):
         comic_name = 'Frazz'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def garfield_minus_garfield(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -109,7 +119,8 @@ class Comic(commands.Cog):
         comic_name = 'Garfield_minus_Garfield'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def frank_and_ernest(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -118,7 +129,8 @@ class Comic(commands.Cog):
         comic_name = 'Frank-and-Ernest'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def broom_hilda(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -126,7 +138,8 @@ class Comic(commands.Cog):
         comic_name = 'BroomHilda'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def cheer_up_emo_kid(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -135,7 +148,8 @@ class Comic(commands.Cog):
         comic_name = 'Cheer-up-emo-kid'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def brevity(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -143,7 +157,8 @@ class Comic(commands.Cog):
         comic_name = 'brevity'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def cats_cafe(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -151,7 +166,8 @@ class Comic(commands.Cog):
         comic_name = 'Cats-Cafe'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def popeye(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -159,7 +175,8 @@ class Comic(commands.Cog):
         comic_name = 'Popeye'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def artic_circle(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -168,7 +185,8 @@ class Comic(commands.Cog):
         comic_name = 'Artic-Circle'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def lockhorns(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -176,7 +194,8 @@ class Comic(commands.Cog):
         comic_name = 'Lockhorns'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def marvin(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -184,7 +203,8 @@ class Comic(commands.Cog):
         comic_name = 'Marvin'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def zits(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -192,7 +212,8 @@ class Comic(commands.Cog):
         comic_name = 'Zits'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def hi_and_lois(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -200,7 +221,8 @@ class Comic(commands.Cog):
         comic_name = 'Hi-and-Lois'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def safely_endangered(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -209,7 +231,8 @@ class Comic(commands.Cog):
         comic_name = 'Safely-Endangered'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def carl(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -217,7 +240,8 @@ class Comic(commands.Cog):
         comic_name = 'Carl'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def bluechair(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -225,7 +249,8 @@ class Comic(commands.Cog):
         comic_name = 'BlueChair'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def adventures_of_god(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -234,7 +259,8 @@ class Comic(commands.Cog):
         comic_name = 'Adventures-of-God'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def live_with_yourself(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -243,7 +269,8 @@ class Comic(commands.Cog):
         comic_name = 'Live-with-yourself'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def system32(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -251,7 +278,8 @@ class Comic(commands.Cog):
         comic_name = 'System32comics'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def the_gamer(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -259,7 +287,8 @@ class Comic(commands.Cog):
         comic_name = 'TheGamer'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def bignate(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -267,7 +296,8 @@ class Comic(commands.Cog):
         comic_name = 'BigNate'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def get_fuzzy(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -275,7 +305,8 @@ class Comic(commands.Cog):
         comic_name = 'GetFuzzy'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def beetle_bailey(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -284,7 +315,8 @@ class Comic(commands.Cog):
         comic_name = 'BeetleBailey'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def boondocks(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -292,7 +324,8 @@ class Comic(commands.Cog):
         comic_name = 'TheBoondocks'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def pickles(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
@@ -300,7 +333,8 @@ class Comic(commands.Cog):
         comic_name = 'Pickles'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def pearls_before_swine(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -309,7 +343,8 @@ class Comic(commands.Cog):
         comic_name = 'PearlsBeforeSwine'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def heathcliff(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -318,7 +353,8 @@ class Comic(commands.Cog):
         comic_name = 'Heathcliff'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     @commands.hybrid_command()
     async def andy_capp(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -327,7 +363,8 @@ class Comic(commands.Cog):
         comic_name = 'AndyCapp'
 
         # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
 
     # Special comic commands
     @commands.has_permissions(manage_guild=True)
@@ -337,12 +374,13 @@ class Comic(commands.Cog):
         strp = utils.strip_details
         for com in strp:
             # Interprets the parameters given by the user
-            await utils.parameters_interpreter(ctx, utils.get_strip_details(com), param=use, date=date, hour=hour)
+            await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(com), param=use, date=date,
+                                                       hour=hour)
 
     @commands.hybrid_command()
     async def random(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None, hour: str = None):
         """Random comic"""
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(random.choice(
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(random.choice(
             list(utils.strip_details.keys()))), param=use, date=date, hour=hour)
 
     # ---- END OF COMICS PARAMETERS ----#

@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from src import utils
+from src import utils, discord_utils
 
 
 class Help(commands.Cog):
@@ -20,7 +20,7 @@ class Help(commands.Cog):
     async def general(self, ctx: commands.Context):
         """Help for BDBot"""
         embed: discord.Embed
-        if utils.HELP_EMBED is None:
+        if discord_utils.HELP_EMBED is None:
             strips = utils.strip_details
             embed = discord.Embed(title="BDBot!")
 
@@ -62,7 +62,7 @@ class Help(commands.Cog):
             # Saves the embed for later use
             utils.HELP_EMBED = embed
         else:
-            embed = utils.HELP_EMBED  # Get the cached value
+            embed = discord_utils.HELP_EMBED  # Get the cached value
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
 
@@ -71,7 +71,7 @@ class Help(commands.Cog):
         """Help for hourly commands"""
         embed: discord.Embed
 
-        if utils.HOURLY_EMBED is None:
+        if discord_utils.HOURLY_EMBED is None:
 
             embed = discord.Embed(title="Daily commands!", description="Date and hour are optional arguments that can "
                                                                        "specify when the the bot should send the "
@@ -108,7 +108,7 @@ class Help(commands.Cog):
 
             utils.HOURLY_EMBED = embed
         else:
-            embed = utils.HOURLY_EMBED
+            embed = discord_utils.HOURLY_EMBED
 
         embed.set_footer(text=utils.get_random_footer())
 
@@ -119,7 +119,7 @@ class Help(commands.Cog):
         """New features of the bot"""
         embed: discord.Embed
 
-        if utils.NEW_EMBED is None:
+        if discord_utils.NEW_EMBED is None:
             embed = discord.Embed(title="New feature", description="Find out what new features have been implemented "
                                                                    "since the last update!")
             embed.add_field(name="Thanks", value="First, I want to take a moment to thank all of you who use BDBot to "
@@ -150,7 +150,7 @@ class Help(commands.Cog):
                                                         "make it more responsive and support the growth!")
             utils.NEW_EMBED = embed
         else:
-            embed = utils.NEW_EMBED
+            embed = discord_utils.NEW_EMBED
 
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
@@ -160,7 +160,7 @@ class Help(commands.Cog):
         """FAQ of the bot"""
         embed: discord.Embed
 
-        if utils.FAQ_EMBED is None:
+        if discord_utils.FAQ_EMBED is None:
             embed = discord.Embed(title="FAQ", description="Have a question on the bot? This is the place you are "
                                                            "looking for!")
             embed.add_field(name="What is this bot?", value="This bot is a helper to keep up with your favorite "
@@ -212,7 +212,7 @@ class Help(commands.Cog):
                                                                                            "`/request_delete`.")
             utils.FAQ_EMBED = embed
         else:
-            embed = utils.FAQ_EMBED
+            embed = discord_utils.FAQ_EMBED
 
         embed.set_footer(text=utils.get_random_footer())
         await ctx.send(embed=embed)
@@ -224,13 +224,13 @@ class Help(commands.Cog):
         website = "https://www.gocomics.com/"
         embeds: list[discord.Embed]
 
-        if utils.GOCOMICS_EMBED is None:
-            embeds = utils.website_specific_embed(website_name, website)
+        if discord_utils.GOCOMICS_EMBED is None:
+            embeds = discord_utils.website_specific_embed(website_name, website)
             utils.GOCOMICS_EMBED = embeds
         else:
-            embeds = utils.GOCOMICS_EMBED
+            embeds = discord_utils.GOCOMICS_EMBED
 
-        await utils.send_embed(ctx, self.bot, embeds)
+        await discord_utils.send_embed(ctx, self.bot, embeds)
 
     @help.command(name="comicskingdom")
     async def comicskingdom(self, ctx: commands.Context):
@@ -239,13 +239,13 @@ class Help(commands.Cog):
         website = "https://comicskingdom.com/"
         embeds: list[discord.Embed]
 
-        if utils.KINGDOM_EMBED is None:
-            embeds = utils.website_specific_embed(website_name, website)
+        if discord_utils.KINGDOM_EMBED is None:
+            embeds = discord_utils.website_specific_embed(website_name, website)
             utils.KINGDOM_EMBED = embeds
         else:
-            embeds = utils.KINGDOM_EMBED
+            embeds = discord_utils.KINGDOM_EMBED
 
-        await utils.send_embed(ctx, self.bot, embeds)
+        await discord_utils.send_embed(ctx, self.bot, embeds)
 
     @help.command(name="webtoons")
     async def webtoons(self, ctx: discord.ext.commands.Context):
@@ -254,13 +254,13 @@ class Help(commands.Cog):
         website = "https://www.webtoons.com/en/"
         embeds: list[discord.Embed]
 
-        if utils.WEBTOONS_EMBED is None:
-            embeds = utils.website_specific_embed(website_name, website)
+        if discord_utils.WEBTOONS_EMBED is None:
+            embeds = discord_utils.website_specific_embed(website_name, website)
             utils.WEBTOONS_EMBED = embeds
         else:
-            embeds = utils.WEBTOONS_EMBED
+            embeds = discord_utils.WEBTOONS_EMBED
 
-        await utils.send_embed(ctx, self.bot, embeds)
+        await discord_utils.send_embed(ctx, self.bot, embeds)
 
 
 async def setup(bot: commands.Bot):

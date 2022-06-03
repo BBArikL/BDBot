@@ -10,7 +10,7 @@ import re
 
 from typing import Union
 from src.Scripts.AutomaticPoster import PosterHandler
-from src import utils
+from src import utils, discord_utils
 
 
 class BDBot(commands.Cog):
@@ -24,7 +24,6 @@ class BDBot(commands.Cog):
         self.bot: commands.Bot = bot
         self.topggpy = None
         self.start_time: datetime = datetime.now(timezone.utc)
-        self.logger: logging.Logger = logging.getLogger('discord')
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -33,7 +32,7 @@ class BDBot(commands.Cog):
         await self.bot.change_presence(status=discord.Status.online,
                                        activity=discord.Activity(type=discord.ActivityType.listening,
                                                                  name=f'/help in {len(self.bot.guilds)} servers'))
-        self.logger.log(logging.INFO, "Logged in as {0.user}".format(self.bot))
+        discord_utils.logger.log(logging.INFO, "Logged in as {0.user}".format(self.bot))
         channel_id: int = int(os.getenv('PRIVATE_CHANNEL_SUPPORT_ID'))
 
         channel: discord.TextChannel = self.bot.get_channel(channel_id)
@@ -61,17 +60,17 @@ class BDBot(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
         """When the bot is removed from a server"""
-        utils.remove_guild(guild, use="auto_remove_guild")
+        discord_utils.remove_guild(guild, use="auto_remove_guild")
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, deleted_channel: discord.abc.GuildChannel):
         """When a guild channel is deleted"""
-        utils.remove_channel(deleted_channel, use="auto_remove_channel")
+        discord_utils.remove_channel(deleted_channel, use="auto_remove_channel")
 
     @commands.Cog.listener()
     async def on_private_channel_delete(self, deleted_channel: discord.abc.GuildChannel):
         """When a private channel is deleted"""
-        utils.remove_channel(deleted_channel, use="auto_remove_channel")
+        discord_utils.remove_channel(deleted_channel, use="auto_remove_channel")
 
     @commands.hybrid_command()
     async def git(self, ctx: discord.ext.commands.Context):
@@ -90,7 +89,7 @@ class BDBot(commands.Cog):
     @commands.has_permissions(manage_guild=True)  # Only mods can add comics
     async def add_all(self, ctx: discord.ext.commands.Context, date: str = None, hour: str = None):
         """Add all comics to a specific channel. Preferred way to add all comics. Mods only"""
-        status = utils.add_all(ctx, date, hour)
+        status = discord_utils.add_all(ctx, date, hour)
         if status == utils.Success:
             await ctx.send("All comics added successfully!")
         else:
@@ -100,7 +99,7 @@ class BDBot(commands.Cog):
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
     async def remove_all(self, ctx: discord.ext.commands.Context):
         """Remove the guild from the database. Preferred way to remove all comics. Mods only"""
-        status = utils.remove_guild(ctx)
+        status = discord_utils.remove_guild(ctx)
 
         if status == utils.Success:
             await ctx.send("All daily comics removed successfully!")
@@ -111,7 +110,7 @@ class BDBot(commands.Cog):
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the channel from the database
     async def remove_channel(self, ctx: discord.ext.commands.Context):
         """Remove the channel from the database. Mods only"""
-        status = utils.remove_channel(ctx)
+        status = discord_utils.remove_channel(ctx)
         if status == utils.Success:
             await ctx.send("All daily comics removed successfully from this channel!")
         else:
@@ -122,7 +121,7 @@ class BDBot(commands.Cog):
     async def set_role(self, ctx: discord.ext.commands.Context, role: discord.Role):
         """Add a role to be notified. Mods only"""
         if discord.Guild.get_role(ctx.guild, role.id) is not None:
-            status = utils.set_role(ctx, role)
+            status = discord_utils.set_role(ctx, role)
             if status == utils.Success:
                 await ctx.send("Role successfully added to be notified! "
                                "This role will get mentioned at each comic post. "
@@ -137,7 +136,7 @@ class BDBot(commands.Cog):
     @commands.has_permissions(manage_guild=True)  # Only mods can delete the role
     async def remove_role(self, ctx: discord.ext.commands.Context):
         """Deletes the role mention. Mods only"""
-        status = utils.remove_role(ctx)
+        status = discord_utils.remove_role(ctx)
 
         if status == utils.Success:
             await ctx.send("Role mention successfully removed!")
@@ -153,7 +152,7 @@ class BDBot(commands.Cog):
         policy = (choice.lower() == "daily")
 
         if policy or choice == "all":
-            status = utils.set_mention(ctx, policy)
+            status = discord_utils.set_mention(ctx, policy)
 
             if status == utils.Success:
                 await ctx.send("Successfully changed the mention policy for this server!")
@@ -167,7 +166,7 @@ class BDBot(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def get_mention(self, ctx: discord.ext.commands.Context):
         """Get the server's mention policy. Mods only"""
-        status, mention_policy = utils.get_mention(ctx, self.bot)
+        status, mention_policy = discord_utils.get_mention(ctx, self.bot)
 
         if status == utils.Success:
             await ctx.send(f"The bot will mention the role {mention_policy}!")
@@ -178,7 +177,7 @@ class BDBot(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def post_mention(self, ctx: discord.ext.commands.Context, choice: str):
         """Change the mention policy for the server. Mods only"""
-        status = utils.set_post_mention(ctx, choice.lower() == "enable")
+        status = discord_utils.set_post_mention(ctx, choice.lower() == "enable")
 
         if status == utils.Success:
             await ctx.send("Successfully changed the mention policy for this server! ")
@@ -192,7 +191,7 @@ class BDBot(commands.Cog):
             "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : "
             "https://discordbotlist.com/bots/bdbot")
 
-    @commands.hybrid_command(hidden=True, guilds=utils.SERVER)
+    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
     @commands.is_owner()
     async def nb_guild(self, ctx: discord.ext.commands.Context):
         """Gets the number of guilds that the bot is in (for analytics)"""
@@ -253,7 +252,7 @@ class BDBot(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     async def sub(self, ctx: discord.ext.commands.Context):
         """Checks if the server is subbed to any comic"""
-        guild_data = utils.get_specific_guild_data(ctx)
+        guild_data = discord_utils.get_specific_guild_data(ctx)
         max_fields = 5
         hr = "Hour"
         if guild_data is not None:
@@ -264,13 +263,13 @@ class BDBot(commands.Cog):
 
                 if "latest" in guild_data["channels"][channel]:
                     for comic in guild_data["channels"][channel]["latest"]:
-                        comic_list = utils.add_comic_to_list(comic_values, comic, self.bot, channel, comic_list)
+                        comic_list = discord_utils.add_comic_to_list(comic_values, comic, self.bot, channel, comic_list)
 
                 for day in guild_data["channels"][channel]["date"]:
                     for hour in guild_data["channels"][channel]["date"][day]:
                         for comic in guild_data["channels"][channel]["date"][day][hour]:
-                            comic_list = utils.add_comic_to_list(comic_values, comic, self.bot, channel, comic_list,
-                                                                 hour, day)
+                            comic_list = discord_utils.add_comic_to_list(comic_values, comic, self.bot, channel,
+                                                                         comic_list, hour, day)
 
             if len(comic_list) > 0:
                 nb_fields = 0
@@ -288,7 +287,7 @@ class BDBot(commands.Cog):
                                                f"channel {comic['Channel']}")
                     nb_fields += 1
 
-                await utils.send_embed(ctx, self.bot, embeds, remove_after=False)
+                await discord_utils.send_embed(ctx, self.bot, embeds, remove_after=False)
             else:
                 await ctx.send("This server is not subscribed to any comic!")
         else:
@@ -317,7 +316,7 @@ class BDBot(commands.Cog):
             "The bot is online, waiting for comics to send. Report any errors by git (`/git`) or by `/request "
             "<your request>`.")
 
-    @commands.hybrid_command(hidden=True, server=utils.SERVER)
+    @commands.hybrid_command(hidden=True, server=discord_utils.SERVER)
     @commands.is_owner()
     async def vrequest(self, ctx: discord.ext.commands.Context):
         """Verifies the requests"""
@@ -326,14 +325,14 @@ class BDBot(commands.Cog):
 
         await ctx.send("Here are the requests:\n```\n" + "\n".join(r) + "\n```")
 
-    @commands.hybrid_command(hidden=True, server=utils.SERVER)
+    @commands.hybrid_command(hidden=True, server=discord_utils.SERVER)
     @commands.is_owner()
     async def nb_active(self, ctx: discord.ext.commands.Context):
         """Returns the number of servers using the hourly poster service"""
         await ctx.send("There is " + str(len(utils.load_json(utils.DATABASE_FILE_PATH))) + "servers using the hourly "
                                                                                            "poster service.")
 
-    @commands.hybrid_command(hidden=True, server=utils.SERVER)
+    @commands.hybrid_command(hidden=True, server=discord_utils.SERVER)
     @commands.is_owner()
     async def kill(self, ctx: discord.ext.commands.Context):
         """Close the bot connection"""
@@ -341,7 +340,7 @@ class BDBot(commands.Cog):
 
         await self.bot.close()
 
-    @commands.hybrid_command(hidden=True, server=utils.SERVER)
+    @commands.hybrid_command(hidden=True, server=discord_utils.SERVER)
     @commands.is_owner()
     async def reload(self, ctx: discord.ext.commands.Context):
         """

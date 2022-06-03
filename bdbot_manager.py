@@ -42,7 +42,7 @@ def manage_bot():
 
     if action == "Create image link cache":
         logger.info("Running link cache, please wait up to 1-2 minutes...")
-        create_link_cache()
+        create_link_cache(logger)
         logger.info("Link cache created!")
     if action == "Setup Bot":
         setup_bot()
@@ -91,7 +91,7 @@ def setup_bot():
             pass
 
     logger.info("Creating link cache, this might take some time...")
-    create_link_cache()
+    create_link_cache(logger)
 
     logger.info("All done! You can start the bot with 'python main.py'!")
 
@@ -336,7 +336,7 @@ def database_update(comic_number: int):
     logger.info("Updating database....")
     data = open_json_if_exist(DATABASE_FILE_PATH)
     comic_number_remove = comic_number  # the comic number to remove
-    save_backup(data)
+    save_backup(data, logger)
     # Removes a comic permanently
     for gid in data:
         guild = data[gid]
