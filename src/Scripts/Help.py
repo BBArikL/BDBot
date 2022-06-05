@@ -63,8 +63,8 @@ class Help(commands.Cog):
             utils.HELP_EMBED = embed
         else:
             embed = discord_utils.HELP_EMBED  # Get the cached value
-        embed.set_footer(text=utils.get_random_footer())
-        await ctx.send(embed=embed)
+
+        await discord_utils.send_embed(ctx, None, [embed])
 
     @help.command()
     async def hourly(self, ctx):
@@ -116,9 +116,7 @@ class Help(commands.Cog):
         else:
             embed = discord_utils.HOURLY_EMBED
 
-        embed.set_footer(text=utils.get_random_footer())
-
-        await ctx.send(embed=embed)
+        await discord_utils.send_embed(ctx, None, [embed])
 
     @commands.hybrid_command()
     async def new(self, ctx):
@@ -163,8 +161,7 @@ class Help(commands.Cog):
         else:
             embed = discord_utils.NEW_EMBED
 
-        embed.set_footer(text=utils.get_random_footer())
-        await ctx.send(embed=embed)
+        await discord_utils.send_embed(ctx, None, [embed])
 
     @commands.hybrid_command()
     async def faq(self, ctx):
@@ -203,8 +200,7 @@ class Help(commands.Cog):
         else:
             embed = discord_utils.FAQ_EMBED
 
-        embed.set_footer(text=utils.get_random_footer())
-        await ctx.send(embed=embed)
+        await discord_utils.send_embed(ctx, None, [embed])
 
     @help.command(name="gocomics")
     async def gocomics(self, ctx: commands.Context):

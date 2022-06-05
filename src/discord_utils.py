@@ -100,7 +100,7 @@ async def send_comic_info(ctx: commands.Context, comic: dict):
     embed.set_footer(text="Random footer")
     embed.set_footer(text=get_random_footer())
 
-    await ctx.send(embed=embed)
+    await send_embed(ctx, None, [embed])
 
 
 async def comic_send(ctx: commands.Context, comic: dict, param: str, comic_date: Optional[Union[datetime, int]] = None):
