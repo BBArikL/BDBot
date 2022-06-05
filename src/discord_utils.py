@@ -3,6 +3,7 @@ import discord
 import logging
 
 from datetime import datetime, timezone
+from discord import app_commands
 from discord.ext import commands
 from typing import Optional, Union
 from src.utils import (clean_url, get_random_footer, get_link, get_date,
@@ -128,7 +129,7 @@ async def parameters_interpreter(ctx: commands.Context, comic_details, param=Non
     :param hour:
     :return:
     """
-    if param is not None:
+    if param is not None and param != "Info":
         """ Parameters:
             today -> Today's comic
             add -> Add the comic to the daily posting list
@@ -773,3 +774,36 @@ async def send_embed(ctx: Union[commands.Context, discord.abc.GuildChannel], bot
                         await msg.remove_reaction(button, bot.user)
                 break
                 # ending the loop if user doesn't react after x seconds
+
+
+async def comic_action_autocomplete(
+        interaction: discord.Interaction,
+        current: str,
+):
+    actions = ['Today', 'Random', 'Info', 'add', 'remove']
+    return [
+        app_commands.Choice(name=action, value=action)
+        for action in actions if current.lower() in action.lower()
+    ]
+
+
+async def comic_date_autocomplete(
+        interaction: discord.Interaction,
+        current: str,
+):
+    days = ['Daily', 'Latest', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    return [
+        app_commands.Choice(name=day, value=day)
+        for day in days if current.lower() in day.lower()
+    ]
+
+
+async def comic_hour_autocomplete(
+        interaction: discord.Interaction,
+        current: str,
+):
+    hours = [str(h) for h in range(1, 24)]
+    return [
+        app_commands.Choice(name=hour, value=hour)
+        for hour in hours if current.lower() in hour.lower()
+    ]
