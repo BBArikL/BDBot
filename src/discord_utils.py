@@ -680,7 +680,7 @@ async def send_request_error(ctx: commands.Context):
     :param ctx:
     :return:
     """
-    await ctx.send("Request not understood. Try '/help' for usable commands.")
+    await ctx.send("Request not understood. Try '/help general' for usable commands.")
 
 
 def website_specific_embed(website_name: str, website: str, nb_per_embed=5) -> list[discord.Embed]:

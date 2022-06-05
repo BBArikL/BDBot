@@ -184,7 +184,7 @@ class Help(commands.Cog):
             embed.add_field(name="How can I request comics?",
                             value="You can use `/request` to request comics or features directly to the developer.")
             embed.add_field(name="How can I receive scheduled comics?",
-                            value="You can use `/help daily` to get help on how to schedule comics.")
+                            value="You can use `/help hourly` to get help on how to schedule comics.")
             embed.add_field(name="What information is collected by using this bot?",
                             value="No personal information is used by this bot if you only use it to read comics. The "
                                   "information collected by the bot when a comic is scheduled is: the ID of the server,"

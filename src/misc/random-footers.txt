@@ -1,4 +1,5 @@
-There as been 6 comics added in the last update! Go check them out!
+There as been 7 comics added in the last update! Go check them out!
+Want to know what changed since last update? Use /new to get information on all the new features!
 See the full list of changes in the latest announcement at https://top.gg/bot/807780409362481163!
 Vote for the bot here: https://top.gg/bot/807780409362481163
 Check out the bot here! https://github.com/BBArikL/BDBot
@@ -10,7 +11,7 @@ Enjoying the bot? Leave a review at https://top.gg/bot/807780409362481163 !
 You did not find your preferred webcomic? Use /request to leave a message for the creator!
 You can request comics by GitHub or by /request!
 Have you tried all the comics yet?
-Did you know you could have fresh comics delivered every day? Try /help daily for more information!
+Did you know you could have fresh comics delivered each hour? Try /help hourly for more information!
 The creator of this bot likes lasagna.
 A comic a day keeps sadness away!
 What was your first ever comic?
