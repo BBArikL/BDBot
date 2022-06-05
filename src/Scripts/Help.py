@@ -135,7 +135,7 @@ class Help(commands.Cog):
                                   "server limit which is phenomenal! Thank you again for your trust into this "
                                   "project! :)")
             embed.add_field(name="New comics",
-                            value="The new comics are: Pearls before Swine, Chibird, War and Peas, Humans are stupid,"
+                            value="The new comics are: Chibird, War and Peas, Humans are stupid,"
                                   " Maximumble, Poorly Drawn Lines, Heathcliff, Andy Capp")
             embed.add_field(name="Latest comics",
                             value="You want to have only the latest comics? Put `latest` in the date parameter of any"
