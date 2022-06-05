@@ -161,11 +161,13 @@ class PosterHandler(commands.Cog):
 
             if count > 0:
                 # Get the details of the comic
-               comic_details: Optional[dict]
-               try:
+                comic_details: Optional[dict]
+                try:
                     comic_details = Web_requests_manager.get_new_comic_details(strip_details[comic_keys[i]], "today",
-                                                                           latest_check=True)
-                except Exception:  # Anything can happen (connection problem, etc... and the bot will crash if any error is raised in the poster loop)
+                                                                               latest_check=True)
+                except Exception:
+                    # Anything can happen (connection problem, etc... and the bot will crash if any error
+                    # is raised in the poster loop)
                     comic_details = None
 
                 embed = discord_utils.create_embed(comic_details)  # Creates the embed
