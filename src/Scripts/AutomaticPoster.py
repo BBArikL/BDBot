@@ -172,7 +172,11 @@ class PosterHandler(commands.Cog):
 
                 embed = discord_utils.create_embed(comic_details)  # Creates the embed
 
-                is_latest = comic_details["is_latest"]
+                is_latest: bool
+                if comic_details is not None:
+                    is_latest = comic_details["is_latest"]
+                else:
+                    is_latest = False
 
                 if is_latest and called_channel is None:
                     # Only updates the link cache if it is done during the hourly loop
