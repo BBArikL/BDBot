@@ -347,6 +347,56 @@ class Comic(commands.Cog):
                                                    hour=hour)
 
     @commands.hybrid_command()
+    async def chibird(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
+                      hour: str = None):
+        """Chibird"""
+        comic_name = 'Chibird'
+
+        # Interprets the parameters given by the user
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
+
+    @commands.hybrid_command()
+    async def war_and_peas(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
+                           hour: str = None):
+        """War and Peas"""
+        comic_name = 'WarAndPeas'
+
+        # Interprets the parameters given by the user
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
+
+    @commands.hybrid_command()
+    async def humans_are_stupid(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
+                                hour: str = None):
+        """Humans are stupid"""
+        comic_name = 'HumansAreStupid'
+
+        # Interprets the parameters given by the user
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
+
+    @commands.hybrid_command()
+    async def maximumble(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
+                         hour: str = None):
+        """Maximumble"""
+        comic_name = 'Maximumble'
+
+        # Interprets the parameters given by the user
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
+
+    @commands.hybrid_command()
+    async def poorly_drawn_lines(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
+                                 hour: str = None):
+        """Poorly Drawn Lines"""
+        comic_name = 'PoorlyDrawnLines'
+
+        # Interprets the parameters given by the user
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date,
+                                                   hour=hour)
+
+    @commands.hybrid_command()
     async def heathcliff(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
                          hour: str = None):
         """Heathcliff"""
