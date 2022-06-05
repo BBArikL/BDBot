@@ -89,7 +89,6 @@ async def send_comic_info(ctx: commands.Context, comic: dict):
 
     if comic["Working_type"] == "date":
         embed.add_field(name="First apparition", value=get_date(get_first_date(comic)), inline=True)
-    embed.add_field(name="Aliases", value=comic["Aliases"], inline=True)
 
     if get_sub_status(ctx, int(comic["Position"])):
         sub_stat = "Yes"

@@ -245,8 +245,6 @@ def process_inputs(name: str, author: str, web_name: str, main_website: str, wor
                                                                      f"{first_date['Day']}",
             "Color": color,
             "Image": image,
-            "Aliases": f"'{normalized_name}', '{normalized_name.lower()}', '{normalized_name[:3]}', "
-                       f"'{normalized_name[:3].lower()}'",
             "Helptxt": helptxt
         }
     }
