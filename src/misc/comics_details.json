@@ -501,7 +501,7 @@
         "Color": "FCF36B",
         "Image": "https://swebtoon-phinf.pstatic.net/20170718_237/1500327571879yzcBu_JPEG/988e7e1e-c286-4391-971c-b8f44cb497bb.jpg",
         "Aliases": "'Chibird', 'chibird', 'Chib', 'chib'",
-        "Helptxt": "TODO"
+        "Helptxt": "Cute and motivational drawings to brighten your day!"
     },
     "WarAndPeas": {
         "Name": "War and Peas",
@@ -515,7 +515,7 @@
         "Color": "FA8B5D",
         "Image": "https://swebtoon-phinf.pstatic.net/20210517_287/1621258998853tRgyE_JPEG/4479eb01-8495-47bf-8463-eb10967e3f32.jpg",
         "Aliases": "'WarAndPeas', 'warandpeas', 'War', 'war', 'Peas', 'peas'",
-        "Helptxt": "TODO"
+        "Helptxt": "War and Peas is an ongoing webcomic made by two individuals, Elizabeth Pich and Jonathan Kunz."
     },
     "HumansAreStupid": {
         "Name": "Humans are stupid",
@@ -523,12 +523,12 @@
         "Web_name": "challenge/humans-are-stupid/list?title_no=54265",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
-        "Description": "",
+        "Description": "Funny comics about stupid people, a robot and various situations of life. \nAbout: https://www.webtoons.com/en/challenge/humans-are-stupid/list?title_no=54265# ",
         "Position": 37,
-        "Color": "111111",
+        "Color": "FFFFFF",
         "Image": "https://swebtoon-phinf.pstatic.net/20210513_36/1620913677460o0T8F_JPEG/d77a8b51-cd85-4aad-a0c5-1c8481a93834.jpg",
         "Aliases": "TODO",
-        "Helptxt": "TODO"
+        "Helptxt": "Funny comics about stupid people and robots."
     },
     "Maximumble": {
         "Name": "Maximumble",
@@ -536,13 +536,13 @@
         "Web_name": "challenge/maximumble/list?title_no=10005",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
-        "Description": "Comics for your brain machine.\nWebsite: \nFacebook: \nInstagram: \nTwitter: \nMore info: ",
+        "Description": "Comics for your brain machine. (No new comics since december 2021, check the twitter profile for new animations)\nWebsite: https://maximumble.thebookofbiff.com/\nFacebook: https://www.facebook.com/maximumble\nInstagram: https://instagram.com/chrishallbeck\nTwitter: https://twitter.com/ChrisHallbeck\nTumblr: https://chrishallbeck.tumblr.com/\nPatreon: https://www.patreon.com/chrishallbeck\nStore: https://chrishallbeckstore.com/",
         "Position": 38,
         "First_date": "1",
-        "Color": "111111",
-        "Image": "TODO",
+        "Color": "FFFFFF",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210512_205/1620750555419RxyeH_PNG/a8ee827c-9fe5-43ec-af3e-3a8704fee800.png",
         "Aliases": "'Maximumble', 'maximumble', 'Max', 'max', 'mumble'",
-        "Helptxt": "TODO"
+        "Helptxt": "Chris Hallbeck create Maximumble, comics for your brain machine."
     },
     "PoorlyDrawnLines": {
         "Name": "Poorly Drawn Lines",
@@ -550,13 +550,13 @@
         "Web_name": "poorly-drawn-lines",
         "Main_website": "https://www.gocomics.com/en/",
         "Working_type": "date",
-        "Description": "Poorly Drawn Lines is a humorous comic strip updating three times weekly. Subjects are varied and include space travel, friendship, animals, people pretending to be animals, shapes, conversation, and the future. Read the full archive of over 200 strips at poorlydrawnlines.com. \nWebsite: \nFacebook: \nInstagram: \nTwitter: \nMore info: ",
+        "Description": "Poorly Drawn Lines is a humorous comic strip updating three times weekly. Subjects are varied and include space travel, friendship, animals, people pretending to be animals, shapes, conversation, and the future. Read the full archive of over 200 strips at poorlydrawnlines.com. \nWebsite: https://poorlydrawnlines.com/\nFacebook: https://facebook.com/poorlydrawnlines\nInstagram: https://instagram.com/poorlydrawnlines\nTwitter: https://twitter.com/PDLComics\nMore info: https://www.gocomics.com/poorly-drawn-lines/about",
         "Position": 39,
         "First_date": "2013/09/18",
-        "Color": "111111",
-        "Image": "TODO",
+        "Color": "F0F7F4",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/pdl/large_rec-201701251557.jpg",
         "Aliases": "'PoorlyDrawnLines', 'Poorly', 'poorly', 'poor', 'lines'",
-        "Helptxt": "TODO"
+        "Helptxt": "Poorly Drawn Lines, by Reza Farazmand, is a classic comic strip about friendship, animals and humor."
     },
     "Heathcliff": {
         "Name": "Heathcliff",
