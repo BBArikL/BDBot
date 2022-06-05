@@ -5,6 +5,7 @@ import re
 import sys
 
 from InquirerPy import inquirer
+from InquirerPy.prompts import SecretPrompt, ListPrompt
 from src.utils import load_json, DETAILS_PATH, REQUEST_FILE_PATH, DATABASE_FILE_PATH, save_json, save_backup, \
     create_link_cache
 from typing import Union, Optional
@@ -52,7 +53,7 @@ def setup_bot():
     """Sets up the bot to be able to be launched"""
 
     logger.info("Setting up environment variables...")
-    environment_variables = {
+    environment_variables: dict[str, dict[str, Union[str, Union[SecretPrompt, ListPrompt]]]] = {
         "TOKEN": {"value": "", "inquiry": inquirer.secret(message="Enter the token (The bot discord token):")},
         "CLIENT_ID": {"value": "", "inquiry": inquirer.secret(message="Enter the client ID (The bot's client ID. "
                                                                       "To get a invite for the bot):")},
@@ -179,8 +180,8 @@ def add_comic(comics: dict):
                           validate=lambda x: re.match("[\\dA-F]{6}", x) is not None, mandatory=False).execute()
     image = inquirer.text(message="Enter the link of a public image that represents well the comic: ").execute()
     helptxt = inquirer.text(message="Write in one phrase a description of the comic.",
-                            validate=lambda x: 50 > len(x),
-                            invalid_message="This short description must be less than 50 characters!",
+                            validate=lambda x: 100 >= len(x),
+                            invalid_message="This short description must be equal or less than 100 characters!",
                             mandatory=False).execute()
     final_comic_dict = process_inputs(name, author, web_name, main_website, working_type, description, len(comics),
                                       first_date, color, image, helptxt)
