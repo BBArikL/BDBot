@@ -36,9 +36,19 @@ Discord bot that post bd strips. Simple as that!
 - Adventures of god https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853
 - System32Comics https://www.webtoons.com/en/challenge/system32comics/list?title_no=235074
 - The Gamer https://www.webtoons.com/en/action/the-gamer/list?title_no=88
-### To Add:
-- Poorly drawn lines https://poorlydrawnlines.com/
-- War and peas https://warandpeas.com/
+- Big Nate https://www.gocomics.com/bignate
+- Get Fuzzy https://www.gocomics.com/getfuzzy
+- Beetle Bailey https://comicskingdom.com/beetle-bailey-1
+- The Boondocks https://www.gocomics.com/boondocks
+- Pickles https://www.gocomics.com/pickles
+- Pearls Before Swine https://www.gocomics.com/pearlsbeforeswine
+- Chibird https://www.webtoons.com/en/challenge/chibird/list?title_no=97265
+- War and Peas https://www.webtoons.com/en/challenge/war-and-peas/list?title_no=63305
+- Humans are stupid https://www.webtoons.com/en/challenge/humans-are-stupid/list?title_no=54265
+- Maximumble https://www.webtoons.com/en/challenge/maximumble/list?title_no=10005
+- Poorly Drawn Lines https://www.gocomics.com/en/poorly-drawn-lines
+- Heathcliff https://www.gocomics.com/heathcliff
+- Andy Capp https://www.gocomics.com/andycapp
 
 ## Related GitHub pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
@@ -73,13 +83,13 @@ Robobert: https://github.com/JTexpo/Robobert
 
 ## Current state of the project
 - Functionalities
-  - 'bd!<comic_name>' Information embed on the requested comic.
-  - 'bd!help' : Help embed
-  - 'bd!git' command : Redirects to this GitHub page
-  - 'bd!invite' command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
-  - Daily Command: use 'bd!<name_of_comic> add/remove' to add or remove a comic from the daily list for the server.
-  - Use 'bd!remove_all' to remove all comics from the daily list for the server.
-  - Use 'bd!remove_channel' to remove all comics in the channel.
+  - '/<comic_name>' Information embed on the requested comic.
+  - '/help' : Help embed
+  - '/git' command : Redirects to this GitHub page
+  - '/invite' command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
+  - Daily Command: use '/<name_of_comic> add/remove' to add or remove a comic from the daily list for the server.
+  - Use '/remove_all' to remove all comics from the daily list for the server.
+  - Use '/remove_channel' to remove all comics in the channel.
   - Tell me if I forgot some commands here!
 
 - Bugs
