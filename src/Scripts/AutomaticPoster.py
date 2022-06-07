@@ -187,7 +187,8 @@ class PosterHandler(commands.Cog):
                                                                             available_channels, not_available_channels,
                                                                             called_channel)
         if called_channel is None:  # Only logs the hourly loop at the end
-            discord_utils.logger.info(f"The hourly loop sent {nb_of_comics_posted} the {datetime.now().strftime('%')}")
+            discord_utils.logger.info(f"The hourly loop sent {nb_of_comics_posted} comic(s) the "
+                                      f"{datetime.now().strftime('%dth of %B %Y at %Hh')}")
         if called_channel is not None and nb_of_comics_posted == 0:
             # If it was called manually ('post' command), and there is no comics to post anywhere in the guild,
             # it will warn in the channel that no comics needed to be sent, and it will conclude
