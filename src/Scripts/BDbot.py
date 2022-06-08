@@ -189,7 +189,8 @@ class BDBot(commands.Cog):
         """Vote for the bot!"""
         await ctx.send(
             "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : "
-            "https://discordbotlist.com/bots/bdbot")
+            "https://discordbotlist.com/bots/bdbot"
+        )
 
     @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
     @commands.is_owner()
@@ -197,7 +198,8 @@ class BDBot(commands.Cog):
         """Gets the number of guilds that the bot is in (for analytics)"""
 
         await ctx.send(
-            f"The bot is in {len(self.bot.guilds)} servers. Trying to update status on Top.gg.....")
+            f"The bot is in {len(self.bot.guilds)} servers. Trying to update status on Top.gg....."
+        )
 
         if self.topggpy is None:
             self.topggpy = topgg.DBLClient(self.bot, str(os.getenv('TOP_GG_TOKEN')))
@@ -295,12 +297,12 @@ class BDBot(commands.Cog):
 
     @commands.hybrid_command()
     async def ping(self, ctx: discord.ext.commands.Context):
-        """Get bot's latency with discord API"""
+        """Get the bot latency with discord API"""
         await ctx.send("Pong! " + str(round(self.bot.latency * 1000)) + "ms")
 
     @commands.hybrid_command()
     async def uptime(self, ctx: discord.ext.commands.Context):
-        """Get the bot's uptime"""
+        """Get the bot uptime"""
         delta = (datetime.now(timezone.utc) - self.start_time)
         hours = math.floor(delta.seconds / 3600)
         minutes = math.floor((delta.seconds - hours * 3600) / 60)

@@ -1,6 +1,6 @@
 # Adding a comic
 
-Hey fellow comic enjoyer! I see you venturing across this project, and you look like you want to add a comic. Do not worry, I will show you!
+Hey fellow comic fan! I see you venturing across this project, and you look like you want to add a comic. Do not worry, I will show you!
 
 Adding a comic is super easy. It does not even take knowledge in code to do it! There is only 2 steps to make:
     

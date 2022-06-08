@@ -123,8 +123,8 @@ class Comic(commands.Cog):
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
-    async def cyanide_and_happinness(self, ctx: discord.ext.commands.Context, action: str = None, date: str = None,
-                                     hour: str = None):
+    async def cyanide_and_happiness(self, ctx: discord.ext.commands.Context, action: str = None, date: str = None,
+                                    hour: str = None):
         """Cyanide and Happiness"""
         comic_name = 'Cyanide_and_Happiness'
 

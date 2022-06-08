@@ -35,7 +35,7 @@ def get_new_comic_details(strip_details: dict, param: str, comic_date: Optional[
     elif working_type == 'rss':  # Works by rss
         comic_details = get_comic_info_rss(strip_details, param=param, comic_date=comic_date, latest_check=latest_check)
     else:  # Works by number
-        comic_details = get_comic_info_number(strip_details, param=param, latest_check=latest_check)
+        comic_details = get_comic_info_number(strip_details, parameters=param, latest_check=latest_check)
     return comic_details
 
 
@@ -139,11 +139,11 @@ def extract_meta_content(html, content) -> Optional[str]:
         return None
 
 
-def get_comic_info_number(strip_details, param=None, latest_check=False):
+def get_comic_info_number(strip_details, parameters=None, latest_check=False):
     """For sites which works by number
 
     :param strip_details:
-    :param param:
+    :param parameters:
     :param latest_check:
     :return:
     """
@@ -156,7 +156,7 @@ def get_comic_info_number(strip_details, param=None, latest_check=False):
         main_website = strip_details["Main_website"]
 
         if strip_details["Name"] == 'xkcd':
-            if param == "random":
+            if parameters == "random":
                 # Link for random XKCD comic
                 main_website = "https://c.xkcd.com/random/comic/"
                 html = urlopen(main_website).read()
@@ -166,9 +166,9 @@ def get_comic_info_number(strip_details, param=None, latest_check=False):
             details["url"] = main_website
 
         elif strip_details["Name"] == 'Cyanide and Happiness':
-            if param == 'random':
-                main_website += param
-            elif param == 'today':
+            if parameters == 'random':
+                main_website += parameters
+            elif parameters == 'today':
                 main_website += 'latest'
 
             details["url"] = main_website
