@@ -16,9 +16,12 @@ def main():
     load_dotenv()
 
     intents = discord.Intents.default()
-    intents.message_content = True
-    bot: discord.ext.commands.Bot = commands.Bot(intents=intents, command_prefix="bd!",
-                                                 help_command=None)
+    bot: discord.ext.commands.Bot = commands.Bot(
+        intents=intents,
+        command_prefix="bd!",
+        help_command=None,
+        description=f"BDBot now supports slash commands! Re-invite the bot with /inv!"
+    )
 
     logger = logging.getLogger('discord')
     logger.setLevel(logging.DEBUG if os.getenv('DEBUG') == "True" else logging.INFO)
