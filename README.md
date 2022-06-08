@@ -10,6 +10,12 @@ Discord bot that post bd strips. Simple as that!
 <img src="https://img.shields.io/github/license/BBArikL/BDBot" alt="License of BDBot">
 <img src="https://img.shields.io/github/last-commit/BBArikL/BDBot" alt="Last commit indicator">
 
+**IMPORTANT: If you cannot send slash commands, make sure to re-invite the bot with the link here:**
+
+https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=277025639488&scope=bot%20applications.commands
+
+
+
 ## Comics:
 ### Added:
 - Garfield https://www.gocomics.com/garfield/
@@ -102,12 +108,6 @@ Robobert: https://github.com/JTexpo/Robobert
 
 - Bugs
   - None for the moment. Open an issue if you find any! :)
-
-- TODO
-  - Sites to add support:
-    - See section TO ADD
-  - Other:
-    - Optimize Web_requests_manager
  
 - Anything else to know?
   - Why can't I go farther than 7 comics on Comics Kingdom? Comics Kingdom use a special premium subscription plan to view all comics. There is no known way to get around it and getting the subscription and after distributing the comic for free could cause some undesirable consequences in the future.
@@ -127,3 +127,21 @@ Robobert: https://github.com/JTexpo/Robobert
     - More about branches: https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-branches
   - The bot is considered complete feature-wise (but not comic-wise).
   - The bot is on UTC time. The daily comic post happen at 6:00 AM UTC daily.
+
+## Privacy FAQ
+- What information is collected by the bot?
+  - If you only use the bot time to time: None!
+  - If you subscribed to comics for your server:
+    - The guild ID
+    - The preferences about how to mention in the chat
+    - The role ID to mention (if provided)
+    - The subscribed channels ID
+    - Information about which comics to send and when it needs to be sent
+  - If you submitted a request (to prevent abuse and relevance):
+    - Discord Username
+    - Discord discriminator
+    - Date and time of the request
+    - The request
+    - If you want to delete this information (and the associated requests), use `/request_delete`
+
+
