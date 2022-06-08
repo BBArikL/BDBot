@@ -29,16 +29,16 @@ class BDBot(commands.Cog):
     async def on_ready(self):
         """On start of the bot"""
         # Change the bot activity
-        await self.bot.change_presence(status=discord.Status.online,
-                                       activity=discord.Activity(type=discord.ActivityType.listening,
-                                                                 name=f'/help in {len(self.bot.guilds)} servers'))
+        await discord_utils.update_presence(self.bot)
         discord_utils.logger.log(logging.INFO, "Logged in as {0.user}".format(self.bot))
         channel_id: int = int(os.getenv('PRIVATE_CHANNEL_SUPPORT_ID'))
 
         channel: discord.TextChannel = self.bot.get_channel(channel_id)
 
+        # Sends this message whenever restarting the bot
         await channel.send(
-            "Bot restarted. I will now try to sync the commands.")  # Sends this message whenever restarting the bot
+            "Bot restarted. I will now try to sync the commands."
+        )
 
         # Sync the commands
         guild: Union[None, discord.Guild] = None
@@ -80,9 +80,7 @@ class BDBot(commands.Cog):
     @commands.hybrid_command()
     async def invite(self, ctx: discord.ext.commands.Context):
         """Get a link to invite the bot"""
-        # inv = discord.utils.oauth_url(os.getenv('CLIENT_ID'))
-        inv = "https://discord.com/api/oauth2/authorize?client_id=837828249467093032&permissions=311385253888&scope" \
-              "=bot%20applications.commands "
+        inv = discord_utils.get_url()
         await ctx.send(f'Share the bot! {inv}')
 
     @commands.hybrid_command()
@@ -211,9 +209,7 @@ class BDBot(commands.Cog):
             await ctx.send('Failed to post server count\n{}: {}'.format(type(e).__name__, e))
 
         await ctx.send("Updating status...")
-        await self.bot.change_presence(status=discord.Status.online,
-                                       activity=discord.Activity(type=discord.ActivityType.listening,
-                                                                 name=f'/help in {len(self.bot.guilds)} servers'))
+        await discord_utils.update_presence(self.bot)
 
     @discord.app_commands.command()
     async def request(self, ctx: discord.Interaction):

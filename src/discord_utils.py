@@ -1,4 +1,6 @@
 import asyncio
+import os
+
 import discord
 import logging
 
@@ -807,3 +809,35 @@ async def comic_hour_autocomplete(
         app_commands.Choice(name=hour, value=hour)
         for hour in hours if current.lower() in hour.lower()
     ]
+
+
+def get_url() -> str:
+    perms = discord.Permissions()
+    perms.update(
+        read_messages=True,
+        read_messages_history=True,
+        send_messages=True,
+        send_messages_in_threads=True,
+        embed_links=True,
+        attach_files=True,
+        mention_everyone=True,
+        add_reactions=True,
+        use_application_commands=True
+    )
+
+    return discord.utils.oauth_url(
+        os.getenv('CLIENT_ID'),
+        permissions=perms,
+        scopes=('bot', 'applications.commands')
+    )
+
+
+async def update_presence(bot: commands.Bot):
+    await bot.change_presence(
+            status=discord.Status.online,
+            activity=discord.Activity(
+                type=discord.ActivityType.listening,
+                name=f'slash commands and \'/help general\' in'
+                     f' {len(bot.guilds)} servers!'
+            )
+        )
