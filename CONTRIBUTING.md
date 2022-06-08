@@ -1,10 +1,10 @@
 # Adding a comic
 
-Hey fellow comic enjoyer! I see you venturing across this project and you look like you want to add a comic. Do not worry, I will show you!
+Hey fellow comic fan! I see you venturing across this project, and you look like you want to add a comic. Do not worry, I will show you!
 
-Adding a comic is super easy. It does not even takes knowledge in code to do it! There is only 2 steps to make:
+Adding a comic is super easy. It does not even take knowledge in code to do it! There is only 2 steps to make:
     
-1. Let's start by searching for the comics and its information. You can find most of the information just by visiting the comic page. With your newly aquired knowledge     about the comic, you can start filing this form:
+1. Let's start by searching for the comics and its information. You can find most of the information just by visiting the comic page. With your newly acquired knowledge     about the comic, you can start filing this form:
     ```
     "<The name of the comic>":{
         "Name": "<The name of the comic>",
@@ -21,8 +21,8 @@ Adding a comic is super easy. It does not even takes knowledge in code to do it!
         "Helptxt": "<A very short description of the comic>"
     }
     ```
-    When you are done, paste the new information in the [configuration file](comics_details.json) under the last comic information.
-2. Add a new command in [Comics.py](../Scripts/Comics.py) with the name of the comic under the last command. Just change the aliases to the ones you specified in the config file and set the `comic_name` variable to the name of the first value. 
+    When you are done, paste the new information in the [configuration file](src/misc/comics_details.json) under the last comic information.
+2. Add a new command in [Comics.py](src/Scripts/Comics.py) with the name of the comic under the last command. Just change the aliases to the ones you specified in the config file and set the `comic_name` variable to the name of the first value. 
 3. All done! Thank you for contributing to BDBot!
 
-From [this file](misc/ADD_COMIC.md).
+From [this file](src/misc/ADD_COMIC.md).

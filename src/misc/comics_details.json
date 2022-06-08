@@ -1,19 +1,18 @@
 {
-    "Garfield":{
+    "Garfield": {
         "Name": "Garfield",
         "Author": "Jim Davis",
         "Web_name": "garfield",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
-        "Description": "A cynical, lazy, lasagna-loving, Monday-hating, dog-punting, mailman-mauling fat cat. Garfield's passion for food and sleep is matched only by his aversion to diet and exercise. Garfield and his human Jon Arbuckle debuted on June 19, 1978, and have been enduring/endearing one another ever since.\nGarfield got a lot of representation in media and experimental cartoons such as:\nGarkov: https://joshmillard.com/garkov/\nPermanent Monday: https://permanent-monday.blogspot.com/\nBarfield loses his lunch (Not intended for readers under 18 years of age): http://www.thereverend.com/barfield/index.html\nCalvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/\nUltimate Garfield: https://www.sparehed.com/2009/11/22/ultimate-garfield/\nNothing Garfield: https://www.sparehed.com/2007/08/08/nothing-garfield/\nLasagna Cat: https://www.youtube.com/channel/UC2AQkHXNVA-w9FA1m9VqO7A\nGarfield minus Garfield (also supported trough bd!gmng): https://garfieldminusgarfield.net/\n\nWebsite: https://www.garfield.com/\nFacebook: https://facebook.com/Garfield/\nTwitter: https://twitter.com/Garfield\nMore info: https://www.gocomics.com/garfield/characters-garfield\n\nSee also:\nGarfield Classics,\nGarfield minus Garfield,\nJon,\nPeanuts",
+        "Description": "A cynical, lazy, lasagna-loving, Monday-hating, dog-punting, mailman-mauling fat cat. Garfield's passion for food and sleep is matched only by his aversion to diet and exercise. Garfield and his human Jon Arbuckle debuted on June 19, 1978, and have been enduring/endearing one another ever since.\nGarfield got a lot of representation in media and experimental cartoons such as:\nGarkov: https://joshmillard.com/garkov/\nPermanent Monday: https://permanent-monday.blogspot.com/\nBarfield loses his lunch (Not intended for readers under 18 years of age): http://www.thereverend.com/barfield/index.html\nCalvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/\nUltimate Garfield: https://www.sparehed.com/2009/11/22/ultimate-garfield/\nNothing Garfield: https://www.sparehed.com/2007/08/08/nothing-garfield/\nLasagna Cat: https://www.youtube.com/channel/UC2AQkHXNVA-w9FA1m9VqO7A\nGarfield minus Garfield (also supported trough /garfield_minus_garfield): https://garfieldminusgarfield.net/\n\nWebsite: https://www.garfield.com/\nFacebook: https://facebook.com/Garfield/\nTwitter: https://twitter.com/Garfield\nMore info: https://www.gocomics.com/garfield/characters-garfield\n\nSee also:\nGarfield Classics,\nGarfield minus Garfield,\nJon,\nPeanuts",
         "Position": 0,
         "First_date": "1978, 6, 19",
         "Color": "FFA202",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/ga/mid_rec-201701251556.jpg",
-        "Aliases": "'Garfield', 'garfield' 'Garf', 'garf'",
         "Helptxt": "The only, the superb, Garfield!"
     },
-    "Garfield_Classics":{
+    "Garfield_Classics": {
         "Name": "Garfield Classics",
         "Author": "Jim Davis",
         "Web_name": "garfield-classics",
@@ -24,10 +23,9 @@
         "First_date": "2016, 6, 20",
         "Color": "FFA202",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/gacl/mid_rec-201701251558.jpg",
-        "Aliases": "'GarfieldClassics', 'GarfClassic', 'garfieldclass', 'GarfCl', 'garfcl'",
         "Helptxt": "Revisit the work of Jim Davis through the best garfield comics!"
     },
-    "CalvinandHobbes":{
+    "CalvinandHobbes": {
         "Name": "Calvin and Hobbes",
         "Author": "Bill Watterson",
         "Web_name": "calvinandhobbes",
@@ -38,10 +36,9 @@
         "First_date": "1985, 11, 18",
         "Color": "F0A921",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/ch/large_rec-201701251556.jpg",
-        "Aliases": "'CalvinandHobbes', 'C&H', 'c&h', 'CH', 'ch'",
         "Helptxt": "The iconic duo of Calvin and Hobbes is assured to bring back memories of the good days of childhood."
     },
-    "XKCD":{
+    "XKCD": {
         "Name": "xkcd",
         "Author": "Randall Munroe",
         "Web_name": "xkcd",
@@ -52,10 +49,9 @@
         "First_date": "1",
         "Color": "FFFFFF",
         "Image": "https://xkcd.com/s/0b7742.png",
-        "Aliases": "'XKCD', 'xkcd', 'xk'",
         "Helptxt": "Randall Munroe explores romance, sarcasm, math and language every Monday, Wednesday and Friday."
     },
-    "Peanuts":{
+    "Peanuts": {
         "Name": "Peanuts",
         "Author": "Charles M. Schulz",
         "Web_name": "peanuts",
@@ -66,10 +62,9 @@
         "First_date": "1950, 10, 2",
         "Color": "6D9BB7",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/pe/large_rec-201701251556.jpg",
-        "Aliases": "'Peanuts', 'peanuts', 'peanut', 'pean'",
         "Helptxt": "Charles Schulz's classic about the adventures of Charlie Brown, Snoopy and the gang."
     },
-    "Peanuts_Begins":{
+    "Peanuts_Begins": {
         "Name": "Peanuts Begins",
         "Author": "Charles M. Schulz",
         "Web_name": "peanuts-begins",
@@ -80,10 +75,9 @@
         "First_date": "1950, 10, 2",
         "Color": "6D9BB7",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/pecl/large_rec-201701251558.jpg",
-        "Aliases": "'PeanutsBegins', 'peanutsbegins', 'peanutbegin', 'peanutsbegin', 'peanbeg'",
         "Helptxt": "The original comics of Charles Schulz's Peanuts, revisited!"
     },
-    "Dilbert":{
+    "Dilbert": {
         "Name": "Dilbert",
         "Author": "Scott Adams",
         "Web_name": "dilbert",
@@ -94,10 +88,9 @@
         "First_date": "1989, 4, 16",
         "Color": "C20C21",
         "Image": "https://dilbert.com/assets/packs/images/dilbert_character_top-b1b24dba0f6ee1cb0bea8de1eb84b5fe.png",
-        "Aliases": "'Dilbert', 'dilbert', 'Dilb', 'dilb'",
         "Helptxt": "A day in the office with Dilbert, Dogbert and the pointy-haired boss."
     },
-    "Dilbert-Classics":{
+    "Dilbert-Classics": {
         "Name": "Dilbert Classics",
         "Author": "Scott Adams",
         "Web_name": "dilbert-classics",
@@ -108,10 +101,9 @@
         "First_date": "2012, 6, 13",
         "Color": "6D9BB7",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/dc/large_rec-201701251557.jpg",
-        "Aliases": "'Dilbertcl', 'dilbertcl', 'Dilbcl', 'dilbcl'",
         "Helptxt": "Dilbert classics revisit the old days of dial-up internet and fax in the office of the pointy-haired boss and Dogbert!"
     },
-    "Cyanide_and_Happiness":{
+    "Cyanide_and_Happiness": {
         "Name": "Cyanide and Happiness",
         "Author": "Dave McElfatrick, Kris Wilson and Rob DenBleyker",
         "Web_name": "Cyanide and Happiness",
@@ -122,10 +114,9 @@
         "First_date": "2012, 6, 13",
         "Color": "FFFFFF",
         "Image": "https://explosm.net/img/logo.png",
-        "Aliases": "'Dilbertcl', 'dilbertcl', 'Dilbcl', 'dilbcl'",
         "Helptxt": "The classic comic of dark humor from the team of Explosm is assured not to leave you cold!"
     },
-    "Frazz":{
+    "Frazz": {
         "Name": "Frazz",
         "Author": "Jeff Mallett",
         "Web_name": "frazz",
@@ -136,12 +127,11 @@
         "First_date": "2001, 4, 2",
         "Color": "36535A",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/fz/large_rec-201701251556.jpg",
-        "Aliases": "'Frazz', 'frazz', 'fraz'",
         "Helptxt": "Join the adventures of Frazz the songwriter-janitor who is every kid's buddy!"
     },
-    "Garfield_minus_Garfield":{
+    "Garfield_minus_Garfield": {
         "Name": "Garfield minus Garfield",
-        "Author": "Jim Davis",
+        "Author": "Dan Walsh",
         "Web_name": "Garfield minus Garfield",
         "Main_website": "https://garfieldminusgarfield.net/",
         "Working_type": "rss",
@@ -150,10 +140,9 @@
         "First_date": "2008, 2, 13",
         "Color": "FFA202",
         "Image": "https://64.media.tumblr.com/avatar_02c53466ae58_64.gif",
-        "Aliases": "'Garfieldminus', 'garfminus', 'GMNG', 'gmng'",
         "Helptxt": "Revisit Garfield without the iconic orange and black cat, to see how can loneliness reveal existential angst in a daily life."
     },
-    "Frank-and-Ernest":{
+    "Frank-and-Ernest": {
         "Name": "Frank and Ernest",
         "Author": "Bob Thaves",
         "Web_name": "frank-and-ernest",
@@ -164,259 +153,395 @@
         "First_date": "1990, 3, 10",
         "Color": "F6F495",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/fk/large_rec-201701251556.jpg",
-        "Aliases": "'Frank', 'frank', 'Ernest', 'ernest', 'Frank&Ernest', 'frank&ernest'",
         "Helptxt": "Enjoy the iconic comic from Bob Thaves!"
     },
-    "BroomHilda":{
+    "BroomHilda": {
         "Name": "Broom Hilda",
         "Author": "Russell Myers",
         "Web_name": "broomhilda",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
-        "Description": "Living in an enchanted forest with surrealistic landscapes, the engaging characters of Broom Hilda happily have no connection with reality. Other comic characters are extensions or distortions of reality, but Broom Hilda deals in pure fantasy, making the strip bewitchingly unique. Here in the forest, the inhabitants maintain a standard of madness where total irrelevance is the only relevancy. The strip is simply a loony-bin where what’s said and done often makes no sense whatsoever, much to the joy of its millions of fans.",
+        "Description": "Living in an enchanted forest with surrealistic landscapes, the engaging characters of Broom Hilda happily have no connection with reality. Other comic characters are extensions or distortions of reality, but Broom Hilda deals in pure fantasy, making the strip bewitchingly unique. Here in the forest, the inhabitants maintain a standard of madness where total irrelevance is the only relevancy. The strip is simply a loony-bin where what\u2019s said and done often makes no sense whatsoever, much to the joy of its millions of fans.",
         "Position": 12,
         "First_date": "2008, 4, 8",
         "Color": "C0BC37",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/tmbro/mid_rec-201701251555.jpg",
-        "Aliases": "'BroomHilda', 'Broom', 'broom', 'Hilda', 'hilda'",
         "Helptxt": "The adventures of a man-crazy, cigar-smoking, beer-guzzling, 1,500-year-old witch and her motley crew of friends!"
     },
-    "Inspector-Dangers-Crime-Quiz":{
-        "Name": "Inspector Danger's Crime Quiz",
-        "Author": "Werner Wejp-Olsen",
-        "Web_name": "inspector-dangers-crime-quiz",
-        "Main_website": "https://www.gocomics.com/",
-        "Working_type": "date",
-        "Description": "INSPECTOR DANGER’S CRIME-QUIZ Do you love whodunit-mysteries? Are you a Columbo-fan? Would you like to be a detective too? Here’s your chance. The comic strip “Inspector Danger’s Crime-Quiz” by Werner Wejp-Olsen, world-renowned cartoonist, is a crime-puzzle challenging armchair sleuths of both genders and all ages to activate their Sherlock Holmes-gene to figure out the right solution and solve the case.\n\nDisclaimer from GoComics: All characters appearing in this comic strip are fictitious. Any resemblance to the real world, real crime scenes and actual criminals is purely coincidental, unintentional and not to be taken too literally.",
-        "Position": 13,
-        "First_date": "2011, 8, 1",
-        "Color": "7AB2BE",
-        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/cq/mid_rec-201701251557.jpg",
-        "Aliases": "'InspectorDanger' 'Inspector', 'inspector', 'crime', 'crimequiz'",
-        "Helptxt": "Solve crime puzzles every Monday with Inspector Danger and his assistant Alfie!"
-    },
-    "Cheer-up-emo-kid":{
+    "Cheer-up-emo-kid": {
         "Name": "Cheer up Emo kid",
         "Author": "Enzo comics",
         "Web_name": "cheer-up-emo-kid",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
         "Description": "'Cheer Up, Emo Kid started in 2008 as an amateur comic about relationships and events in my life, and has since graduated into a professional amateur comic about relationships and events in my life. It loosely follows the non-adventures of Zeke & Frank, two friends constantly at odds with each other in their attitudes towards relationships; and their friends Steve & Sue, an extraordinarily ordinary couple just going through the motions of monogamy.[...]' - Enzo.\nFacebook: https://facebook.com/cheerupemokid\nTwitter: https://twitter.com/enzocomics\nInstagram: https://instagram.com/enzocomics\nTumblr: https://enzocomics.tumblr.com/\nWebsite: https://cheerupemokid.com/",
-        "Position": 14,
+        "Position": 13,
         "First_date": "2017, 3, 20",
         "Color": "8B8C8C",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/cuek/large_cuek_rec_201704041613.jpg",
-        "Aliases": "'Cheerupemokid' 'emo', 'Emo', 'Cheerup', 'emokid'",
         "Helptxt": "A comic about friendship and love made by Enzo Comics."
     },
-    "brevity":{
+    "brevity": {
         "Name": "Brevity",
         "Author": "Dan Thompson",
         "Web_name": "brevity",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
         "Description": "With his random but always funny comics, Dan Thompson knows how to twist a situation with a whole new perspective.\nFacebook: https://facebook.com/brevitycomic\nTwitter: https://twitter.com/BrevityComic",
-        "Position": 15,
+        "Position": 14,
         "First_date": "2005, 1, 3",
         "Color": "99552F",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/bvp/large_rec-201701251556.jpg",
-        "Aliases": "'brevity', 'brev'",
         "Helptxt": "Enjoy the humor of Dan Thompson as he twist seemingly normal situations into a whole new perspective."
     },
-    "Cats-Cafe":{
+    "Cats-Cafe": {
         "Name": "Cat's Cafe",
         "Author": "Matt Tarpley",
         "Web_name": "cats-cafe",
         "Main_website": "https://www.gocomics.com/",
         "Working_type": "date",
-        "Description": "Everyone is welcome at Cat’s Café! There is always a seat and someone to talk to. Follow Cat, Penguin, and Rabbit along with a variety of other special animals, form a wonderful place where everyone can feel warm, fuzzy, and accepted.\n\nFacebook: https://facebook.com/catscafecomics\nTwitter: https://twitter.com/CatsCafeComics\nInstagram: https://instagram.com/catscafecomics/\nTumblr: https://catscafecomics.tumblr.com/\nWebsite: https://www.catscafecomics.com/\nMore info: https://www.gocomics.com/cats-cafe/characters\nSee also:\nGarfield",
-        "Position": 16,
+        "Description": "Everyone is welcome at Cat\u2019s Caf\u00e9! There is always a seat and someone to talk to. Follow Cat, Penguin, and Rabbit along with a variety of other special animals, form a wonderful place where everyone can feel warm, fuzzy, and accepted.\n\nFacebook: https://facebook.com/catscafecomics\nTwitter: https://twitter.com/CatsCafeComics\nInstagram: https://instagram.com/catscafecomics/\nTumblr: https://catscafecomics.tumblr.com/\nWebsite: https://www.catscafecomics.com/\nMore info: https://www.gocomics.com/cats-cafe/characters\nSee also:\nGarfield",
+        "Position": 15,
         "First_date": "2019, 5, 20",
         "Color": "F5D16F",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/ccf/large_ccf_rec_201905140834.jpg",
-        "Aliases": "'Catscafe', 'catscafe', 'Cats', 'cats', 'cafe', 'cat'",
         "Helptxt": "Join Cat's cafe where wholesomeness and good vibes are always on the menu!"
     },
-    "Popeye":{
+    "Popeye": {
         "Name": "Popeye",
         "Author": "Bud Sagendorf (Dailies) and Hy Eisman (Sundays)",
         "Web_name": "popeye",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
         "Description": "He's short, balding, ornery and downright ugly by anyone's standards. But countless numbers of fans have grown up admiring and identifying with this unpretentious hero since his introduction to the public in 1929. With one of his cartoons airing somewhere in the world nearly every minute of every day, Popeye remains one of the most widely recognized and best-loved personalities ever.\n\nFacebook: https://www.facebook.com/Popeye/\nTwitter: https://twitter.com/PopeyeTweetsk\nInstagram: https://www.instagram.com/popeye\nYoutube: https://www.youtube.com/channel/UCqvXAiNyn8pd9SVPclWfJTg\nMore info: https://comicskingdom.com/popeye/about",
-        "Position": 17,
+        "Position": 16,
         "First_date": "",
         "Color": "CD1C23",
         "Image": "https://api.kingdigital.com/img/features/232/logos/website.png",
-        "Aliases": "'Popeye', 'popeye', 'Pop', 'pop', 'Pops'",
         "Helptxt": "The iconic sailor is ready to roll on adventures with his incredible spinach strength!!"
     },
-    "Artic-Circle":{
+    "Artic-Circle": {
         "Name": "Artic Circle",
         "Author": "Alex Hallatt",
         "Web_name": "arctic-circle",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
         "Description": "Arctic Circle is a comic strip about three penguins who have migrated from the Antarctic to the small town of Snowpeak within the Arctic Circle.\n\nThe penguins have joined a polar bear, a snow bunny, a lemming and an Arctic tern. Collectively, they deal with everything the 21st century has to throw at them, including climate change, fashion, Facebook and genetically modified organisms gone wild.\n\nFacebook: https://www.facebook.com/arcticcirclecartoons/\nTwitter: https://twitter.com/alexhtweets\nInstagram: https://www.instagram.com/alexhallattcartoons/\nMore info: https://comicskingdom.com/artic-circle/about",
-        "Position": 18,
+        "Position": 17,
         "First_date": "",
         "Color": "C4E5F6",
         "Image": "https://api.kingdigital.com/img/features/2/logos/website.png",
-        "Aliases": "'ArticCircle', 'Articcircle', 'articCircle', 'articcircle', 'Artic', 'artic', 'Circle', 'circle'",
         "Helptxt": "A band of penguins and their friends have moved to the little town of Snowpeak, ready to deal with everything the 21st century has to throw at them!"
     },
-    "Lockhorns":{
+    "Lockhorns": {
         "Name": "The lockhorns",
         "Author": "Bunny Hoest and John Reiner",
         "Web_name": "lockhorns",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
         "Description": "Join Leroy and Loretta Lockhorn in the award-winning comic strips gently spoofs the state of marital bliss, poking fun at the foibles of both partners. Their snappy repartee and witty banter has made them a perennial favorite.\n\nFacebook: https://www.facebook.com/TheLockhornsComic\nMore info: https://comicskingdom.com/lockhorns/about",
-        "Position": 19,
+        "Position": 18,
         "First_date": "",
         "Color": "03A582",
         "Image": "https://api.kingdigital.com/img/features/292/logos/website.png",
-        "Aliases": "'Lockhorns', 'lockhorns', 'Lock', 'lock'",
         "Helptxt": "Join Loretta and Leroy Lockhorns in their humorous couple!"
     },
-    "Marvin":{
+    "Marvin": {
         "Name": "Marvin",
         "Author": "Tom Armstrong",
         "Web_name": "marvin",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
-        "Description": "Marvin features a precocious red-headed toddler who spends much of his time lost in his own thoughts and fantasy adventures.\n\nLike most young children - and too many adults - Marvin is convinced that hersquos the center of the universe. And as such, he believes that everything and everyone else revolves around him. He may be right. Marvin is definitely the epicenter of all the activity and chaos in his family! Marvin relegates his mom and dad, Jenny and Jeff, to the position of household staff.\n\nMore info: https://comicskingdom.com/marvin/about",
-        "Position": 20,
+        "Description": "Marvin features a precocious red-headed toddler who spends much of his time lost in his own thoughts and fantasy adventures.\n\nLike most young children - and too many adults - Marvin is convinced that he is the center of the universe. And as such, he believes that everything and everyone else revolves around him. He may be right. Marvin is definitely the epicenter of all the activity and chaos in his family! Marvin relegates his mom and dad, Jenny and Jeff, to the position of household staff.\n\nMore info: https://comicskingdom.com/marvin/about",
+        "Position": 19,
         "First_date": "",
         "Color": "CC4637",
         "Image": "https://api.kingdigital.com/img/features/342/logos/website.jpg",
-        "Aliases": "'Marvin', 'marvin', 'Marv', 'marv'",
         "Helptxt": "Join the Miller family as they live adventures and good laughs!"
     },
-    "Zits":{
+    "Zits": {
         "Name": "Zits",
         "Author": "Jerry Scott and Jim Borgman",
         "Web_name": "zits",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
         "Description": "Sixteen-year-old Jeremy Duncan is a high school freshman and an aspiring musician. He daydreams about the day when his band, Goat Cheese Pizza, records their first monster hit single, and they all pile into his van for their cross-country, sold-out concert tour. Between naps, study hall and band practice, Jeremy still manages to find time to be the star of the hugely popular comic strip, Zits.\n\nCreated in 1997 by Pulitzer Prize-winning editorial cartoonist Jim Borgman and Reuben Award-winning cartoonist/writer Jerry Scott, Zits appears in more than 1,600 newspapers worldwide in 45 countries and is translated into 15 different languages. The comic has an estimated daily readership of more than 200 million readers. Zits is the only strip in comics history to achieve that milestone in the short span of nine years.\nFacebook: https://www.facebook.com/zitscomics\nInstagram: https://www.instagram.com/zitsguys/\nMore info: https://comicskingdom.com/zits/about",
-        "Position": 21,
+        "Position": 20,
         "First_date": "",
         "Color": "7F4B85",
         "Image": "https://api.kingdigital.com/img/features/642/logos/website.png",
-        "Aliases": "'Zits', 'zits', 'Zit', 'zit'",
         "Helptxt": "Follow Jeremy Duncan as he tries to balance family, school and social life, through high school and his band!"
     },
-    "Hi-and-Lois":{
+    "Hi-and-Lois": {
         "Name": "Hi and Lois",
         "Author": "Brian Walker, Greg Walker and Chance Browne",
         "Web_name": "hi-and-lois",
         "Main_website": "https://comicskingdom.com/",
         "Working_type": "date",
-        "Description": "Hi and Lois was created in 1954 by Mort Walker and Dik Browne, two of the most successful cartoonists in comic history. Provoking a strong emotional response from readers right from the beginning, it grew steadily in popularity, passing the 1,000-newspaper mark in 1982. It is continued today by their sons, writers Brian and Greg Walker and artist Chance Browne. Whether itrsquos busy parents juggling jobs and raising a family, a teen coping with his self-image, sibling rivalry among the youngsters, or a toddler learning about the world and her place in it, Hi and Lois has kept pace with mainstream life and found the gentle humor in familiar situations.\nFacebook: https://www.facebook.com/hiandlois\nInstagram: https://www.instagram.com/ericreavesart\nMore info: https://comicskingdom.com/hi-and-lois/about",
-        "Position": 22,
+        "Description": "Hi and Lois was created in 1954 by Mort Walker and Dik Browne, two of the most successful cartoonists in comic history. Provoking a strong emotional response from readers right from the beginning, it grew steadily in popularity, passing the 1,000-newspaper mark in 1982. It is continued today by their sons, writers Brian and Greg Walker and artist Chance Browne. Whether it is busy parents juggling jobs and raising a family, a teen coping with his self-image, sibling rivalry among the youngsters, or a toddler learning about the world and her place in it, Hi and Lois has kept pace with mainstream life and found the gentle humor in familiar situations.\nFacebook: https://www.facebook.com/hiandlois\nInstagram: https://www.instagram.com/ericreavesart\nMore info: https://comicskingdom.com/hi-and-lois/about",
+        "Position": 21,
         "First_date": "",
         "Color": "CE552C",
         "Image": "https://api.kingdigital.com/img/features/242/logos/website.png",
-        "Aliases": "'HiandLois', 'hiandlois', 'Hi', 'hi', 'Lois', 'lois'",
         "Helptxt": "Follow the adventures of a little family who always know how to find humor into family life!"
     },
-    "Safely-Endangered":{
+    "Safely-Endangered": {
         "Name": "Safely Endangered",
         "Author": "Chris McCoy",
         "Web_name": "comedy/safely-endangered/list?title_no=352",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
         "Description": "\"Safely Endangered is a webcomic drawn by me, Chris McCoy, a UK based cartoonist. I created the strip in late 2012 and began publishing comics via Tumblr. Ever since 2014, Safely Endangered has been published on Webtoon. New episodes are published every week and you can read over 600 free comics for free there. You can also find me at the occasional UK convention! When I'm not drawing comics, I like to play guitar, drink beers and watch re-runs of f.r.i.e.n.d.s :)\" -Chris McCoy \n\nOther Works:\nYour Adventure:https://www.webtoons.com/en/comedy/your-adventure/list?title_no=506.\nFacebook: https://facebook.com/safelyendangered\nTwitter: https://twitter.com/EndangeredComic\nWebsite: https://safelyendangered.com/\nMore info: https://safelyendangered.com/pages/comics",
-        "Position": 23,
+        "Position": 22,
         "First_date": "1",
         "Color": "F1AC52",
         "Image": "https://swebtoon-phinf.pstatic.net/20160608_11/1465351605782P29tU_JPEG/thumb_ipad.jpg",
-        "Aliases": "'SafelyEndangered', 'safelyendangered', 'Safely', 'safely', 'Safe', 'safe'",
         "Helptxt": "Silly comics for silly people updated each Monday and Wednesday!"
     },
-    "Carl":{
+    "Carl": {
         "Name": "Carl",
         "Author": "Hussein Traboulsi and Claudia Z.",
         "Web_name": "slice-of-life/carl/list?title_no=1216",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
-        "Description": "Carl is a robot psychiatrist that suddenly becomes sentient. He starts longing to be human but his creator and father figure Dr Alda prevents him from showing his feelings out of fear of losing him. More challenges arise when Alda’s arch nemesis sets out to destroy them both.\nHussein Traboulsi's twitter: https://twitter.com/hughsain1\nInstagram: https://www.instagram.com/hughsain/?hl=en\nClaudia Z. twitter: https://twitter.com/SWEETC0UPS\nMore info: https://www.webtoons.com/en/slice-of-life/carl/list?title_no=1216",
-        "Position": 24,
+        "Description": "Carl is a robot psychiatrist that suddenly becomes sentient. He starts longing to be human but his creator and father figure Dr Alda prevents him from showing his feelings out of fear of losing him. More challenges arise when Alda\u2019s arch nemesis sets out to destroy them both.\nHussein Traboulsi's twitter: https://twitter.com/hughsain1\nInstagram: https://www.instagram.com/hughsain/?hl=en\nClaudia Z. twitter: https://twitter.com/SWEETC0UPS\nMore info: https://www.webtoons.com/en/slice-of-life/carl/list?title_no=1216",
+        "Position": 23,
         "First_date": "1",
         "Color": "798F90",
         "Image": "https://swebtoon-phinf.pstatic.net/20210707_107/16256036334140R8Fb_JPEG/1CARL_desktop_thumbnail.jpg",
-        "Aliases": "'Carl', 'carl'",
-        "Helptxt": "Join the adventures of the sentient robot Carl updated each Thuesday and Sunday!"
+        "Helptxt": "Join the adventures of the sentient robot Carl updated each Tuesday and Sunday!"
     },
-    "BlueChair":{
+    "BlueChair": {
         "Name": "BlueChair",
         "Author": "Shen",
         "Web_name": "slice-of-life/bluechair/list?title_no=199",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
         "Description": "\"I'm the cartoonist behind Bluechair, Owlturd, and Live With Yourself! My comics are usually based on thoughts I have when I forget to think \"no, wait, that's stupid.\" If you say my name 3 times, I won't necessarily appear before you, but I might suddenly become nervous and not know why.\" -Shen\n\nOther Works:\nLive with yourself: https://www.webtoons.com/en/comedy/live-with-yourself/list?title_no=919.\nFacebook: https://www.facebook.com/owlturdcomix\nTwitter: https://twitter.com/shenanigansen\nWebsite: https://safelyendangered.com/\nMore info: https://safelyendangered.com/pages/comics",
-        "Position": 25,
+        "Position": 24,
         "First_date": "1",
         "Color": "FBD55D",
         "Image": "https://swebtoon-phinf.pstatic.net/20180704_72/1530671398892KGNLr_JPEG/10_EC8DB8EB84A4EC9DBC_ipad.jpg",
-        "Aliases": "'BlueChair', 'blueChair', 'Bluechair', 'bluechair', 'blue', 'chair'",
-        "Helptxt": "The internet's favorite visual stand-up comic to make memes out of, updated each Wednesday and Satudray!"
+        "Helptxt": "The internet's favorite visual stand-up comic to make memes out of, updated each Wednesday and Saturday!"
     },
-    "Adventures-of-God":{
+    "Adventures-of-God": {
         "Name": "Adventures of God",
         "Author": "Teo and Corey",
         "Web_name": "comedy/adventures-of-god/list?title_no=853",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
         "Description": "In this slice of (eternal) life, you'll meet God, visit Heaven and learn that what goes on behind the pearly gates isn't exactly the way the good book describes it. For starters, it's a pretty unhealthy work environment - what with God's ginormous, fragile ego and heavy drinking problem. The good news is that while heaven is a lot less holy than expected, it's much more hilarious too.\n\nOther Works:\nDeadlove: https://www.webtoons.com/en/slice-of-life/deadlove/list?title_no=2460\nMy Dictator Boyfriend: https://www.webtoons.com/en/comedy/my-dictator-boyfriend/list?title_no=1391\nFacebook: https://www.facebook.com/adventuresofgod\nTwitter: https://twitter.com/adventuresofteo\nMore info: https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853",
-        "Position": 26,
+        "Position": 25,
         "First_date": "1",
         "Color": "EDE4DE",
         "Image": "https://swebtoon-phinf.pstatic.net/20170502_80/1493715267628Gz02K_JPEG/thumb_ipad.jpg",
-        "Aliases": "'AdventuresOfGod', 'adventuresOfGod', 'adventuresGod', 'adventuresofgod', 'AOO', 'AOGod', 'aogod'",
         "Helptxt": "The adventures of God, Gabe, Satan and Ebag updated each Tuesday and Saturday!"
     },
-    "Live-with-yourself":{
+    "Live-with-yourself": {
         "Name": "Live with yourself",
         "Author": "Shen and David Mercier",
         "Web_name": "comedy/live-with-yourself/list?title_no=919",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
         "Description": "An explosive time-space accident leaves happy-go-lucky 20-something Todd living with himself, himself, and himself. You get to watch the struggle.\n\nOther Works:\nBlueChair:https://www.webtoons.com/en/slice-of-life/bluechair/list?title_no=199\nMercWorks:https://www.webtoons.com/en/slice-of-life/mercworks/list?title_no=426\nFacebook: https://www.facebook.com/owlturdcomix\nTwitter: https://twitter.com/shenanigansen\nFacebook: https://facebook.com/mercworks.net\nTwitter: https://twitter.com/MercWorks\nWebsite: https://www.mercworks.net/\nMore info: https://www.mercworks.net/lwys",
-        "Position": 27,
+        "Position": 26,
         "First_date": "1",
         "Color": "F3DF76",
         "Image": "https://swebtoon-phinf.pstatic.net/20210329_125/1616995930991WAfcF_JPEG/5Live-with-Yourself21_ipad.jpg",
-        "Aliases": "'LiveWithYourself', 'livewithyourself', 'Live', 'live', 'LWY', 'lwy'",
         "Helptxt": "Watch Todd live with himself at different time of his life each Tuesday and Sunday!!"
     },
-    "System32comics":{
+    "System32comics": {
         "Name": "System32Comics",
         "Author": "System32",
         "Web_name": "challenge/system32comics/list?title_no=235074",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
         "Description": "If a computer could talk, what would it say? A tech webcomic!\nOther Works: https://twitter.com/System32ComicsA\nLinkTree: https://linktr.ee/System32Comics\nTwitter: https://twitter.com/system32comics\nFacebook: https://www.facebook.com/System32Comics\nInstagram: https://www.instagram.com/system32comics/\n Patreon: https://www.patreon.com/System32Comics\nMore info: https://www.webtoons.com/en/challenge/system32comics/list?title_no=235074",
-        "Position": 28,
+        "Position": 27,
         "First_date": "1",
         "Color": "BFDBBF",
         "Image": "https://swebtoon-phinf.pstatic.net/20210924_160/1632421968047cVuvN_JPEG/8fbef6a0-ea3d-472b-b655-1fe4395d1bc3.jpg",
-        "Aliases": "'System32', 'system32', 'Sys32', 'sys32', 'sys'",
         "Helptxt": "A tech webcomic in a world where computers can talk!"
     },
-    "TheGamer":{
+    "TheGamer": {
         "Name": "The Gamer",
         "Author": "Sangyoung Seong and Sang-A",
         "Web_name": "action/the-gamer/list?title_no=88",
         "Main_website": "https://www.webtoons.com/en/",
         "Working_type": "rss",
-        "Description": "Jihan Han is your typical high school student -- minus the fact the he’s acquired the special ability to view the world around him as a video-game. Not long after this discovery, he stumbles upon a hidden world filled with others just like him. Now, amidst juggling homework and completing quests, Jihan must learn how to navigate his newfound power in order to level up in life.\nMore info: https://www.webtoons.com/en/action/the-gamer/list?title_no=88",
-        "Position": 29,
+        "Description": "Jihan Han is your typical high school student -- minus the fact the he\u2019s acquired the special ability to view the world around him as a video-game. Not long after this discovery, he stumbles upon a hidden world filled with others just like him. Now, amidst juggling homework and completing quests, Jihan must learn how to navigate his newfound power in order to level up in life.\nMore info: https://www.webtoons.com/en/action/the-gamer/list?title_no=88",
+        "Position": 28,
         "First_date": "1",
         "Color": "8B95C9",
         "Image": "https://swebtoon-phinf.pstatic.net/20210329_218/16169951215067JJXW_JPEG/6The-Gamer_ipad.jpg",
-        "Aliases": "'TheGamer', 'theGamer', 'thegamer', 'Gamer', 'gamer', 'game'",
-        "Helptxt": "What if your life turned into a video game? Follow Jihan Han advntures each Friday"
+        "Helptxt": "What if your life turned into a video game? Follow Jihan Han's adventures each Friday"
+    },
+    "BigNate": {
+        "Name": "Big Nate",
+        "Author": "Lincoln Peirce",
+        "Web_name": "bignate",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Aspiring cartoonist Nate Wright is the star of Big Nate, the daily and Sunday comic strip distributed by NEA since 1991. Nate is 11 years old, four-and-a-half feet tall, and the all-time record holder for detentions in school history. He's a self-described genius and sixth grade Renaissance Man. Nate, who lives with his dad and older sister, enjoys pestering his family and teachers with his sarcasm.\nFacebook: https://www.facebook.com/bignatebooks/\nMore info: https://www.gocomics.com/bignate/about",
+        "Position": 29,
+        "First_date": "1991, 01, 07",
+        "Color": "179AC2",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/bn/large_rec-201701251556.jpg",
+        "Helptxt": "Class clown. Self-described genius. Mischief maker. Big Nate knows trouble."
+    },
+    "GetFuzzy": {
+        "Name": "Get Fuzzy",
+        "Author": "Darby Conley",
+        "Web_name": "getfuzzy",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "House-cats are known to be aloof, but \"cat-titude\" reaches new heights in Get Fuzzy, the bitingly hilarious comic strip from cartoonist Darby Conley. Available daily and Sunday and appearing in 650 newspapers nationwide, Get Fuzzy is a wry portrait of single life, with pets. At the center of this warm and fuzzy romp is Rob Wilco, a single, mild-mannered ad executive and guardian of anthropomorphic scamps Bucky and Satchel.\nMore info: https://www.gocomics.com/getfuzzy/about",
+        "Position": 30,
+        "First_date": "1999, 09, 06",
+        "Color": "BC9B6E",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/gz/large_rec-201701251556.jpg",
+        "Helptxt": "Get Fuzzy is a wry portrait of single life, with pets."
+    },
+    "BeetleBailey": {
+        "Name": "Beetle Bailey",
+        "Author": "Mort Walker",
+        "Web_name": "beetle-bailey-1",
+        "Main_website": "https://comicskingdom.com/",
+        "Working_type": "date",
+        "Description": "Beetle Bailey, which started as a college-themed strip in 1950, debuted inauspiciously in 12 newspapers. After six months, it had signed on only 25 clients, and King Features Syndicate considered dropping it. The Korean War was heating up at that time, so Mort Walker decided to have Beetle enlist in the Army. He quickly picked up 100 newspapers. When Mort won the National Cartoonist Society\u2019s award as the best cartoonist of the year for 1953, Beetle Bailey had become a certified success. Today, after more than six decades, Mort Walker\u2019s creation is still one of the most popular comic strips in the world.\nFacebook: https://www.facebook.com/beetlebaileypage\nMore info: https://comicskingdom.com/beetle-bailey-1/about",
+        "Position": 31,
+        "First_date": "",
+        "Color": "EB0202",
+        "Image": "https://api.kingdigital.com/img/features/42/logos/website.png",
+        "Helptxt": "Follow the adventures of Beetle as he resist authority in the army."
+    },
+    "TheBoondocks": {
+        "Name": "The Boondocks",
+        "Author": "Aaron McGruder",
+        "Web_name": "boondocks",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Meet Aaron McGruder\u2019s The Boondocks: Huey and Riley Freeman, Jazmine DuBois, and Huey\u2019s best friend, Caesar. This comic strip reflects the racial diversity and complexity of our world. Combining Huey\u2019s childish antics with contemporary political and social satire, the strip explores the terrain where dashikis and Brand Nubian CDs meet The Gap and Hanson.\nMore info: https://www.gocomics.com/boondocks/about",
+        "Position": 32,
+        "First_date": "1999, 04, 19",
+        "Color": "A16F4F",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/bo/large_rec-201701251555.jpg",
+        "Helptxt": "A popular and controversial strip, The Boondocks satirizes African American culture and American politics as seen through the eyes of young, black radical Huey Freeman."
+    },
+    "Pickles": {
+        "Name": "Pickles",
+        "Author": "Brian Crane",
+        "Web_name": "pickles",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Pickles, syndicated by The Washington Post Writers Group for more than 26 years, tells the story of Earl and Opal Pickles as they enjoy their golden years surrounded by friends and family. A perennial favorite with readers of all ages, Pickles has topped comics polls across the nation again and again, and was named the best comic strip of 2001 by the National Cartoonists\u2019 Society.\nFacebook: https://www.facebook.com/picklescomic/\nMore info: https://www.gocomics.com/pickles/about",
+        "Position": 33,
+        "First_date": "2003, 01, 01",
+        "Color": "0F844B",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/wppic/large_rec-201701251555.jpg",
+        "Helptxt": "Pickles is a daily and Sunday comic strip by Brian Crane focusing on a retired couple in their seventies, Earl and Opal Pickles."
+    },
+    "PearlsBeforeSwine": {
+        "Name": "Pearls Before Swine",
+        "Author": "Stephan Pastis",
+        "Web_name": "pearlsbeforeswine",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "At its heart, Pearls Before Swine is the comic strip tale of two friends: an arrogant Rat who thinks he knows it all and a slow-witted Pig who doesn't know any better. Together, this pair offers caustic commentary on humanity's quest for the unattainable.\nWebsite: https://stephanpastis.wordpress.com/\nMore info: https://www.gocomics.com/pearlsbeforeswine/meet-the-cast",
+        "Position": 34,
+        "First_date": "2002, 01, 07",
+        "Color": "6EBED6",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/pb/large_pb_rec_201804050954.jpg",
+        "Helptxt": "Join the chronicles of the daily lives of an ensemble cast of suburban anthropomorphic animals: Pig, Rat, Zebra, Goat, and a fraternity of crocodiles."
+    },
+    "Chibird": {
+        "Name": "Chibird",
+        "Author": "Chibird",
+        "Web_name": "challenge/chibird/list?title_no=97265",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "Positive, motivational drawings to brighten your day! Featuring everyday life with Jackie, Chibird, Motivational Penguin, Shy Ghost, Positive Bunny, Hedgehog, and more! Find Chibird at chibird.com or @ChibirdArt on Instagram and Facebook! :D (Under Creative Commons : https://creativecommons.org/licenses/by-nc-nd/4.0/)\nWebsite: https://chibird.com/\nPatreon: https://www.patreon.com/chibird\nShop: https://chibird.myshopify.com/\nFacebook: https://www.facebook.com/ChibirdArt/\nInstagram: https://www.instagram.com/chibirdart/\nTwitter: https://twitter.com/ChibirdArt\niMessage stickers: https://itunes.apple.com/us/app/chibird-penguin-stickers/id1173229367\nMore info: https://chibird.com/faq",
+        "Position": 35,
+        "First_date": "1",
+        "Color": "FCF36B",
+        "Image": "https://swebtoon-phinf.pstatic.net/20170718_237/1500327571879yzcBu_JPEG/988e7e1e-c286-4391-971c-b8f44cb497bb.jpg",
+        "Helptxt": "Cute and motivational drawings to brighten your day!"
+    },
+    "WarAndPeas": {
+        "Name": "War and Peas",
+        "Author": "Elizabeth and Jonathan",
+        "Web_name": "challenge/war-and-peas/list?title_no=63305",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "A robot hopelessly in love, a promiscuous yet self-assured witch, and a fatally laid-back grim reaper. This never-ending webcomic of woefully funny stories will leave you cry-laughing or the other way around.\nWebsite: https://warandpeas.com/\nShop: https://warandpeas.com/shop\nFacebook: https://www.facebook.com/warnpeas\nInstagram: https://www.instagram.com/war.and.peas\nTwitter: https://twitter.com/warandpeass\nMore info: https://warandpeas.com/about/",
+        "Position": 36,
+        "First_date": "1",
+        "Color": "FA8B5D",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210517_287/1621258998853tRgyE_JPEG/4479eb01-8495-47bf-8463-eb10967e3f32.jpg",
+        "Helptxt": "War and Peas is an ongoing webcomic made by two individuals, Elizabeth Pich and Jonathan Kunz."
+    },
+    "HumansAreStupid": {
+        "Name": "Humans are stupid",
+        "Author": "Bino Comics",
+        "Web_name": "challenge/humans-are-stupid/list?title_no=54265",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "Funny comics about stupid people, a robot and various situations of life. \nAbout: https://www.webtoons.com/en/challenge/humans-are-stupid/list?title_no=54265# ",
+        "Position": 37,
+        "Color": "FFFFFF",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210513_36/1620913677460o0T8F_JPEG/d77a8b51-cd85-4aad-a0c5-1c8481a93834.jpg",
+        "Helptxt": "Funny comics about stupid people and robots."
+    },
+    "Maximumble": {
+        "Name": "Maximumble",
+        "Author": "Chris Hallbeck",
+        "Web_name": "challenge/maximumble/list?title_no=10005",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "Comics for your brain machine. (No new comics since december 2021, check the twitter profile for new animations)\nWebsite: https://maximumble.thebookofbiff.com/\nFacebook: https://www.facebook.com/maximumble\nInstagram: https://instagram.com/chrishallbeck\nTwitter: https://twitter.com/ChrisHallbeck\nTumblr: https://chrishallbeck.tumblr.com/\nPatreon: https://www.patreon.com/chrishallbeck\nStore: https://chrishallbeckstore.com/",
+        "Position": 38,
+        "First_date": "1",
+        "Color": "FFFFFF",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210512_205/1620750555419RxyeH_PNG/a8ee827c-9fe5-43ec-af3e-3a8704fee800.png",
+        "Helptxt": "Chris Hallbeck create Maximumble, comics for your brain machine."
+    },
+    "PoorlyDrawnLines": {
+        "Name": "Poorly Drawn Lines",
+        "Author": "Reza Farazmand",
+        "Web_name": "poorly-drawn-lines",
+        "Main_website": "https://www.gocomics.com/en/",
+        "Working_type": "date",
+        "Description": "Poorly Drawn Lines is a humorous comic strip updating three times weekly. Subjects are varied and include space travel, friendship, animals, people pretending to be animals, shapes, conversation, and the future. Read the full archive of over 200 strips at poorlydrawnlines.com. \nWebsite: https://poorlydrawnlines.com/\nFacebook: https://facebook.com/poorlydrawnlines\nInstagram: https://instagram.com/poorlydrawnlines\nTwitter: https://twitter.com/PDLComics\nMore info: https://www.gocomics.com/poorly-drawn-lines/about",
+        "Position": 39,
+        "First_date": "2013, 09, 18",
+        "Color": "F0F7F4",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/pdl/large_rec-201701251557.jpg",
+        "Helptxt": "Poorly Drawn Lines, by Reza Farazmand, is a classic comic strip about friendship, animals and humor."
+    },
+    "Heathcliff": {
+        "Name": "Heathcliff",
+        "Author": "George Cately",
+        "Web_name": "heathcliff",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Called the \"Cat of the Century\" by a major cat magazine, Heathcliff has been an incredible success. The cat is loved and recognized by millions in all corners of the globe. In addition to being published in hundreds of papers, the comic has been animated in more than 80 television shows, published in over 50 books with over a million copies in print and featured in a full-length motion picture. Heathcliff cartoons have even hung on the walls of the Louvre in Paris.\n\nAbout: https://www.gocomics.com/heathcliff/about",
+        "Position": 40,
+        "First_date": "2002, 1, 1",
+        "Color": "F04C1C",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/crhea/large_rec-201701251555.jpg",
+        "Helptxt": "Follow Heathcliff, the first internet orange cat!"
+    },
+    "AndyCapp": {
+        "Name": "Andy Capp",
+        "Author": "Reg Smythe",
+        "Web_name": "andycapp",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Andy and his wife, Flo, live out the epitome of functional dysfunction. From the pub to the bedroom, Andy\u2019s misadventures paint an indelible portrait of an extremely British battle of the sexes. Join Andy and Flo as they bicker their way through life. Their banter can be hostile, caring, sarcastic and adorable: the perfect ingredients for a lasting marriage.\nWebsite: https://www.creators.com/read/andy-capp\nFacebook: https://www.facebook.com/WorldofAndyCapp/\nTwitter: https://twitter.com/WorldofAndyCapp\nTumblr: https://starmirrorcartoons.tumblr.com/\nAbout: https://www.gocomics.com/andycapp/about",
+        "Position": 41,
+        "First_date": "2002, 1, 1",
+        "Color": "249E44",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/crcap/large_rec-201701251555.jpg",
+        "Helptxt": "Join Andy and Flo Capp through their adventures!"
     }
 }

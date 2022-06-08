@@ -1,36 +1,53 @@
+import json
+import random
+
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from datetime import date, timedelta, datetime
 from bs4 import BeautifulSoup
 from rss_parser import Parser
 from requests import get
-from randomtimestamp import randomtimestamp
-import json
-import random
-import utils
+from src import utils
+from typing import Optional, Union
 
-# Class that makes the web requests to have the fresh comic details
+# Utilities for web requests to have the fresh comic details
 
-ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "author":"", "day": "", "month": "", "year": "",
-                    "sub_img_url": "", "img_url": "", "alt": "", "color": 0}
+ORIGINAL_DETAILS = {"url": "", "Name": "", "title": "", "author": "", "day": "", "month": "", "year": "",
+                    "sub_img_url": "", "img_url": "", "alt": "", "color": 0, "is_latest": False}
 MAX_TRIES = 15
 
 
-# Only gets the new comic details
-def get_new_comic_details(strip_details, param, comic_date=None):
+def get_new_comic_details(strip_details: dict, param: str, comic_date: Optional[Union[datetime, int]] = None,
+                          latest_check: Optional[bool] = False) -> Optional[dict[str, Union[str, int, bool]]]:
+    """Gets the comics details from the internet
+
+    :param strip_details:
+    :param param:
+    :param comic_date:
+    :param latest_check:
+    :return:
+    """
     working_type = strip_details["Working_type"]
-    if working_type == 'date':
-        # Specific manager for date comics website
-        comic_details = get_comic_info_date(strip_details, param=param, comic_date=comic_date)
-    elif working_type == 'rss':
-        comic_details = get_comic_info_rss(strip_details, param=param, comic_date=comic_date)
+    comic_details: Optional[dict[str, str]]
+    if working_type == 'date':  # Specific manager for date comics website
+        comic_details = get_comic_info_date(strip_details, param=param, comic_date=comic_date,
+                                            latest_check=latest_check)
+    elif working_type == 'rss':  # Works by rss
+        comic_details = get_comic_info_rss(strip_details, param=param, comic_date=comic_date, latest_check=latest_check)
     else:  # Works by number
-        comic_details = get_comic_info_number(strip_details, param=param)
+        comic_details = get_comic_info_number(strip_details, parameters=param, latest_check=latest_check)
     return comic_details
 
 
-# Get the details of comics which site works by date
-def get_comic_info_date(strip_details, param=None, comic_date=None):
+def get_comic_info_date(strip_details, param=None, comic_date=None, latest_check=False) -> Optional[dict[str, str]]:
+    """Get the details of comics which site works by date
+
+    :param strip_details:
+    :param param:
+    :param comic_date:
+    :param latest_check:
+    :return:
+    """
     details = ORIGINAL_DETAILS.copy()
     random_date = None
 
@@ -52,11 +69,11 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
                 details["year"] = comic_date.strftime("%Y")
 
                 # Gets today /  url
-                details["url"] = get_link(strip_details, comic_date)
+                details["url"] = utils.get_link(strip_details, comic_date)
 
             else:
                 # Random comic
-                details["url"], random_date = get_random_link(strip_details)
+                details["url"], random_date = utils.get_random_link(strip_details)
 
             # Get the html of the comic site
             try:
@@ -80,11 +97,11 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
                 return None
 
         if details is not None:
-            details["color"] = int(strip_details["Color"], 16)
+            finalize_comic(strip_details, details, latest_check)
 
             # Finds the date of the random comic
             if details['day'] == "":
-                final_date = None
+                final_date: datetime
                 if random_date is None:
                     # We have to parse the string (Only gocomics)
                     final_date = datetime.strptime(
@@ -102,43 +119,15 @@ def get_comic_info_date(strip_details, param=None, comic_date=None):
     return details
 
 
-def get_link(strip_details, day):  # Returns the comic url
-    date_formatted = ""
-    middle_params = ""
-    if strip_details["Main_website"] == "https://www.gocomics.com/":
-        date_formatted = day.strftime("%Y/%m/%d")
-        middle_params = strip_details["Web_name"]
-    elif strip_details["Main_website"] == "https://comicskingdom.com/":
-        date_formatted = day.strftime("%Y-%m-%d")
-        middle_params = strip_details["Web_name"]
-    elif strip_details["Main_website"] == "https://dilbert.com/":
-        date_formatted = day.strftime("%Y-%m-%d")
-        middle_params = "strip"
+def extract_meta_content(html, content) -> Optional[str]:
+    """Extract the image source of the comic
 
-    return f'{strip_details["Main_website"]}{middle_params}/{date_formatted}'
+    Copied from CalvinBot : https://github.com/wdr1/CalvinBot/blob/master/CalvinBot.py
 
-
-def get_random_link(strip_details):  # Returns the random comic url
-    if strip_details["Main_website"] == "https://www.gocomics.com/":
-        return f'{strip_details["Main_website"]}random/{strip_details["Web_name"]}', None
-    else:
-        first_date = datetime.strptime(utils.get_first_date(strip_details), "%Y, %m, %d")
-        random_date = randomtimestamp(start=first_date,
-                                      end=datetime.today().replace(hour=0, minute=0, second=0,
-                                                                   microsecond=0))
-        middle_params = ""
-        if strip_details["Main_website"] == "https://comicskingdom.com/":
-            middle_params = strip_details["Web_name"]
-        elif strip_details["Main_website"] == "https://dilbert.com/":
-            middle_params = "strip"
-
-        return f'{strip_details["Main_website"]}{middle_params}/{random_date.strftime("%Y-%m-%d")}', random_date
-
-
-def extract_meta_content(html, content):
-    # Copied from CalvinBot : https://github.com/wdr1/CalvinBot/blob/master/CalvinBot.py
-    # Extract the image source of the comic
-    # Problem : Since the bot is hosted on replit, the site can be at a date where the comic is not accessible
+    :param html:
+    :param content:
+    :return:
+    """
     soup = BeautifulSoup(html, "html.parser")
     content_meta = soup.find('meta', attrs={'property': f'og:{content}', 'content': True})
 
@@ -150,9 +139,14 @@ def extract_meta_content(html, content):
         return None
 
 
-# For sites which works by number
-def get_comic_info_number(strip_details, param=None):
-    # Details of the comic
+def get_comic_info_number(strip_details, parameters=None, latest_check=False):
+    """For sites which works by number
+
+    :param strip_details:
+    :param parameters:
+    :param latest_check:
+    :return:
+    """
     details = ORIGINAL_DETAILS.copy()
 
     details["Name"] = strip_details["Name"]
@@ -162,7 +156,7 @@ def get_comic_info_number(strip_details, param=None):
         main_website = strip_details["Main_website"]
 
         if strip_details["Name"] == 'xkcd':
-            if param == "random":
+            if parameters == "random":
                 # Link for random XKCD comic
                 main_website = "https://c.xkcd.com/random/comic/"
                 html = urlopen(main_website).read()
@@ -172,9 +166,9 @@ def get_comic_info_number(strip_details, param=None):
             details["url"] = main_website
 
         elif strip_details["Name"] == 'Cyanide and Happiness':
-            if param == 'random':
-                main_website += param
-            elif param == 'today':
+            if parameters == 'random':
+                main_website += parameters
+            elif parameters == 'today':
                 main_website += 'latest'
 
             details["url"] = main_website
@@ -183,32 +177,57 @@ def get_comic_info_number(strip_details, param=None):
             html = urlopen(main_website).read()
             details["url"] = extract_meta_content(html, 'url')
 
-        # Gets today date
-        if param == "today":
-            d = date.today()
-            details["day"] = d.strftime("%d")
-            details["month"] = d.strftime("%m")
-            details["year"] = d.strftime("%Y")
-
         # Get the html of the comic site
         try:
             html = urlopen(details["url"]).read()
         except HTTPError:
             html = None
 
-        if strip_details["Name"] != 'xkcd':
-            # General extractor
-            if html is not None:
-                details["url"] = extract_meta_content(html, 'url')
+        if html is not None:
+            if strip_details["Name"] == 'Cyanide and Happiness':
+                # Cyanide and Happiness special extractor
+                # heavily inspired by https://github.com/JTexpo/Robobert
+                # Parse the json that is embedded into the end of the page
+                soup = BeautifulSoup(html, 'html.parser')
+                dat = soup.find("script", id="__NEXT_DATA__").get_text()
 
-                details["title"] = extract_meta_content(html, 'title')
+                js = json.loads(dat)
 
-                details["img_url"] = extract_meta_content(html, 'image')
-            else:
-                return None
+                urql_states = js["props"]["pageProps"]["urqlState"]
 
-        else:
-            if html is not None:
+                for state_id in urql_states:
+                    # Bruteforce the json entries to find the one contains the content of the comic
+                    state_data = urql_states[state_id]
+                    middle_data = json.loads(state_data["data"])
+
+                    if "comic" in middle_data:
+                        comdata = middle_data["comic"]
+
+                        comic_det = comdata["comicDetails"]
+                        author_det = comic_det["author"]["authorDetails"]
+
+                        details["url"] = f"https://explosm.net/comics/{comdata['slug']}"
+
+                        details["title"] = comdata["title"]
+
+                        # Legacy comics
+                        if "comicmgurl" in comic_det:
+                            details["img_url"] = comic_det["comicmgurl"]
+                        else:
+                            # modern comics
+                            details["img_url"] = comic_det["comicimgstaticbucketurl"]["mediaItemUrl"]
+
+                        details["author"] = author_det["name"]
+                        details["sub_img_url"] = author_det["image"]["mediaItemUrl"]
+
+                        post_date = datetime.strptime(comdata["date"], "%Y-%m-%dT%H:%M:%S")
+
+                        details["day"] = post_date.day
+                        details["month"] = post_date.month
+                        details["year"] = post_date.year
+                        break
+
+            elif strip_details["Name"] == 'xkcd':
                 # XKCD special extractor
                 # We requested a json and not a html
                 json_details = json.loads(html)
@@ -221,22 +240,37 @@ def get_comic_info_number(strip_details, param=None):
                 details["month"] = json_details["month"]
                 details["year"] = json_details["year"]
             else:
-                return None
+                # General extractor
+
+                details["url"] = extract_meta_content(html, 'url')
+
+                details["title"] = extract_meta_content(html, 'title')
+
+                details["img_url"] = extract_meta_content(html, 'image')
+        else:
+            return None
+
         if details is not None:
-            details["color"] = int(strip_details["Color"], 16)
+            finalize_comic(strip_details, details, latest_check)
+
     else:
         return None
 
     return details
 
-    # --- End of OtherSiteManager ---#
 
+def get_comic_info_rss(strip_details, param=None, comic_date=None, latest_check=False) -> Optional[dict[str, str]]:
+    """For comics which can only be found by rss
 
-# For comics which can only be found by rss
-def get_comic_info_rss(strip_details, param=None, comic_date=None):
+    :param strip_details:
+    :param param:
+    :param comic_date:
+    :param latest_check:
+    :return:
+    """
     # Details of the comic
-    fall_back_img = ""
-    rss_site = ""
+    fall_back_img: str
+    rss_site: str
     max_entries = 19  # Max entries for rss files : 20
     details = ORIGINAL_DETAILS.copy()
     comic_nb = 0
@@ -278,12 +312,13 @@ def get_comic_info_rss(strip_details, param=None, comic_date=None):
             # Webtoon
             details["url"] = main_website + f"&episode_no={comic_date}"
     else:
-        feed = Parser(xml=get(rss_site).content, limit=comic_nb+1).parse().feed[comic_nb]
-        # Get informations
-        tz = ""
-        weekday = ""
+        feed = Parser(xml=get(rss_site).text, limit=comic_nb + 1).parse().feed[comic_nb]
+        # Get information
+        tz: str
+        weekday: str
         if strip_details["Main_website"] == 'https://www.webtoons.com/en/':
-            details["title"] = f"{feed.title}"
+            if feed.title != "":
+                details["title"] = f"{feed.title}"
             weekday = "A"
             tz = "Z"
         else:
@@ -298,13 +333,26 @@ def get_comic_info_rss(strip_details, param=None, comic_date=None):
         details["url"] = feed.link
 
         img_index = 0
-        if strip_details["Main_website"] == 'https://www.webtoons.com/en/':
+        if len(feed.description_images) > 1:  # general check for a second image to embed
             details["sub_img_url"] = feed.description_images[img_index].source
             img_index += 1
 
         details["img_url"] = feed.description_images[img_index].source
 
     if details is not None:
-        details["color"] = int(strip_details["Color"], 16)
+        finalize_comic(strip_details, details, latest_check)
 
     return details
+
+
+def finalize_comic(strip_details: dict, details: dict, latest_link: bool) -> None:
+    """
+
+    :param strip_details:
+    :param details:
+    :param latest_link:
+    :return:
+    """
+    details["color"] = int(strip_details["Color"], 16)
+    if latest_link:
+        details["is_latest"] = utils.check_if_latest_link(details["Name"], details["img_url"])
