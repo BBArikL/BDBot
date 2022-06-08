@@ -2,6 +2,14 @@
 
 Discord bot that post bd strips. Simple as that!
 
+<img src="https://img.shields.io/github/languages/top/BBArikL/BDBot" alt="Github top language"/>
+<img src="https://img.shields.io/discord/982838016945033247" alt="Discord server">
+<img src="https://img.shields.io/github/languages/code-size/BBArikL/BDBot" alt="Github code size">
+<img src="https://img.shields.io/github/issues/BBArikL/BDBot" alt="Issues in repo BDBot">
+<img src="https://img.shields.io/github/issues-pr/BBArikL/BDBot" alt="Pull request in repo BDBot">
+<img src="https://img.shields.io/github/license/BBArikL/BDBot" alt="License of BDBot">
+<img src="https://img.shields.io/github/last-commit/BBArikL/BDBot" alt="Last commit indicator">
+
 ## Comics:
 ### Added:
 - Garfield https://www.gocomics.com/garfield/
