@@ -53,31 +53,47 @@ def setup_bot():
     """Sets up the bot to be able to be launched"""
 
     logger.info("Setting up environment variables...")
-    environment_variables: dict[str, dict[str, Union[str, Union[SecretPrompt, ListPrompt]]]] = {
-        "TOKEN": {"value": "", "inquiry": inquirer.secret(message="Enter the token (The bot discord token):")},
-        "CLIENT_ID": {"value": "", "inquiry": inquirer.secret(message="Enter the client ID (The bot's client ID. "
-                                                                      "To get a invite for the bot):")},
-        "PRIVATE_CHANNEL_SUPPORT_ID": {"value": "", "inquiry": inquirer.secret(message="Enter the ID of the "
-                                                                                       "private channel (The ID of the "
-                                                                                       "channel where the bot can print"
-                                                                                       " debugging information):")},
-        "PRIVATE_SERVER_SUPPORT_ID": {"value": "", "inquiry": inquirer.secret(message="Enter the ID of the "
-                                                                                      "private server (The ID of the "
-                                                                                      "server where the bot can allow"
-                                                                                      " owner commands):")},
-        "DEBUG": {"value": "", "inquiry": inquirer.select(message="Is the bot used for development purposes? (If the "
-                                                                  "bot is in debug mode (Should be False if the bot "
-                                                                  "is supposed to serve multiple servers)):",
-                                                          choices=["True", "False"])}
-    }
 
-    for envv in environment_variables:
-        environment_variables[envv]["value"] = environment_variables[envv]["inquiry"].execute()
+    write_env = True
+    if os.path.exists("./env"):
+        write_env = inquirer.confirm("The file `.env` already exist. Do you want to overwrite it?")
 
-    output = "\n".join([f"{envv}={environment_variables[envv]['value']}" for envv in environment_variables])
-    usage = "w" if os.path.exists(".env") else "x"
-    with open(".env", f"{usage}t") as f:
-        f.write(output)
+    if write_env:
+        environment_variables: dict[str, dict[str, Union[str, Union[SecretPrompt, ListPrompt]]]] = {
+            "TOKEN": {"value": "", "inquiry": inquirer.secret(message="Enter the token (The bot discord token):")},
+            "CLIENT_ID": {"value": "", "inquiry": inquirer.secret(message="Enter the client ID (The bot client ID. "
+                                                                          "To get a invite for the bot):")},
+            "PRIVATE_CHANNEL_SUPPORT_ID": {
+                "value": "",
+                "inquiry": inquirer.secret(
+                    message="Enter the ID of the private channel (The ID of the channel where the bot can print"
+                            " debugging information):"
+                )
+            },
+            "PRIVATE_SERVER_SUPPORT_ID": {
+                "value": "",
+                "inquiry": inquirer.secret(
+                    message="Enter the ID of the private server (The ID of the server where the bot can allow owner "
+                            "commands):"
+                )
+            },
+            "DEBUG": {
+                "value": "",
+                "inquiry": inquirer.select(
+                    message="Is the bot used for development purposes? (Should be False if the bot is supposed to"
+                            " serve multiple servers):",
+                    choices=["True", "False"]
+                )
+            }
+        }
+
+        for envv in environment_variables:
+            environment_variables[envv]["value"] = environment_variables[envv]["inquiry"].execute()
+
+        output = "\n".join([f"{envv}={environment_variables[envv]['value']}" for envv in environment_variables])
+        usage = "w" if os.path.exists(".env") else "x"
+        with open(".env", f"{usage}t") as f:
+            f.write(output)
 
     logger.info("Creating folders and files...")
     os.makedirs("src/data/backups", exist_ok=True)
