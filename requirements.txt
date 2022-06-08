@@ -4,5 +4,5 @@ InquirerPy==0.3.3
 python-dotenv==0.20.0
 randomtimestamp==2.2
 requests==2.27.1
-rss_parser==0.2.3
+rss_parser==0.2.4
 topggpy==1.4.0
