@@ -334,7 +334,7 @@ def modify_database(ctx: Union[commands.Context, discord.abc.GuildChannel, disco
                     d[guild_id]["channels"][channel_id]["date"][day].update({hour: com_list})
 
                 elif comic_number not in d[guild_id]["channels"][channel_id]["date"][day][hour] and len(com_list) == 1:
-                    d[guild_id]["channels"][channel_id]["date"][day][hour].extend(comic_number)
+                    d[guild_id]["channels"][channel_id]["date"][day][hour].extend(com_list)
 
                 elif len(com_list) > 1:  # Add all comics command
                     d[guild_id]["channels"][channel_id]["date"][day][hour] = com_list
