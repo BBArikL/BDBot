@@ -12,8 +12,7 @@ Discord bot that post bd strips. Simple as that!
 
 **IMPORTANT: If you cannot send slash commands, make sure to re-invite the bot with the link here:**
 
-https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=277025639488&scope=bot%20applications.commands
-
+https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=277025647680&scope=bot%20applications.commands
 
 
 ## Comics:

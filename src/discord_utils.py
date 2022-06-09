@@ -822,7 +822,8 @@ def get_url() -> str:
         attach_files=True,
         mention_everyone=True,
         add_reactions=True,
-        use_application_commands=True
+        use_application_commands=True,
+        manage_messages=True
     )
 
     return discord.utils.oauth_url(
