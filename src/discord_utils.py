@@ -1,5 +1,6 @@
 import asyncio
 import os
+import functools
 
 import discord
 import logging
@@ -7,7 +8,7 @@ import logging
 from datetime import datetime, timezone
 from discord import app_commands
 from discord.ext import commands
-from typing import Optional, Union
+from typing import Optional, Union, Callable
 from src.utils import (clean_url, get_random_footer, get_link, get_date,
                        get_first_date, parse_all, save_json, load_json,
                        Success, strip_details, DATABASE_FILE_PATH, DETAILS_PATH)
@@ -115,7 +116,7 @@ async def comic_send(ctx: commands.Context, comic: dict, param: str, comic_date:
     :return:
     """
     await ctx.defer()  # Defers the return, so Discord cna wait longer
-    comic_details = get_new_comic_details(comic, param, comic_date=comic_date)
+    comic_details = await run_blocking(get_new_comic_details, ctx.bot, comic, param, comic_date=comic_date)
 
     # Sends the comic
     await send_comic_embed(ctx, comic_details)
@@ -842,3 +843,18 @@ async def update_presence(bot: commands.Bot):
                      f' {len(bot.guilds)} servers!'
             )
         )
+
+
+async def run_blocking(blocking_func: Callable, bot: commands.Bot,  *args, **kwargs) -> Optional[dict[str, Union[str, int, bool]]]:
+    """Run a blocking function as a non-blocking one
+
+    From https://stackoverflow.com/questions/65881761/discord-gateway-warning-shard-id-none-heartbeat-blocked-for-more-than-10-second
+
+    :param blocking_func:
+    :param bot:
+    :param args:
+    :param kwargs:
+    :return:
+    """
+    func = functools.partial(blocking_func, *args, **kwargs)
+    return await bot.loop.run_in_executor(None, func)
