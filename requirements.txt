@@ -3,6 +3,6 @@ git+https://github.com/Rapptz/discord.py.git#egg=discord.py
 InquirerPy==0.3.4
 python-dotenv==0.20.0
 randomtimestamp==2.2
-requests==2.28.0
+requests==2.28.1
 rss_parser==0.2.4
 topggpy==1.4.0
