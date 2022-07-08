@@ -84,20 +84,22 @@ class PosterHandler(commands.Cog):
         :param post_days: The days to check for
         :param hour: The current hour
         """
-        for channel in guild_data["channels"]:
+        if "channels" in guild_data:
+            for channel in guild_data["channels"]:
 
-            # First check if it wants only the latest comics
-            if "latest" in guild_data["channels"][channel]:
-                latest_comics: list[int] = guild_data["channels"][channel]["latest"]
-                comic_list: dict = self.set_comic_to_post(guild_data, channel, comic_list, latest_comics, hour)
-                comic_list[channel].update({"latest_comics": latest_comics})
+                # First check if it wants only the latest comics
+                if "latest" in guild_data["channels"][channel]:
+                    latest_comics: list[int] = guild_data["channels"][channel]["latest"]
+                    comic_list: dict = self.set_comic_to_post(guild_data, channel, comic_list, latest_comics, hour)
+                    comic_list[channel].update({"latest_comics": latest_comics})
 
-            # Then check if the comic is wanted for a specific time
-            for day in post_days:
-                if day in guild_data["channels"][channel]["date"]:
-                    if hour in guild_data["channels"][channel]["date"][day]:
-                        hour_specific_comics: list[int] = guild_data["channels"][channel]["date"][day][hour]
-                        comic_list: dict = self.set_comic_to_post(guild_data, channel, comic_list,
+                # Then check if the comic is wanted for a specific time
+                for day in post_days:
+                    if "date" in guild_data["channels"][channel]:
+                        if day in guild_data["channels"][channel]["date"]:
+                            if hour in guild_data["channels"][channel]["date"][day]:
+                                hour_specific_comics: list[int] = guild_data["channels"][channel]["date"][day][hour]
+                                comic_list: dict = self.set_comic_to_post(guild_data, channel, comic_list,
                                                                   hour_specific_comics, hour)
 
     def set_comic_to_post(self, guild_data: dict, channel: str, comic_list: dict, comics_to_add: list[int],
