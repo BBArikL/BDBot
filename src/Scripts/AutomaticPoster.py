@@ -36,20 +36,23 @@ class PosterHandler(commands.Cog):
 
     @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
     @commands.is_owner()
-    async def force_hourly(self, ctx: commands.Context):
+    async def force_hourly(self, ctx: commands.Context, hour: Optional[int] = None):
         """Force the push of comics to all subscribed servers
 
         :param ctx: The context of the where the command was called.
         """
-        await ctx.send(f'Trying to force the hourly post for hour {utils.get_hour()}h UTC')
-        await self.hourly()
+        await ctx.send(f'Trying to force the hourly post for hour {utils.get_hour() if not hour else hour}h UTC')
+        await self.hourly(hour)
 
     @tasks.loop(hours=1)
     async def post_hourly(self):
         """Loop to post hourly comics"""
-        await self.hourly()
+        try:
+            await self.hourly()
+        except Exception as e:
+            discord_utils.logger.error(str(e))
 
-    async def hourly(self):
+    async def hourly(self, hour: Optional[int] = None):
         """Post hourly comics"""
         discord_utils.logger.info("Starting automatic poster...")
         strip_details: dict = utils.strip_details
@@ -57,7 +60,8 @@ class PosterHandler(commands.Cog):
         comic_list: dict = {}
         comic_keys: list[str] = list(strip_details.keys())
         post_days: list[str] = ["D", utils.get_today()]
-        hour: str = utils.get_hour()
+        if not hour:
+            hour: str = utils.get_hour()
 
         if hour == "6":
             utils.save_backup(comic_data, discord_utils.logger)

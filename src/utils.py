@@ -79,17 +79,18 @@ def clean_database(data: dict = None, do_backup: bool = True, strict: bool = Fal
             to_remove = True
             channels = data[guild]["channels"]
             for chan in channels:
-                dates = channels[chan]["date"]
-                for date in dates:
-                    hours = dates[date]
-                    for hour in hours:
-                        if len(hours[hour]) > 0:
-                            to_remove = False
+                if "date" in channels[chan]:
+                    dates = channels[chan]["date"]
+                    for date in dates:
+                        hours = dates[date]
+                        for hour in hours:
+                            if len(hours[hour]) > 0:
+                                to_remove = False
+                                break
+                        if not to_remove:
                             break
                     if not to_remove:
                         break
-                if not to_remove:
-                    break
 
             if to_remove:
                 guilds_to_clean.append(guild)

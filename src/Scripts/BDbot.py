@@ -263,10 +263,11 @@ class BDBot(commands.Cog):
                     for comic in guild_data["channels"][channel]["latest"]:
                         comic_list = discord_utils.add_comic_to_list(comic_values, comic, self.bot, channel, comic_list)
 
-                for day in guild_data["channels"][channel]["date"]:
-                    for hour in guild_data["channels"][channel]["date"][day]:
-                        for comic in guild_data["channels"][channel]["date"][day][hour]:
-                            comic_list = discord_utils.add_comic_to_list(comic_values, comic, self.bot, channel,
+                if "date" in guild_data["channels"][channel]:
+                    for day in guild_data["channels"][channel]["date"]:
+                        for hour in guild_data["channels"][channel]["date"][day]:
+                            for comic in guild_data["channels"][channel]["date"][day][hour]:
+                                comic_list = discord_utils.add_comic_to_list(comic_values, comic, self.bot, channel,
                                                                          comic_list, hour, day)
 
             if len(comic_list) > 0:
