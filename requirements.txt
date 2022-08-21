@@ -1,5 +1,5 @@
 beautifulsoup4==4.11.1
-git+https://github.com/Rapptz/discord.py.git#egg=discord.py
+discord.py==2.0.0
 InquirerPy==0.3.4
 python-dotenv==0.20.0
 randomtimestamp==2.2
