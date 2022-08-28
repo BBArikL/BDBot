@@ -37,9 +37,7 @@ class Help(commands.Cog):
                 if strips[strip]["Main_website"] != "https://www.gocomics.com/" \
                         and strips[strip]["Main_website"] != "https://comicskingdom.com/" \
                         and strips[strip]["Main_website"] != "https://www.webtoons.com/en/":
-                    embed.add_field(name=strips[strip]['Name'], value=f"{strips[strip]['Helptxt']}\nAliases: "
-                                                                      f"{strips[strip]['Aliases']} / random "
-                                                                      f"/ # or date of comic.")
+                    embed.add_field(name=strips[strip]['Name'], value=strips[strip]['Helptxt'])
             embed.add_field(name="Hourly comics commands.",
                             value="Use /help hourly to see available commands for daily comics. "
                                   "Post daily at 6:00 AM UTC.")
