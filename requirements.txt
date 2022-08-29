@@ -1,5 +1,5 @@
 beautifulsoup4==4.11.1
-discord.py==2.0.0
+discord.py==2.0.1
 InquirerPy==0.3.4
 python-dotenv==0.20.0
 randomtimestamp==2.2
