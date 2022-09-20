@@ -10,6 +10,8 @@ Discord bot that post bd strips. Simple as that!
 <img src="https://img.shields.io/github/license/BBArikL/BDBot" alt="License of BDBot">
 <img src="https://img.shields.io/github/last-commit/BBArikL/BDBot" alt="Last commit indicator">
 
+**IMPORTANT: Due to a misconception in how the new discord.py and discord update worked, the bot has had issues since the last day of August. A patch is on the way and will be applied before October 1st.**
+
 **IMPORTANT: If you cannot send slash commands, make sure to re-invite the bot with the link here:**
 
 https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=277025647680&scope=bot%20applications.commands
