@@ -6,9 +6,9 @@ import discord
 import logging
 
 from datetime import datetime, timezone
-from discord import app_commands
+from discord import app_commands, ui
 from discord.ext import commands
-from typing import Optional, Union, Callable
+from typing import Optional, Union, Callable, Any
 from src.utils import (clean_url, get_random_footer, get_link, get_date,
                        get_first_date, parse_all, save_json, load_json,
                        Success, strip_details, DATABASE_FILE_PATH, DETAILS_PATH)
@@ -78,10 +78,10 @@ def create_embed(comic_details: Optional[dict] = None):
         return embed
 
 
-async def send_comic_info(ctx: commands.Context, comic: dict):
+async def send_comic_info(inter: discord.Interaction, comic: dict):
     """Sends comics info in an embed
 
-    :param ctx:
+    :param inter:
     :param comic:
     :return:
     """
@@ -94,7 +94,7 @@ async def send_comic_info(ctx: commands.Context, comic: dict):
     if comic["Working_type"] == "date":
         embed.add_field(name="First apparition", value=get_date(get_first_date(comic)), inline=True)
 
-    if get_sub_status(ctx, int(comic["Position"])):
+    if get_sub_status(inter, int(comic["Position"])):
         sub_stat = "Yes"
     else:
         sub_stat = "No"
@@ -103,29 +103,29 @@ async def send_comic_info(ctx: commands.Context, comic: dict):
     embed.set_footer(text="Random footer")
     embed.set_footer(text=get_random_footer())
 
-    await send_embed(ctx, None, [embed])
+    await send_embed(inter, [embed])
 
 
-async def comic_send(ctx: commands.Context, comic: dict, param: str, comic_date: Optional[Union[datetime, int]] = None):
+async def comic_send(inter: discord.Interaction, comic: dict, param: str, comic_date: Optional[Union[datetime, int]] = None):
     """Post the strip (with the given parameters)
 
-    :param ctx:
+    :param inter:
     :param comic:
     :param param:
     :param comic_date:
     :return:
     """
-    await ctx.defer()  # Defers the return, so Discord cna wait longer
-    comic_details = await run_blocking(get_new_comic_details, ctx.bot, comic, param, comic_date=comic_date)
+    await inter.defer()  # Defers the return, so Discord cna wait longer
+    comic_details = await run_blocking(get_new_comic_details, inter.bot, comic, param, comic_date=comic_date)
 
     # Sends the comic
-    await send_comic_embed(ctx, comic_details)
+    await send_comic_embed(inter, comic_details)
 
 
-async def parameters_interpreter(ctx: commands.Context, comic_details, param=None, date=None, hour=None):
+async def parameters_interpreter(inter: discord.Interaction, comic_details, param=None, date=None, hour=None):
     """Interprets the parameters given by the user
 
-    :param ctx:
+    :param inter:
     :param comic_details:
     :param param:
     :param date:
@@ -143,31 +143,31 @@ async def parameters_interpreter(ctx: commands.Context, comic_details, param=Non
 
         if param == "today" or param == "tod":
             # Sends the website of today's comic
-            await comic_send(ctx, comic_details, "today")
+            await comic_send(inter, comic_details, "today")
         elif param == "random" or param == "rand" or param == "rnd":
             # Random comic
-            await comic_send(ctx, comic_details, "random")
+            await comic_send(inter, comic_details, "random")
         elif param == "add":
             # Add the comic to the daily list for a guild
-            if ctx.message.author.guild_permissions.manage_guild:
-                status = new_change(ctx, comic_details, "add", date=date, hour=hour)
+            if inter.message.author.guild_permissions.manage_guild:
+                status = new_change(inter, comic_details, "add", date=date, hour=hour)
                 if status == Success:
-                    await ctx.send(f"{comic_details['Name']} added successfully as a daily comic!")
+                    await send_message(inter, f"{comic_details['Name']} added successfully as a daily comic!", first=False)
                 else:
-                    await ctx.send(status)
+                    await send_message(inter, status)
             else:
-                await ctx.send("You need `manage_guild` permission to do that!")
+                await send_message(inter, "You need `manage_guild` permission to do that!")
         elif param == "remove":
             # Remove the comic to the daily list for a guild
-            if ctx.message.author.guild_permissions.manage_guild:
-                status = new_change(ctx, comic_details, "remove", date=date, hour=hour)
+            if inter.message.author.guild_permissions.manage_guild:
+                status = new_change(inter, comic_details, "remove", date=date, hour=hour)
                 if status == Success:
-                    await ctx.send(
+                    await send_message(inter,
                         f"{comic_details['Name']} removed successfully from the daily list!")
                 else:
-                    await ctx.send(status)
+                    await send_message(inter, status)
             else:
-                await ctx.send("You need `manage_guild` permission to do that!")
+                await send_message(inter, "You need `manage_guild` permission to do that!")
         else:
             # Tries to parse date / number of comic
             working_type = comic_details["Working_type"]
@@ -177,15 +177,15 @@ async def parameters_interpreter(ctx: commands.Context, comic_details, param=Non
                     comic_date = datetime.strptime(param, "%d/%m/%Y")
                     first_date = datetime.strptime(get_first_date(comic_details), "%Y, %m, %d")
                     if first_date.timestamp() <= comic_date.timestamp() <= datetime.now(timezone.utc).timestamp():
-                        await comic_send(ctx, comic_details, "Specific_date", comic_date=comic_date)
+                        await comic_send(inter, comic_details, "Specific_date", comic_date=comic_date)
                     else:
                         first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
                         date_now_formatted = datetime.strftime(datetime.now(timezone.utc), "%d/%m/%Y")
-                        await ctx.send(
+                        await send_message(inter,
                             f"Invalid date. Try sending a date between {first_date_formatted} and "
                             f"{date_now_formatted}.")
                 except ValueError:
-                    await ctx.send("This is not a valid date format! The format is : DD/MM/YYYY.")
+                    await send_message(inter, "This is not a valid date format! The format is : DD/MM/YYYY.")
             else:
                 # Works by number of comic
                 try:
@@ -193,36 +193,36 @@ async def parameters_interpreter(ctx: commands.Context, comic_details, param=Non
                     if number >= int(get_first_date(comic_details)):
                         if working_type == "number":
                             comic_details["Main_website"] = comic_details["Main_website"] + str(number) + '/'
-                            await comic_send(ctx, comic_details, param=param)
+                            await comic_send(inter, comic_details, param=param)
                         else:
-                            await comic_send(ctx, comic_details, "Specific_date", comic_date=number)
+                            await comic_send(inter, comic_details, "Specific_date", comic_date=number)
                     else:
-                        await ctx.send("There is no comics with such values!")
+                        await send_message(inter, "There is no comics with such values!")
 
                 except ValueError:
-                    await ctx.send('This is not a valid comic number!')
+                    await send_message(inter, 'This is not a valid comic number!')
     else:
         # If the user didn't send any parameters, return the information the comic requested
-        await send_comic_info(ctx, comic_details)
+        await send_comic_info(inter, comic_details)
 
 
-def add_all(ctx: commands.Context, date: Optional[str] = None, hour: Optional[str] = None):
+def add_all(inter: discord.Interaction, date: Optional[str] = None, hour: Optional[str] = None):
     """Add all comics to a channel
 
-    :param ctx:
+    :param inter:
     :param date:
     :param hour:
     :return:
     """
     final_date, final_hour = parse_all(date, hour)
 
-    return modify_database(ctx, "add_all", day=final_date, hour=str(final_hour))
+    return modify_database(inter, "add_all", day=final_date, hour=str(final_hour))
 
 
-def new_change(ctx: commands.Context, comic, param, date=None, hour=None):
+def new_change(inter: discord.Interaction, comic, param, date=None, hour=None):
     """Make a change in the database
 
-    :param ctx:
+    :param inter:
     :param comic:
     :param param:
     :param date:
@@ -233,37 +233,37 @@ def new_change(ctx: commands.Context, comic, param, date=None, hour=None):
 
     comic_number = int(comic["Position"])
 
-    return modify_database(ctx, param, day=final_date, hour=str(final_hour), comic_number=comic_number)
+    return modify_database(inter, param, day=final_date, hour=str(final_hour), comic_number=comic_number)
 
 
-def remove_guild(ctx: Union[commands.Context, discord.Guild], use: str = 'remove_guild'):
+def remove_guild(inter: Union[discord.Interaction, discord.Guild], use: str = 'remove_guild'):
     """Removes a guild from the database
 
-    :param ctx:
+    :param inter:
     :param use:
     :return:
     """
-    return modify_database(ctx, use)
+    return modify_database(inter, use)
 
 
-def remove_channel(ctx: Union[commands.Context, discord.abc.GuildChannel], use="remove_channel"):
+def remove_channel(inter: Union[discord.Interaction, discord.abc.GuildChannel], use="remove_channel"):
     """Removes a channel from the database
 
-    :param ctx:
+    :param inter:
     :param use:
     :return:
     """
-    return modify_database(ctx, use)
+    return modify_database(inter, use)
 
 
-def modify_database(ctx: Union[commands.Context, discord.abc.GuildChannel, discord.Guild], use: str, day: str = None,
+def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild], use: str, day: str = None,
                     hour: str = None, comic_number: int = None):
     """
     Saves the new information in the database
 
     Adds or delete the guild_id, the channel id and the comic_strip data
 
-    :param ctx:
+    :param inter:
     :param use:
     :param day:
     :param hour:
@@ -280,8 +280,8 @@ def modify_database(ctx: Union[commands.Context, discord.abc.GuildChannel, disco
     data = load_json(DATABASE_FILE_PATH)
 
     if use == add or use == a_all:
-        guild_id = str(ctx.guild.id)
-        channel_id = str(ctx.channel.id)
+        guild_id = str(inter.guild.id)
+        channel_id = str(inter.channel.id)
         d = {
             guild_id: {
                 "server_id": 0,
@@ -380,8 +380,8 @@ def modify_database(ctx: Union[commands.Context, discord.abc.GuildChannel, disco
         data.update(d)
 
     elif use == remove_c:
-        guild_id = str(ctx.guild.id)
-        channel_id = str(ctx.channel.id)
+        guild_id = str(inter.guild.id)
+        channel_id = str(inter.channel.id)
         # Remove comic
         if guild_id in data and channel_id in data[guild_id]["channels"]:
             if day is None:
@@ -418,9 +418,9 @@ def modify_database(ctx: Union[commands.Context, discord.abc.GuildChannel, disco
     elif use == remove_g or use == fremove_g:
         guild_id = ""
         if use == 'remove_guild':
-            guild_id = str(ctx.guild.id)
+            guild_id = str(inter.guild.id)
         elif use == 'auto_remove_guild':
-            guild_id = str(ctx.id)  # it is a guild
+            guild_id = str(inter.id)  # it is a guild
 
         # Remove a guild from the list
         if guild_id in data:
@@ -429,12 +429,12 @@ def modify_database(ctx: Union[commands.Context, discord.abc.GuildChannel, disco
             return "This server is not registered for any scheduled comics!"
 
     elif use == remove_chan or use == fremove_chan:
-        guild_id = str(ctx.guild.id)
+        guild_id = str(inter.guild.id)
         channel_id = ""
         if use == 'remove_channel':
-            channel_id = str(ctx.channel.id)
+            channel_id = str(inter.channel.id)
         elif use == 'auto_remove_channel':
-            channel_id = str(ctx.id)  # it is a channel
+            channel_id = str(inter.id)  # it is a channel
 
         # Remove a guild from the list
         if guild_id in data:
@@ -451,14 +451,14 @@ def modify_database(ctx: Union[commands.Context, discord.abc.GuildChannel, disco
     return Success
 
 
-def set_role(ctx: commands.Context, role_id) -> str:
+def set_role(inter: discord.Interaction, role_id) -> str:
     """
 
-    :param ctx:
+    :param inter:
     :param role_id:
     :return:
     """
-    gid = str(ctx.guild.id)
+    gid = str(inter.guild.id)
     role = "role"
     mention = "mention"
     data = load_json(DATABASE_FILE_PATH)
@@ -482,14 +482,14 @@ def set_role(ctx: commands.Context, role_id) -> str:
         return "This server is not subscribed to any comic! Please subscribe to a comic before entering a role to add."
 
 
-def set_mention(ctx: commands.Context, choice) -> str:
+def set_mention(inter: discord.Interaction, choice) -> str:
     """
 
-    :param ctx:
+    :param inter:
     :param choice:
     :return:
     """
-    gid = str(ctx.guild.id)
+    gid = str(inter.guild.id)
     only_daily = "only_daily"
     mention = "mention"
     data = load_json(DATABASE_FILE_PATH)
@@ -513,14 +513,14 @@ def set_mention(ctx: commands.Context, choice) -> str:
                " when you want to be mentioned!"
 
 
-def get_mention(ctx: commands.Context, bot: commands.Bot) -> (str, str):
+def get_mention(inter: discord.Interaction, bot: commands.Bot) -> (str, str):
     """
 
-    :param ctx:
+    :param inter:
     :param bot:
     :return:
     """
-    gid = str(ctx.guild.id)
+    gid = str(inter.guild.id)
     only_daily = "only_daily"
     mention = "mention"
     data = load_json(DATABASE_FILE_PATH)
@@ -550,13 +550,13 @@ def get_mention(ctx: commands.Context, bot: commands.Bot) -> (str, str):
                "deciding when you want to be mentioned!", ""
 
 
-def remove_role(ctx):
+def remove_role(inter):
     """
 
-    :param ctx:
+    :param inter:
     :return:
     """
-    gid = str(ctx.guild.id)
+    gid = str(inter.guild.id)
     role = "role"
     only_daily = "only_daily"
     data = load_json(DATABASE_FILE_PATH)
@@ -577,14 +577,14 @@ def remove_role(ctx):
                "mentions!"
 
 
-def set_post_mention(ctx, choice):
+def set_post_mention(inter, choice):
     """Change if the bot says a phrase before posting daily comics
 
-    :param ctx:
+    :param inter:
     :param choice:
     :return:
     """
-    gid = str(ctx.guild.id)
+    gid = str(inter.guild.id)
     mention = "mention"
     role = "role"
     data = load_json(DATABASE_FILE_PATH)
@@ -603,10 +603,10 @@ def set_post_mention(ctx, choice):
         return "This server is not registered for any comics!"
 
 
-def get_specific_guild_data(ctx: commands.Context) -> Optional[dict]:
+def get_specific_guild_data(inter: discord.Interaction) -> Optional[dict]:
     """Returns a specific guild's data"""
     database = load_json(DATABASE_FILE_PATH)
-    guild_id = str(ctx.guild.id)
+    guild_id = str(inter.guild.id)
 
     if guild_id in database:
         return database[guild_id]
@@ -614,10 +614,10 @@ def get_specific_guild_data(ctx: commands.Context) -> Optional[dict]:
         return None
 
 
-def get_sub_status(ctx, position: int, database: Optional[dict] = None):
+def get_sub_status(inter, position: int, database: Optional[dict] = None):
     """Check if the comic is subscribed to this guild
 
-    :param ctx:
+    :param inter:
     :param position:
     :param database:
     :return:
@@ -625,7 +625,7 @@ def get_sub_status(ctx, position: int, database: Optional[dict] = None):
     if database is None:  # Gets database if needed
         database = load_json(DATABASE_FILE_PATH)
 
-    guild_id = str(ctx.guild.id)
+    guild_id = str(inter.guild.id)
 
     if guild_id in database:
         guild_data = database[guild_id]
@@ -665,25 +665,25 @@ def add_comic_to_list(comic_values: list[dict], comic: int, bot: commands.Bot, c
     return comic_list
 
 
-async def send_comic_embed(ctx: commands.Context, comic_details: dict):
+async def send_comic_embed(inter: discord.Interaction, comic_details: dict):
     """Send a comic embed
 
-    :param ctx:
+    :param inter:
     :param comic_details:
     :return:
     """
     embed = create_embed(comic_details=comic_details)  # Creates the embed
 
-    await send_embed(ctx, None, [embed])  # Send the comic
+    await send_embed(inter, [embed])  # Send the comic
 
 
-async def send_request_error(ctx: commands.Context):
+async def send_request_error(inter: discord.Interaction):
     """If the request is not understood
 
-    :param ctx:
+    :param inter:
     :return:
     """
-    await ctx.send("Request not understood. Try '/help general' for usable commands.")
+    await send_message(inter, "Request not understood. Try '/help general' for usable commands.")
 
 
 def website_specific_embed(website_name: str, website: str, nb_per_embed=5) -> list[discord.Embed]:
@@ -714,37 +714,34 @@ def website_specific_embed(website_name: str, website: str, nb_per_embed=5) -> l
     return embeds
 
 
-async def send_embed(ctx: Union[commands.Context, discord.abc.GuildChannel], bot: Optional[commands.Bot],
-                     embeds: list[discord.Embed], btn_left: str = "\u25c0", btn_right: str = "\u25b6",
-                     btn_cancel: str = "\u274C", remove_after: bool = True):
+async def send_embed(inter: discord.Interaction, embeds: list[discord.Embed]):
     """Send embeds, can be of multiple pages
 
     From https://stackoverflow.com/questions/61787520/i-want-to-make-a-multi-page-help-command-using-discord-py
 
-    :param ctx: Discord context
-    :param bot:
+    :param inter: Discord interaction
     :param embeds: The list of embeds to send
-    :param btn_left:
-    :param btn_right:
-    :param btn_cancel:
-    :param remove_after:
     """
-    buttons = [btn_right, btn_cancel, btn_left]
     pages = len(embeds)
     current = 1
 
     for embed in embeds:
         embed.set_footer(text=get_random_footer())
 
-    msg = await ctx.send(embed=embeds[current - 1])
+    response: discord.InteractionResponse = inter.response
 
-    if pages > 1:  # For more than one embed
-        await msg.add_reaction(btn_left)
-        await msg.add_reaction(btn_right)
-        await msg.add_reaction(btn_cancel)
+    if pages == 1:
+        await response.send_message(embed=embeds[current - 1])
+    else:
+        # For more than one embed
+        multi_page_view = MultiPageView(inter.message.author.id)
+        multi_page_view.add_item(ui.Button(label="Last"))
+        multi_page_view.add_item(ui.Button(label="Next"))
+        multi_page_view.add_item(ui.Button(style=discord.ButtonStyle.danger, label="Exit"))
 
-        def check(react, usr):
-            return usr == ctx.message.author and str(react) in buttons
+        await response.send_message(embed=embeds[current - 1], view=multi_page_view)
+
+        """
 
         while True:
             try:
@@ -776,7 +773,7 @@ async def send_embed(ctx: Union[commands.Context, discord.abc.GuildChannel], bot
                     for button in buttons:
                         await msg.remove_reaction(button, bot.user)
                 break
-                # ending the loop if user doesn't react after x seconds
+                # ending the loop if user doesn't react after x seconds"""
 
 
 async def comic_action_autocomplete(
@@ -836,16 +833,17 @@ def get_url() -> str:
 
 async def update_presence(bot: commands.Bot):
     await bot.change_presence(
-            status=discord.Status.online,
-            activity=discord.Activity(
-                type=discord.ActivityType.listening,
-                name=f'slash commands and \'/help general\' in'
-                     f' {len(bot.guilds)} servers!'
-            )
+        status=discord.Status.online,
+        activity=discord.Activity(
+            type=discord.ActivityType.listening,
+            name=f'slash commands and \'/help general\' in'
+                 f' {len(bot.guilds)} servers!'
         )
+    )
 
 
-async def run_blocking(blocking_func: Callable, bot: commands.Bot,  *args, **kwargs) -> Optional[dict[str, Union[str, int, bool]]]:
+async def run_blocking(blocking_func: Callable, bot: commands.Bot, *args, **kwargs) -> \
+        Optional[dict[str, Union[str, int, bool]]]:
     """Run a blocking function as a non-blocking one
 
     From https://stackoverflow.com/questions/65881761/discord-gateway-warning-shard-id-none-heartbeat-blocked-for-more-than-10-second
@@ -858,3 +856,26 @@ async def run_blocking(blocking_func: Callable, bot: commands.Bot,  *args, **kwa
     """
     func = functools.partial(blocking_func, *args, **kwargs)
     return await bot.loop.run_in_executor(None, func)
+
+
+class MultiPageView(ui.View):
+
+    def __init__(self, author: int, timeout: float = 60):
+        super().__init__(timeout=timeout)
+        self.author_id = author
+
+    def interaction_check(self, interaction: discord.Interaction, /) -> bool:
+        return interaction.message.author.id == self.author_id
+
+
+class MultiPageButton(ui.Button):
+
+    def callback(self, interaction: discord.Interaction) -> Any:
+        interaction.followup.send_message(f"You clicked on button {self.label}")
+
+
+async def send_message(inter: discord.Interaction, message: Optional[str] = None, embed: Optional[discord.Embed]= None, first: bool = True):
+    if first:
+        await inter.response.send_message(message=message, embed=embed)
+    else:
+        await inter.followup.send_message(message=message, embed=embed)

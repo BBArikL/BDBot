@@ -19,7 +19,7 @@ class Comic(commands.Cog):
     # --- Start of functions --- #
     # --- If you want to add another comic, add it here between this and the 'END OF COMICS PARAMETERS'. --- #
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -31,7 +31,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -44,7 +44,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -57,7 +57,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -69,7 +69,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -81,7 +81,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -94,7 +94,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -106,7 +106,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -119,7 +119,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -132,7 +132,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -144,7 +144,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -157,7 +157,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -170,7 +170,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -183,7 +183,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -196,7 +196,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -209,7 +209,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -222,7 +222,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -235,7 +235,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -248,7 +248,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -261,7 +261,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -274,7 +274,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -286,7 +286,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -299,7 +299,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -312,7 +312,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -325,7 +325,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -338,7 +338,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -351,7 +351,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -364,7 +364,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -376,7 +376,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -389,7 +389,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -401,7 +401,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -414,7 +414,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -427,7 +427,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -440,7 +440,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -452,7 +452,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -465,7 +465,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -478,7 +478,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -491,7 +491,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -504,7 +504,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -517,7 +517,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -530,7 +530,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -543,7 +543,7 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    @commands.hybrid_command()
+    @app_commands.command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -556,9 +556,17 @@ class Comic(commands.Cog):
         await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=action, date=date,
                                                    hour=hour)
 
-    # Special comic commands
+    @app_commands.command()
+    @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
+                               date=discord_utils.comic_date_autocomplete,
+                               hour=discord_utils.comic_hour_autocomplete)
+    async def random(self, ctx: discord.ext.commands.Context, action: str = None, date: str = None, hour: str = None):
+        """Random comic"""
+        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(random.choice(
+            list(utils.strip_details.keys()))), param=action, date=date, hour=hour)
+
+    @app_commands.command()
     @commands.has_permissions(manage_guild=True)
-    @commands.hybrid_command()
     @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
                                date=discord_utils.comic_date_autocomplete,
                                hour=discord_utils.comic_hour_autocomplete)
@@ -569,15 +577,7 @@ class Comic(commands.Cog):
             # Interprets the parameters given by the user
             await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(com), param=action, date=date,
                                                        hour=hour)
-
-    @commands.hybrid_command()
-    @app_commands.autocomplete(action=discord_utils.comic_action_autocomplete,
-                               date=discord_utils.comic_date_autocomplete,
-                               hour=discord_utils.comic_hour_autocomplete)
-    async def random(self, ctx: discord.ext.commands.Context, action: str = None, date: str = None, hour: str = None):
-        """Random comic"""
-        await discord_utils.parameters_interpreter(ctx, utils.get_strip_details(random.choice(
-            list(utils.strip_details.keys()))), param=action, date=date, hour=hour)
+    # Special comic commands
 
     # ---- END OF COMICS PARAMETERS ----#
     # --- END of functions that communicate directly with discord ----#

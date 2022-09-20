@@ -1,23 +1,22 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
 from src import utils, discord_utils
 
 
-class Help(commands.Cog):
+class Help(app_commands.Group):
     """Class responsible for sending help embeds"""
 
     def __init__(self, bot: commands.Bot):
         """Constructor of the cog
 
         Initialize all the properties of the cog"""
+        self.__name__ = 'help'
+        super().__init__(name='help')
         self.bot: commands.Bot = bot
 
-    @commands.hybrid_group()
-    async def help(self, ctx):
-        pass
-
-    @help.command()
-    async def general(self, ctx: commands.Context):
+    @app_commands.command()
+    async def help(self, inter: discord.Interaction):
         """Help for BDBot"""
         embed: discord.Embed
         if discord_utils.HELP_EMBED is None:
@@ -62,10 +61,10 @@ class Help(commands.Cog):
         else:
             embed = discord_utils.HELP_EMBED  # Get the cached value
 
-        await discord_utils.send_embed(ctx, None, [embed])
+        await discord_utils.send_embed(inter, [embed])
 
-    @help.command()
-    async def hourly(self, ctx):
+    @app_commands.command()
+    async def hourly(self, inter: discord.Interaction):
         """Help for hourly commands"""
         embed: discord.Embed
 
@@ -114,10 +113,10 @@ class Help(commands.Cog):
         else:
             embed = discord_utils.HOURLY_EMBED
 
-        await discord_utils.send_embed(ctx, None, [embed])
+        await discord_utils.send_embed(inter, [embed])
 
-    @commands.hybrid_command()
-    async def new(self, ctx):
+    @app_commands.command()
+    async def new(self, inter: discord.Interaction):
         """New features of the bot"""
         embed: discord.Embed
 
@@ -159,10 +158,10 @@ class Help(commands.Cog):
         else:
             embed = discord_utils.NEW_EMBED
 
-        await discord_utils.send_embed(ctx, None, [embed])
+        await discord_utils.send_embed(inter, [embed])
 
-    @commands.hybrid_command()
-    async def faq(self, ctx):
+    @app_commands.command()
+    async def faq(self, inter: discord.Interaction):
         """FAQ of the bot"""
         embed: discord.Embed
 
@@ -198,10 +197,10 @@ class Help(commands.Cog):
         else:
             embed = discord_utils.FAQ_EMBED
 
-        await discord_utils.send_embed(ctx, None, [embed])
+        await discord_utils.send_embed(inter, [embed])
 
-    @help.command(name="gocomics")
-    async def gocomics(self, ctx: commands.Context):
+    @app_commands.command(name="gocomics")
+    async def gocomics(self, inter: discord.Interaction):
         """Gocomics help"""
         website_name = "Gocomics"
         website = "https://www.gocomics.com/"
@@ -213,10 +212,10 @@ class Help(commands.Cog):
         else:
             embeds = discord_utils.GOCOMICS_EMBED
 
-        await discord_utils.send_embed(ctx, self.bot, embeds)
+        await discord_utils.send_embed(inter, embeds)
 
-    @help.command(name="comicskingdom")
-    async def comicskingdom(self, ctx: commands.Context):
+    @app_commands.command(name="comicskingdom")
+    async def comicskingdom(self, inter: discord.Interaction):
         """Comics Kingdom help"""
         website_name = "Comics Kingdom"
         website = "https://comicskingdom.com/"
@@ -228,10 +227,10 @@ class Help(commands.Cog):
         else:
             embeds = discord_utils.KINGDOM_EMBED
 
-        await discord_utils.send_embed(ctx, self.bot, embeds)
+        await discord_utils.send_embed(inter, embeds)
 
-    @help.command(name="webtoons")
-    async def webtoons(self, ctx: discord.ext.commands.Context):
+    @app_commands.command(name="webtoons")
+    async def webtoons(self, inter: discord.Interaction):
         """Webtoons help"""
         website_name = "Webtoons"
         website = "https://www.webtoons.com/en/"
@@ -243,9 +242,9 @@ class Help(commands.Cog):
         else:
             embeds = discord_utils.WEBTOONS_EMBED
 
-        await discord_utils.send_embed(ctx, self.bot, embeds)
+        await discord_utils.send_embed(inter, embeds)
 
 
 async def setup(bot: commands.Bot):
     """Initialize the cog"""
-    await bot.add_cog(Help(bot))
+    ...

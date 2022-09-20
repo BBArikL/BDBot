@@ -1,6 +1,8 @@
 import discord
 
 from datetime import datetime, timedelta, timezone
+
+from discord import app_commands
 from discord.ext import tasks, commands
 from src import utils, Web_requests_manager, discord_utils
 from typing import Optional
@@ -20,8 +22,8 @@ class PosterHandler(commands.Cog):
         self.bot: commands.Bot = bot
         self.do_cleanup: bool = True
 
-    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
-    @commands.is_owner()
+    # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
+    # @app_commands.is_owner()
     async def start_hourly(self, ctx: commands.Context):
         """Starts the PosterHandler loop"""
         await ctx.send("Hourly loop started! Hourly comics are posted at each hour.")
@@ -34,8 +36,8 @@ class PosterHandler(commands.Cog):
         await discord.utils.sleep_until(sleep_date)
         await PosterHandler.post_hourly.start(self)
 
-    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
-    @commands.is_owner()
+    # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
+    # @app_commands.is_owner()
     async def force_hourly(self, ctx: commands.Context, hour: Optional[int] = None):
         """Force the push of comics to all subscribed servers
 
@@ -254,7 +256,7 @@ class PosterHandler(commands.Cog):
                                         f" {role_mention}")
                         comic_list[channel]["hasBeenMentioned"] = True  # Sets the channel as already mentioned
 
-                    await discord_utils.send_embed(chan, None, [embed])  # Sends the comic embed (most important)
+                    await discord_utils.send_embed(chan, [embed])  # Sends the comic embed (most important)
                     return 1
                 except Exception as e:
                     # There is too many things that can go wrong here, just catch everything
@@ -278,9 +280,9 @@ class PosterHandler(commands.Cog):
 
         return 0  # If it encountered an issue or there is no comic to send, return 0
 
-    @commands.hybrid_command()
-    @commands.has_permissions(manage_guild=True)
-    @commands.guild_only()
+    @app_commands.command()
+    @app_commands.checks.has_permissions(manage_guild=True)
+    @app_commands.guild_only()
     async def post(self, ctx: commands.Context, date: str = None, hour: str = None):
         """Force the comic post for a single server.
 
@@ -315,8 +317,8 @@ class PosterHandler(commands.Cog):
         else:  # Warns that no comic are available
             await ctx.send("This server is not subscribed to any comic!")
 
-    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
-    @commands.is_owner()
+    # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
+    # @app_commands.is_owner()
     async def update_database_clean(self, ctx: commands.Context):
         """Clean the database from servers that don't have any comics saved
 
@@ -326,8 +328,8 @@ class PosterHandler(commands.Cog):
 
         await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
 
-    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
-    @commands.is_owner()
+    # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
+    # @app_commands.is_owner()
     async def restore_last_backup(self, ctx: commands.Context):
         """Restore a previous backup
 
@@ -339,8 +341,8 @@ class PosterHandler(commands.Cog):
 
         await ctx.send("Last backup restored! Please reboot the bot to re-enable automatic cleanups!")
 
-    @commands.hybrid_command(hidden=True, guilds=discord_utils.SERVER)
-    @commands.is_owner()
+    # @app_commands.command()
+    # @app_commands.checks.is_owner()
     async def do_backup(self, ctx: commands.Context):
         """Force a backup
 

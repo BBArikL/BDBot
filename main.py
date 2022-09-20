@@ -16,6 +16,7 @@ def main():
     load_dotenv()
 
     intents = discord.Intents.default()
+    intents.message_content = True
     bot: discord.ext.commands.AutoShardedBot = commands.AutoShardedBot(
         intents=intents,
         command_prefix="bd!",
@@ -24,12 +25,11 @@ def main():
         shard_count=4
     )
 
-    logger = logging.getLogger('discord')
-    logger.setLevel(logging.DEBUG if os.getenv('DEBUG') == "True" else logging.INFO)
     handler = logging.FileHandler(filename=f'src/data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
                                   encoding='utf-8', mode='w')
-    handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-    logger.addHandler(handler)
+    log_format = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
+    discord.utils.setup_logging(handler=handler, formatter=log_format, level=logging.DEBUG if os.getenv('DEBUG') == "True" else logging.INFO, root=False)
+    logger = logging.getLogger("discord")
 
     logger.info("Writing pid file...")
     pid_file = "bdbot.pid"

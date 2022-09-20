@@ -1,4 +1,5 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 
@@ -17,15 +18,15 @@ class Errors(commands.Cog):
     async def on_command_error(self, ctx: discord.ext.commands.Context, error: Exception):
         # Handles errors
         channel = ctx.channel
-        if isinstance(error, commands.errors.CommandNotFound):  # Command not found
-            await channel.send('Invalid command. Try /help to search for usable commands.')
-        elif isinstance(error, commands.errors.MissingPermissions):
+        if isinstance(error, app_commands.errors.CommandNotFound):  # Command not found
+            await channel.send('Invalid command. Try /help general to search for usable commands.')
+        elif isinstance(error, app_commands.errors.MissingPermissions):
             await channel.send('You do not have the permission to do that.')
-        elif isinstance(error, commands.errors.HybridCommandError):
+        elif isinstance(error, app_commands.errors.AppCommandError):
             await channel.send('The command failed. Please report this issue on Github here: '
                                f'https://github.com/BBArikL/BDBot . The error is: {error.__class__}: {error}')
-        elif isinstance(error, commands.errors.NotOwner):
-            await channel.send('You do not own this bot.')
+        # elif isinstance(error, app_commands.errors.NotOwner):
+        #    await channel.send('You do not own this bot.')
         else:  # Not supported errors
             await channel.send(f'Error not supported. Visit https://github.com/BBArikL/BDBot to report '
                                f'the issue. The error is: {error.__class__}: {error}')
