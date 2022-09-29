@@ -776,6 +776,17 @@ async def send_embed(inter: discord.Interaction, embeds: list[discord.Embed]):
                 # ending the loop if user doesn't react after x seconds"""
 
 
+async def send_chan_embed(channel: discord.TextChannel, embed: discord.Embed):
+    """Send an embed in a channel
+
+    :param channel: The channel object
+    :param embed: The embed to send
+    """
+    embed.set_footer(text=get_random_footer())
+
+    await channel.send(embed=embed)
+
+
 async def comic_action_autocomplete(
         interaction: discord.Interaction,
         current: str,

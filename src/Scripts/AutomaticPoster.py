@@ -41,7 +41,9 @@ class PosterHandler(commands.Cog):
     async def force_hourly(self, ctx: commands.Context, hour: Optional[int] = None):
         """Force the push of comics to all subscribed servers
 
+
         :param ctx: The context of the where the command was called.
+        :param hour: The hour to simulate
         """
         await ctx.send(f'Trying to force the hourly post for hour {utils.get_hour() if not hour else hour}h UTC')
         await self.hourly(hour)
@@ -106,7 +108,7 @@ class PosterHandler(commands.Cog):
                             if hour in guild_data["channels"][channel]["date"][day]:
                                 hour_specific_comics: list[int] = guild_data["channels"][channel]["date"][day][hour]
                                 comic_list: dict = self.set_comic_to_post(guild_data, channel, comic_list,
-                                                                  hour_specific_comics, hour)
+                                                                          hour_specific_comics, hour)
 
     def set_comic_to_post(self, guild_data: dict, channel: str, comic_list: dict, comics_to_add: list[int],
                           hour: str) -> dict:
@@ -256,7 +258,7 @@ class PosterHandler(commands.Cog):
                                         f" {role_mention}")
                         comic_list[channel]["hasBeenMentioned"] = True  # Sets the channel as already mentioned
 
-                    await discord_utils.send_embed(chan, [embed])  # Sends the comic embed (most important)
+                    await discord_utils.send_chan_embed(chan, embed)  # Sends the comic embed (most important)
                     return 1
                 except Exception as e:
                     # There is too many things that can go wrong here, just catch everything

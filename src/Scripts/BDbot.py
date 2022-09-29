@@ -13,6 +13,7 @@ from src.Scripts.AutomaticPoster import PosterHandler
 from src import utils, discord_utils
 from src.discord_utils import send_message
 
+
 class BDBot(commands.Cog):
     """Class responsible for main functions of the bot"""
 
@@ -36,9 +37,9 @@ class BDBot(commands.Cog):
         channel: discord.TextChannel = self.bot.get_channel(channel_id)
 
         # Sends this message whenever restarting the bot
-        #await channel.send(
-        print(    "Bot restarted. I will now try to sync the commands."
-        )
+        # await channel.send(
+        print("Bot restarted. I will now try to sync the commands."
+              )
 
         # Sync the commands
         guild: Union[None, discord.Guild] = None
@@ -46,10 +47,10 @@ class BDBot(commands.Cog):
         if os.getenv('DEBUG') == "True":
             guild = channel.guild
             command_tree.copy_global_to(guild=guild)
-            #await channel.send(f"Syncing commands to server {guild.name} ...")
+            # await channel.send(f"Syncing commands to server {guild.name} ...")
             print(f"Syncing commands to server {guild.name} ...")
         else:
-            #await channel.send("Syncing global commands...")
+            # await channel.send("Syncing global commands...")
             print("Syncing global commands...")
 
         await command_tree.sync(guild=guild)
@@ -75,131 +76,77 @@ class BDBot(commands.Cog):
         """When a private channel is deleted"""
         discord_utils.remove_channel(deleted_channel, use="auto_remove_channel")
 
-
     @app_commands.command()
     async def git(self, inter: discord.Interaction):
         """
-    GitHub
-    page
-    """
-            await send_message(inter,"Want to help the bot? Go here: https://github.com/BBArikL/BDBot")
+        GitHub page
+        """
+        await send_message(inter, "Want to help the bot? Go here: https://github.com/BBArikL/BDBot")
 
-        @app_commands.command()
-        async def invite(self, inter: discord.Interaction):
-            """
-    Get
-    a
-    link
-    to
-    invite
-    the
-    bot
-    """
-            inv = discord_utils.get_url()
-            await send_message(inter,f'Share the bot! {inv}')
+    @app_commands.command()
+    async def invite(self, inter: discord.Interaction):
+        """Get a link to invite the bot"""
+        inv = discord_utils.get_url()
+        await send_message(inter, f'Share the bot! {inv}')
 
-        @app_commands.command()
-        @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add comics
-        async def add_all(self, inter: discord.Interaction, date: str = None, hour: str = None):
-            """
-    Add
-    all
-    comics
-    to
-    a
-    specific
-    channel.Preferred
-    way
-    to
-    add
-    all
-    comics.Mods
-    only
-    """
-            status = discord_utils.add_all(inter, date, hour)
+    @app_commands.command()
+    @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add comics
+    async def add_all(self, inter: discord.Interaction, date: str = None, hour: str = None):
+        """Add all comics to a specific channel.Preferred way to add all comics. Modsonly
+        """
+        status = discord_utils.add_all(inter, date, hour)
+        if status == utils.Success:
+            await send_message(inter, "All comics added successfully!")
+        else:
+            await send_message(inter, status)
+
+    @app_commands.command()
+    @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
+    async def remove_all(self, inter: discord.Interaction):
+        """Remove the guild from the database. Preferred way to remove all comics.Mods only"""
+        status = discord_utils.remove_guild(inter)
+
+        if status == utils.Success:
+            await send_message(inter, "All daily comics removed successfully!")
+        else:
+            await send_message(inter, status)
+
+    @app_commands.command()
+    @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can delete the channel from the database
+    async def remove_channel(self, inter: discord.Interaction):
+        """Remove the channel from the database.Mods only"""
+        status = discord_utils.remove_channel(inter)
+        if status == utils.Success:
+            await send_message(inter, "All daily comics removed successfully from this channel!")
+        else:
+            await send_message(inter, status)
+
+    @app_commands.command()
+    @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add a role
+    async def set_role(self, inter: discord.Interaction, role: discord.Role):
+        """Add a role to be notified. Mods only"""
+        if discord.Guild.get_role(inter.guild, role.id) is not None:
+            status = discord_utils.set_role(inter, role)
             if status == utils.Success:
-                await send_message(inter,"All comics added successfully!")
+                await send_message(inter, "Role successfully added to be notified! "
+                                          "This role will get mentioned at each comic post. "
+                                          "If you wish to be notified only for daily comics happening at 6 AM "
+                                          "UTC, use `/set_mention daily`.")
             else:
-                await send_message(inter,status)
-
-        @app_commands.command()
-        @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
-        async def remove_all(self, inter: discord.Interaction):
-            """
-    Remove
-    the
-    guild
-    from the database.Preferred
-    way
-    to
-    remove
-    all
-    comics.Mods
-    only
-    """
-            status = discord_utils.remove_guild(inter)
-
-            if status == utils.Success:
-                await send_message(inter,"All daily comics removed successfully!")
-            else:
-                await send_message(inter,status)
-
-        @app_commands.command()
-        @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can delete the channel from the database
-        async def remove_channel(self, inter: discord.Interaction):
-            """
-    Remove
-    the
-    channel
-    from the database.Mods
-    only
-    """
-            status = discord_utils.remove_channel(inter)
-            if status == utils.Success:
-                await send_message(inter,"All daily comics removed successfully from this channel!")
-            else:
-                await send_message(inter,status)
-
-        @app_commands.command()
-        @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add a role
-        async def set_role(self, inter: discord.Interaction, role: discord.Role):
-            """
-    Add
-    a
-    role
-    to
-    be
-    notified.Mods
-    only
-    """
-            if discord.Guild.get_role(inter.guild, role.id) is not None:
-                status = discord_utils.set_role(inter, role)
-                if status == utils.Success:
-                    await send_message(inter,"Role successfully added to be notified! "
-                                   "This role will get mentioned at each comic post. "
-                                   "If you wish to be notified only for daily comics happening at 6 AM "
-                                   "UTC, use `/set_mention daily`.")
-                else:
-                    await send_message(inter,status)
-            else:
-                await send_message(inter,"The role is invalid or not provided!")
+                await send_message(inter, status)
+        else:
+            await send_message(inter, "The role is invalid or not provided!")
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can delete the role
     async def remove_role(self, inter: discord.Interaction):
-        """
-        Deletes
-    the
-    role
-    mention.Mods
-    only
-    """
-            status = discord_utils.remove_role(inter)
+        """Deletes the role mention.Mods only"""
+        status = discord_utils.remove_role(inter)
 
-            if status == utils.Success:
-                await send_message(inter,"Role mention successfully removed!")
-            else:
-                await send_message(inter,status)
+        if status == utils.Success:
+            await send_message(inter, "Role mention successfully removed!")
+        else:
+            await send_message(inter, status)
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
@@ -213,12 +160,12 @@ class BDBot(commands.Cog):
             status = discord_utils.set_mention(inter, policy)
 
             if status == utils.Success:
-                await send_message(inter,"Successfully changed the mention policy for this server!")
+                await send_message(inter, "Successfully changed the mention policy for this server!")
             else:
-                await send_message(inter,status)
+                await send_message(inter, status)
         else:
             await send_message(inter,
-                    "Choose between `daily` and `all`to determine the mention policy for this server!")
+                               "Choose between `daily` and `all`to determine the mention policy for this server!")
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
@@ -231,10 +178,9 @@ class BDBot(commands.Cog):
         status, mention_policy = discord_utils.get_mention(inter, self.bot)
 
         if status == utils.Success:
-            await send_message(inter,f"The bot will mention the role {mention_policy}!")
+            await send_message(inter, f"The bot will mention the role {mention_policy}!")
         else:
-            await send_message(inter,status)
-
+            await send_message(inter, status)
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
@@ -243,19 +189,17 @@ class BDBot(commands.Cog):
         status = discord_utils.set_post_mention(inter, choice.lower() == "enable")
 
         if status == utils.Success:
-            await send_message(inter,"Successfully changed the mention policy for this server! ")
+            await send_message(inter, "Successfully changed the mention policy for this server! ")
         else:
-            await send_message(inter,status)
-
+            await send_message(inter, status)
 
     @app_commands.command()
     async def vote(self, inter: discord.Interaction):
         """Vote for the bot!"""
         await send_message(inter,
-            "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : "
-            "https://discordbotlist.com/bots/bdbot"
-        )
-
+                           "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : "
+                           "https://discordbotlist.com/bots/bdbot"
+                           )
 
     # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
     @commands.is_owner()
@@ -263,28 +207,26 @@ class BDBot(commands.Cog):
         """Gets the number of guilds that the bot is in (for analytics)"""
 
         await send_message(inter,
-            f"The bot is in {len(self.bot.guilds)} servers. Trying to update status on Top.gg....."
-        )
+                           f"The bot is in {len(self.bot.guilds)} servers. Trying to update status on Top.gg....."
+                           )
 
         if self.topggpy is None:
             self.topggpy = topgg.DBLClient(self.bot, str(os.getenv('TOP_GG_TOKEN')))
 
         try:
             await self.topggpy.post_guild_count()
-            await send_message(inter,f'Posted server count ({self.topggpy.guild_count})')
+            await send_message(inter, f'Posted server count ({self.topggpy.guild_count})')
         except Exception as e:
-            await send_message(inter,'Failed to post server count\n{}: {}'.format(type(e).__name__, e))
+            await send_message(inter, 'Failed to post server count\n{}: {}'.format(type(e).__name__, e))
 
-        await send_message(inter,"Updating status...")
+        await send_message(inter, "Updating status...")
         await discord_utils.update_presence(self.bot)
-
 
     @discord.app_commands.command()
     async def request(self, inter: discord.Interaction):
         """Request something from the developer!"""
         # Adds a request to the database
         await inter.response.send_modal(BotRequest())
-
 
     @app_commands.command()
     async def request_delete(self, inter: discord.Interaction):
@@ -311,10 +253,9 @@ class BDBot(commands.Cog):
         if count > 0:
             with open(utils.REQUEST_FILE_PATH, "wt") as rq:
                 rq.writelines("".join(output))  # Rewrites all lines
-            await send_message(inter,f"Deleted {count} request(s)!")
+            await send_message(inter, f"Deleted {count} request(s)!")
         else:
-            await send_message(inter,"No requests to delete!")
-
+            await send_message(inter, "No requests to delete!")
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
@@ -356,18 +297,16 @@ class BDBot(commands.Cog):
                                                f"channel {comic['Channel']}")
                     nb_fields += 1
 
-                await discord_utils.send_embed(inter, self.bot, embeds, remove_after=False)
+                await discord_utils.send_embed(inter, embeds)
             else:
-                await send_message(inter,"This server is not subscribed to any comic!")
+                await send_message(inter, "This server is not subscribed to any comic!")
         else:
-            await send_message(inter,"This server is not subscribed to any comic!")
-
+            await send_message(inter, "This server is not subscribed to any comic!")
 
     @app_commands.command()
     async def ping(self, inter: discord.Interaction):
         """Get the bot latency with discord API"""
-        await send_message(inter,"Pong! " + str(round(self.bot.latency * 1000)) + "ms")
-
+        await send_message(inter, "Pong! " + str(round(self.bot.latency * 1000)) + "ms")
 
     @app_commands.command()
     async def uptime(self, inter: discord.Interaction):
@@ -377,16 +316,15 @@ class BDBot(commands.Cog):
         minutes = math.floor((delta.seconds - hours * 3600) / 60)
         seconds = math.floor(delta.seconds - ((minutes * 60) + (hours * 3600)))
         await send_message(inter,
-            "The bot has been up for " + str(delta.days) + " days, " + str(hours) + " hours, " +
-            str(minutes) + " minutes and " + str(seconds) + " seconds.")
-
+                           "The bot has been up for " + str(delta.days) + " days, " + str(hours) + " hours, " +
+                           str(minutes) + " minutes and " + str(seconds) + " seconds.")
 
     @app_commands.command()
     async def status(self, inter: discord.Interaction):
         """Get status of the bot"""
         await send_message(inter,
-            "The bot is online, waiting for comics to send. Report any errors by git (`/git`) or by `/request.")
-
+                           "The bot is online, waiting for comics to send. Report any errors by git (`/git`) or by "
+                           "`/request`.")
 
     # @app_commands.command(hidden=True, server=discord_utils.SERVER)
     @commands.is_owner()
@@ -395,25 +333,23 @@ class BDBot(commands.Cog):
         with open(utils.REQUEST_FILE_PATH, 'rt') as f:
             r = f.readlines()
 
-        await send_message(inter,"Here are the requests:\n```\n" + "\n".join(r) + "\n```")
-
+        await send_message(inter, "Here are the requests:\n```\n" + "\n".join(r) + "\n```")
 
     # @app_commands.command(hidden=True, server=discord_utils.SERVER)
     @commands.is_owner()
     async def nb_active(self, inter: discord.Interaction):
         """Returns the number of servers using the hourly poster service"""
-        await send_message(inter,"There is " + str(len(utils.load_json(utils.DATABASE_FILE_PATH))) + "servers using the hourly "
-                                                                                           "poster service.")
-
+        await send_message(inter, "There is " + str(
+            len(utils.load_json(utils.DATABASE_FILE_PATH))) + "servers using the hourly "
+                                                              "poster service.")
 
     # @app_commands.command(hidden=True, server=discord_utils.SERVER)
     @commands.is_owner()
     async def kill(self, inter: discord.Interaction):
         """Close the bot connection"""
-        await send_message(inter,"Closing bot....")
+        await send_message(inter, "Closing bot....")
 
         await self.bot.close()
-
 
     # @app_commands.command(hidden=True, server=discord_utils.SERVER)
     @commands.is_owner()
@@ -423,7 +359,7 @@ class BDBot(commands.Cog):
 
         :param inter: Discord message context.
         """
-        await send_message(inter,"Reloading comics....")
+        await send_message(inter, "Reloading comics....")
         utils.strip_details = utils.load_json(utils.DETAILS_PATH)
         utils.GOCOMICS_EMBED = None
         utils.KINGDOM_EMBED = None
@@ -441,7 +377,7 @@ class BotRequest(ui.Modal, title="Request"):
     async def on_submit(self, interaction: discord.Interaction) -> None:
         utils.save_request(self.request.value, interaction.user.name,
                            interaction.user.discriminator)
-        await send_message(interaction ,"Request saved! Thank you for using BDBot!")
+        await send_message(interaction, "Request saved! Thank you for using BDBot!")
 
 
 async def setup(client):  # Initialize the cog
