@@ -1,11 +1,10 @@
-import discord
-
 from datetime import datetime, timedelta, timezone
-
-from discord import app_commands
-from discord.ext import tasks, commands
-from src import utils, Web_requests_manager, discord_utils
 from typing import Optional
+
+import discord
+from discord.ext import tasks, commands
+
+from src import utils, Web_requests_manager, discord_utils
 
 
 class PosterHandler(commands.Cog):
@@ -13,13 +12,13 @@ class PosterHandler(commands.Cog):
     Manages automatic posting of hourly comic strips
     """
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: discord.Client):
         """
         Construct the cog.
 
         :param bot: The discord bot
         """
-        self.bot: commands.Bot = bot
+        self.bot: discord.Client = bot
         self.do_cleanup: bool = True
 
     # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
@@ -282,9 +281,9 @@ class PosterHandler(commands.Cog):
 
         return 0  # If it encountered an issue or there is no comic to send, return 0
 
-    @app_commands.command()
-    @app_commands.checks.has_permissions(manage_guild=True)
-    @app_commands.guild_only()
+    # @app_commands.command()
+    # @app_commands.checks.has_permissions(manage_guild=True)
+    # @app_commands.guild_only()
     async def post(self, ctx: commands.Context, date: str = None, hour: str = None):
         """Force the comic post for a single server.
 

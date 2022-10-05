@@ -1,4 +1,4 @@
-import asyncio
+from __future__ import annotations
 import os
 import functools
 
@@ -106,7 +106,8 @@ async def send_comic_info(inter: discord.Interaction, comic: dict):
     await send_embed(inter, [embed])
 
 
-async def comic_send(inter: discord.Interaction, comic: dict, param: str, comic_date: Optional[Union[datetime, int]] = None):
+async def comic_send(inter: discord.Interaction, comic: dict, param: str,
+                     comic_date: Optional[Union[datetime, int]] = None):
     """Post the strip (with the given parameters)
 
     :param inter:
@@ -115,8 +116,8 @@ async def comic_send(inter: discord.Interaction, comic: dict, param: str, comic_
     :param comic_date:
     :return:
     """
-    await inter.defer()  # Defers the return, so Discord cna wait longer
-    comic_details = await run_blocking(get_new_comic_details, inter.bot, comic, param, comic_date=comic_date)
+    await inter.response.defer()  # Defers the return, so Discord cna wait longer
+    comic_details = await run_blocking(get_new_comic_details, inter.client, comic, param, comic_date=comic_date)
 
     # Sends the comic
     await send_comic_embed(inter, comic_details)
@@ -149,21 +150,21 @@ async def parameters_interpreter(inter: discord.Interaction, comic_details, para
             await comic_send(inter, comic_details, "random")
         elif param == "add":
             # Add the comic to the daily list for a guild
-            if inter.message.author.guild_permissions.manage_guild:
+            if inter.user.guild_permissions.manage_guild:
                 status = new_change(inter, comic_details, "add", date=date, hour=hour)
                 if status == Success:
-                    await send_message(inter, f"{comic_details['Name']} added successfully as a daily comic!", first=False)
+                    await send_message(inter, f"{comic_details['Name']} added successfully as a daily comic!")
                 else:
                     await send_message(inter, status)
             else:
                 await send_message(inter, "You need `manage_guild` permission to do that!")
         elif param == "remove":
             # Remove the comic to the daily list for a guild
-            if inter.message.author.guild_permissions.manage_guild:
+            if inter.user.guild_permissions.manage_guild:
                 status = new_change(inter, comic_details, "remove", date=date, hour=hour)
                 if status == Success:
                     await send_message(inter,
-                        f"{comic_details['Name']} removed successfully from the daily list!")
+                                       f"{comic_details['Name']} removed successfully from the daily list!")
                 else:
                     await send_message(inter, status)
             else:
@@ -182,8 +183,8 @@ async def parameters_interpreter(inter: discord.Interaction, comic_details, para
                         first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
                         date_now_formatted = datetime.strftime(datetime.now(timezone.utc), "%d/%m/%Y")
                         await send_message(inter,
-                            f"Invalid date. Try sending a date between {first_date_formatted} and "
-                            f"{date_now_formatted}.")
+                                           f"Invalid date. Try sending a date between {first_date_formatted} and "
+                                           f"{date_now_formatted}.")
                 except ValueError:
                     await send_message(inter, "This is not a valid date format! The format is : DD/MM/YYYY.")
             else:
@@ -256,7 +257,8 @@ def remove_channel(inter: Union[discord.Interaction, discord.abc.GuildChannel], 
     return modify_database(inter, use)
 
 
-def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild], use: str, day: str = None,
+def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild], use: str,
+                    day: str = None,
                     hour: str = None, comic_number: int = None):
     """
     Saves the new information in the database
@@ -674,7 +676,7 @@ async def send_comic_embed(inter: discord.Interaction, comic_details: dict):
     """
     embed = create_embed(comic_details=comic_details)  # Creates the embed
 
-    await send_embed(inter, [embed])  # Send the comic
+    await send_embed(inter, [embed], after_defer=True)  # Send the comic
 
 
 async def send_request_error(inter: discord.Interaction):
@@ -714,13 +716,44 @@ def website_specific_embed(website_name: str, website: str, nb_per_embed=5) -> l
     return embeds
 
 
-async def send_embed(inter: discord.Interaction, embeds: list[discord.Embed]):
+class ResponseSender:
+    """Class to account for some response types"""
+    def __init__(self, resp: [discord.InteractionResponse, discord.InteractionMessage, discord.Webhook]):
+        self.resp = resp
+
+    @classmethod
+    def from_multiple_text(cls, inter: discord.Interaction, first: bool) -> ResponseSender:
+        if first:
+            return cls(inter.response)
+        else:
+            return cls(inter.followup)
+
+    @classmethod
+    async def from_embeds(cls, inter: discord.Interaction, after_defer: bool) -> ResponseSender:
+        if after_defer:
+            return cls(await inter.original_response())
+        else:
+            return cls(inter.response)
+
+    async def send_message(self, *args, **kwargs):
+        if isinstance(self.resp, discord.InteractionMessage):
+            await self.resp.edit(*args, **kwargs)
+        elif isinstance(self.resp, discord.InteractionResponse):
+            if 'message' in kwargs:
+                kwargs.update({'content': kwargs.pop('message')})
+
+            await self.resp.send_message(*args, **kwargs)
+        elif isinstance(self.resp, discord.Webhook):
+            await self.resp.send(*args, **kwargs)
+
+async def send_embed(inter: discord.Interaction, embeds: list[discord.Embed], after_defer: bool = False):
     """Send embeds, can be of multiple pages
 
     From https://stackoverflow.com/questions/61787520/i-want-to-make-a-multi-page-help-command-using-discord-py
 
     :param inter: Discord interaction
     :param embeds: The list of embeds to send
+    :param after_defer: If the response has been deferred
     """
     pages = len(embeds)
     current = 1
@@ -728,18 +761,18 @@ async def send_embed(inter: discord.Interaction, embeds: list[discord.Embed]):
     for embed in embeds:
         embed.set_footer(text=get_random_footer())
 
-    response: discord.InteractionResponse = inter.response
+    resp = await ResponseSender.from_embeds(inter, after_defer)
 
     if pages == 1:
-        await response.send_message(embed=embeds[current - 1])
+        await resp.send_message(embed=embeds[0])
     else:
         # For more than one embed
-        multi_page_view = MultiPageView(inter.message.author.id)
+        multi_page_view = MultiPageView(inter.user.id)
         multi_page_view.add_item(ui.Button(label="Last"))
         multi_page_view.add_item(ui.Button(label="Next"))
         multi_page_view.add_item(ui.Button(style=discord.ButtonStyle.danger, label="Exit"))
 
-        await response.send_message(embed=embeds[current - 1], view=multi_page_view)
+        await resp.send_message(embed=embeds[current - 1], view=multi_page_view)
 
         """
 
@@ -842,7 +875,7 @@ def get_url() -> str:
     )
 
 
-async def update_presence(bot: commands.Bot):
+async def update_presence(bot: discord.Client):
     await bot.change_presence(
         status=discord.Status.online,
         activity=discord.Activity(
@@ -853,7 +886,7 @@ async def update_presence(bot: commands.Bot):
     )
 
 
-async def run_blocking(blocking_func: Callable, bot: commands.Bot, *args, **kwargs) -> \
+async def run_blocking(blocking_func: Callable, bot: discord.Client, *args, **kwargs) -> \
         Optional[dict[str, Union[str, int, bool]]]:
     """Run a blocking function as a non-blocking one
 
@@ -885,8 +918,7 @@ class MultiPageButton(ui.Button):
         interaction.followup.send_message(f"You clicked on button {self.label}")
 
 
-async def send_message(inter: discord.Interaction, message: Optional[str] = None, embed: Optional[discord.Embed]= None, first: bool = True):
-    if first:
-        await inter.response.send_message(message=message, embed=embed)
-    else:
-        await inter.followup.send_message(message=message, embed=embed)
+async def send_message(inter: discord.Interaction, message: Optional[str] = None, embed: Optional[discord.Embed] = None,
+                       first: bool = True):
+    resp = ResponseSender.from_multiple_text(inter, first)
+    await resp.send_message(message=message, embed=embed)

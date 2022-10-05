@@ -1,10 +1,12 @@
-import os
-import logging
 import asyncio
+import logging
+import os
+from datetime import datetime
+
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
-from datetime import datetime
+
 from src import utils, discord_utils
 
 
@@ -16,7 +18,6 @@ def main():
     load_dotenv()
 
     intents = discord.Intents.default()
-    intents.message_content = True
     bot: discord.ext.commands.AutoShardedBot = commands.AutoShardedBot(
         intents=intents,
         command_prefix="bd!",
@@ -24,11 +25,11 @@ def main():
         description=f"BDBot now supports slash commands! Re-invite the bot with /inv!",
         shard_count=4
     )
-
     handler = logging.FileHandler(filename=f'src/data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
                                   encoding='utf-8', mode='w')
     log_format = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
-    discord.utils.setup_logging(handler=handler, formatter=log_format, level=logging.DEBUG if os.getenv('DEBUG') == "True" else logging.INFO, root=False)
+    discord.utils.setup_logging(handler=handler, formatter=log_format,
+                                level=logging.DEBUG if os.getenv('DEBUG') == "True" else logging.INFO, root=False)
     logger = logging.getLogger("discord")
 
     logger.info("Writing pid file...")
