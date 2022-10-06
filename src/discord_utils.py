@@ -817,6 +817,28 @@ async def comic_hour_autocomplete(
     ]
 
 
+async def choice_autocomplete(
+        interaction: discord.Interaction,
+        current: str,
+):
+    choices = ["Enable", "Disable"]
+    return [
+        app_commands.Choice(name=choice, value=choice)
+        for choice in choices if current.lower() in choice.lower()
+    ]
+
+
+async def mention_policy_choices(
+        interaction: discord.Interaction,
+        current: str,
+):
+    choices = ["Daily", "All"]
+    return [
+        app_commands.Choice(name=choice, value=choice)
+        for choice in choices if current.lower() in choice.lower()
+    ]
+
+
 def get_url() -> str:
     perms = discord.Permissions()
     perms.update(
