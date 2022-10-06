@@ -28,7 +28,7 @@ class BDBot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        # On start of the bot
+        """On start of the bot"""
         # Change the bot activity
         await discord_utils.update_presence(self.bot)
         discord_utils.logger.log(logging.INFO, "Logged in as {0.user}".format(self.bot))
@@ -37,10 +37,8 @@ class BDBot(commands.Cog):
         channel: discord.TextChannel = self.bot.get_channel(channel_id)
 
         # Sends this message whenever restarting the bot
-        # await channel.send(
-        print("Bot restarted. I will now try to sync the commands."
-              )
-
+        await channel.send("Bot restarted. I will now try to sync the commands.")
+#
         # Sync the commands
         guild: Union[None, discord.Guild] = None
         command_tree: discord.app_commands.CommandTree = self.bot.tree
@@ -48,15 +46,12 @@ class BDBot(commands.Cog):
             guild = channel.guild
             command_tree.copy_global_to(guild=guild)
             await channel.send(f"Syncing commands to server {guild.name} ...")
-            print(f"Syncing commands to server {guild.name} ...")
         else:
-            # await channel.send("Syncing global commands...")
-            print("Syncing global commands...")
+            await channel.send("Syncing global commands...")
 
         await command_tree.sync(guild=guild)
 
-        # await channel.send("Finished syncing commands. An hour might be needed for global commands to be available!")
-        print("Finished syncing commands. An hour might be needed for global commands to be available!")
+        await channel.send("Finished syncing commands. An hour might be needed for global commands to be available!")
 
         async with self.bot:
             await PosterHandler.wait_for_next_hour(PosterHandler(self.bot))  # Wait for daily poster

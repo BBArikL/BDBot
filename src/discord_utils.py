@@ -739,74 +739,30 @@ class ResponseSender:
         if isinstance(self.resp, discord.InteractionMessage):
             await self.resp.edit(*args, **kwargs)
         elif isinstance(self.resp, discord.InteractionResponse):
-            if 'message' in kwargs:
-                kwargs.update({'content': kwargs.pop('message')})
-
             await self.resp.send_message(*args, **kwargs)
         elif isinstance(self.resp, discord.Webhook):
             await self.resp.send(*args, **kwargs)
 
+
 async def send_embed(inter: discord.Interaction, embeds: list[discord.Embed], after_defer: bool = False):
     """Send embeds, can be of multiple pages
-
-    From https://stackoverflow.com/questions/61787520/i-want-to-make-a-multi-page-help-command-using-discord-py
 
     :param inter: Discord interaction
     :param embeds: The list of embeds to send
     :param after_defer: If the response has been deferred
     """
-    pages = len(embeds)
-    current = 1
-
     for embed in embeds:
         embed.set_footer(text=get_random_footer())
 
     resp = await ResponseSender.from_embeds(inter, after_defer)
 
-    if pages == 1:
+    if len(embeds) == 1:
         await resp.send_message(embed=embeds[0])
     else:
         # For more than one embed
-        multi_page_view = MultiPageView(inter.user.id)
-        multi_page_view.add_item(ui.Button(label="Last"))
-        multi_page_view.add_item(ui.Button(label="Next"))
-        multi_page_view.add_item(ui.Button(style=discord.ButtonStyle.danger, label="Exit"))
+        multi_page_view = MultiPageView(inter.user.id, embeds)
 
-        await resp.send_message(embed=embeds[current - 1], view=multi_page_view)
-
-        """
-
-        while True:
-            try:
-                reaction, user = await bot.wait_for("reaction_add", timeout=60, check=check)
-                # waiting for a reaction to be added - times out after x seconds, 60 in this example
-
-                if str(reaction.emoji) == btn_right and current != pages:
-                    current += 1
-                    await msg.edit(embed=embeds[current - 1])
-                    await msg.remove_reaction(reaction, user)
-
-                elif str(reaction.emoji) == btn_left and current > 1:
-                    current -= 1
-                    await msg.edit(embed=embeds[current - 1])
-                    await msg.remove_reaction(reaction, user)
-
-                elif str(reaction.emoji) == btn_cancel:
-                    await msg.remove_reaction(reaction, user)
-                    await msg.delete()
-                    break
-                else:
-                    await msg.remove_reaction(reaction, user)
-                    # removes reactions if the user tries to go forward on the last page or
-                    # backwards on the first page
-            except asyncio.TimeoutError:
-                if remove_after:
-                    await msg.delete()
-                else:
-                    for button in buttons:
-                        await msg.remove_reaction(button, bot.user)
-                break
-                # ending the loop if user doesn't react after x seconds"""
+        await resp.send_message(embed=embeds[0], view=multi_page_view)
 
 
 async def send_chan_embed(channel: discord.TextChannel, embed: discord.Embed):
@@ -904,21 +860,48 @@ async def run_blocking(blocking_func: Callable, bot: discord.Client, *args, **kw
 
 class MultiPageView(ui.View):
 
-    def __init__(self, author: int, timeout: float = 60):
+    def __init__(self, author: int, embeds: list[discord.Embed], timeout: float = 60):
         super().__init__(timeout=timeout)
         self.author_id = author
+        self.embeds = embeds
+        self.current_embed = 0
 
-    def interaction_check(self, interaction: discord.Interaction, /) -> bool:
-        return interaction.message.author.id == self.author_id
+    async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
+        return interaction.user.id == self.author_id
 
+    async def on_error(self, interaction: discord.Interaction, error: Exception, item: discord.ui.Item[Any], /) -> None:
+        await interaction.followup.send(content=error)
 
-class MultiPageButton(ui.Button):
+    @discord.ui.button(label="Last")
+    async def last_embed(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.current_embed > 0:
+            self.current_embed -= 1
 
-    def callback(self, interaction: discord.Interaction) -> Any:
-        interaction.followup.send_message(f"You clicked on button {self.label}")
+        await interaction.response.edit_message(embed=self.embeds[self.current_embed], view=self)
+
+    @discord.ui.button(label="Next")
+    async def next_embed(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.current_embed < len(self.embeds) - 1:
+            self.current_embed += 1
+
+        await interaction.response.edit_message(embed=self.embeds[self.current_embed], view=self)
+
+    @discord.ui.button(label="Exit", style=discord.ButtonStyle.danger)
+    async def exit_embed(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.next_embed.disabled = True
+        self.last_embed.disabled = True
+        button.disabled = True
+
+        await interaction.response.edit_message(embed=self.embeds[self.current_embed], view=self)
+
+    async def on_timeout(self) -> None:
+        self.clear_items()
+        self.embeds = None
+        self.author_id = 0
+        self.current_embed = 0
 
 
 async def send_message(inter: discord.Interaction, message: Optional[str] = None, embed: Optional[discord.Embed] = None,
                        first: bool = True):
     resp = ResponseSender.from_multiple_text(inter, first)
-    await resp.send_message(message=message, embed=embed)
+    await resp.send_message(content=message, embed=embed)
