@@ -143,6 +143,6 @@ Robobert: https://github.com/JTexpo/Robobert
     - Discord discriminator
     - Date and time of the request
     - The request
-    - If you want to delete this information (and the associated requests), use `/request_delete`
+    - If you want to delete this information (and the associated requests), use `/delete_request`
 
 
