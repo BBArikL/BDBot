@@ -29,7 +29,6 @@ match_date = {
     "D": "day",
     "La": "Latest"
 }
-Success = "Success"
 strip_details: dict = {}
 link_cache: dict = {}
 random_footers: list[str] = []

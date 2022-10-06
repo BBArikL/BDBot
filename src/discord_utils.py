@@ -11,7 +11,7 @@ from discord.ext import commands
 from typing import Optional, Union, Callable, Any
 from src.utils import (clean_url, get_random_footer, get_link, get_date,
                        get_first_date, parse_all, save_json, load_json,
-                       Success, strip_details, DATABASE_FILE_PATH, DETAILS_PATH)
+                       strip_details, DATABASE_FILE_PATH, DETAILS_PATH)
 from src.Web_requests_manager import get_new_comic_details
 
 SERVER: Optional[discord.Object] = None
@@ -293,18 +293,6 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
             }
         }
 
-        """
-        Example of a specific channel data:
-        channel_specific_data = {
-            channel_id: {
-                "channel_id": 0,
-                "date": {
-                    "6":[0],
-                }
-            },
-        }
-        """
-
         if guild_id in data:
             # If this server was already in the database, fill out information
             d[guild_id] = data[guild_id]
@@ -381,6 +369,13 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
         # Update the main database
         data.update(d)
 
+        # Save the database
+        save_json(data)
+
+        if use == a_all:
+            return "All comics added successfully!"
+        else:
+            return "Comic "
     elif use == remove_c:
         guild_id = str(inter.guild.id)
         channel_id = str(inter.channel.id)
@@ -417,6 +412,10 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
         else:
             return "This server or channel is not registered for scheduled comics!"
 
+        # Save the database
+        save_json(data)
+
+        return ""
     elif use == remove_g or use == fremove_g:
         guild_id = ""
         if use == 'remove_guild':
@@ -430,6 +429,10 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
         else:
             return "This server is not registered for any scheduled comics!"
 
+        # Save the database
+        save_json(data)
+
+        return "All daily comics removed successfully!"
     elif use == remove_chan or use == fremove_chan:
         guild_id = str(inter.guild.id)
         channel_id = ""
@@ -447,10 +450,11 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
         else:
             return "This server is not registered for any scheduled comics!"
 
-    # Save the database
-    save_json(data)
+        # Save the database
+        save_json(data)
+        return "All daily comics removed successfully from this channel!"
 
-    return Success
+    return None
 
 
 def set_role(inter: discord.Interaction, role_id) -> str:
@@ -479,12 +483,15 @@ def set_role(inter: discord.Interaction, role_id) -> str:
 
         save_json(data)
 
-        return Success
+        return "Role successfully added to be notified! " \
+               "This role will get mentioned at each comic post. " \
+               "If you wish to be notified only for daily comics happening at 6 AM " \
+               "UTC, use `/set_mention daily`."
     else:
         return "This server is not subscribed to any comic! Please subscribe to a comic before entering a role to add."
 
 
-def set_mention(inter: discord.Interaction, choice) -> str:
+def set_mention(inter: discord.Interaction, choice: bool) -> str:
     """
 
     :param inter:
@@ -506,7 +513,7 @@ def set_mention(inter: discord.Interaction, choice) -> str:
 
             save_json(data)
 
-            return Success
+            return "Successfully changed the mention policy for this server!"
         else:
             return "This server has no role set up! Please use `bd!set_up <role>` to add a role before deciding if " \
                    "you want to be notified of all comic or only the daily ones."
@@ -543,7 +550,7 @@ def get_mention(inter: discord.Interaction, bot: commands.Bot) -> (str, str):
             if not data[gid][only_daily]:
                 men = f"{role_mention} for all comic posts"
 
-            return Success, men
+            return f"The bot will mention the role {men}!"
         else:
             return "This server has no role set up! Please use `bd!set_role @<role>` to add a role " \
                    "before deciding if you want to be notified of all comic or only the daily ones.", ""
@@ -571,7 +578,7 @@ def remove_role(inter):
 
             save_json(data)
 
-            return Success
+            return "Role mention successfully removed!"
         else:
             return "This server is not set to mention any role!"
     else:
@@ -579,7 +586,7 @@ def remove_role(inter):
                "mentions!"
 
 
-def set_post_mention(inter, choice):
+def set_post_mention(inter: discord.Interaction, choice: bool):
     """Change if the bot says a phrase before posting daily comics
 
     :param inter:
@@ -600,7 +607,7 @@ def set_post_mention(inter, choice):
 
         save_json(data)
 
-        return Success
+        return "Successfully changed the mention policy for this server! "
     else:
         return "This server is not registered for any comics!"
 
@@ -718,6 +725,7 @@ def website_specific_embed(website_name: str, website: str, nb_per_embed=5) -> l
 
 class ResponseSender:
     """Class to account for some response types"""
+
     def __init__(self, resp: [discord.InteractionResponse, discord.InteractionMessage, discord.Webhook]):
         self.resp = resp
 
