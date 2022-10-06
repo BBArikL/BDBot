@@ -1,11 +1,12 @@
 # Collection of static methods
+import enum
 import logging
 import os
 import re
 import random
 import json
 
-from src import Web_requests_manager
+# from src import Web_requests_manager
 from datetime import datetime, timedelta, timezone
 from randomtimestamp import randomtimestamp
 from typing import Optional
@@ -274,28 +275,6 @@ def get_strip_details(comic_name: str):
     return strip_details[comic_name]
 
 
-def create_link_cache(logger: logging.Logger) -> None:
-    """Create a cache of links containing the latest comics links
-
-    :param logger:
-    :return:
-    """
-    logger.debug("Running link cache...")
-    comics: dict = load_json(DETAILS_PATH)
-    for comic in comics:
-        logger.debug(f"Getting image link for comic {comic} ...")
-        comic_url: Optional[dict[str, str]]
-        try:
-            comic_url = Web_requests_manager.get_new_comic_details(comics[comic], param="today")
-        except (ValueError, AttributeError) as e:
-            logger.error(f"An error occurred for comic {comic}: {e}")
-            comic_url = None
-        link_cache.update({comics[comic]["Name"]: comic_url["img_url"] if comic_url is not None else ""})
-
-    logger.debug("Saving comics link...")
-    save_json(link_cache, COMIC_LATEST_LINKS_PATH)
-
-
 def get_random_footer() -> str:
     """Get a random footer
 
@@ -390,3 +369,41 @@ def save_request(req: str, author: str, discriminator: Optional[str] = ""):
     with open(REQUEST_FILE_PATH, "at") as requests:
         requests.write(f'Request: "{param}" by {author}#{discriminator} on '
                        f'{datetime.now(timezone.utc)}\n')
+
+
+class Action(enum.Enum):
+    Today = "Today"
+    Random = "Random"
+    Info = "Info"
+    Add = "Add"
+    Remove = "Remove"
+
+
+class ExtendedAction(enum.Enum):
+    Specific_date = "Specific_date"
+    Remove_channel = "Remove_channel"
+    Remove_guild = "Remove_guild"
+    Add_all = "Add_all"
+    Auto_remove_guild = "auto_remove_guild"
+    Auto_remove_channel = "auto_remove_channel"
+
+
+class Date(enum.Enum):
+    Daily = "Daily"
+    Latest = "Latest"
+    Monday = "Monday"
+    Tuesday = "Tuesday"
+    Wednesday = "Thursday"
+    Friday = "Friday"
+    Saturday = "Saturday"
+    Sunday = "Sunday"
+
+
+class MentionChoice(enum.Enum):
+    Enable = "Enable"
+    Disable = "Disable"
+
+
+class MentionPolicy(enum.Enum):
+    Daily = "Daily"
+    All = "All"

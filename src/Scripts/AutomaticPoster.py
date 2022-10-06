@@ -318,41 +318,40 @@ class PosterHandler(commands.Cog):
         else:  # Warns that no comic are available
             await ctx.send("This server is not subscribed to any comic!")
 
-    # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
-    # @app_commands.is_owner()
-    async def update_database_clean(self, ctx: commands.Context):
-        """Clean the database from servers that don't have any comics saved
-
-        :param ctx: The context of the where the command was called.
-        """
-        nb_removed = utils.clean_database(strict=True, logger=discord_utils.logger)
-
-        await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
-
-    # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
-    # @app_commands.is_owner()
-    async def restore_last_backup(self, ctx: commands.Context):
-        """Restore a previous backup
-
-        :param ctx: The context of the where the command was called.
-        """
-        # Stops the database cleaning and restore the last backup
-        self.do_cleanup = False
-        utils.restore_backup()
-
-        await ctx.send("Last backup restored! Please reboot the bot to re-enable automatic cleanups!")
+    # # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
+    # # @app_commands.is_owner()
+    # async def update_database_clean(self, ctx: commands.Context):
+    #     """Clean the database from servers that don't have any comics saved
+    #
+    #     :param ctx: The context of the where the command was called.
+    #     """
+    #     nb_removed = utils.clean_database(strict=True, logger=discord_utils.logger)
+    #
+    #     await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
+    #
+    # # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
+    # # @app_commands.is_owner()
+    # async def restore_last_backup(self, ctx: commands.Context):
+    #     """Restore a previous backup
+    #
+    #     :param ctx: The context of the where the command was called.
+    #     """
+    #     # Stops the database cleaning and restore the last backup
+    #     self.do_cleanup = False
+    #     utils.restore_backup()
+    #
+    #     await ctx.send("Last backup restored! Please reboot the bot to re-enable automatic cleanups!")
 
     # @app_commands.command()
     # @app_commands.checks.is_owner()
-    async def do_backup(self, ctx: commands.Context):
-        """Force a backup
-
-        :param ctx: The context of the where the command was called.
-        """
-        # Force a backup
-        utils.save_backup(utils.load_json(utils.DATABASE_FILE_PATH), discord_utils.logger)
-
-        await ctx.send("Backup done!")
+    # async def do_backup(self, ctx: commands.Context):
+    #    """Force a backup
+    #
+    #    :param ctx: The context of the where the command was called.
+    #    """
+    #    # Force a backup
+    #    utils.save_backup(utils.load_json(utils.DATABASE_FILE_PATH), discord_utils.logger)
+    #    await ctx.send("Backup done!")
 
 
 async def setup(bot: commands.Bot):

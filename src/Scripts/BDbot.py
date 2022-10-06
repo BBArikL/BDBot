@@ -59,23 +59,21 @@ class BDBot(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
         """When the bot is removed from a server"""
-        discord_utils.remove_guild(guild, use="auto_remove_guild")
+        discord_utils.remove_guild(guild, use=utils.ExtendedAction.Auto_remove_guild)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, deleted_channel: discord.abc.GuildChannel):
         """When a guild channel is deleted"""
-        discord_utils.remove_channel(deleted_channel, use="auto_remove_channel")
+        discord_utils.remove_channel(deleted_channel, use=utils.ExtendedAction.Auto_remove_channel)
 
     @commands.Cog.listener()
     async def on_private_channel_delete(self, deleted_channel: discord.abc.GuildChannel):
         """When a private channel is deleted"""
-        discord_utils.remove_channel(deleted_channel, use="auto_remove_channel")
+        discord_utils.remove_channel(deleted_channel, use=utils.ExtendedAction.Auto_remove_channel)
 
     @app_commands.command()
     async def git(self, inter: discord.Interaction):
-        """
-        GitHub page
-        """
+        """GitHub page"""
         await send_message(inter, "Want to help the bot? Go here: https://github.com/BBArikL/BDBot")
 
     @app_commands.command()
@@ -84,22 +82,22 @@ class BDBot(commands.Cog):
         inv = discord_utils.get_url()
         await send_message(inter, f'Share the bot! {inv}')
 
-    # @app_commands.command()
-    # @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add comics
+    @app_commands.command()
+    @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add comics
     async def add_all(self, inter: discord.Interaction, date: str = None, hour: str = None):
         """Add all comics to a specific channel. Preferred way to add all comics. Mods only"""
         status = discord_utils.add_all(inter, date, hour)
         await send_message(inter, status)
 
-    # @app_commands.command()
-    # @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
+    @app_commands.command()
+    @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can delete the server from the database
     async def remove_all(self, inter: discord.Interaction):
         """Remove the guild from the database. Preferred way to remove all comics.Mods only"""
         status = discord_utils.remove_guild(inter)
         await send_message(inter, status)
 
-    # @app_commands.command()
-    # @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can delete the channel from the database
+    @app_commands.command()
+    @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can delete the channel from the database
     async def remove_channel(self, inter: discord.Interaction):
         """Remove the channel from the database.Mods only"""
         status = discord_utils.remove_channel(inter)
@@ -125,10 +123,9 @@ class BDBot(commands.Cog):
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
-    @app_commands.autocomplete(choice=discord_utils.mention_policy_choices)
-    async def set_mention(self, inter: discord.Interaction, choice: str):
+    async def set_mention(self, inter: discord.Interaction, choice: utils.MentionPolicy):
         """Set the role mention policy.Mods only"""
-        status = discord_utils.set_mention(inter, choice == "Daily")
+        status = discord_utils.set_mention(inter, choice == utils.MentionPolicy.Daily)
         await send_message(inter, status)
 
     @app_commands.command()
@@ -140,10 +137,9 @@ class BDBot(commands.Cog):
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
-    @app_commands.autocomplete(choice=discord_utils.choice_autocomplete)
-    async def post_mention(self, inter: discord.Interaction, choice: str):
+    async def post_mention(self, inter: discord.Interaction, choice: utils.MentionChoice):
         """Change the mention policy for the server. Mods only"""
-        status = discord_utils.set_post_mention(inter, choice.lower() == "enable")
+        status = discord_utils.set_post_mention(inter, choice == utils.MentionChoice.Enable)
         await send_message(inter, status)
 
     @app_commands.command()
@@ -175,19 +171,15 @@ class BDBot(commands.Cog):
         await send_message(inter, "Updating status...")
         await discord_utils.update_presence(self.bot)
 
-    @discord.app_commands.command()
+    @app_commands.command()
     async def request(self, inter: discord.Interaction):
         """Request something from the developer!"""
         # Adds a request to the database
         await inter.response.send_modal(BotRequest())
 
-    # @app_commands.command()
-    async def delete_request(self, inter: discord.Interaction):
-        """
-
-        :param inter:
-        :return:
-        """
+    @app_commands.command()
+    async def delete_requests(self, inter: discord.Interaction):
+        """Delete requests sent through 'request'"""
         author = f"{inter.user.name}#{inter.user.discriminator}"
         output = []
         count = 0
@@ -256,12 +248,12 @@ class BDBot(commands.Cog):
         else:
             await send_message(inter, "This server is not subscribed to any comic!")
 
-    # @app_commands.command()
+    @app_commands.command()
     async def ping(self, inter: discord.Interaction):
         """Get the bot latency with discord API"""
         await send_message(inter, "Pong! " + str(round(self.bot.latency * 1000)) + "ms")
 
-    # @app_commands.command()
+    @app_commands.command()
     async def uptime(self, inter: discord.Interaction):
         """Get the bot uptime"""
         delta = (datetime.now(timezone.utc) - self.start_time)
@@ -271,13 +263,6 @@ class BDBot(commands.Cog):
         await send_message(inter,
                            "The bot has been up for " + str(delta.days) + " days, " + str(hours) + " hours, " +
                            str(minutes) + " minutes and " + str(seconds) + " seconds.")
-
-    # @app_commands.command()
-    # async def status(self, inter: discord.Interaction):
-    #    """Get status of the bot"""
-    #    await send_message(inter,
-    #                       "The bot is online, waiting for comics to send. Report any errors by git (`/git`) or by "
-    #                       "`/request`.")
 
     # @app_commands.command(hidden=True, server=discord_utils.SERVER)
     # @commands.is_owner()
