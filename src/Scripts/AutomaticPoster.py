@@ -2,9 +2,9 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 import discord
-from discord.ext import tasks, commands
+from discord.ext import commands, tasks
 
-from src import utils, Web_requests_manager, discord_utils
+from src import Web_requests_manager, discord_utils, utils
 from src.utils import Action
 
 
@@ -32,7 +32,9 @@ class PosterHandler(commands.Cog):
 
     async def wait_for_next_hour(self):
         """Wait for the time to restart the hourly loop"""
-        sleep_date = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+        sleep_date = datetime.now(timezone.utc).replace(
+            minute=0, second=0, microsecond=0
+        ) + timedelta(hours=1)
         await discord.utils.sleep_until(sleep_date)
         await PosterHandler.post_hourly.start(self)
 
@@ -45,7 +47,9 @@ class PosterHandler(commands.Cog):
         :param ctx: The context of the where the command was called.
         :param hour: The hour to simulate
         """
-        await ctx.send(f'Trying to force the hourly post for hour {utils.get_hour() if not hour else hour}h UTC')
+        await ctx.send(
+            f"Trying to force the hourly post for hour {utils.get_hour() if not hour else hour}h UTC"
+        )
         await self.hourly(hour)
 
     @tasks.loop(hours=1)
@@ -80,11 +84,15 @@ class PosterHandler(commands.Cog):
 
         await self.check_comics_and_post(comic_list, strip_details, comic_keys)
 
-        utils.save_json(utils.link_cache, utils.COMIC_LATEST_LINKS_PATH)  # Saves the link cache
+        utils.save_json(
+            utils.link_cache, utils.COMIC_LATEST_LINKS_PATH
+        )  # Saves the link cache
 
         discord_utils.logger.info("Finished automatic poster.")
 
-    def get_comic_info_for_guild(self, guild_data: dict, comic_list: dict, post_days: list[str], hour: str):
+    def get_comic_info_for_guild(
+        self, guild_data: dict, comic_list: dict, post_days: list[str], hour: str
+    ):
         """Get the comic info for each server. This method mutate 'comic_list' for each comic.
 
         :param guild_data: All the information of the server
@@ -98,7 +106,9 @@ class PosterHandler(commands.Cog):
                 # First check if it wants only the latest comics
                 if "latest" in guild_data["channels"][channel]:
                     latest_comics: list[int] = guild_data["channels"][channel]["latest"]
-                    comic_list: dict = self.set_comic_to_post(guild_data, channel, comic_list, latest_comics, hour)
+                    comic_list: dict = self.set_comic_to_post(
+                        guild_data, channel, comic_list, latest_comics, hour
+                    )
                     comic_list[channel].update({"latest_comics": latest_comics})
 
                 # Then check if the comic is wanted for a specific time
@@ -106,12 +116,25 @@ class PosterHandler(commands.Cog):
                     if "date" in guild_data["channels"][channel]:
                         if day in guild_data["channels"][channel]["date"]:
                             if hour in guild_data["channels"][channel]["date"][day]:
-                                hour_specific_comics: list[int] = guild_data["channels"][channel]["date"][day][hour]
-                                comic_list: dict = self.set_comic_to_post(guild_data, channel, comic_list,
-                                                                          hour_specific_comics, hour)
+                                hour_specific_comics: list[int] = guild_data[
+                                    "channels"
+                                ][channel]["date"][day][hour]
+                                comic_list: dict = self.set_comic_to_post(
+                                    guild_data,
+                                    channel,
+                                    comic_list,
+                                    hour_specific_comics,
+                                    hour,
+                                )
 
-    def set_comic_to_post(self, guild_data: dict, channel: str, comic_list: dict, comics_to_add: list[int],
-                          hour: str) -> dict:
+    def set_comic_to_post(
+        self,
+        guild_data: dict,
+        channel: str,
+        comic_list: dict,
+        comics_to_add: list[int],
+        hour: str,
+    ) -> dict:
         """Set one comic to post on one channel
 
         :param guild_data: All the information of the server
@@ -124,31 +147,42 @@ class PosterHandler(commands.Cog):
             to_mention = guild_data["mention"]
             role: Optional[discord.Role] = None
 
-            if ('only_daily' in guild_data) and \
-                    (not guild_data["only_daily"] or hour == "6") and \
-                    ("role" in guild_data) and to_mention:
+            if (
+                ("only_daily" in guild_data)
+                and (not guild_data["only_daily"] or hour == "6")
+                and ("role" in guild_data)
+                and to_mention
+            ):
                 # Check if:
                 # - A role is set
                 # - The role can be mentioned anytime, or it is 6 AM UTC
                 # - And the guild wants to be mentioned
                 role = discord.Guild.get_role(
-                    self.bot.get_guild(guild_data["server_id"]), guild_data["role"])
+                    self.bot.get_guild(guild_data["server_id"]), guild_data["role"]
+                )
 
-            comic_list.update({
-                channel: {
-                    "channel": channel,
-                    "comics": comics_to_add,
-                    "role": role,
-                    "hasBeenMentioned": False,
-                    "wantMention": to_mention
+            comic_list.update(
+                {
+                    channel: {
+                        "channel": channel,
+                        "comics": comics_to_add,
+                        "role": role,
+                        "hasBeenMentioned": False,
+                        "wantMention": to_mention,
+                    }
                 }
-            })
+            )
         else:
             comic_list[channel]["comics"].extend(comics_to_add)
         return comic_list
 
-    async def check_comics_and_post(self, comic_list: dict, strip_details: dict, comic_keys: list[str],
-                                    called_channel: Optional[discord.TextChannel] = None):
+    async def check_comics_and_post(
+        self,
+        comic_list: dict,
+        strip_details: dict,
+        comic_keys: list[str],
+        called_channel: Optional[discord.TextChannel] = None,
+    ):
         """Load comics and check if they are the latest ones.
         Finally, post the comic to the channels.
 
@@ -177,7 +211,8 @@ class PosterHandler(commands.Cog):
                         Web_requests_manager.get_new_comic_details,
                         self.bot,
                         strip_details[comic_keys[i]],
-                        Action.Today, latest_check=True
+                        Action.Today,
+                        latest_check=True,
                     )
                 except Exception:
                     # Anything can happen (connection problem, etc... and the bot will crash if any error
@@ -197,21 +232,37 @@ class PosterHandler(commands.Cog):
                     utils.link_cache[comic_details["Name"]] = comic_details["img_url"]
 
                 for channel in comic_list:  # Finally, sends the comic
-                    nb_of_comics_posted += await self.load_channel_and_send(i, comic_list, channel, embed, is_latest,
-                                                                            available_channels, not_available_channels,
-                                                                            called_channel)
+                    nb_of_comics_posted += await self.load_channel_and_send(
+                        i,
+                        comic_list,
+                        channel,
+                        embed,
+                        is_latest,
+                        available_channels,
+                        not_available_channels,
+                        called_channel,
+                    )
         if called_channel is None:  # Only logs the hourly loop at the end
-            discord_utils.logger.info(f"The hourly loop sent {nb_of_comics_posted} comic(s) the "
-                                      f"{datetime.now().strftime('%dth of %B %Y at %Hh')}")
+            discord_utils.logger.info(
+                f"The hourly loop sent {nb_of_comics_posted} comic(s) the "
+                f"{datetime.now().strftime('%dth of %B %Y at %Hh')}"
+            )
         if called_channel is not None and nb_of_comics_posted == 0:
             # If it was called manually ('post' command), and there is no comics to post anywhere in the guild,
             # it will warn in the channel that no comics needed to be sent, and it will conclude
             await called_channel.send("No comics to send!")
 
-    async def load_channel_and_send(self, comic_number: int, comic_list: dict, channel: str,
-                                    embed: discord.Embed, is_latest: bool, available_channels: dict,
-                                    not_available_channels: dict,
-                                    called_channel: Optional[discord.TextChannel] = None) -> int:
+    async def load_channel_and_send(
+        self,
+        comic_number: int,
+        comic_list: dict,
+        channel: str,
+        embed: discord.Embed,
+        is_latest: bool,
+        available_channels: dict,
+        not_available_channels: dict,
+        called_channel: Optional[discord.TextChannel] = None,
+    ) -> int:
         """Sends the loaded comic to the specified channel
 
         :param comic_number: The number of the comic to send
@@ -227,25 +278,43 @@ class PosterHandler(commands.Cog):
         :returns: 1 if it posted a comic, 0 if it could/did not
         """
         # First, check that the comic is the latest and if that channel only wants the latest (for this comic)
-        latest_comics = comic_list[channel]["latest_comics"] if "latest_comics" in comic_list[channel] else []
-        if comic_number in comic_list[channel]["comics"] and (comic_number not in latest_comics
-                                                              or (comic_number in latest_comics and is_latest)):
+        latest_comics = (
+            comic_list[channel]["latest_comics"]
+            if "latest_comics" in comic_list[channel]
+            else []
+        )
+        if comic_number in comic_list[channel]["comics"] and (
+            comic_number not in latest_comics
+            or (comic_number in latest_comics and is_latest)
+        ):
             # Then, gets the channel object by its ID
             channel_id = int(comic_list[channel]["channel"])
 
             if channel_id not in available_channels:
-                chan = self.bot.get_channel(channel_id)  # Retrieves the channel object by the discord client
+                chan = self.bot.get_channel(
+                    channel_id
+                )  # Retrieves the channel object by the discord client
                 # And save it for future use (so it can be looked up later)
                 available_channels.update({channel_id: chan})
             else:
-                chan = available_channels.get(channel_id)  # Use the cached channel object
+                chan = available_channels.get(
+                    channel_id
+                )  # Use the cached channel object
 
-            if chan is not None and channel_id not in not_available_channels and \
-                    chan.permissions_for(chan.guild.get_member(self.bot.user.id)).send_messages:
+            if (
+                chan is not None
+                and channel_id not in not_available_channels
+                and chan.permissions_for(
+                    chan.guild.get_member(self.bot.user.id)
+                ).send_messages
+            ):
                 # Makes sure that the channel is available (e.g. channel object is not None and the bot
                 # can send messages)
                 try:
-                    if not comic_list[channel]["hasBeenMentioned"] and comic_list[channel]["wantMention"]:
+                    if (
+                        not comic_list[channel]["hasBeenMentioned"]
+                        and comic_list[channel]["wantMention"]
+                    ):
                         # Checks if the channel want the original mention ('Comics for <date>, <hour> UTC @<role>')
                         if comic_list[channel]["role"] is not None:
                             # Checks if there is a role to mention
@@ -253,32 +322,48 @@ class PosterHandler(commands.Cog):
                         else:
                             role_mention = ""
 
-                        await chan.send(f"Comics for "
-                                        f"{datetime.now(timezone.utc).strftime('%A %B %dth %Y, %H h UTC')}"
-                                        f" {role_mention}")
-                        comic_list[channel]["hasBeenMentioned"] = True  # Sets the channel as already mentioned
+                        await chan.send(
+                            f"Comics for "
+                            f"{datetime.now(timezone.utc).strftime('%A %B %dth %Y, %H h UTC')}"
+                            f" {role_mention}"
+                        )
+                        comic_list[channel][
+                            "hasBeenMentioned"
+                        ] = True  # Sets the channel as already mentioned
 
-                    await discord_utils.send_chan_embed(chan, embed)  # Sends the comic embed (most important)
+                    await discord_utils.send_chan_embed(
+                        chan, embed
+                    )  # Sends the comic embed (most important)
                     return 1
                 except Exception as e:
                     # There is too many things that can go wrong here, just catch everything
                     error_msg = f"An error occurred in the hourly poster: {e.__class__.__name__}: {e}"
                     discord_utils.logger.error(error_msg)
 
-                    if called_channel is not None:  # Send the error message to the channel too
+                    if (
+                        called_channel is not None
+                    ):  # Send the error message to the channel too
                         await called_channel.send(error_msg)
             else:
-                not_available_channels.update({channel_id: None})  # Remembers that the channel is not available
-                if called_channel is not None:  # If it can, send a message to the channel if an error occurred
+                not_available_channels.update(
+                    {channel_id: None}
+                )  # Remembers that the channel is not available
+                if (
+                    called_channel is not None
+                ):  # If it can, send a message to the channel if an error occurred
                     if chan is None:
                         chan = comic_list[channel]["channel"]
                     else:
                         chan = chan.mention
 
-                    await called_channel.send(f"Could not send message to channel {chan}")
+                    await called_channel.send(
+                        f"Could not send message to channel {chan}"
+                    )
                 else:
                     # Logs that a channel is not available but still signed up for a comic
-                    discord_utils.logger.warning("A comic could not be posted to a channel.")
+                    discord_utils.logger.warning(
+                        "A comic could not be posted to a channel."
+                    )
 
         return 0  # If it encountered an issue or there is no comic to send, return 0
 
@@ -300,20 +385,30 @@ class PosterHandler(commands.Cog):
 
         if guild_id in comic_data:
             # Gets date and hour of force post
-            final_date, final_hour = utils.parse_all(date, hour, default_date=utils.get_today(),
-                                                     default_hour=utils.get_hour())
-            await ctx.send(f"Looking for comics to post for date: {utils.match_date[final_date]} at "
-                           f"{final_hour}h UTC")
+            final_date, final_hour = utils.parse_all(
+                date,
+                hour,
+                default_date=utils.get_today(),
+                default_hour=utils.get_hour(),
+            )
+            await ctx.send(
+                f"Looking for comics to post for date: {utils.match_date[final_date]} at "
+                f"{final_hour}h UTC"
+            )
             post_days = ["D", final_date]
 
             final_hour = str(final_hour)
 
             # Gets the comic info for the guild
-            self.get_comic_info_for_guild(comic_data[guild_id], comic_list, post_days, final_hour)
+            self.get_comic_info_for_guild(
+                comic_data[guild_id], comic_list, post_days, final_hour
+            )
 
             # If there is comic to send
             if len(comic_list) > 0:
-                await self.check_comics_and_post(comic_list, strip_details, comic_keys, called_channel=ctx.channel)
+                await self.check_comics_and_post(
+                    comic_list, strip_details, comic_keys, called_channel=ctx.channel
+                )
             else:
                 await ctx.send("No comics to send!")
         else:  # Warns that no comic are available

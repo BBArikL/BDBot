@@ -3,12 +3,20 @@ import logging
 import os
 import re
 import sys
+from typing import Optional, Union
 
 from InquirerPy import inquirer
-from InquirerPy.prompts import SecretPrompt, ListPrompt
-from src.utils import load_json, DETAILS_PATH, REQUEST_FILE_PATH, DATABASE_FILE_PATH, save_json, save_backup
+from InquirerPy.prompts import ListPrompt, SecretPrompt
+
+from src.utils import (
+    DATABASE_FILE_PATH,
+    DETAILS_PATH,
+    REQUEST_FILE_PATH,
+    load_json,
+    save_backup,
+    save_json,
+)
 from src.Web_requests_manager import create_link_cache
-from typing import Union, Optional
 
 TEMP_FILE_PATH = "src/misc/comics_not_ready.json"
 RETIRED_COMICS_PATH = "src/misc/retired_comics.json"
@@ -26,8 +34,10 @@ def main():
 
     action = ""
     while action != "Exit":
-        action = inquirer.select(message="What do you want to do?", choices=["Manage bot", "Manage comics",
-                                                                             "Exit"]).execute()
+        action = inquirer.select(
+            message="What do you want to do?",
+            choices=["Manage bot", "Manage comics", "Exit"],
+        ).execute()
 
         if action == "Manage bot":
             manage_bot()
@@ -37,9 +47,16 @@ def main():
 
 def manage_bot():
     """Manage the bot and its settings"""
-    action = inquirer.select(message="What do you want to do?",
-                             choices=["Database tools", "Verify requests", "Create image link cache", "Setup Bot"],
-                             mandatory=False).execute()
+    action = inquirer.select(
+        message="What do you want to do?",
+        choices=[
+            "Database tools",
+            "Verify requests",
+            "Create image link cache",
+            "Setup Bot",
+        ],
+        mandatory=False,
+    ).execute()
 
     if action == "Create image link cache":
         logger.info("Running link cache, please wait up to 1-2 minutes...")
@@ -56,41 +73,62 @@ def setup_bot():
 
     write_env = True
     if os.path.exists("./env"):
-        write_env = inquirer.confirm("The file `.env` already exist. Do you want to overwrite it?")
+        write_env = inquirer.confirm(
+            "The file `.env` already exist. Do you want to overwrite it?"
+        )
 
     if write_env:
-        environment_variables: dict[str, dict[str, Union[str, Union[SecretPrompt, ListPrompt]]]] = {
-            "TOKEN": {"value": "", "inquiry": inquirer.secret(message="Enter the token (The bot discord token):")},
-            "CLIENT_ID": {"value": "", "inquiry": inquirer.secret(message="Enter the client ID (The bot client ID. "
-                                                                          "To get a invite for the bot):")},
+        environment_variables: dict[
+            str, dict[str, Union[str, Union[SecretPrompt, ListPrompt]]]
+        ] = {
+            "TOKEN": {
+                "value": "",
+                "inquiry": inquirer.secret(
+                    message="Enter the token (The bot discord token):"
+                ),
+            },
+            "CLIENT_ID": {
+                "value": "",
+                "inquiry": inquirer.secret(
+                    message="Enter the client ID (The bot client ID. "
+                    "To get a invite for the bot):"
+                ),
+            },
             "PRIVATE_CHANNEL_SUPPORT_ID": {
                 "value": "",
                 "inquiry": inquirer.secret(
                     message="Enter the ID of the private channel (The ID of the channel where the bot can print"
-                            " debugging information):"
-                )
+                    " debugging information):"
+                ),
             },
             "PRIVATE_SERVER_SUPPORT_ID": {
                 "value": "",
                 "inquiry": inquirer.secret(
                     message="Enter the ID of the private server (The ID of the server where the bot can allow owner "
-                            "commands):"
-                )
+                    "commands):"
+                ),
             },
             "DEBUG": {
                 "value": "",
                 "inquiry": inquirer.select(
                     message="Is the bot used for development purposes? (Should be False if the bot is supposed to"
-                            " serve multiple servers):",
-                    choices=["True", "False"]
-                )
-            }
+                    " serve multiple servers):",
+                    choices=["True", "False"],
+                ),
+            },
         }
 
         for envv in environment_variables:
-            environment_variables[envv]["value"] = environment_variables[envv]["inquiry"].execute()
+            environment_variables[envv]["value"] = environment_variables[envv][
+                "inquiry"
+            ].execute()
 
-        output = "\n".join([f"{envv}={environment_variables[envv]['value']}" for envv in environment_variables])
+        output = "\n".join(
+            [
+                f"{envv}={environment_variables[envv]['value']}"
+                for envv in environment_variables
+            ]
+        )
         usage = "w" if os.path.exists(".env") else "x"
         with open(".env", f"{usage}t") as f:
             f.write(output)
@@ -123,7 +161,7 @@ def manage_comics():
         action = inquirer.select(
             message="What do you want to do with the comics?",
             choices=["Add", "Delete", "Modify", "Return"],
-            mandatory=False
+            mandatory=False,
         ).execute()
 
         if action == "Delete" or action == "Modify":
@@ -137,8 +175,9 @@ def manage_comics():
 def choose_comic(action: str, comics: dict):
     comic = inquirer.fuzzy(
         message=f"What comic do you want to {action.lower()}?",
-        choices=[f"{comics[x]['Position']}. {comics[x]['Name']}" for x in comics] + ["Return"],
-        mandatory=False
+        choices=[f"{comics[x]['Position']}. {comics[x]['Name']}" for x in comics]
+        + ["Return"],
+        mandatory=False,
     ).execute()
 
     if comic is None or comic == "Return":
@@ -157,50 +196,86 @@ def add_comic(comics: dict):
     websites = {"Gocomics": None, "ComicsKingdom": None, "Webtoon": None}
     socials = ["Website", "Facebook", "Twitter", "Youtube", "Patreon", "About"]
     first_date = {"Year": 0, "Month": 0, "Day": 0}
-    name = inquirer.text(message="What is the name of the comic? ", mandatory=False).execute()
-    author = inquirer.text(message="Who is the creator of the comic? ", mandatory=False).execute()
-    web_name = inquirer.text(message="Enter the name of the comic as it is written in the link to its main "
-                                     "page: ", mandatory=False).execute()
-    main_website = inquirer.text(message="What is the main website of the comic?",
-                                 completer={"Gocomics": None, "ComicsKingdom": None, "Webtoon": None},
-                                 mandatory=False).execute()
+    name = inquirer.text(
+        message="What is the name of the comic? ", mandatory=False
+    ).execute()
+    author = inquirer.text(
+        message="Who is the creator of the comic? ", mandatory=False
+    ).execute()
+    web_name = inquirer.text(
+        message="Enter the name of the comic as it is written in the link to its main "
+        "page: ",
+        mandatory=False,
+    ).execute()
+    main_website = inquirer.text(
+        message="What is the main website of the comic?",
+        completer={"Gocomics": None, "ComicsKingdom": None, "Webtoon": None},
+        mandatory=False,
+    ).execute()
     if main_website not in websites:
-        working_type = inquirer.select(message="What is the working type of the comic? (For example,are comics "
-                                               "accessible by specifying a date, a number or is there a rss "
-                                               "available?)\nIf you do not know, please choose other. ",
-                                       choices=["date", "number", "rss", "other"], mandatory=False).execute()
+        working_type = inquirer.select(
+            message="What is the working type of the comic? (For example,are comics "
+            "accessible by specifying a date, a number or is there a rss "
+            "available?)\nIf you do not know, please choose other. ",
+            choices=["date", "number", "rss", "other"],
+            mandatory=False,
+        ).execute()
     elif main_website == "Gocomics" or main_website == "ComicsKingdom":
         working_type = "date"
     else:
         working_type = "rss"
 
-    description = inquirer.text(message="Enter a long description of the comic: ", mandatory=False).execute()
+    description = inquirer.text(
+        message="Enter a long description of the comic: ", mandatory=False
+    ).execute()
     for social in socials:
         social_link: str = inquirer.text(
             message=f"Does this comic has a {social} page? (leave blank if not applicable) ",
             mandatory=False,
-            default="").execute()
+            default="",
+        ).execute()
         if social_link.strip():
             description += f"\n{social}: {social_link}"
 
     if working_type == "date":
         for date in first_date:
-            first_date[date] = inquirer.number(message=f"What is the first date of the comic? "
-                                                       f"Please enter the {date}: ", mandatory=False).execute()
+            first_date[date] = inquirer.number(
+                message=f"What is the first date of the comic? "
+                f"Please enter the {date}: ",
+                mandatory=False,
+            ).execute()
     elif working_type == "number" or working_type == "rss":
         first_date = "1"
     else:
         first_date = ""
-    color = inquirer.text(message="Enter the hexadecimal code of the most represented color in this comic "
-                                  "(without the 0x)",
-                          validate=lambda x: re.match("[\\dA-F]{6}", x) is not None, mandatory=False).execute()
-    image = inquirer.text(message="Enter the link of a public image that represents well the comic: ").execute()
-    helptxt = inquirer.text(message="Write in one phrase a description of the comic.",
-                            validate=lambda x: 100 >= len(x),
-                            invalid_message="This short description must be equal or less than 100 characters!",
-                            mandatory=False).execute()
-    final_comic_dict = process_inputs(name, author, web_name, main_website, working_type, description, len(comics),
-                                      first_date, color, image, helptxt)
+    color = inquirer.text(
+        message="Enter the hexadecimal code of the most represented color in this comic "
+        "(without the 0x)",
+        validate=lambda x: re.match("[\\dA-F]{6}", x) is not None,
+        mandatory=False,
+    ).execute()
+    image = inquirer.text(
+        message="Enter the link of a public image that represents well the comic: "
+    ).execute()
+    helptxt = inquirer.text(
+        message="Write in one phrase a description of the comic.",
+        validate=lambda x: 100 >= len(x),
+        invalid_message="This short description must be equal or less than 100 characters!",
+        mandatory=False,
+    ).execute()
+    final_comic_dict = process_inputs(
+        name,
+        author,
+        web_name,
+        main_website,
+        working_type,
+        description,
+        len(comics),
+        first_date,
+        color,
+        image,
+        helptxt,
+    )
     logger.info("Final comic data:")
     logger.info(json.dumps(final_comic_dict, indent=4))
     confirm = inquirer.confirm("Is the data good?").execute()
@@ -215,18 +290,33 @@ def add_comic(comics: dict):
         command = create_command(final_comic_dict)
         logger.info("Here is your command:\n'''")
         logger.info(command)
-        logger.info(f"'''\nAdd it to the end of {os.getcwd()}/src/Scripts/Comic.py to make the comic executable.")
+        logger.info(
+            f"'''\nAdd it to the end of {os.getcwd()}/src/Scripts/Comic.py to make the comic executable."
+        )
     else:  # Adds the details to a temporary file
         absolute_path = os.getcwd() + "/" + TEMP_FILE_PATH
         logger.info(f"Writing dictionary to a temporary location.... ({absolute_path})")
         temp_comic_data = open_json_if_exist(absolute_path)
         temp_comic_data.update(final_comic_dict)
         save_json(temp_comic_data, absolute_path)
-        logger.info("Wrote the details to the temporary file! You can edit this file manually or with this tool!")
+        logger.info(
+            "Wrote the details to the temporary file! You can edit this file manually or with this tool!"
+        )
 
 
-def process_inputs(name: str, author: str, web_name: str, main_website: str, working_type: str, description: str,
-                   position: int, first_date: Union[str, dict], color: str, image: str, helptxt: str) -> dict:
+def process_inputs(
+    name: str,
+    author: str,
+    web_name: str,
+    main_website: str,
+    working_type: str,
+    description: str,
+    position: int,
+    first_date: Union[str, dict],
+    color: str,
+    image: str,
+    helptxt: str,
+) -> dict:
     """
 
     :param name:
@@ -245,7 +335,7 @@ def process_inputs(name: str, author: str, web_name: str, main_website: str, wor
     websites = {
         "Gocomics": "https://www.gocomics.com/",
         "ComicsKingdom": "https://comicskingdom.com/",
-        "Webtoon": "https://www.webtoons.com/en/"
+        "Webtoon": "https://www.webtoons.com/en/",
     }
     normalized_name = name.replace(" ", "")
     return {
@@ -253,15 +343,19 @@ def process_inputs(name: str, author: str, web_name: str, main_website: str, wor
             "Name": name,
             "Author": author,
             "Web_name": web_name,
-            "Main_website": websites[main_website] if main_website in websites else main_website,
+            "Main_website": websites[main_website]
+            if main_website in websites
+            else main_website,
             "Working_type": working_type,
             "Description": description,
             "Position": position,
-            "First_date": first_date if type(first_date) is str else f"{first_date['Year']}, {first_date['Month']}, "
-                                                                     f"{first_date['Day']}",
+            "First_date": first_date
+            if type(first_date) is str
+            else f"{first_date['Year']}, {first_date['Month']}, "
+            f"{first_date['Day']}",
             "Color": color,
             "Image": image,
-            "Helptxt": helptxt
+            "Helptxt": helptxt,
         }
     }
 
@@ -273,7 +367,7 @@ def create_command(cmc: dict) -> str:
     :return:
     """
     comic = cmc.get(list(cmc.keys())[0])
-    normalized_name = comic['Name'].replace(" ", "_").lower()
+    normalized_name = comic["Name"].replace(" ", "_").lower()
     return f"""
     @commands.hybrid_command()
     async def {normalized_name}(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
@@ -295,7 +389,9 @@ def delete(comics: dict, comic: str):
     """
     comic_number, comic_name = comic.split(". ")
     comic_number = int(comic_number)
-    confirm = inquirer.confirm(message=f"Are you sure you want to delete {comic_name}?").execute()
+    confirm = inquirer.confirm(
+        message=f"Are you sure you want to delete {comic_name}?"
+    ).execute()
 
     if confirm:
         abs_path = os.getcwd() + "/" + RETIRED_COMICS_PATH
@@ -316,8 +412,10 @@ def delete(comics: dict, comic: str):
         save_json(retired_comics, abs_path)
         logger.info("Deletion successful in the details file!")
 
-        update_database = inquirer.confirm(message="Do you want to update the database as well? (Note: A backup will "
-                                                   "be made in case this step breaks the database.)").execute()
+        update_database = inquirer.confirm(
+            message="Do you want to update the database as well? (Note: A backup will "
+            "be made in case this step breaks the database.)"
+        ).execute()
         if update_database:
             database_update(comic_number)
         else:
@@ -338,7 +436,7 @@ def open_json_if_exist(absolute_path: str) -> dict:
     if os.path.exists(absolute_path):
         return load_json(absolute_path)
     else:
-        open(absolute_path, 'x').close()
+        open(absolute_path, "x").close()
         return temp_comic_data
 
 
@@ -390,8 +488,11 @@ def modify(comics: dict, comic: str):
     comic_dict = comics[comic_dict_key]
 
     while comic_property != "Return":
-        comic_property = inquirer.select(message=f"Which comic_property of the comic {comic_name} do you want to edit?",
-                                         choices=[prop for prop in comic_dict] + ["Return"], mandatory=False).execute()
+        comic_property = inquirer.select(
+            message=f"Which comic_property of the comic {comic_name} do you want to edit?",
+            choices=[prop for prop in comic_dict] + ["Return"],
+            mandatory=False,
+        ).execute()
 
         if comic_property != "" and comic_property != "Return":
             comic_dict = modify_property(comic_dict, comic_property)
@@ -409,20 +510,27 @@ def modify_property(comic_dict: dict, comic_property: str) -> dict:
     :return:
     """
     property_value = comic_dict[comic_property]
-    logger.info(f"Current {comic_property!r} value:\n`\n{comic_dict[comic_property]}\n`")
+    logger.info(
+        f"Current {comic_property!r} value:\n`\n{comic_dict[comic_property]}\n`"
+    )
 
     completer: Optional[dict] = None
     if type(property_value) is str:
         completer = {word: None for word in property_value}
 
-    new_value = inquirer.text(message="What new value do you want to give this property?", mandatory=False,
-                              completer=completer).execute()
+    new_value = inquirer.text(
+        message="What new value do you want to give this property?",
+        mandatory=False,
+        completer=completer,
+    ).execute()
 
     if new_value == "":
         logger.info(f"{comic_property!r} has not been changed.")
     else:
-        confirm = inquirer.confirm(message=f"Are you sure your want to set "
-                                           f"{comic_property!r} to \n`\n{new_value}\n` ?").execute()
+        confirm = inquirer.confirm(
+            message=f"Are you sure your want to set "
+            f"{comic_property!r} to \n`\n{new_value}\n` ?"
+        ).execute()
 
         if confirm:
             logger.info(f"Updating property {comic_property!r}...")

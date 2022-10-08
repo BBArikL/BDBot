@@ -1,20 +1,18 @@
 # Collection of static methods
-import calendar
 import enum
+import json
 import logging
 import os
-import re
 import random
-import json
-
-# from src import Web_requests_manager
+import re
 from datetime import datetime, timedelta, timezone
-from randomtimestamp import randomtimestamp
-from typing import Optional
 from os import path
+from typing import Optional
+
+from randomtimestamp import randomtimestamp
 
 DETAILS_PATH = "src/misc/comics_details.json"
-FOOTERS_FILE_PATH = 'src/misc/random-footers.txt'
+FOOTERS_FILE_PATH = "src/misc/random-footers.txt"
 DATABASE_FILE_PATH = "src/data/data.json"
 BACKUP_FILE_PATH = "src/data/backups/BACKUP_DATABASE_"
 REQUEST_FILE_PATH = "src/data/requests.txt"
@@ -29,7 +27,7 @@ match_date = {
     "Sa": "Saturday",
     "Su": "Sunday",
     "D": "day",
-    "La": "Latest"
+    "La": "Latest",
 }
 strip_details: dict = {}
 link_cache: dict = {}
@@ -48,13 +46,18 @@ def load_json(json_path: str) -> dict:
     :param json_path: The path to the json file.
     :return: The json as a dict.
     """
-    with open(json_path, 'r', encoding='utf-8') as f:
+    with open(json_path, "r", encoding="utf-8") as f:
         json_file = json.load(f)
 
     return json_file
 
 
-def clean_database(data: dict = None, do_backup: bool = True, strict: bool = False, logger: logging.Logger = None):
+def clean_database(
+    data: dict = None,
+    do_backup: bool = True,
+    strict: bool = False,
+    logger: logging.Logger = None,
+):
     """
 
     :param data:
@@ -113,9 +116,11 @@ def save_backup(data, logger: logging.Logger):
     """
     logger.info("Running backup...")
     # Creates a new backup and saves it
-    backupfp = BACKUP_FILE_PATH + datetime.now(timezone.utc).strftime("%Y_%m_%d_%H") + ".json"
+    backupfp = (
+        BACKUP_FILE_PATH + datetime.now(timezone.utc).strftime("%Y_%m_%d_%H") + ".json"
+    )
 
-    with open(backupfp, 'w') as f:
+    with open(backupfp, "w") as f:
         json.dump(data, f)
 
     logger.info("Backup successfully done")
@@ -134,7 +139,7 @@ def restore_backup():
         file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
 
     if tries < 25:
-        with open(file_path, 'r') as f:
+        with open(file_path, "r") as f:
             database = json.load(f)
 
         if database != "":
@@ -150,7 +155,7 @@ def save_json(json_file: dict, file_path: str = DATABASE_FILE_PATH):
     :param file_path:
     :return:
     """
-    with open(file_path, 'w') as f:
+    with open(file_path, "w") as f:
         json.dump(json_file, f, indent=4)
 
 
@@ -255,16 +260,20 @@ def get_random_link(comic: dict) -> (str, Optional[datetime]):
         return f'{comic["Main_website"]}random/{comic["Web_name"]}', None
     else:
         first_date = datetime.strptime(get_first_date(comic), "%Y, %m, %d")
-        random_date: datetime = randomtimestamp(start=first_date,
-                                                end=datetime.today().replace(hour=0, minute=0, second=0,
-                                                                             microsecond=0))
+        random_date: datetime = randomtimestamp(
+            start=first_date,
+            end=datetime.today().replace(hour=0, minute=0, second=0, microsecond=0),
+        )
         middle_params = ""
         if comic["Main_website"] == "https://comicskingdom.com/":
             middle_params = comic["Web_name"]
         elif comic["Main_website"] == "https://dilbert.com/":
             middle_params = "strip"
 
-        return f'{comic["Main_website"]}{middle_params}/{random_date.strftime("%Y-%m-%d")}', random_date
+        return (
+            f'{comic["Main_website"]}{middle_params}/{random_date.strftime("%Y-%m-%d")}',
+            random_date,
+        )
 
 
 def get_strip_details(comic_name: str):
@@ -283,7 +292,7 @@ def get_random_footer() -> str:
     """
     rnd_footer = random.choice(get_footers())
 
-    return rnd_footer.replace('\n', '')
+    return rnd_footer.replace("\n", "")
 
 
 def get_footers() -> list[str]:
@@ -292,7 +301,7 @@ def get_footers() -> list[str]:
     :return:
     """
     if random_footers is None or random_footers == []:
-        return open(FOOTERS_FILE_PATH, 'rt').readlines()
+        return open(FOOTERS_FILE_PATH, "rt").readlines()
     else:
         return random_footers
 
@@ -368,8 +377,10 @@ def save_request(req: str, author: str, discriminator: Optional[str] = ""):
     param = re.sub("[\\^]*\\\\\\[*", "", param)
 
     with open(REQUEST_FILE_PATH, "at") as requests:
-        requests.write(f'Request: "{param}" by {author}#{discriminator} on '
-                       f'{datetime.now(timezone.utc)}\n')
+        requests.write(
+            f'Request: "{param}" by {author}#{discriminator} on '
+            f"{datetime.now(timezone.utc)}\n"
+        )
 
 
 class Action(enum.Enum):

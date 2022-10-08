@@ -15,21 +15,29 @@ class Errors(commands.Cog):
     # terminal. But you should at least not forget to remove the comments when your bot goes live ;)
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: discord.ext.commands.Context, error: Exception):
+    async def on_command_error(
+        self, ctx: discord.ext.commands.Context, error: Exception
+    ):
         # Handles errors
         channel = ctx.channel
         if isinstance(error, app_commands.errors.CommandNotFound):  # Command not found
-            await channel.send('Invalid command. Try /help general to search for usable commands.')
+            await channel.send(
+                "Invalid command. Try /help general to search for usable commands."
+            )
         elif isinstance(error, app_commands.errors.MissingPermissions):
-            await channel.send('You do not have the permission to do that.')
+            await channel.send("You do not have the permission to do that.")
         elif isinstance(error, app_commands.errors.AppCommandError):
-            await channel.send('The command failed. Please report this issue on Github here: '
-                               f'https://github.com/BBArikL/BDBot . The error is: {error.__class__}: {error}')
+            await channel.send(
+                "The command failed. Please report this issue on Github here: "
+                f"https://github.com/BBArikL/BDBot . The error is: {error.__class__}: {error}"
+            )
         # elif isinstance(error, app_commands.errors.NotOwner):
         #    await channel.send('You do not own this bot.')
         else:  # Not supported errors
-            await channel.send(f'Error not supported. Visit https://github.com/BBArikL/BDBot to report '
-                               f'the issue. The error is: {error.__class__}: {error}')
+            await channel.send(
+                f"Error not supported. Visit https://github.com/BBArikL/BDBot to report "
+                f"the issue. The error is: {error.__class__}: {error}"
+            )
 
 
 async def setup(bot: commands.Bot):

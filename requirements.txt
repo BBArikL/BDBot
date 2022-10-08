@@ -1,8 +1,8 @@
 beautifulsoup4==4.11.1
 discord.py==2.0.1
-InquirerPy==0.3.4
 python-dotenv==0.21.0
 randomtimestamp==2.2
 requests==2.28.1
 rss_parser==0.2.4
 topggpy==1.4.0
+poetry==1.2.1

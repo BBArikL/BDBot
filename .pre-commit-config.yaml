@@ -1,0 +1,36 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: "v3.4.0"
+    hooks:
+      - id: check-merge-conflict
+        stages: [ commit, push ]
+      - id: check-ast
+        stages: [ commit ]
+
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        entry: black
+        language: system
+        types: [ python ]
+        stages: [ commit ]
+
+      - id: isort
+        name: isort
+        entry: isort
+        args:
+          - --profile
+          - black
+          - --gitignore
+        language: system
+        types: [ python ]
+        stages: [ commit ]
+
+      - id: flake8
+        name: flake8
+        entry: flake8 --exclude *venv
+        language: system
+        always_run: true
+        pass_filenames: false
+        stages: [ commit ]

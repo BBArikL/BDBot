@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from src import utils, discord_utils
+from src import discord_utils, utils
 
 
 def main():
@@ -22,14 +22,21 @@ def main():
         intents=intents,
         command_prefix="bd!",
         help_command=None,
-        description=f"BDBot now supports slash commands! Re-invite the bot with /inv!",
-        shard_count=4
+        description="BDBot now supports slash commands! Re-invite the bot with /inv!",
+        shard_count=4,
     )
-    handler = logging.FileHandler(filename=f'src/data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
-                                  encoding='utf-8', mode='w')
-    log_format = logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s')
-    discord.utils.setup_logging(handler=handler, formatter=log_format,
-                                level=logging.DEBUG if os.getenv('DEBUG') == "True" else logging.INFO, root=False)
+    handler = logging.FileHandler(
+        filename=f'src/data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
+        encoding="utf-8",
+        mode="w",
+    )
+    log_format = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s")
+    discord.utils.setup_logging(
+        handler=handler,
+        formatter=log_format,
+        level=logging.DEBUG if os.getenv("DEBUG") == "True" else logging.INFO,
+        root=False,
+    )
     logger = logging.getLogger("discord")
 
     logger.info("Writing pid file...")
@@ -53,15 +60,19 @@ async def run(bot: commands.AutoShardedBot, logger: logging.Logger):
     """
     logger.info("Setting up private server object")
     try:
-        discord_utils.SERVER = discord.Object(id=int(os.getenv("PRIVATE_SERVER_SUPPORT_ID")))
+        discord_utils.SERVER = discord.Object(
+            id=int(os.getenv("PRIVATE_SERVER_SUPPORT_ID"))
+        )
         logger.info("Private server set!")
     except TypeError:
-        logger.info("Could not set private server object, please be wary that owner commands are usable everywhere")
+        logger.info(
+            "Could not set private server object, please be wary that owner commands are usable everywhere"
+        )
         discord_utils.SERVER = None
 
-    for filename in os.listdir('src/Scripts'):
-        if filename.endswith('py'):
-            await bot.load_extension(f'src.Scripts.{filename[:-3]}')
+    for filename in os.listdir("src/Scripts"):
+        if filename.endswith("py"):
+            await bot.load_extension(f"src.Scripts.{filename[:-3]}")
 
     logger.info("Cogs successfully loaded!")
 
@@ -78,7 +89,8 @@ async def run(bot: commands.AutoShardedBot, logger: logging.Logger):
     logger.info("Loaded comic links!")
 
     async with bot:
-        await bot.start(os.getenv('TOKEN'))
+        await bot.start(os.getenv("TOKEN"))
+
 
 if __name__ == "__main__":
     main()
