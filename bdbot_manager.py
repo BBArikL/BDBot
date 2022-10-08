@@ -6,8 +6,8 @@ import sys
 
 from InquirerPy import inquirer
 from InquirerPy.prompts import SecretPrompt, ListPrompt
-from src.utils import load_json, DETAILS_PATH, REQUEST_FILE_PATH, DATABASE_FILE_PATH, save_json, save_backup, \
-    create_link_cache
+from src.utils import load_json, DETAILS_PATH, REQUEST_FILE_PATH, DATABASE_FILE_PATH, save_json, save_backup
+from src.Web_requests_manager import create_link_cache
 from typing import Union, Optional
 
 TEMP_FILE_PATH = "src/misc/comics_not_ready.json"

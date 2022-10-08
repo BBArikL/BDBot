@@ -65,8 +65,9 @@ def get_new_comic_details(strip_details: dict,
     return comic_details
 
 
-def get_comic_info_date(strip_details, param: Union[utils.Action, utils.ExtendedAction] = None, comic_date: utils.Date = None,
-                        latest_check: bool =False) -> Optional[dict[str, str]]:
+def get_comic_info_date(strip_details, param: Union[utils.Action, utils.ExtendedAction] = None,
+                        comic_date: utils.Date = None,
+                        latest_check: bool = False) -> Optional[dict[str, str]]:
     """Get the details of comics which site works by date
 
     :param strip_details:
@@ -286,7 +287,8 @@ def get_comic_info_number(strip_details, param: Union[utils.Action, utils.Extend
     return details
 
 
-def get_comic_info_rss(strip_details, param: Union[utils.Action, utils.ExtendedAction] =None, comic_date=None, latest_check=False) -> Optional[dict[str, str]]:
+def get_comic_info_rss(strip_details, param: Union[utils.Action, utils.ExtendedAction] = None, comic_date=None,
+                       latest_check=False) -> Optional[dict[str, str]]:
     """For comics which can only be found by rss
 
     :param strip_details:
