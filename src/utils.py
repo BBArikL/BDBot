@@ -1,4 +1,5 @@
 # Collection of static methods
+import calendar
 import enum
 import logging
 import os
@@ -374,6 +375,7 @@ def save_request(req: str, author: str, discriminator: Optional[str] = ""):
 class Action(enum.Enum):
     Today = "Today"
     Random = "Random"
+    Specific_date = "Specific date"
     Info = "Info"
     Add = "Add"
     Remove = "Remove"
@@ -397,6 +399,21 @@ class Date(enum.Enum):
     Friday = "Friday"
     Saturday = "Saturday"
     Sunday = "Sunday"
+
+
+class Month(enum.Enum):
+    January = 1
+    February = 2
+    March = 3
+    April = 4
+    May = 5
+    June = 6
+    July = 7
+    August = 8
+    September = 9
+    October = 10
+    November = 11
+    December = 12
 
 
 class MentionChoice(enum.Enum):

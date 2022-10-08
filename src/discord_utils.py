@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import functools
 import logging
 import os
@@ -13,7 +14,7 @@ from discord.ext import commands
 from src.Web_requests_manager import get_new_comic_details
 from src.utils import (clean_url, get_random_footer, get_link, get_date,
                        get_first_date, parse_all, save_json, load_json,
-                       strip_details, DATABASE_FILE_PATH, DETAILS_PATH, Action, Date, ExtendedAction)
+                       strip_details, DATABASE_FILE_PATH, DETAILS_PATH, Action, Date, ExtendedAction, Month)
 
 SERVER: Optional[discord.Object] = None
 HELP_EMBED: Optional[discord.Embed] = None
@@ -124,78 +125,104 @@ async def comic_send(inter: discord.Interaction, comic: dict, param: [Action, Ex
     await send_comic_embed(inter, comic_details)
 
 
-async def parameters_interpreter(inter: discord.Interaction, comic_details, param: Action = None, date: Date = None,
-                                 hour: int = None):
+async def parameters_interpreter(inter: discord.Interaction, comic_details: dict[str, Union[str, int]],
+                                 action: Action = None, date: Date = None, hour: int = None, day: int = None,
+                                 month: Month = None, year: int = None, comic_number: int = None):
     """Interprets the parameters given by the user
+
+    Actions:
+        Info -> Comic information
+
+        Today -> Today's comic
+
+        Random -> Choose a random comic to send
+
+        Specific_Date -> Retrieve that comic at the specific comic date
+
+        Add -> Add the comic to the daily posting list
+
+        Remove -> remove the comic to the daily posting list
+
+    :param inter: The interaction
+    :param comic_details: The specific comic details
+    :param action: The action the bot need to take
+    :param date: The day of the week to add / remove the comic
+    :param hour: The hour to set up a comic
+    :param day: Day of the month (1 to 31)
+    :param month: Month of the year
+    :param year: Year (1950 to now)
+    :param comic_number: The comic number
+    """
+    if action is None or action == Action.Info:
+        # If the user didn't send any parameters, return the information the comic requested
+        await send_comic_info(inter, comic_details)
+    elif action == Action.Today or action == Action.Random:
+        # Sends the website of today's comic
+        # or random comic
+        await comic_send(inter, comic_details, action)
+    elif action in [Action.Add, Action.Random]:
+        # Add or remove a comic to the daily list for a guild
+        status = new_change(inter, comic_details, action, date=date, hour=hour)
+        await send_message(inter, status)
+    else:
+        # Tries to parse date / number of comic
+        working_type = comic_details["Working_type"]
+        if working_type == "date" or comic_details["Main_website"] == 'https://garfieldminusgarfield.net/':
+            # Works by date
+            await extract_date_comic(inter, comic_details, day, month, year)
+        else:
+            # Works by number of comic
+            await extract_number_comic(inter, comic_details, action, working_type, comic_number)
+
+
+async def extract_number_comic(inter: discord.Interaction, comic_details: dict[str, Union[str, int]],
+                               action: Action, working_type: str, comic_number: int):
+    """Extract and send a comic based on the number
 
     :param inter:
     :param comic_details:
-    :param param:
-    :param date:
-    :param hour:
+    :param action:
+    :param working_type:
+    :param comic_number:
     :return:
     """
-    if param is not None and param != "Info":
-        """ Parameters:
-            today -> Today's comic
-            add -> Add the comic to the daily posting list
-            remove -> remove the comic to the daily posting list
-            random -> Choose a random comic to send
-            """
-        if param == Action.Today:
-            # Sends the website of today's comic
-            await comic_send(inter, comic_details, "today")
-        elif param == Action.Random:
-            # Random comic
-            await comic_send(inter, comic_details, "random")
-        elif param in [Action.Add, Action.Random]:
-            # Add or remove a comic to the daily list for a guild
-            status = new_change(inter, comic_details, param, date=date, hour=hour)
-            await send_message(inter, status)
+    if comic_number >= int(get_first_date(comic_details)):
+        if working_type == "number":
+            comic_details_ = copy.deepcopy(comic_details)
+            comic_details_["Main_website"] = comic_details_["Main_website"] + str(comic_number) + '/'
+            await comic_send(inter, comic_details_, param=action)
         else:
-            # Tries to parse date / number of comic
-            working_type = comic_details["Working_type"]
-            if working_type == "date" or comic_details["Main_website"] == 'https://garfieldminusgarfield.net/':
-                # Works by date
-                await extract_date_comic(inter, comic_details, param)
-            else:
-                # Works by number of comic
-                await extract_number_comic(inter, comic_details, param, working_type)
+            await comic_send(inter, comic_details, ExtendedAction.Specific_date, comic_date=comic_number)
     else:
-        # If the user didn't send any parameters, return the information the comic requested
-        await send_comic_info(inter, comic_details)
+        await send_message(inter, "There is no comics with such values!")
 
 
-async def extract_number_comic(inter, comic_details, param: Action, working_type):
+async def extract_date_comic(inter: discord.Interaction, comic_details: dict[str, Union[str, int]], day: int,
+                             month: Month, year: int):
+    """Extract and send a comic by date
+
+    :param inter:
+    :param comic_details:
+    :param day:
+    :param month:
+    :param year:
+    :return:
+    """
     try:
-        number = int(param.split(" ")[0])
-        if number >= int(get_first_date(comic_details)):
-            if working_type == "number":
-                comic_details["Main_website"] = comic_details["Main_website"] + str(number) + '/'
-                await comic_send(inter, comic_details, param=param)
-            else:
-                await comic_send(inter, comic_details, ExtendedAction.Specific_date, comic_date=number)
-        else:
-            await send_message(inter, "There is no comics with such values!")
-
-    except ValueError:
-        await send_message(inter, 'This is not a valid comic number!')
-
-
-async def extract_date_comic(inter: discord.Interaction, comic_details, param: Action):
-    try:
-        comic_date = datetime.strptime(param, "%d/%m/%Y")
+        comic_date = datetime(day=day, month=month.value, year=year)
         first_date = datetime.strptime(get_first_date(comic_details), "%Y, %m, %d")
-        if first_date.timestamp() <= comic_date.timestamp() <= datetime.now(timezone.utc).timestamp():
-            await comic_send(inter, comic_details, "Specific_date", comic_date=comic_date)
-        else:
-            first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
-            date_now_formatted = datetime.strftime(datetime.now(timezone.utc), "%d/%m/%Y")
-            await send_message(inter,
-                               f"Invalid date. Try sending a date between {first_date_formatted} and "
-                               f"{date_now_formatted}.")
     except ValueError:
         await send_message(inter, "This is not a valid date format! The format is : DD/MM/YYYY.")
+        return
+
+    if first_date.timestamp() <= comic_date.timestamp() <= datetime.now(timezone.utc).timestamp():
+        await comic_send(inter, comic_details, "Specific_date", comic_date=comic_date)
+    else:
+        first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
+        date_now_formatted = datetime.strftime(datetime.now(timezone.utc), "%d/%m/%Y")
+        await send_message(inter,
+                           f"Invalid date. Try sending a date between {first_date_formatted} and "
+                           f"{date_now_formatted}.")
 
 
 def add_all(inter: discord.Interaction, date: Optional[Date] = None, hour: Optional[int] = None):
@@ -253,7 +280,8 @@ def remove_channel(inter: Union[discord.Interaction, discord.abc.GuildChannel],
     return modify_database(inter, use)
 
 
-def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild], use: Union[Action, ExtendedAction],
+def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild],
+                    action: Union[Action, ExtendedAction],
                     day: Date = None,
                     hour: int = None, comic_number: int = None):
     """
@@ -262,23 +290,16 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
     Adds or delete the guild_id, the channel id and the comic_strip data
 
     :param inter:
-    :param use:
+    :param action:
     :param day:
     :param hour:
     :param comic_number:
     :return:
     """
-    add = "add"
-    a_all = "add_all"
-    remove_c = "remove"
-    remove_g = "remove_guild"
-    fremove_g = "auto_remove_guild"
-    remove_chan = "remove_channel"
-    fremove_chan = "auto_remove_guild"
     data = load_json(DATABASE_FILE_PATH)
     hour = str(hour)
 
-    if use == add or use == a_all:
+    if action == Action.Add or action == ExtendedAction.Add_all:
         guild_id = str(inter.guild.id)
         channel_id = str(inter.channel.id)
         d = {
@@ -307,7 +328,7 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
                 hour = "6"  # Default: 6 AM UTC
 
             com_list: list[int]
-            if use == a_all:
+            if action == ExtendedAction.Add_all:
                 strips = load_json(DETAILS_PATH)
                 com_list = [i for i in range(len(strips))]
             else:
@@ -346,7 +367,7 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
             d[guild_id]["server_id"] = int(guild_id)
 
             com_list: list
-            if use == a_all:
+            if action == ExtendedAction.Add_all:
                 strips = load_json(DETAILS_PATH)
                 com_list = [i for i in range(len(strips))]
             else:
@@ -369,11 +390,11 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
         # Save the database
         save_json(data)
 
-        if use == a_all:
+        if action == ExtendedAction.Add_all:
             return "All comics added successfully!"
         else:
             return f"{comic_number} added successfully as a daily comic!"
-    elif use == remove_c:
+    elif action == ExtendedAction.Remove_channel:
         guild_id = str(inter.guild.id)
         channel_id = str(inter.channel.id)
         # Remove comic
@@ -413,11 +434,11 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
         save_json(data)
 
         return f"{comic_number} removed successfully from the daily list!"
-    elif use == remove_g or use == fremove_g:
+    elif action == ExtendedAction.Remove_guild or action == ExtendedAction.Auto_remove_guild:
         guild_id = ""
-        if use == 'remove_guild':
+        if action == 'remove_guild':
             guild_id = str(inter.guild.id)
-        elif use == 'auto_remove_guild':
+        elif action == 'auto_remove_guild':
             guild_id = str(inter.id)  # it is a guild
 
         # Remove a guild from the list
@@ -430,12 +451,12 @@ def modify_database(inter: Union[discord.Interaction, discord.abc.GuildChannel, 
         save_json(data)
 
         return "All daily comics removed successfully!"
-    elif use == remove_chan or use == fremove_chan:
+    elif action == ExtendedAction.Remove_channel or action == ExtendedAction.Auto_remove_channel:
         guild_id = str(inter.guild.id)
         channel_id = ""
-        if use == 'remove_channel':
+        if action == 'remove_channel':
             channel_id = str(inter.channel.id)
-        elif use == 'auto_remove_channel':
+        elif action == 'auto_remove_channel':
             channel_id = str(inter.id)  # it is a channel
 
         # Remove a guild from the list
@@ -782,7 +803,15 @@ async def send_chan_embed(channel: discord.TextChannel, embed: discord.Embed):
 
 
 def get_possible_hours():
-    return [app_commands.Choice(name=str(h), value=h) for h in range(1, 24)]
+    return [app_commands.Choice(name=str(h), value=h) for h in range(1, 25)]
+
+
+def get_possible_days():
+    return [app_commands.Choice(name=str(d), value=d) for d in range(1, 32)]
+
+
+def get_possible_years():
+    return [app_commands.Choice(name=str(d), value=d) for d in range(1950, datetime.now().year+1)]
 
 
 def get_url() -> str:
@@ -849,14 +878,14 @@ class MultiPageView(ui.View):
         await interaction.followup.send(content=error)
 
     @discord.ui.button(label="Last")
-    async def last_embed(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def last_embed(self, interaction: discord.Interaction, button: discord.ui.Button):  # noqa
         if self.current_embed > 0:
             self.current_embed -= 1
 
         await interaction.response.edit_message(embed=self.embeds[self.current_embed], view=self)
 
     @discord.ui.button(label="Next")
-    async def next_embed(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def next_embed(self, interaction: discord.Interaction, button: discord.ui.Button):  # noqa
         if self.current_embed < len(self.embeds) - 1:
             self.current_embed += 1
 
