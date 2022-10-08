@@ -5,6 +5,7 @@ import discord
 from discord.ext import tasks, commands
 
 from src import utils, Web_requests_manager, discord_utils
+from src.utils import Action
 
 
 class PosterHandler(commands.Cog):
@@ -176,7 +177,7 @@ class PosterHandler(commands.Cog):
                         Web_requests_manager.get_new_comic_details,
                         self.bot,
                         strip_details[comic_keys[i]],
-                        "today", latest_check=True
+                        Action.Today, latest_check=True
                     )
                 except Exception:
                     # Anything can happen (connection problem, etc... and the bot will crash if any error
