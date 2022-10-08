@@ -27,13 +27,13 @@ class HelpCommands(commands.Cog):
 
                 embed.add_field(name="Gocomics",
                                 value="Use /help gocomics to get all comics that are supported on the Gocomics "
-                                      "website.\nCommands:\n`/<name-of-comic> today / random / dd/mm/YYY`.")
+                                      "website.")
                 embed.add_field(name="Comics Kingdom",
                                 value="Use /help comicskingdom to get all comics that are supported on the Comics "
-                                      "Kingdom website.\nCommands:\n`/<name-of-comic> today / random / dd/mm/YYY`.")
+                                      "Kingdom website.")
                 embed.add_field(name="Webtoons",
                                 value="Use /help webtoons to get all comics that are supported on the Webtoons "
-                                      "website.\nCommands:\n`/<name-of-comic> today / random / dd/mm/YYY`.")
+                                      "website.")
                 for strip in strips:
                     if strips[strip]["Main_website"] != "https://www.gocomics.com/" \
                             and strips[strip]["Main_website"] != "https://comicskingdom.com/" \
