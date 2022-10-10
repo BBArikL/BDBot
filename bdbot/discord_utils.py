@@ -201,7 +201,7 @@ async def parameters_interpreter(
         # Add or remove a comic to the daily list for a guild
         status = new_change(inter, comic_details, action, date=date, hour=hour)
         await send_message(inter, status)
-    else:
+    elif action == Action.Specific_date:
         # Tries to parse date / number of comic
         working_type = comic_details["Working_type"]
         if (
@@ -215,6 +215,8 @@ async def parameters_interpreter(
             await extract_number_comic(
                 inter, comic_details, action, working_type, comic_number
             )
+    else:
+        await send_message(inter, "Command not understood!")
 
 
 async def extract_number_comic(
@@ -233,7 +235,7 @@ async def extract_number_comic(
     :param comic_number:
     :return:
     """
-    if comic_number >= int(get_first_date(comic_details)):
+    if comic_number is not None and comic_number >= int(get_first_date(comic_details)):
         if working_type == "number":
             comic_details_ = copy.deepcopy(comic_details)
             comic_details_["Main_website"] = (
@@ -248,7 +250,11 @@ async def extract_number_comic(
                 comic_date=comic_number,
             )
     else:
-        await send_message(inter, "There is no comics with such values!")
+        await send_message(
+            inter,
+            "There is no comics with such values!"
+            " Please input a comic number instead of a date!",
+        )
 
 
 async def extract_date_comic(
