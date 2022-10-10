@@ -26,7 +26,7 @@ def main():
         shard_count=4,
     )
     handler = logging.FileHandler(
-        filename=f'bdbot/data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
+        filename=f'data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
         encoding="utf-8",
         mode="w",
     )
@@ -70,10 +70,6 @@ async def run(bot: commands.AutoShardedBot, logger: logging.Logger):
         )
         discord_utils.SERVER = None
 
-    for filename in os.listdir("bdbot/Scripts"):
-        if filename.endswith("py"):
-            await bot.load_extension(f"bdbot.Scripts.{filename[:-3]}")
-
     logger.info("Cogs successfully loaded!")
 
     logger.info("Loading comic details...")
@@ -87,6 +83,10 @@ async def run(bot: commands.AutoShardedBot, logger: logging.Logger):
     logger.info("Loading latest comic links...")
     utils.link_cache = utils.load_json(utils.COMIC_LATEST_LINKS_PATH)
     logger.info("Loaded comic links!")
+
+    for filename in os.listdir("cogs"):
+        if filename.endswith("py") and filename != "__init__.py":
+            await bot.load_extension(f"bdbot.cogs.{filename[:-3]}")
 
     async with bot:
         await bot.start(os.getenv("TOKEN"))

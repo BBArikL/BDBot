@@ -18,8 +18,8 @@ from bdbot.utils import (
 )
 from bdbot.Web_requests_manager import create_link_cache
 
-TEMP_FILE_PATH = "bdbot/misc/comics_not_ready.json"
-RETIRED_COMICS_PATH = "bdbot/misc/retired_comics.json"
+TEMP_FILE_PATH = "misc/comics_not_ready.json"
+RETIRED_COMICS_PATH = "misc/retired_comics.json"
 
 logger = logging.Logger("manager_logger", logging.INFO)
 
@@ -129,7 +129,7 @@ def setup_bot():
                 for envv in environment_variables
             ]
         )
-        usage = "w" if os.path.exists(".env") else "x"
+        usage = "w" if os.path.exists("../.env") else "x"
         with open(".env", f"{usage}t") as f:
             f.write(output)
 
@@ -257,7 +257,7 @@ def add_comic(comics: dict):
     image = inquirer.text(
         message="Enter the link of a public image that represents well the comic: "
     ).execute()
-    helptxt = inquirer.text(
+    help_txt = inquirer.text(
         message="Write in one phrase a description of the comic.",
         validate=lambda x: 100 >= len(x),
         invalid_message="This short description must be equal or less than 100 characters!",
@@ -274,7 +274,7 @@ def add_comic(comics: dict):
         first_date,
         color,
         image,
-        helptxt,
+        help_txt,
     )
     logger.info("Final comic data:")
     logger.info(json.dumps(final_comic_dict, indent=4))
@@ -291,7 +291,7 @@ def add_comic(comics: dict):
         logger.info("Here is your command:\n'''")
         logger.info(command)
         logger.info(
-            f"'''\nAdd it to the end of {os.getcwd()}/bdbot/Scripts/Comic.py to make the comic executable."
+            f"'''\nAdd it to the end of {os.path.dirname(__file__)}/cogs/Comic.py to make the comic executable."
         )
     else:  # Adds the details to a temporary file
         absolute_path = os.getcwd() + "/" + TEMP_FILE_PATH
@@ -343,9 +343,7 @@ def process_inputs(
             "Name": name,
             "Author": author,
             "Web_name": web_name,
-            "Main_website": websites[main_website]
-            if main_website in websites
-            else main_website,
+            "Main_website": websites.get(main_website, main_website),
             "Working_type": working_type,
             "Description": description,
             "Position": position,

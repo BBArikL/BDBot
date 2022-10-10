@@ -11,12 +11,12 @@ from typing import Optional
 
 from randomtimestamp import randomtimestamp
 
-DETAILS_PATH = "src/misc/comics_details.json"
-FOOTERS_FILE_PATH = "src/misc/random-footers.txt"
-DATABASE_FILE_PATH = "src/data/data.json"
-BACKUP_FILE_PATH = "src/data/backups/BACKUP_DATABASE_"
-REQUEST_FILE_PATH = "src/data/requests.txt"
-COMIC_LATEST_LINKS_PATH = "src/data/latest_comics.json"
+DETAILS_PATH = "misc/comics_details.json"
+FOOTERS_FILE_PATH = "misc/random-footers.txt"
+DATABASE_FILE_PATH = "data/data.json"
+BACKUP_FILE_PATH = "data/backups/BACKUP_DATABASE_"
+REQUEST_FILE_PATH = "data/requests.txt"
+COMIC_LATEST_LINKS_PATH = "data/latest_comics.json"
 date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su", "La"]
 match_date = {
     "Mo": "Monday",

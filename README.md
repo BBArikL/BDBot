@@ -117,8 +117,13 @@ Robobert: https://github.com/JTexpo/Robobert
   - You want to do a pull request to add your favourite comic? 
     - Preferably, Gocomics and Comics Kingdom comics are the easiest to implement, so try to stick with that if your comic is hosted there. 
       - Steps:
-        1. Add a new value in misc/comics_details.json that specifies each value for the comic. (See [this README](src/misc/ADD_COMIC.md)).
-        2. Add a command in Scripts/Comics.py under the latest comic with aliases that are the same that were added to the json file and change the value of 'comic_name' to the name of the comic added.
+        1. Install the project with at least `InquirerPy` installed.
+        2. Run `python -m bdbot_manager`
+        3. Follow the steps to add a new comic
+        4. That's it!
+      - Manual steps:
+        1. Add a new value in misc/comics_details.json that specifies each value for the comic. (See [this README](misc/ADD_COMIC.md)).
+        2. Add a command in bdbot/cogs/Comics.py under the latest comic with aliases that are the same that were added to the json file and change the value of 'comic_name' to the name of the comic added.
         3. That's it!
   - If the comic is NOT hosted on GoComics/Comics Kingdom, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
   - Any pull requests that was not approved from another site will be automatically rejected, and you will be asked to follow the procedure cited.
