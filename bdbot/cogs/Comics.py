@@ -22,18 +22,17 @@ class Comic(commands.Cog):
     # --- If you want to add another comic, add it here between this and the 'END OF COMICS PARAMETERS'. --- #
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def garfield(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Garfield"""
         comic_name = "Garfield"
@@ -48,21 +47,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def garfield_classics(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Garfield classics"""
         comic_name = "Garfield_Classics"
@@ -77,21 +76,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def calvin_and_hobbes(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Calvin and Hobbes"""
         comic_name = "CalvinandHobbes"
@@ -106,21 +105,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def xkcd(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """XKCD"""
         comic_name = "XKCD"
@@ -135,21 +134,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def peanuts(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Peanuts"""
         comic_name = "Peanuts"
@@ -164,21 +163,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def peanuts_begins(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Peanuts begins"""
         comic_name = "Peanuts_Begins"
@@ -193,21 +192,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def dilbert(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Dilbert"""
         comic_name = "Dilbert"
@@ -222,21 +221,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def dilbert_classics(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Dilbert classics"""
         comic_name = "Dilbert-Classics"
@@ -251,21 +250,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def cyanide_and_happiness(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Cyanide and Happiness"""
         comic_name = "Cyanide_and_Happiness"
@@ -280,21 +279,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def frazz(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Frazz"""
         comic_name = "Frazz"
@@ -309,21 +308,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def garfield_minus_garfield(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Garfield minus Garfield"""
         comic_name = "Garfield_minus_Garfield"
@@ -338,21 +337,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def frank_and_ernest(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Frank and Ernest"""
         comic_name = "Frank-and-Ernest"
@@ -367,21 +366,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def broom_hilda(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Broom Hilda"""
         comic_name = "BroomHilda"
@@ -396,21 +395,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def cheer_up_emo_kid(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Cheer up emo kid"""
         comic_name = "Cheer-up-emo-kid"
@@ -425,21 +424,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def brevity(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Brevity"""
         comic_name = "brevity"
@@ -454,21 +453,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def cats_cafe(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Cat's cafe"""
         comic_name = "Cats-Cafe"
@@ -483,21 +482,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def popeye(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Popeye"""
         comic_name = "Popeye"
@@ -512,21 +511,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def artic_circle(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Artic Circle"""
         comic_name = "Artic-Circle"
@@ -541,21 +540,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def lockhorns(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """The Lockhorns"""
         comic_name = "Lockhorns"
@@ -570,21 +569,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def marvin(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Marvin"""
         comic_name = "Marvin"
@@ -599,21 +598,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def zits(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Zits"""
         comic_name = "Zits"
@@ -628,21 +627,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def hi_and_lois(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Hi and Lois"""
         comic_name = "Hi-and-Lois"
@@ -657,21 +656,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def safely_endangered(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Safely Endangered"""
         comic_name = "Safely-Endangered"
@@ -686,21 +685,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def carl(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Carl"""
         comic_name = "Carl"
@@ -715,21 +714,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def bluechair(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Bluechair"""
         comic_name = "BlueChair"
@@ -744,21 +743,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def adventures_of_god(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Adventures of God"""
         comic_name = "Adventures-of-God"
@@ -773,21 +772,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def live_with_yourself(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Live with yourself"""
         comic_name = "Live-with-yourself"
@@ -802,21 +801,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def system32(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """System32"""
         comic_name = "System32comics"
@@ -831,21 +830,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def the_gamer(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """The Gamer"""
         comic_name = "TheGamer"
@@ -860,21 +859,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def bignate(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Big Nate"""
         comic_name = "BigNate"
@@ -889,21 +888,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def get_fuzzy(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Get Fuzzy"""
         comic_name = "GetFuzzy"
@@ -918,21 +917,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def beetle_bailey(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Beetle Bailey"""
         comic_name = "BeetleBailey"
@@ -947,21 +946,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def boondocks(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """The Boondocks"""
         comic_name = "TheBoondocks"
@@ -976,21 +975,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def pickles(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Pickles"""
         comic_name = "Pickles"
@@ -1005,21 +1004,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def pearls_before_swine(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Pearls before swine"""
         comic_name = "PearlsBeforeSwine"
@@ -1034,21 +1033,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def chibird(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Chibird"""
         comic_name = "Chibird"
@@ -1063,21 +1062,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def war_and_peas(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """War and Peas"""
         comic_name = "WarAndPeas"
@@ -1092,21 +1091,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def humans_are_stupid(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Humans are stupid"""
         comic_name = "HumansAreStupid"
@@ -1121,21 +1120,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def maximumble(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Maximumble"""
         comic_name = "Maximumble"
@@ -1150,21 +1149,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def poorly_drawn_lines(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Poorly Drawn Lines"""
         comic_name = "PoorlyDrawnLines"
@@ -1179,21 +1178,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def heathcliff(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Heathcliff"""
         comic_name = "Heathcliff"
@@ -1208,21 +1207,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def andy_capp(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Andy Capp"""
         comic_name = "AndyCapp"
@@ -1237,21 +1236,21 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def random(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Random comic"""
         await parameters_interpreter(
@@ -1263,22 +1262,22 @@ class Comic(commands.Cog):
             day=day,
             month=month,
             year=year,
+            comic_number=comic_number,
         )
 
     @app_commands.command()
     @commands.has_permissions(manage_guild=True)
-    @app_commands.choices(
-        hour=get_possible_hours(), day=get_possible_days(), year=get_possible_years()
-    )
+    @app_commands.choices(hour=get_possible_hours())
     async def all(
         self,
         inter: discord.Interaction,
         action: Action,
         date: Date = None,
         hour: int = None,
-        day: int = 1,
-        month: Month = Month.February,
-        year: int = 1950,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """All comics. Mods only"""
         strp = strip_details
@@ -1293,6 +1292,7 @@ class Comic(commands.Cog):
                 day=day,
                 month=month,
                 year=year,
+                comic_number=comic_number,
             )
 
     # Special comic commands
