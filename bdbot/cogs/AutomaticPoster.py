@@ -4,8 +4,8 @@ from typing import Optional
 import discord
 from discord.ext import commands, tasks
 
-from src import Web_requests_manager, discord_utils, utils
-from src.utils import Action
+from bdbot import Web_requests_manager, discord_utils, utils
+from bdbot.utils import Action
 
 
 class PosterHandler(commands.Cog):

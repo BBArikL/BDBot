@@ -10,10 +10,10 @@ from bs4 import BeautifulSoup
 from requests import get
 from rss_parser import Parser
 
-from src import utils
+from bdbot import utils
 
 # Utilities for web requests to have the fresh comic details
-from src.utils import load_json
+from bdbot.utils import load_json
 
 ORIGINAL_DETAILS = {
     "url": "",

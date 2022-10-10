@@ -8,7 +8,7 @@ from typing import Optional, Union
 from InquirerPy import inquirer
 from InquirerPy.prompts import ListPrompt, SecretPrompt
 
-from src.utils import (
+from bdbot.utils import (
     DATABASE_FILE_PATH,
     DETAILS_PATH,
     REQUEST_FILE_PATH,
@@ -16,10 +16,10 @@ from src.utils import (
     save_backup,
     save_json,
 )
-from src.Web_requests_manager import create_link_cache
+from bdbot.Web_requests_manager import create_link_cache
 
-TEMP_FILE_PATH = "src/misc/comics_not_ready.json"
-RETIRED_COMICS_PATH = "src/misc/retired_comics.json"
+TEMP_FILE_PATH = "bdbot/misc/comics_not_ready.json"
+RETIRED_COMICS_PATH = "bdbot/misc/retired_comics.json"
 
 logger = logging.Logger("manager_logger", logging.INFO)
 
@@ -134,8 +134,8 @@ def setup_bot():
             f.write(output)
 
     logger.info("Creating folders and files...")
-    os.makedirs("src/data/backups", exist_ok=True)
-    os.makedirs("src/data/logs", exist_ok=True)
+    os.makedirs("data/backups", exist_ok=True)
+    os.makedirs("data/logs", exist_ok=True)
 
     if not os.path.exists(DATABASE_FILE_PATH):
         with open(DATABASE_FILE_PATH, "xt") as f:
@@ -148,7 +148,7 @@ def setup_bot():
     logger.info("Creating link cache, this might take some time...")
     create_link_cache(logger)
 
-    logger.info("All done! You can start the bot with 'python main.py'!")
+    logger.info("All done! You can start the bot with 'python __main__.py'!")
 
 
 def manage_comics():
@@ -291,7 +291,7 @@ def add_comic(comics: dict):
         logger.info("Here is your command:\n'''")
         logger.info(command)
         logger.info(
-            f"'''\nAdd it to the end of {os.getcwd()}/src/Scripts/Comic.py to make the comic executable."
+            f"'''\nAdd it to the end of {os.getcwd()}/bdbot/Scripts/Comic.py to make the comic executable."
         )
     else:  # Adds the details to a temporary file
         absolute_path = os.getcwd() + "/" + TEMP_FILE_PATH

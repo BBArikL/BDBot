@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from src import discord_utils, utils
+from bdbot import discord_utils, utils
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
         shard_count=4,
     )
     handler = logging.FileHandler(
-        filename=f'src/data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
+        filename=f'bdbot/data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
         encoding="utf-8",
         mode="w",
     )
@@ -70,9 +70,9 @@ async def run(bot: commands.AutoShardedBot, logger: logging.Logger):
         )
         discord_utils.SERVER = None
 
-    for filename in os.listdir("src/Scripts"):
+    for filename in os.listdir("bdbot/Scripts"):
         if filename.endswith("py"):
-            await bot.load_extension(f"src.Scripts.{filename[:-3]}")
+            await bot.load_extension(f"bdbot.Scripts.{filename[:-3]}")
 
     logger.info("Cogs successfully loaded!")
 

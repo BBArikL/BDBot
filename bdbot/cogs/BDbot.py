@@ -10,9 +10,9 @@ import topgg
 from discord import app_commands, ui
 from discord.ext import commands
 
-from src import discord_utils, utils
-from src.discord_utils import send_message
-from src.Scripts.AutomaticPoster import PosterHandler
+from bdbot import discord_utils, utils
+from bdbot.cogs.AutomaticPoster import PosterHandler
+from bdbot.discord_utils import send_message
 
 
 class BDBot(commands.Cog):

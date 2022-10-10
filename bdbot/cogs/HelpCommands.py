@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src import discord_utils, utils
+from bdbot import discord_utils, utils
 
 
 class HelpCommands(commands.Cog):

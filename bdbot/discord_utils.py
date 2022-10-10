@@ -11,7 +11,7 @@ import discord
 from discord import app_commands, ui
 from discord.ext import commands
 
-from src.utils import (
+from bdbot.utils import (
     DATABASE_FILE_PATH,
     DETAILS_PATH,
     Action,
@@ -28,7 +28,7 @@ from src.utils import (
     save_json,
     strip_details,
 )
-from src.Web_requests_manager import get_new_comic_details
+from bdbot.Web_requests_manager import get_new_comic_details
 
 SERVER: Optional[discord.Object] = None
 HELP_EMBED: Optional[discord.Embed] = None

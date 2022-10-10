@@ -4,13 +4,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from src.discord_utils import (
-    get_possible_days,
-    get_possible_hours,
-    get_possible_years,
-    parameters_interpreter,
-)
-from src.utils import Action, Date, Month, get_strip_details, strip_details
+from bdbot.discord_utils import get_possible_hours, parameters_interpreter
+from bdbot.utils import Action, Date, Month, get_strip_details, strip_details
 
 
 class Comic(commands.Cog):
