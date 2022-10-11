@@ -12,7 +12,7 @@ from discord.ext import commands
 
 from bdbot import discord_utils, utils
 from bdbot.cogs.AutomaticPoster import PosterHandler
-from bdbot.discord_utils import send_message
+from bdbot.discord_utils import send_message, NextSend
 
 
 class BDBot(commands.Cog):
@@ -239,6 +239,7 @@ class BDBot(commands.Cog):
     @app_commands.checks.has_permissions(manage_guild=True)
     async def sub(self, inter: discord.Interaction):
         """Checks if the server is subbed to any comic"""
+        await inter.response.defer()
         guild_data = discord_utils.get_specific_guild_data(inter)
         max_fields = 5
         hr = "Hour"
@@ -290,7 +291,7 @@ class BDBot(commands.Cog):
                     )
                     nb_fields += 1
 
-                await discord_utils.send_embed(inter, embeds)
+                await discord_utils.send_embed(inter, embeds, NextSend.Deferred)
             else:
                 await send_message(inter, "This server is not subscribed to any comic!")
         else:

@@ -1,10 +1,11 @@
 import random
+from typing import Any, Callable
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from bdbot.discord_utils import get_possible_hours, parameters_interpreter
+from bdbot.discord_utils import get_possible_hours, parameters_interpreter, NextSend
 from bdbot.utils import Action, Date, Month, get_strip_details, strip_details
 
 
@@ -38,7 +39,7 @@ class Comic(commands.Cog):
         comic_name = "Garfield"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -49,6 +50,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -67,7 +69,7 @@ class Comic(commands.Cog):
         comic_name = "Garfield_Classics"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -78,6 +80,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -96,7 +99,7 @@ class Comic(commands.Cog):
         comic_name = "CalvinandHobbes"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -107,6 +110,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -125,7 +129,7 @@ class Comic(commands.Cog):
         comic_name = "XKCD"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -136,6 +140,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -154,7 +159,7 @@ class Comic(commands.Cog):
         comic_name = "Peanuts"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -165,6 +170,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -183,7 +189,7 @@ class Comic(commands.Cog):
         comic_name = "Peanuts_Begins"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -194,6 +200,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -212,7 +219,7 @@ class Comic(commands.Cog):
         comic_name = "Dilbert"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -223,6 +230,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -241,7 +249,7 @@ class Comic(commands.Cog):
         comic_name = "Dilbert-Classics"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -252,6 +260,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -270,7 +279,7 @@ class Comic(commands.Cog):
         comic_name = "Cyanide_and_Happiness"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -281,6 +290,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -299,7 +309,7 @@ class Comic(commands.Cog):
         comic_name = "Frazz"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -310,6 +320,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -328,7 +339,7 @@ class Comic(commands.Cog):
         comic_name = "Garfield_minus_Garfield"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -339,6 +350,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -357,7 +369,7 @@ class Comic(commands.Cog):
         comic_name = "Frank-and-Ernest"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -368,6 +380,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -386,7 +399,7 @@ class Comic(commands.Cog):
         comic_name = "BroomHilda"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -397,6 +410,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -415,7 +429,7 @@ class Comic(commands.Cog):
         comic_name = "Cheer-up-emo-kid"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -426,6 +440,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -444,7 +459,7 @@ class Comic(commands.Cog):
         comic_name = "brevity"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -455,6 +470,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -473,7 +489,7 @@ class Comic(commands.Cog):
         comic_name = "Cats-Cafe"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -484,6 +500,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -502,7 +519,7 @@ class Comic(commands.Cog):
         comic_name = "Popeye"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -513,6 +530,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -531,7 +549,7 @@ class Comic(commands.Cog):
         comic_name = "Artic-Circle"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -542,6 +560,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -560,7 +579,7 @@ class Comic(commands.Cog):
         comic_name = "Lockhorns"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -571,6 +590,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -589,7 +609,7 @@ class Comic(commands.Cog):
         comic_name = "Marvin"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -600,6 +620,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -618,7 +639,7 @@ class Comic(commands.Cog):
         comic_name = "Zits"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -629,6 +650,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -647,7 +669,7 @@ class Comic(commands.Cog):
         comic_name = "Hi-and-Lois"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -658,6 +680,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -676,7 +699,7 @@ class Comic(commands.Cog):
         comic_name = "Safely-Endangered"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -687,6 +710,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -705,7 +729,7 @@ class Comic(commands.Cog):
         comic_name = "Carl"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -716,6 +740,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -734,7 +759,7 @@ class Comic(commands.Cog):
         comic_name = "BlueChair"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -745,6 +770,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -763,7 +789,7 @@ class Comic(commands.Cog):
         comic_name = "Adventures-of-God"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -774,6 +800,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -792,7 +819,7 @@ class Comic(commands.Cog):
         comic_name = "Live-with-yourself"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -803,6 +830,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -821,7 +849,7 @@ class Comic(commands.Cog):
         comic_name = "System32comics"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -832,6 +860,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -850,7 +879,7 @@ class Comic(commands.Cog):
         comic_name = "TheGamer"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -861,6 +890,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -879,7 +909,7 @@ class Comic(commands.Cog):
         comic_name = "BigNate"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -890,6 +920,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -908,7 +939,7 @@ class Comic(commands.Cog):
         comic_name = "GetFuzzy"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -919,6 +950,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -937,7 +969,7 @@ class Comic(commands.Cog):
         comic_name = "BeetleBailey"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -948,6 +980,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -966,7 +999,7 @@ class Comic(commands.Cog):
         comic_name = "TheBoondocks"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -977,6 +1010,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -995,7 +1029,7 @@ class Comic(commands.Cog):
         comic_name = "Pickles"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -1006,6 +1040,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -1024,7 +1059,7 @@ class Comic(commands.Cog):
         comic_name = "PearlsBeforeSwine"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -1035,6 +1070,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -1053,7 +1089,7 @@ class Comic(commands.Cog):
         comic_name = "Chibird"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -1064,6 +1100,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -1082,7 +1119,7 @@ class Comic(commands.Cog):
         comic_name = "WarAndPeas"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -1093,6 +1130,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -1111,7 +1149,7 @@ class Comic(commands.Cog):
         comic_name = "HumansAreStupid"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -1122,6 +1160,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -1140,7 +1179,7 @@ class Comic(commands.Cog):
         comic_name = "Maximumble"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -1151,6 +1190,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -1169,7 +1209,7 @@ class Comic(commands.Cog):
         comic_name = "PoorlyDrawnLines"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -1180,6 +1220,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -1198,7 +1239,7 @@ class Comic(commands.Cog):
         comic_name = "Heathcliff"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -1209,6 +1250,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -1227,7 +1269,7 @@ class Comic(commands.Cog):
         comic_name = "AndyCapp"
 
         # Interprets the parameters given by the user
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(comic_name),
             action=action,
@@ -1238,6 +1280,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
@@ -1253,7 +1296,7 @@ class Comic(commands.Cog):
         comic_number: int = None,
     ):
         """Random comic"""
-        await parameters_interpreter(
+        func, params = parameters_interpreter(
             inter,
             get_strip_details(random.choice(list(strip_details.keys()))),
             action=action,
@@ -1264,6 +1307,7 @@ class Comic(commands.Cog):
             year=year,
             comic_number=comic_number,
         )
+        await func(**params)
 
     @app_commands.command()
     @commands.has_permissions(manage_guild=True)
@@ -1280,10 +1324,12 @@ class Comic(commands.Cog):
         comic_number: int = None,
     ):
         """All comics. Mods only"""
-        strp = strip_details
-        for com in strp:
+        first = True
+        for com in strip_details:
             # Interprets the parameters given by the user
-            await parameters_interpreter(
+            func: Callable
+            params: dict[str, Any]
+            func, params = parameters_interpreter(
                 inter,
                 get_strip_details(com),
                 action=action,
@@ -1294,6 +1340,13 @@ class Comic(commands.Cog):
                 year=year,
                 comic_number=comic_number,
             )
+
+            if first:
+                first = False
+            else:
+                params.update({"next_send": NextSend.Followup})
+
+            await func(**params)
 
     # Special comic commands
 

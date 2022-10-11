@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 import copy
+import enum
 import functools
 import logging
 import os
 from datetime import datetime, timezone
-from typing import Any, Callable, Optional, Union
+from typing import Any, Optional, Union, Callable
 
 import discord
 from discord import app_commands, ui
 from discord.ext import commands
 
+from bdbot.Web_requests_manager import get_new_comic_details
 from bdbot.utils import (
     DATABASE_FILE_PATH,
     DETAILS_PATH,
@@ -28,7 +30,6 @@ from bdbot.utils import (
     save_json,
     strip_details,
 )
-from bdbot.Web_requests_manager import get_new_comic_details
 
 SERVER: Optional[discord.Object] = None
 HELP_EMBED: Optional[discord.Embed] = None
@@ -39,6 +40,12 @@ GOCOMICS_EMBED: Optional[list[discord.Embed]] = None
 KINGDOM_EMBED: Optional[list[discord.Embed]] = None
 WEBTOONS_EMBED: Optional[list[discord.Embed]] = None
 logger = logging.getLogger("discord")
+
+
+class NextSend(enum.Enum):
+    Normal = 0
+    Deferred = 1
+    Followup = 2
 
 
 def create_embed(comic_details: Optional[dict] = None):
@@ -98,11 +105,13 @@ def create_embed(comic_details: Optional[dict] = None):
         return embed
 
 
-async def send_comic_info(inter: discord.Interaction, comic: dict):
+async def send_comic_info(inter: discord.Interaction, comic: dict[str, Union[str, int]],
+                          next_send: NextSend = NextSend.Normal):
     """Sends comics info in an embed
 
     :param inter:
     :param comic:
+    :param next_send:
     :return:
     """
     embed: discord.Embed = discord.Embed(
@@ -128,43 +137,51 @@ async def send_comic_info(inter: discord.Interaction, comic: dict):
     embed.set_footer(text="Random footer")
     embed.set_footer(text=get_random_footer())
 
-    await send_embed(inter, [embed])
+    await send_embed(inter, [embed], next_send=next_send)
 
 
 async def comic_send(
-    inter: discord.Interaction,
-    comic: dict,
-    param: Union[Action, ExtendedAction],
-    comic_date: Optional[Union[datetime, int]] = None,
+        inter: discord.Interaction,
+        comic: dict,
+        action: Union[Action, ExtendedAction],
+        comic_date: Optional[Union[datetime, int]] = None,
+        next_send: NextSend = NextSend.Normal,
 ):
     """Post the strip (with the given parameters)
 
     :param inter:
     :param comic:
-    :param param:
+    :param action:
     :param comic_date:
+    :param next_send:
     :return:
     """
-    await inter.response.defer()  # Defers the return, so Discord cna wait longer
+    if next_send == NextSend.Normal:
+        await inter.response.defer()  # Defers the return, so Discord can wait longer
+
     comic_details = await run_blocking(
-        get_new_comic_details, inter.client, comic, param, comic_date=comic_date
+        get_new_comic_details, inter.client, comic, action, comic_date=comic_date
     )
 
     # Sends the comic
-    await send_comic_embed(inter, comic_details)
+    await send_comic_embed(
+        inter,
+        comic_details,
+        next_send=NextSend.Deferred if next_send == NextSend.Normal else next_send
+    )
 
 
-async def parameters_interpreter(
-    inter: discord.Interaction,
-    comic_details: dict[str, Union[str, int]],
-    action: Action = None,
-    date: Date = None,
-    hour: int = None,
-    day: int = None,
-    month: Month = None,
-    year: int = None,
-    comic_number: int = None,
-):
+def parameters_interpreter(
+        inter: discord.Interaction,
+        comic_details: dict[str, Union[str, int]],
+        action: Action = None,
+        date: Date = None,
+        hour: int = None,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
+) -> (Callable, dict[str, Any]):
     """Interprets the parameters given by the user
 
     Actions:
@@ -192,40 +209,46 @@ async def parameters_interpreter(
     """
     if action is None or action == Action.Info:
         # If the user didn't send any parameters, return the information the comic requested
-        await send_comic_info(inter, comic_details)
+        # await send_comic_info(inter, comic_details)
+        return send_comic_info, {"inter": inter, "comic": comic_details}
     elif action == Action.Today or action == Action.Random:
         # Sends the website of today's comic
         # or random comic
-        await comic_send(inter, comic_details, action)
+        # await comic_send(inter, comic_details, action)
+        return comic_send, {"inter": inter, "comic": comic_details, "action": action}
     elif action in [Action.Add, Action.Random]:
         # Add or remove a comic to the daily list for a guild
         status = new_change(inter, comic_details, action, date=date, hour=hour)
-        await send_message(inter, status)
+        # await send_message(inter, status)
+        return send_message, {"inter": inter, "message": status}
     elif action == Action.Specific_date:
         # Tries to parse date / number of comic
         working_type = comic_details["Working_type"]
         if (
-            working_type == "date"
-            or comic_details["Main_website"] == "https://garfieldminusgarfield.net/"
+                working_type == "date"
+                or comic_details["Main_website"] == "https://garfieldminusgarfield.net/"
         ):
             # Works by date
-            await extract_date_comic(inter, comic_details, day, month, year)
+            # await extract_date_comic(inter, comic_details, day, month, year)
+            return extract_date_comic(inter, comic_details, day, month, year)
         else:
             # Works by number of comic
-            await extract_number_comic(
+            # await extract_number_comic(
+            return extract_number_comic(
                 inter, comic_details, action, working_type, comic_number
             )
     else:
-        await send_message(inter, "Command not understood!")
+        # await send_message(inter, "Command not understood!")
+        return send_message, {"inter": inter, "message": "Command not understood!"}
 
 
-async def extract_number_comic(
-    inter: discord.Interaction,
-    comic_details: dict[str, Union[str, int]],
-    action: Action,
-    working_type: str,
-    comic_number: int,
-):
+def extract_number_comic(
+        inter: discord.Interaction,
+        comic_details: dict[str, Union[str, int]],
+        action: Action,
+        working_type: str,
+        comic_number: int
+) -> (Callable, dict[str, Any]):
     """Extract and send a comic based on the number
 
     :param inter:
@@ -239,31 +262,30 @@ async def extract_number_comic(
         if working_type == "number":
             comic_details_ = copy.deepcopy(comic_details)
             comic_details_["Main_website"] = (
-                comic_details_["Main_website"] + str(comic_number) + "/"
+                    comic_details_["Main_website"] + str(comic_number) + "/"
             )
-            await comic_send(inter, comic_details_, param=action)
-        else:
-            await comic_send(
-                inter,
-                comic_details,
-                ExtendedAction.Specific_date,
-                comic_date=comic_number,
-            )
-    else:
-        await send_message(
-            inter,
-            "There is no comics with such values!"
-            " Please input a comic number instead of a date!",
-        )
+
+        return comic_send, {
+            "inter": inter,
+            "comic": comic_details,
+            "action": action,
+            "comic_date": comic_number
+        }
+
+    return send_message, {
+        "inter": inter,
+        "message": "There is no comics with such values!"
+                   " Please input a comic number instead of a date!",
+    }
 
 
-async def extract_date_comic(
-    inter: discord.Interaction,
-    comic_details: dict[str, Union[str, int]],
-    day: int,
-    month: Month,
-    year: int,
-):
+def extract_date_comic(
+        inter: discord.Interaction,
+        comic_details: dict[str, Union[str, int]],
+        day: int,
+        month: Month,
+        year: int,
+) -> (Callable, dict[str, Any]):
     """Extract and send a comic by date
 
     :param inter:
@@ -277,31 +299,34 @@ async def extract_date_comic(
         comic_date = datetime(day=day, month=month.value, year=year)
         first_date = datetime.strptime(get_first_date(comic_details), "%Y, %m, %d")
     except ValueError:
-        await send_message(
-            inter, "This is not a valid date format! The format is : DD/MM/YYYY."
-        )
-        return
+        return send_message, {
+            "inter": inter, "message": "This is not a valid date format! The format is : DD/MM/YYYY."
+        }
 
     if (
-        first_date.timestamp()
-        <= comic_date.timestamp()
-        <= datetime.now(timezone.utc).timestamp()
+            first_date.timestamp()
+            <= comic_date.timestamp()
+            <= datetime.now(timezone.utc).timestamp()
     ):
-        await comic_send(
-            inter, comic_details, Action.Specific_date, comic_date=comic_date
-        )
+        return comic_send, {
+            "inter": inter,
+            "comic": comic_details,
+            "action": Action.Specific_date,
+            "comic_date": comic_date,
+        }
     else:
         first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
         date_now_formatted = datetime.strftime(datetime.now(timezone.utc), "%d/%m/%Y")
-        await send_message(
-            inter,
-            f"Invalid date. Try sending a date between {first_date_formatted} and "
-            f"{date_now_formatted}.",
-        )
+
+        return send_message, {
+            "inter": inter,
+            "message": f"Invalid date. Try sending a date between {first_date_formatted} and "
+                       f"{date_now_formatted}.",
+        }
 
 
 def add_all(
-    inter: discord.Interaction, date: Optional[Date] = None, hour: Optional[int] = None
+        inter: discord.Interaction, date: Optional[Date] = None, hour: Optional[int] = None
 ):
     """Add all comics to a channel
 
@@ -318,11 +343,11 @@ def add_all(
 
 
 def new_change(
-    inter: discord.Interaction,
-    comic,
-    param: Action,
-    date: Date = None,
-    hour: int = None,
+        inter: discord.Interaction,
+        comic,
+        param: Action,
+        date: Date = None,
+        hour: int = None,
 ):
     """Make a change in the database
 
@@ -346,8 +371,8 @@ def new_change(
 
 
 def remove_guild(
-    inter: Union[discord.Interaction, discord.Guild],
-    use: Union[Action, ExtendedAction] = ExtendedAction.Remove_guild,
+        inter: Union[discord.Interaction, discord.Guild],
+        use: Union[Action, ExtendedAction] = ExtendedAction.Remove_guild,
 ):
     """Removes a guild from the database
 
@@ -359,8 +384,8 @@ def remove_guild(
 
 
 def remove_channel(
-    inter: Union[discord.Interaction, discord.abc.GuildChannel],
-    use: Union[Action, ExtendedAction] = ExtendedAction.Remove_channel,
+        inter: Union[discord.Interaction, discord.abc.GuildChannel],
+        use: Union[Action, ExtendedAction] = ExtendedAction.Remove_channel,
 ):
     """Removes a channel from the database
 
@@ -372,11 +397,11 @@ def remove_channel(
 
 
 def modify_database(
-    inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild],
-    action: Union[Action, ExtendedAction],
-    day: Date = None,
-    hour: int = None,
-    comic_number: int = None,
+        inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild],
+        action: Union[Action, ExtendedAction],
+        day: Date = Date.Daily,
+        hour: int = 6,
+        comic_number: int = None,
 ):
     """
     Saves the new information in the database
@@ -816,13 +841,13 @@ def get_sub_status(inter, position: int, database: Optional[dict] = None):
 
 
 def add_comic_to_list(
-    comic_values: list[dict],
-    comic: int,
-    bot: commands.Bot,
-    channel: str,
-    comic_list: list[dict],
-    hour: str = "",
-    day: str = "La",
+        comic_values: list[dict],
+        comic: int,
+        bot: commands.Bot,
+        channel: str,
+        comic_list: list[dict],
+        hour: str = "",
+        day: str = "La",
 ) -> list[dict]:
     comic_name = comic_values[comic]["Name"]
 
@@ -838,16 +863,18 @@ def add_comic_to_list(
     return comic_list
 
 
-async def send_comic_embed(inter: discord.Interaction, comic_details: dict):
+async def send_comic_embed(inter: discord.Interaction, comic_details: dict[str, Union[str, int]],
+                           next_send: NextSend = NextSend.Deferred):
     """Send a comic embed
 
     :param inter:
     :param comic_details:
+    :param next_send:
     :return:
     """
     embed = create_embed(comic_details=comic_details)  # Creates the embed
 
-    await send_embed(inter, [embed], after_defer=True)  # Send the comic
+    await send_embed(inter, [embed], next_send)  # Send the comic
 
 
 async def send_request_error(inter: discord.Interaction):
@@ -862,7 +889,7 @@ async def send_request_error(inter: discord.Interaction):
 
 
 def website_specific_embed(
-    website_name: str, website: str, nb_per_embed=5
+        website_name: str, website: str, nb_per_embed=5
 ) -> list[discord.Embed]:
     """Create embeds with all the specific comics from a website
 
@@ -895,32 +922,23 @@ class ResponseSender:
     """Class to account for some response types"""
 
     def __init__(
-        self,
-        resp: [
-            discord.InteractionResponse,
-            discord.InteractionMessage,
-            discord.Webhook,
-        ],
+            self,
+            resp: [
+                discord.InteractionResponse,
+                discord.InteractionMessage,
+                discord.Webhook,
+            ],
     ):
         self.resp = resp
 
     @classmethod
-    def from_multiple_text(
-        cls, inter: discord.Interaction, first: bool
-    ) -> ResponseSender:
-        if first:
+    async def from_next_send(cls, inter: discord.Interaction, next_send: NextSend) -> ResponseSender:
+        if next_send == NextSend.Normal:
             return cls(inter.response)
-        else:
-            return cls(inter.followup)
-
-    @classmethod
-    async def from_embeds(
-        cls, inter: discord.Interaction, after_defer: bool
-    ) -> ResponseSender:
-        if after_defer:
+        elif next_send == NextSend.Deferred:
             return cls(await inter.original_response())
         else:
-            return cls(inter.response)
+            return cls(inter.followup)
 
     async def send_message(self, *args, **kwargs):
         if isinstance(self.resp, discord.InteractionMessage):
@@ -932,18 +950,18 @@ class ResponseSender:
 
 
 async def send_embed(
-    inter: discord.Interaction, embeds: list[discord.Embed], after_defer: bool = False
+        inter: discord.Interaction, embeds: list[discord.Embed], next_send: NextSend = NextSend.Normal
 ):
     """Send embeds, can be of multiple pages
 
     :param inter: Discord interaction
     :param embeds: The list of embeds to send
-    :param after_defer: If the response has been deferred
+    :param next_send: How to handle the next send
     """
     for embed in embeds:
         embed.set_footer(text=get_random_footer())
 
-    resp = await ResponseSender.from_embeds(inter, after_defer)
+    resp = await ResponseSender.from_next_send(inter, next_send)
 
     if len(embeds) == 1:
         await resp.send_message(embed=embeds[0])
@@ -1008,13 +1026,13 @@ async def update_presence(bot: discord.Client):
         activity=discord.Activity(
             type=discord.ActivityType.listening,
             name=f"slash commands and '/help general' in"
-            f" {len(bot.guilds)} servers!",
+                 f" {len(bot.guilds)} servers!",
         ),
     )
 
 
 async def run_blocking(
-    blocking_func: Callable, bot: discord.Client, *args, **kwargs
+        blocking_func: Callable, bot: discord.Client, *args, **kwargs
 ) -> Optional[dict[str, Union[str, int, bool]]]:
     """Run a blocking function as a non-blocking one
 
@@ -1041,17 +1059,17 @@ class MultiPageView(ui.View):
         return interaction.user.id == self.author_id
 
     async def on_error(
-        self,
-        interaction: discord.Interaction,
-        error: Exception,
-        item: discord.ui.Item[Any],
-        /,
+            self,
+            interaction: discord.Interaction,
+            error: Exception,
+            item: discord.ui.Item[Any],
+            /,
     ) -> None:
         await interaction.followup.send(content=error)
 
     @discord.ui.button(label="Last")
     async def last_embed(
-        self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
+            self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
     ):
         if self.current_embed > 0:
             self.current_embed -= 1
@@ -1062,7 +1080,7 @@ class MultiPageView(ui.View):
 
     @discord.ui.button(label="Next")
     async def next_embed(
-        self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
+            self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
     ):
         if self.current_embed < len(self.embeds) - 1:
             self.current_embed += 1
@@ -1073,7 +1091,7 @@ class MultiPageView(ui.View):
 
     @discord.ui.button(label="Exit", style=discord.ButtonStyle.danger)
     async def exit_embed(
-        self, interaction: discord.Interaction, button: discord.ui.Button
+            self, interaction: discord.Interaction, button: discord.ui.Button
     ):
         self.next_embed.disabled = True
         self.last_embed.disabled = True
@@ -1091,10 +1109,10 @@ class MultiPageView(ui.View):
 
 
 async def send_message(
-    inter: discord.Interaction,
-    message: Optional[str] = None,
-    embed: Optional[discord.Embed] = None,
-    first: bool = True,
+        inter: discord.Interaction,
+        message: Optional[str] = None,
+        embed: Optional[discord.Embed] = None,
+        next_send: NextSend = NextSend.Normal,
 ):
-    resp = ResponseSender.from_multiple_text(inter, first)
+    resp = await ResponseSender.from_next_send(inter, next_send)
     await resp.send_message(content=message, embed=embed)
