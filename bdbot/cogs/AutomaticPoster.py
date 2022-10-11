@@ -1,11 +1,32 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Iterable, Optional
 
 import discord
 from discord.ext import commands, tasks
 
-from bdbot import Web_requests_manager, discord_utils, utils
-from bdbot.utils import Action
+from bdbot.discord_utils import (
+    clean_database,
+    create_embed,
+    logger,
+    run_blocking,
+    send_chan_embed,
+)
+from bdbot.utils import (
+    COMIC_LATEST_LINKS_PATH,
+    DATABASE_FILE_PATH,
+    Action,
+    Date,
+    date_to_db,
+    get_hour,
+    get_today,
+    link_cache,
+    load_json,
+    parse_all,
+    save_backup,
+    save_json,
+    strip_details,
+)
+from bdbot.Web_requests_manager import get_new_comic_details
 
 
 class PosterHandler(commands.Cog):
@@ -22,7 +43,7 @@ class PosterHandler(commands.Cog):
         self.bot: discord.Client = bot
         self.do_cleanup: bool = True
 
-    # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
+    # @app_commands.command(hidden=True, guilds=SERVER)
     # @app_commands.is_owner()
     async def start_hourly(self, ctx: commands.Context):
         """Starts the PosterHandler loop"""
@@ -38,7 +59,7 @@ class PosterHandler(commands.Cog):
         await discord.utils.sleep_until(sleep_date)
         await PosterHandler.post_hourly.start(self)
 
-    # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
+    # @app_commands.command(hidden=True, guilds=SERVER)
     # @app_commands.is_owner()
     async def force_hourly(self, ctx: commands.Context, hour: Optional[int] = None):
         """Force the push of comics to all subscribed servers
@@ -48,7 +69,7 @@ class PosterHandler(commands.Cog):
         :param hour: The hour to simulate
         """
         await ctx.send(
-            f"Trying to force the hourly post for hour {utils.get_hour() if not hour else hour}h UTC"
+            f"Trying to force the hourly post for hour {get_hour() if not hour else hour}h UTC"
         )
         await self.hourly(hour)
 
@@ -58,24 +79,25 @@ class PosterHandler(commands.Cog):
         try:
             await self.hourly()
         except Exception as e:
-            discord_utils.logger.error(str(e))
+            logger.error(str(e))
 
     async def hourly(self, hour: Optional[int] = None):
         """Post hourly comics"""
-        discord_utils.logger.info("Starting automatic poster...")
-        strip_details: dict = utils.strip_details
-        comic_data: dict = utils.load_json(utils.DATABASE_FILE_PATH)
+        logger.info("Starting automatic poster...")
+        comic_data: dict = load_json(DATABASE_FILE_PATH)
         comic_list: dict = {}
         comic_keys: list[str] = list(strip_details.keys())
-        post_days: list[str] = ["D", utils.get_today()]
+        post_days = [Date.Daily, get_today()]
+
         if not hour:
-            hour: str = utils.get_hour()
+            hour = get_hour()
+        hour = str(hour)
 
         if hour == "6":
-            utils.save_backup(comic_data, discord_utils.logger)
+            save_backup(comic_data, logger)
 
             if self.do_cleanup:
-                utils.clean_database(data=comic_data, logger=discord_utils.logger)
+                clean_database(data=comic_data, logger=logger)
 
         # Construct the list of what comics need to be sent
         for guild in comic_data:
@@ -84,14 +106,12 @@ class PosterHandler(commands.Cog):
 
         await self.check_comics_and_post(comic_list, strip_details, comic_keys)
 
-        utils.save_json(
-            utils.link_cache, utils.COMIC_LATEST_LINKS_PATH
-        )  # Saves the link cache
+        save_json(link_cache, COMIC_LATEST_LINKS_PATH)  # Saves the link cache
 
-        discord_utils.logger.info("Finished automatic poster.")
+        logger.info("Finished automatic poster.")
 
     def get_comic_info_for_guild(
-        self, guild_data: dict, comic_list: dict, post_days: list[str], hour: str
+        self, guild_data: dict, comic_list: dict, post_days: Iterable[Date], hour: str
     ):
         """Get the comic info for each server. This method mutate 'comic_list' for each comic.
 
@@ -113,6 +133,7 @@ class PosterHandler(commands.Cog):
 
                 # Then check if the comic is wanted for a specific time
                 for day in post_days:
+                    day = date_to_db(day)
                     if "date" in guild_data["channels"][channel]:
                         if day in guild_data["channels"][channel]["date"]:
                             if hour in guild_data["channels"][channel]["date"][day]:
@@ -179,7 +200,7 @@ class PosterHandler(commands.Cog):
     async def check_comics_and_post(
         self,
         comic_list: dict,
-        strip_details: dict,
+        comic_details: dict,
         comic_keys: list[str],
         called_channel: Optional[discord.TextChannel] = None,
     ):
@@ -187,7 +208,7 @@ class PosterHandler(commands.Cog):
         Finally, post the comic to the channels.
 
         :param comic_list: The information about where to post each comic and how
-        :param strip_details: The details of the comic strip
+        :param comic_details: The details of the comic strip
         :param comic_keys: The name of all the comics
         :param called_channel: The channel of where the command was sent from (Should be None for the hourly poster
         and filled when called manually)
@@ -196,7 +217,7 @@ class PosterHandler(commands.Cog):
         not_available_channels = {}
         nb_of_comics_posted = 0
         # Check if any guild want the comic
-        for i in range(len(strip_details)):
+        for i in range(len(comic_details)):
             count = 0
             for chan in comic_list:
                 if i in comic_list[chan]["comics"]:
@@ -207,10 +228,10 @@ class PosterHandler(commands.Cog):
                 # Get the details of the comic
                 comic_details: Optional[dict]
                 try:
-                    comic_details = await discord_utils.run_blocking(
-                        Web_requests_manager.get_new_comic_details,
+                    comic_details = await run_blocking(
+                        get_new_comic_details,
                         self.bot,
-                        strip_details[comic_keys[i]],
+                        comic_details[comic_keys[i]],
                         Action.Today,
                         latest_check=True,
                     )
@@ -219,7 +240,7 @@ class PosterHandler(commands.Cog):
                     # is raised in the poster loop)
                     comic_details = None
 
-                embed = discord_utils.create_embed(comic_details)  # Creates the embed
+                embed = create_embed(comic_details)  # Creates the embed
 
                 is_latest: bool
                 if comic_details is not None:
@@ -229,7 +250,7 @@ class PosterHandler(commands.Cog):
 
                 if is_latest and called_channel is None:
                     # Only updates the link cache if it is done during the hourly loop
-                    utils.link_cache[comic_details["Name"]] = comic_details["img_url"]
+                    link_cache[comic_details["Name"]] = comic_details["img_url"]
 
                 for channel in comic_list:  # Finally, sends the comic
                     nb_of_comics_posted += await self.load_channel_and_send(
@@ -243,7 +264,7 @@ class PosterHandler(commands.Cog):
                         called_channel,
                     )
         if called_channel is None:  # Only logs the hourly loop at the end
-            discord_utils.logger.info(
+            logger.info(
                 f"The hourly loop sent {nb_of_comics_posted} comic(s) the "
                 f"{datetime.now().strftime('%dth of %B %Y at %Hh')}"
             )
@@ -331,14 +352,14 @@ class PosterHandler(commands.Cog):
                             "hasBeenMentioned"
                         ] = True  # Sets the channel as already mentioned
 
-                    await discord_utils.send_chan_embed(
+                    await send_chan_embed(
                         chan, embed
                     )  # Sends the comic embed (most important)
                     return 1
                 except Exception as e:
                     # There is too many things that can go wrong here, just catch everything
                     error_msg = f"An error occurred in the hourly poster: {e.__class__.__name__}: {e}"
-                    discord_utils.logger.error(error_msg)
+                    logger.error(error_msg)
 
                     if (
                         called_channel is not None
@@ -361,9 +382,7 @@ class PosterHandler(commands.Cog):
                     )
                 else:
                     # Logs that a channel is not available but still signed up for a comic
-                    discord_utils.logger.warning(
-                        "A comic could not be posted to a channel."
-                    )
+                    logger.warning("A comic could not be posted to a channel.")
 
         return 0  # If it encountered an issue or there is no comic to send, return 0
 
@@ -377,25 +396,24 @@ class PosterHandler(commands.Cog):
         :param date: The date to simulate
         :param hour: The hour to simulate
         """
-        strip_details: dict = utils.strip_details
-        comic_data: dict = utils.load_json(utils.DATABASE_FILE_PATH)
+        comic_data: dict = load_json(DATABASE_FILE_PATH)
         comic_list: dict = {}
         comic_keys: list[str] = list(strip_details.keys())
         guild_id: str = str(ctx.guild.id)
 
         if guild_id in comic_data:
             # Gets date and hour of force post
-            final_date, final_hour = utils.parse_all(
+            final_date, final_hour = parse_all(
                 date,
                 hour,
-                default_date=utils.get_today(),
-                default_hour=utils.get_hour(),
+                default_date=get_today(),
+                default_hour=get_hour(),
             )
             await ctx.send(
-                f"Looking for comics to post for date: {utils.match_date[final_date]} at "
+                f"Looking for comics to post for date: {final_date} at "
                 f"{final_hour}h UTC"
             )
-            post_days = ["D", final_date]
+            post_days = (Date.Daily, final_date)
 
             final_hour = str(final_hour)
 
@@ -414,18 +432,18 @@ class PosterHandler(commands.Cog):
         else:  # Warns that no comic are available
             await ctx.send("This server is not subscribed to any comic!")
 
-    # # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
+    # # @app_commands.command(hidden=True, guilds=SERVER)
     # # @app_commands.is_owner()
     # async def update_database_clean(self, ctx: commands.Context):
     #     """Clean the database from servers that don't have any comics saved
     #
     #     :param ctx: The context of the where the command was called.
     #     """
-    #     nb_removed = utils.clean_database(strict=True, logger=discord_utils.logger)
+    #     nb_removed = clean_database(strict=True, logger=logger)
     #
     #     await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
     #
-    # # @app_commands.command(hidden=True, guilds=discord_utils.SERVER)
+    # # @app_commands.command(hidden=True, guilds=SERVER)
     # # @app_commands.is_owner()
     # async def restore_last_backup(self, ctx: commands.Context):
     #     """Restore a previous backup
@@ -434,7 +452,7 @@ class PosterHandler(commands.Cog):
     #     """
     #     # Stops the database cleaning and restore the last backup
     #     self.do_cleanup = False
-    #     utils.restore_backup()
+    #     restore_backup()
     #
     #     await ctx.send("Last backup restored! Please reboot the bot to re-enable automatic cleanups!")
 
@@ -446,7 +464,7 @@ class PosterHandler(commands.Cog):
     #    :param ctx: The context of the where the command was called.
     #    """
     #    # Force a backup
-    #    utils.save_backup(utils.load_json(utils.DATABASE_FILE_PATH), discord_utils.logger)
+    #    save_backup(load_json(DATABASE_FILE_PATH), logger)
     #    await ctx.send("Backup done!")
 
 
