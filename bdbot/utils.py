@@ -18,20 +18,77 @@ BACKUP_FILE_PATH = "data/backups/BACKUP_DATABASE_"
 REQUEST_FILE_PATH = "data/requests.txt"
 COMIC_LATEST_LINKS_PATH = "data/latest_comics.json"
 date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su", "La"]
-match_date = {
-    "Mo": "Monday",
-    "Tu": "Tuesday",
-    "We": "Wednesday",
-    "Th": "Thursday",
-    "Fr": "Friday",
-    "Sa": "Saturday",
-    "Su": "Sunday",
-    "D": "day",
-    "La": "Latest",
-}
 strip_details: dict = {}
 link_cache: dict = {}
 random_footers: list[str] = []
+
+
+class Action(enum.Enum):
+    Today = "Today"
+    Random = "Random"
+    Specific_date = "Specific date"
+    Info = "Info"
+    Add = "Add"
+    Remove = "Remove"
+
+
+class ExtendedAction(enum.Enum):
+    Specific_date = "Specific_date"
+    Remove_channel = "Remove_channel"
+    Remove_guild = "Remove_guild"
+    Add_all = "Add_all"
+    Auto_remove_guild = "auto_remove_guild"
+    Auto_remove_channel = "auto_remove_channel"
+
+
+class Date(enum.Enum):
+    Daily = "Daily"
+    Latest = "Latest"
+    Monday = "Monday"
+    Tuesday = "Tuesday"
+    Wednesday = "Wednesday"
+    Thursday = "Thursday"
+    Friday = "Friday"
+    Saturday = "Saturday"
+    Sunday = "Sunday"
+
+
+match_date = {
+    "Mo": Date.Monday,
+    "Tu": Date.Tuesday,
+    "We": Date.Wednesday,
+    "Th": Date.Thursday,
+    "Fr": Date.Friday,
+    "Sa": Date.Saturday,
+    "Su": Date.Sunday,
+    "D": Date.Daily,
+    "La": Date.Latest,
+}
+
+
+class Month(enum.Enum):
+    January = 1
+    February = 2
+    March = 3
+    April = 4
+    May = 5
+    June = 6
+    July = 7
+    August = 8
+    September = 9
+    October = 10
+    November = 11
+    December = 12
+
+
+class MentionChoice(enum.Enum):
+    Enable = "Enable"
+    Disable = "Disable"
+
+
+class MentionPolicy(enum.Enum):
+    Daily = "Daily"
+    All = "All"
 
 
 def load_json(json_path: str) -> dict:
@@ -52,61 +109,6 @@ def load_json(json_path: str) -> dict:
     return json_file
 
 
-def clean_database(
-    data: dict = None,
-    do_backup: bool = True,
-    strict: bool = False,
-    logger: logging.Logger = None,
-):
-    """
-
-    :param data:
-    :param do_backup:
-    :param strict:
-    :param logger:
-    :return:
-    """
-    logger.info("Running database clean...")
-    # Cleans the database from inactive servers
-    if data is None:
-        data = load_json(DATABASE_FILE_PATH)
-
-    if do_backup:
-        save_backup(data, logger)
-
-    guilds_to_clean = []
-    nb_removed = 0
-
-    for guild in data:
-        # To take in account or not if a server still has a role tied to their info
-        if "role" not in data[guild] or strict:
-            to_remove = True
-            channels = data[guild]["channels"]
-            for chan in channels:
-                if "date" in channels[chan]:
-                    dates = channels[chan]["date"]
-                    for date in dates:
-                        hours = dates[date]
-                        for hour in hours:
-                            if len(hours[hour]) > 0:
-                                to_remove = False
-                                break
-                        if not to_remove:
-                            break
-                    if not to_remove:
-                        break
-
-            if to_remove:
-                guilds_to_clean.append(guild)
-                nb_removed += 1
-
-    if nb_removed > 0:
-        save_json(data)
-
-    logger.info(f"Cleaned the database from {nb_removed} servers")
-    return nb_removed
-
-
 def save_backup(data, logger: logging.Logger):
     """
 
@@ -116,11 +118,11 @@ def save_backup(data, logger: logging.Logger):
     """
     logger.info("Running backup...")
     # Creates a new backup and saves it
-    backupfp = (
+    backup_file_path = (
         BACKUP_FILE_PATH + datetime.now(timezone.utc).strftime("%Y_%m_%d_%H") + ".json"
     )
 
-    with open(backupfp, "w") as f:
+    with open(backup_file_path, "w") as f:
         json.dump(data, f)
 
     logger.info("Backup successfully done")
@@ -181,20 +183,24 @@ def get_first_date(comic: dict) -> str:
         return comic["First_date"]
 
 
-def get_today() -> str:
-    """Get the first two letters of the current weekday in UTC
+def get_today() -> Date:
+    """Get the day
 
     :return: The first two letters of the weekday
     """
-    return datetime.now(timezone.utc).today().strftime("%A")[0:2]
+    return Date(datetime.now(timezone.utc).today().strftime("%A"))
 
 
-def get_hour() -> str:
+def date_to_db(date: Date) -> str:
+    return date.value[:2:] if date != Date.Daily else date.value[:1:]
+
+
+def get_hour() -> int:
     """Get the current UTC hour
 
     :return: Current UTC hour
     """
-    return str(datetime.now(timezone.utc).hour)
+    return datetime.now(timezone.utc).hour
 
 
 def clean_url(url: str, file_forms: Optional[list] = None) -> str:
@@ -306,7 +312,12 @@ def get_footers() -> list[str]:
         return random_footers
 
 
-def parse_all(date=None, hour=None, default_date="D", default_hour=6) -> (str, str):
+def parse_all(
+    date: Date = None,
+    hour: int = None,
+    default_date: Date = Date.Daily,
+    default_hour: int = 6,
+) -> (Date, int):
     """
 
     :param date:
@@ -315,39 +326,8 @@ def parse_all(date=None, hour=None, default_date="D", default_hour=6) -> (str, s
     :param default_hour:
     :return:
     """
-    final_date = default_date
-    final_hour = default_hour
-
-    final_date, final_hour = parse_try(date, final_date, final_hour)
-    final_date, final_hour = parse_try(hour, final_date, final_hour)
-
-    return final_date, final_hour
-
-
-def parse_try(to_parse, final_date, final_hour) -> (str, str):
-    """
-
-    :param to_parse:
-    :param final_date:
-    :param final_hour:
-    :return:
-    """
-    if to_parse is not None:
-        if len(str(to_parse)) >= 2:
-            date = to_parse[0:1].capitalize() + to_parse[1:2].lower()
-
-            if date in date_tries:
-                final_date = date
-            else:
-                try:
-                    final_hour = int(to_parse)
-                except ValueError:
-                    pass
-        else:
-            try:
-                final_hour = int(to_parse)
-            except ValueError:
-                pass
+    final_date = default_date if date is None else date
+    final_hour = default_hour if hour is None else hour
 
     return final_date, final_hour
 
@@ -381,57 +361,3 @@ def save_request(req: str, author: str, discriminator: Optional[str] = ""):
             f'Request: "{param}" by {author}#{discriminator} on '
             f"{datetime.now(timezone.utc)}\n"
         )
-
-
-class Action(enum.Enum):
-    Today = "Today"
-    Random = "Random"
-    Specific_date = "Specific date"
-    Info = "Info"
-    Add = "Add"
-    Remove = "Remove"
-
-
-class ExtendedAction(enum.Enum):
-    Specific_date = "Specific_date"
-    Remove_channel = "Remove_channel"
-    Remove_guild = "Remove_guild"
-    Add_all = "Add_all"
-    Auto_remove_guild = "auto_remove_guild"
-    Auto_remove_channel = "auto_remove_channel"
-
-
-class Date(enum.Enum):
-    Daily = "Daily"
-    Latest = "Latest"
-    Monday = "Monday"
-    Tuesday = "Tuesday"
-    Wednesday = "Thursday"
-    Friday = "Friday"
-    Saturday = "Saturday"
-    Sunday = "Sunday"
-
-
-class Month(enum.Enum):
-    January = 1
-    February = 2
-    March = 3
-    April = 4
-    May = 5
-    June = 6
-    July = 7
-    August = 8
-    September = 9
-    October = 10
-    November = 11
-    December = 12
-
-
-class MentionChoice(enum.Enum):
-    Enable = "Enable"
-    Disable = "Disable"
-
-
-class MentionPolicy(enum.Enum):
-    Daily = "Daily"
-    All = "All"
