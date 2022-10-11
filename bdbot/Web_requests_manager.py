@@ -10,10 +10,21 @@ from bs4 import BeautifulSoup
 from requests import get
 from rss_parser import Parser
 
-from bdbot import utils
+from bdbot.utils import (
+    COMIC_LATEST_LINKS_PATH,
+    DETAILS_PATH,
+    Action,
+    Date,
+    ExtendedAction,
+    check_if_latest_link,
+    get_link,
+    get_random_link,
+    link_cache,
+    load_json,
+    save_json,
+)
 
 # Utilities for web requests to have the fresh comic details
-from bdbot.utils import load_json
 
 ORIGINAL_DETAILS = {
     "url": "",
@@ -39,16 +50,16 @@ def create_link_cache(logger: logging.Logger) -> None:
     :return:
     """
     logger.debug("Running link cache...")
-    comics: dict = load_json(utils.DETAILS_PATH)
+    comics: dict = load_json(DETAILS_PATH)
     for comic in comics:
         logger.debug(f"Getting image link for comic {comic} ...")
         comic_url: Optional[dict[str, str]]
         try:
-            comic_url = get_new_comic_details(comics[comic], param=utils.Action.Today)
+            comic_url = get_new_comic_details(comics[comic], action=Action.Today)
         except (ValueError, AttributeError) as e:
             logger.error(f"An error occurred for comic {comic}: {e}")
             comic_url = None
-        utils.link_cache.update(
+        link_cache.update(
             {
                 comics[comic]["Name"]: comic_url["img_url"]
                 if comic_url is not None
@@ -57,19 +68,19 @@ def create_link_cache(logger: logging.Logger) -> None:
         )
 
     logger.debug("Saving comics link...")
-    utils.save_json(utils.link_cache, utils.COMIC_LATEST_LINKS_PATH)
+    save_json(link_cache, COMIC_LATEST_LINKS_PATH)
 
 
 def get_new_comic_details(
     strip_details: dict,
-    param: Union[utils.Action, utils.ExtendedAction],
+    action: Union[Action, ExtendedAction],
     comic_date: Optional[Union[datetime, int]] = None,
     latest_check: Optional[bool] = False,
 ) -> Optional[dict[str, Union[str, int, bool]]]:
     """Gets the comics details from the internet
 
     :param strip_details:
-    :param param:
+    :param action:
     :param comic_date:
     :param latest_check:
     :return:
@@ -78,29 +89,35 @@ def get_new_comic_details(
     comic_details: Optional[dict[str, str]]
     if working_type == "date":  # Specific manager for date comics website
         comic_details = get_comic_info_date(
-            strip_details, param=param, comic_date=comic_date, latest_check=latest_check
+            strip_details,
+            action=action,
+            comic_date=comic_date,
+            latest_check=latest_check,
         )
     elif working_type == "rss":  # Works by rss
         comic_details = get_comic_info_rss(
-            strip_details, param=param, comic_date=comic_date, latest_check=latest_check
+            strip_details,
+            action=action,
+            comic_date=comic_date,
+            latest_check=latest_check,
         )
     else:  # Works by number
         comic_details = get_comic_info_number(
-            strip_details, param=param, latest_check=latest_check
+            strip_details, action=action, latest_check=latest_check
         )
     return comic_details
 
 
 def get_comic_info_date(
     strip_details,
-    param: Union[utils.Action, utils.ExtendedAction] = None,
-    comic_date: utils.Date = None,
+    action: Union[Action, ExtendedAction] = None,
+    comic_date: Date = None,
     latest_check: bool = False,
 ) -> Optional[dict[str, str]]:
     """Get the details of comics which site works by date
 
     :param strip_details:
-    :param param:
+    :param action:
     :param comic_date:
     :param latest_check:
     :return:
@@ -122,17 +139,17 @@ def get_comic_info_date(
             details["img_url"] == "" or details["img_url"] is None
         ):
             i += 1
-            if param != utils.Action.Random:
+            if action != Action.Random:
                 details["day"] = comic_date.strftime("%d")
                 details["month"] = comic_date.strftime("%m")
                 details["year"] = comic_date.strftime("%Y")
 
                 # Gets today /  url
-                details["url"] = utils.get_link(strip_details, comic_date)
+                details["url"] = get_link(strip_details, comic_date)
 
             else:
                 # Random comic
-                details["url"], random_date = utils.get_random_link(strip_details)
+                details["url"], random_date = get_random_link(strip_details)
 
             # Get the html of the comic site
             try:
@@ -207,13 +224,13 @@ def extract_meta_content(html, content) -> Optional[str]:
 
 def get_comic_info_number(
     strip_details,
-    param: Union[utils.Action, utils.ExtendedAction] = None,
+    action: Union[Action, ExtendedAction] = None,
     latest_check=False,
 ):
     """For sites which works by number
 
     :param strip_details:
-    :param param:
+    :param action:
     :param latest_check:
     :return:
     """
@@ -226,7 +243,7 @@ def get_comic_info_number(
         main_website = strip_details["Main_website"]
 
         if strip_details["Name"] == "xkcd":
-            if param == utils.Action.Random:
+            if action == Action.Random:
                 # Link for random XKCD comic
                 main_website = "https://c.xkcd.com/random/comic/"
                 html = urlopen(main_website).read()
@@ -236,9 +253,9 @@ def get_comic_info_number(
             details["url"] = main_website
 
         elif strip_details["Name"] == "Cyanide and Happiness":
-            if param == utils.Action.Random:
-                main_website += param
-            elif param == utils.Action.Today:
+            if action == Action.Random:
+                main_website += "random"
+            elif action == Action.Today:
                 main_website += "latest"
 
             details["url"] = main_website
@@ -335,14 +352,14 @@ def get_comic_info_number(
 
 def get_comic_info_rss(
     strip_details,
-    param: Union[utils.Action, utils.ExtendedAction] = None,
+    action: Union[Action, ExtendedAction] = None,
     comic_date=None,
     latest_check=False,
 ) -> Optional[dict[str, str]]:
     """For comics which can only be found by rss
 
     :param strip_details:
-    :param param:
+    :param action:
     :param comic_date:
     :param latest_check:
     :return:
@@ -367,15 +384,15 @@ def get_comic_info_rss(
         rss_site = main_website.replace("list", "rss")
 
     # Gets today date
-    if param == "today":
+    if action == Action.Today:
         # First comic in the rss feed
         comic_nb = 0
-    elif param == "random":
+    elif action == Action.Random:
         comic_nb = random.randint(0, max_entries)
 
     details["title"] = strip_details["Name"]
 
-    if param == "Specific_date":
+    if action == Action.Specific_date:
         details["img_url"] = fall_back_img
 
         if main_website == "https://garfieldminusgarfield.net/":
@@ -438,6 +455,4 @@ def finalize_comic(strip_details: dict, details: dict, latest_link: bool) -> Non
     """
     details["color"] = int(strip_details["Color"], 16)
     if latest_link:
-        details["is_latest"] = utils.check_if_latest_link(
-            details["Name"], details["img_url"]
-        )
+        details["is_latest"] = check_if_latest_link(details["Name"], details["img_url"])
