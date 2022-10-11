@@ -50,8 +50,8 @@ def manage_bot():
     action = inquirer.select(
         message="What do you want to do?",
         choices=[
-            "Database tools",
-            "Verify requests",
+            "Database tools - Not implemented",
+            "Verify requests - Not implemented",
             "Create image link cache",
             "Setup Bot",
         ],
@@ -60,6 +60,7 @@ def manage_bot():
 
     if action == "Create image link cache":
         logger.info("Running link cache, please wait up to 1-2 minutes...")
+        os.makedirs("data", exist_ok=True)
         create_link_cache(logger)
         logger.info("Link cache created!")
     if action == "Setup Bot":
@@ -148,7 +149,7 @@ def setup_bot():
     logger.info("Creating link cache, this might take some time...")
     create_link_cache(logger)
 
-    logger.info("All done! You can start the bot with 'python __main__.py'!")
+    logger.info("All done! You can start the bot with 'python -m bdbot'!")
 
 
 def manage_comics():
@@ -255,7 +256,8 @@ def add_comic(comics: dict):
         mandatory=False,
     ).execute()
     image = inquirer.text(
-        message="Enter the link of a public image that represents well the comic: "
+        message="Enter the link of a public image that represents well the comic: ",
+        mandatory=False,
     ).execute()
     help_txt = inquirer.text(
         message="Write in one phrase a description of the comic.",
