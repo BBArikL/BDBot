@@ -12,7 +12,8 @@ from discord.ext import commands
 
 from bdbot import discord_utils, utils
 from bdbot.cogs.AutomaticPoster import PosterHandler
-from bdbot.discord_utils import send_message, NextSend
+from bdbot.discord_utils import NextSend, send_message
+from bdbot.utils import Date
 
 
 class BDBot(commands.Cog):
@@ -282,11 +283,11 @@ class BDBot(commands.Cog):
                             discord.Embed(title="This server is subscribed to:")
                         )
 
-                    mtch_date = matching_date[comic["Date"]]
+                    match_date = matching_date[comic["Date"]]
                     embeds[-1].add_field(
                         name=comic["Name"],
-                        value=f"{'Each ' if mtch_date != 'Latest' else ''}{mtch_date}"
-                        f"{f' at {comic[hr]} h UTC' if mtch_date != 'Latest' else ''} in "
+                        value=f"{'Each ' if match_date not in [Date.Latest, Date.Daily] else ''}{match_date}"
+                        f"{f' at {comic[hr]} h UTC' if match_date not in [Date.Latest, Date.Daily] else ''} in "
                         f"channel {comic['Channel']}",
                     )
                     nb_fields += 1
