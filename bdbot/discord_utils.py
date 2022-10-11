@@ -6,13 +6,12 @@ import functools
 import logging
 import os
 from datetime import datetime, timezone
-from typing import Any, Optional, Union, Callable
+from typing import Any, Callable, Optional, Union
 
 import discord
 from discord import app_commands, ui
 from discord.ext import commands
 
-from bdbot.Web_requests_manager import get_new_comic_details
 from bdbot.utils import (
     DATABASE_FILE_PATH,
     DETAILS_PATH,
@@ -21,15 +20,18 @@ from bdbot.utils import (
     ExtendedAction,
     Month,
     clean_url,
+    date_to_db,
     get_date,
     get_first_date,
     get_link,
     get_random_footer,
     load_json,
     parse_all,
+    save_backup,
     save_json,
     strip_details,
 )
+from bdbot.Web_requests_manager import get_new_comic_details
 
 SERVER: Optional[discord.Object] = None
 HELP_EMBED: Optional[discord.Embed] = None
@@ -105,8 +107,11 @@ def create_embed(comic_details: Optional[dict] = None):
         return embed
 
 
-async def send_comic_info(inter: discord.Interaction, comic: dict[str, Union[str, int]],
-                          next_send: NextSend = NextSend.Normal):
+async def send_comic_info(
+    inter: discord.Interaction,
+    comic: dict[str, Union[str, int]],
+    next_send: NextSend = NextSend.Normal,
+):
     """Sends comics info in an embed
 
     :param inter:
@@ -141,11 +146,11 @@ async def send_comic_info(inter: discord.Interaction, comic: dict[str, Union[str
 
 
 async def comic_send(
-        inter: discord.Interaction,
-        comic: dict,
-        action: Union[Action, ExtendedAction],
-        comic_date: Optional[Union[datetime, int]] = None,
-        next_send: NextSend = NextSend.Normal,
+    inter: discord.Interaction,
+    comic: dict,
+    action: Union[Action, ExtendedAction],
+    comic_date: Optional[Union[datetime, int]] = None,
+    next_send: NextSend = NextSend.Normal,
 ):
     """Post the strip (with the given parameters)
 
@@ -167,20 +172,20 @@ async def comic_send(
     await send_comic_embed(
         inter,
         comic_details,
-        next_send=NextSend.Deferred if next_send == NextSend.Normal else next_send
+        next_send=NextSend.Deferred if next_send == NextSend.Normal else next_send,
     )
 
 
 def parameters_interpreter(
-        inter: discord.Interaction,
-        comic_details: dict[str, Union[str, int]],
-        action: Action = None,
-        date: Date = None,
-        hour: int = None,
-        day: int = None,
-        month: Month = None,
-        year: int = None,
-        comic_number: int = None,
+    inter: discord.Interaction,
+    comic_details: dict[str, Union[str, int]],
+    action: Action = None,
+    date: Date = None,
+    hour: int = None,
+    day: int = None,
+    month: Month = None,
+    year: int = None,
+    comic_number: int = None,
 ) -> (Callable, dict[str, Any]):
     """Interprets the parameters given by the user
 
@@ -225,8 +230,8 @@ def parameters_interpreter(
         # Tries to parse date / number of comic
         working_type = comic_details["Working_type"]
         if (
-                working_type == "date"
-                or comic_details["Main_website"] == "https://garfieldminusgarfield.net/"
+            working_type == "date"
+            or comic_details["Main_website"] == "https://garfieldminusgarfield.net/"
         ):
             # Works by date
             # await extract_date_comic(inter, comic_details, day, month, year)
@@ -243,11 +248,11 @@ def parameters_interpreter(
 
 
 def extract_number_comic(
-        inter: discord.Interaction,
-        comic_details: dict[str, Union[str, int]],
-        action: Action,
-        working_type: str,
-        comic_number: int
+    inter: discord.Interaction,
+    comic_details: dict[str, Union[str, int]],
+    action: Action,
+    working_type: str,
+    comic_number: int,
 ) -> (Callable, dict[str, Any]):
     """Extract and send a comic based on the number
 
@@ -262,29 +267,29 @@ def extract_number_comic(
         if working_type == "number":
             comic_details_ = copy.deepcopy(comic_details)
             comic_details_["Main_website"] = (
-                    comic_details_["Main_website"] + str(comic_number) + "/"
+                comic_details_["Main_website"] + str(comic_number) + "/"
             )
 
         return comic_send, {
             "inter": inter,
             "comic": comic_details,
             "action": action,
-            "comic_date": comic_number
+            "comic_date": comic_number,
         }
 
     return send_message, {
         "inter": inter,
         "message": "There is no comics with such values!"
-                   " Please input a comic number instead of a date!",
+        " Please input a comic number instead of a date!",
     }
 
 
 def extract_date_comic(
-        inter: discord.Interaction,
-        comic_details: dict[str, Union[str, int]],
-        day: int,
-        month: Month,
-        year: int,
+    inter: discord.Interaction,
+    comic_details: dict[str, Union[str, int]],
+    day: int,
+    month: Month,
+    year: int,
 ) -> (Callable, dict[str, Any]):
     """Extract and send a comic by date
 
@@ -300,13 +305,14 @@ def extract_date_comic(
         first_date = datetime.strptime(get_first_date(comic_details), "%Y, %m, %d")
     except ValueError:
         return send_message, {
-            "inter": inter, "message": "This is not a valid date format! The format is : DD/MM/YYYY."
+            "inter": inter,
+            "message": "This is not a valid date format! The format is : DD/MM/YYYY.",
         }
 
     if (
-            first_date.timestamp()
-            <= comic_date.timestamp()
-            <= datetime.now(timezone.utc).timestamp()
+        first_date.timestamp()
+        <= comic_date.timestamp()
+        <= datetime.now(timezone.utc).timestamp()
     ):
         return comic_send, {
             "inter": inter,
@@ -321,12 +327,12 @@ def extract_date_comic(
         return send_message, {
             "inter": inter,
             "message": f"Invalid date. Try sending a date between {first_date_formatted} and "
-                       f"{date_now_formatted}.",
+            f"{date_now_formatted}.",
         }
 
 
 def add_all(
-        inter: discord.Interaction, date: Optional[Date] = None, hour: Optional[int] = None
+    inter: discord.Interaction, date: Optional[Date] = None, hour: Optional[int] = None
 ):
     """Add all comics to a channel
 
@@ -343,11 +349,11 @@ def add_all(
 
 
 def new_change(
-        inter: discord.Interaction,
-        comic,
-        param: Action,
-        date: Date = None,
-        hour: int = None,
+    inter: discord.Interaction,
+    comic,
+    param: Action,
+    date: Date = None,
+    hour: int = None,
 ):
     """Make a change in the database
 
@@ -371,8 +377,8 @@ def new_change(
 
 
 def remove_guild(
-        inter: Union[discord.Interaction, discord.Guild],
-        use: Union[Action, ExtendedAction] = ExtendedAction.Remove_guild,
+    inter: Union[discord.Interaction, discord.Guild],
+    use: Union[Action, ExtendedAction] = ExtendedAction.Remove_guild,
 ):
     """Removes a guild from the database
 
@@ -384,8 +390,8 @@ def remove_guild(
 
 
 def remove_channel(
-        inter: Union[discord.Interaction, discord.abc.GuildChannel],
-        use: Union[Action, ExtendedAction] = ExtendedAction.Remove_channel,
+    inter: Union[discord.Interaction, discord.abc.GuildChannel],
+    use: Union[Action, ExtendedAction] = ExtendedAction.Remove_channel,
 ):
     """Removes a channel from the database
 
@@ -397,11 +403,11 @@ def remove_channel(
 
 
 def modify_database(
-        inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild],
-        action: Union[Action, ExtendedAction],
-        day: Date = Date.Daily,
-        hour: int = 6,
-        comic_number: int = None,
+    inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild],
+    action: Union[Action, ExtendedAction],
+    day: Date = Date.Daily,
+    hour: int = 6,
+    comic_number: int = None,
 ):
     """
     Saves the new information in the database
@@ -419,220 +425,256 @@ def modify_database(
     hour = str(hour)
 
     if action == Action.Add or action == ExtendedAction.Add_all:
-        guild_id = str(inter.guild.id)
-        channel_id = str(inter.channel.id)
-        d = {guild_id: {"server_id": 0, "channels": {}, "mention": True}}
-
-        if guild_id in data:
-            # If this server was already in the database, fill out information
-            d[guild_id] = data[guild_id]
-
-            # Checks if the channel was already set
-            if channel_id in data[guild_id]["channels"]:
-                d[guild_id]["channels"][channel_id] = data[guild_id]["channels"][
-                    channel_id
-                ]
-            else:
-                d[guild_id]["channels"].update(
-                    {channel_id: {"channel_id": int(channel_id), "date": {}}}
-                )
-
-            if day is None:
-                day = "D"  # Default: Daily
-
-            if hour is None:
-                hour = "6"  # Default: 6 AM UTC
-
-            com_list: list[int]
-            if action == ExtendedAction.Add_all:
-                strips = load_json(DETAILS_PATH)
-                com_list = [i for i in range(len(strips))]
-            else:
-                com_list = [comic_number]
-
-            if day != "La":
-                # Checks if the day, the hour and the comic was already set for the channel
-                if day not in d[guild_id]["channels"][channel_id]["date"]:
-                    d[guild_id]["channels"][channel_id]["date"].update(
-                        {day: {hour: com_list}}
-                    )
-
-                elif hour not in d[guild_id]["channels"][channel_id]["date"][day]:
-                    d[guild_id]["channels"][channel_id]["date"][day].update(
-                        {hour: com_list}
-                    )
-
-                elif (
-                    comic_number
-                    not in d[guild_id]["channels"][channel_id]["date"][day][hour]
-                    and len(com_list) == 1
-                ):
-                    d[guild_id]["channels"][channel_id]["date"][day][hour].extend(
-                        com_list
-                    )
-
-                elif len(com_list) > 1:  # Add all comics command
-                    d[guild_id]["channels"][channel_id]["date"][day][hour] = com_list
-
-                else:
-                    return "This comic is already set at this time!"
-            else:
-                # Add a comic to be only latest
-                if "latest" not in d[guild_id]["channels"][channel_id]:
-                    d[guild_id]["channels"][channel_id].update({"latest": com_list})
-                elif (
-                    comic_number not in d[guild_id]["channels"][channel_id]["latest"]
-                    and len(com_list) == 1
-                ):
-                    d[guild_id]["channels"][channel_id]["latest"].extend(com_list)
-                elif len(com_list) > 1:
-                    d[guild_id]["channels"][channel_id]["latest"] = com_list
-                else:
-                    return "This comic is already set at this time!"
-
-        else:
-            # If there was no comic data stored for this guild
-            # Add a comic to the list of comics
-            d[guild_id]["server_id"] = int(guild_id)
-
-            com_list: list
-            if action == ExtendedAction.Add_all:
-                strips = load_json(DETAILS_PATH)
-                com_list = [i for i in range(len(strips))]
-            else:
-                com_list = [comic_number]
-
-            if day is None:
-                day = "D"
-
-            if hour is None:
-                hour = "6"
-
-            if day != "La":
-                d[guild_id]["channels"].update(
-                    {
-                        channel_id: {
-                            "channel_id": int(channel_id),
-                            "date": {day: {hour: com_list}},
-                        }
-                    }
-                )
-            else:
-                d[guild_id]["channels"].update(
-                    {channel_id: {"channel_id": int(channel_id), "latest": com_list}}
-                )
-        # Update the main database
-        data.update(d)
-
-        # Save the database
-        save_json(data)
-
-        if action == ExtendedAction.Add_all:
-            return "All comics added successfully!"
-        else:
-            return f"{comic_number} added successfully as a daily comic!"
+        return add_comic_in_guild(inter, action, comic_number, data, day, hour)
     elif action == ExtendedAction.Remove_channel:
-        guild_id = str(inter.guild.id)
-        channel_id = str(inter.channel.id)
-        # Remove comic
-        if guild_id in data and channel_id in data[guild_id]["channels"]:
-            if day is None:
-                day = "D"
-
-            if hour is None:
-                hour = "6"
-
-            if day != "La":
-                # Verifies that the day and time was set
-                if (
-                    day in data[guild_id]["channels"][channel_id]["date"]
-                    and hour in data[guild_id]["channels"][channel_id]["date"][day]
-                ):
-                    comic_list: list[int] = data[guild_id]["channels"][channel_id][
-                        "date"
-                    ][day][hour]
-
-                    # Verifies if the comic is in the list
-                    if comic_number in comic_list:
-                        comic_list.remove(comic_number)
-                        data[guild_id]["channels"][channel_id]["date"][day][
-                            hour
-                        ] = comic_list
-
-                    else:
-                        return "This comic is not registered for scheduled posts!"
-                else:
-                    return "This comic is not registered for scheduled posts!"
-            else:
-                comic_list: list[int] = data[guild_id]["channels"][channel_id]["latest"]
-                if comic_number in comic_list:
-                    comic_list.remove(comic_number)
-                    data[guild_id]["channels"][channel_id]["latest"] = comic_list
-                else:
-                    return "This comic is not registered for scheduled posts!"
-        else:
-            return "This server or channel is not registered for scheduled comics!"
-
-        # Save the database
-        save_json(data)
-
-        return f"{comic_number} removed successfully from the daily list!"
+        return remove_comic_in_guild(inter, comic_number, data, day, hour)
     elif (
         action == ExtendedAction.Remove_guild
         or action == ExtendedAction.Auto_remove_guild
     ):
-        guild_id = ""
-        if action == "remove_guild":
-            guild_id = str(inter.guild.id)
-        elif action == "auto_remove_guild":
-            guild_id = str(inter.id)  # it is a guild
-
-        # Remove a guild from the list
-        if guild_id in data:
-            data.pop(guild_id)
-        else:
-            return "This server is not registered for any scheduled comics!"
-
-        # Save the database
-        save_json(data)
-
-        return "All daily comics removed successfully!"
+        return remove_guild_in_db(inter, action, data)
     elif (
         action == ExtendedAction.Remove_channel
         or action == ExtendedAction.Auto_remove_channel
     ):
-        guild_id = str(inter.guild.id)
-        channel_id = ""
-        if action == "remove_channel":
-            channel_id = str(inter.channel.id)
-        elif action == "auto_remove_channel":
-            channel_id = str(inter.id)  # it is a channel
-
-        # Remove a guild from the list
-        if guild_id in data:
-            if channel_id in data[guild_id]["channels"]:
-                data[guild_id]["channels"].pop(channel_id)
-            else:
-                return "This channel is not registered for any scheduled comics!"
-        else:
-            return "This server is not registered for any scheduled comics!"
-
-        # Save the database
-        save_json(data)
-        return "All daily comics removed successfully from this channel!"
+        return remove_channel_in_db(inter, action, data)
 
     return None
 
 
-def set_role(inter: discord.Interaction, role_id) -> str:
+def remove_channel_in_db(
+    inter: discord.Interaction, action: Union[Action, ExtendedAction], data: dict
+) -> str:
     """
 
     :param inter:
-    :param role_id:
+    :param action:
+    :param data:
+    :return:
+    """
+    guild_id = str(inter.guild.id)
+    channel_id = ""
+    if action == "remove_channel":
+        channel_id = str(inter.channel.id)
+    elif action == "auto_remove_channel":
+        channel_id = str(inter.id)  # it is a channel
+    # Remove a guild from the list
+    if guild_id in data:
+        if channel_id in data[guild_id]["channels"]:
+            data[guild_id]["channels"].pop(channel_id)
+        else:
+            return "This channel is not registered for any scheduled comics!"
+    else:
+        return "This server is not registered for any scheduled comics!"
+    # Save the database
+    save_json(data)
+    return "All daily comics removed successfully from this channel!"
+
+
+def remove_guild_in_db(
+    inter: discord.Interaction, action: Union[Action, ExtendedAction], data: dict
+) -> str:
+    """
+
+    :param inter:
+    :param action:
+    :param data:
+    :return:
+    """
+    guild_id = ""
+    if action == "remove_guild":
+        guild_id = str(inter.guild.id)
+    elif action == "auto_remove_guild":
+        guild_id = str(inter.id)  # it is a guild
+    # Remove a guild from the list
+    if guild_id in data:
+        data.pop(guild_id)
+    else:
+        return "This server is not registered for any scheduled comics!"
+    # Save the database
+    save_json(data)
+    return "All daily comics removed successfully!"
+
+
+def add_comic_in_guild(
+    inter: discord.Interaction,
+    action: Union[Action, ExtendedAction],
+    comic_number: int,
+    data: dict,
+    day: Date,
+    hour: str,
+) -> str:
+    """
+
+    :param inter:
+    :param action:
+    :param comic_number:
+    :param data:
+    :param day:
+    :param hour:
+    :return:
+    """
+    guild_id = str(inter.guild.id)
+    channel_id = str(inter.channel.id)
+    d = {guild_id: {"server_id": 0, "channels": {}, "mention": True}}
+
+    com_list: list[int]
+    if action == ExtendedAction.Add_all:
+        strips = load_json(DETAILS_PATH)
+        com_list = [i for i in range(len(strips))]
+    else:
+        com_list = [comic_number]
+
+    if guild_id in data:
+        # If this server was already in the database, fill out information
+        d[guild_id] = data[guild_id]
+
+        # Checks if the channel was already set
+        if channel_id in data[guild_id]["channels"]:
+            d[guild_id]["channels"][channel_id] = data[guild_id]["channels"][channel_id]
+        else:
+            d[guild_id]["channels"].update(
+                {channel_id: {"channel_id": int(channel_id), "date": {}}}
+            )
+
+        if day != Date.Latest:
+            # Checks if the day, the hour and the comic was already set for the channel
+            day = date_to_db(day)
+
+            if day not in d[guild_id]["channels"][channel_id]["date"]:
+                d[guild_id]["channels"][channel_id]["date"].update(
+                    {day: {hour: com_list}}
+                )
+
+            elif hour not in d[guild_id]["channels"][channel_id]["date"][day]:
+                d[guild_id]["channels"][channel_id]["date"][day].update(
+                    {hour: com_list}
+                )
+
+            elif (
+                comic_number
+                not in d[guild_id]["channels"][channel_id]["date"][day][hour]
+                and len(com_list) == 1
+            ):
+                d[guild_id]["channels"][channel_id]["date"][day][hour].extend(com_list)
+
+            elif len(com_list) > 1:  # Add all comics command
+                d[guild_id]["channels"][channel_id]["date"][day][hour] = com_list
+
+            else:
+                return "This comic is already set at this time!"
+        else:
+            # Add a comic to be only latest
+            if "latest" not in d[guild_id]["channels"][channel_id]:
+                d[guild_id]["channels"][channel_id].update({"latest": com_list})
+            elif (
+                comic_number not in d[guild_id]["channels"][channel_id]["latest"]
+                and len(com_list) == 1
+            ):
+                d[guild_id]["channels"][channel_id]["latest"].extend(com_list)
+            elif len(com_list) > 1:
+                d[guild_id]["channels"][channel_id]["latest"] = com_list
+            else:
+                return "This comic is already set at this time!"
+
+    else:
+        d = add_guild_in_db(channel_id, com_list, d, day, guild_id, hour)
+
+    # Update the main database
+    data.update(d)
+
+    # Save the database
+    save_json(data)
+
+    if action == ExtendedAction.Add_all:
+        return "All comics added successfully!"
+    else:
+        return f"{comic_number} added successfully as a daily comic!"
+
+
+def add_guild_in_db(channel_id, com_list, d, day, guild_id, hour):
+    # If there was no comic data stored for this guild
+    # Add a comic to the list of comics
+    d[guild_id]["server_id"] = int(guild_id)
+    if day != Date.Latest:
+        d[guild_id]["channels"].update(
+            {
+                channel_id: {
+                    "channel_id": int(channel_id),
+                    "date": {date_to_db(day): {hour: com_list}},
+                }
+            }
+        )
+    else:
+        d[guild_id]["channels"].update(
+            {channel_id: {"channel_id": int(channel_id), "latest": com_list}}
+        )
+    return d
+
+
+def remove_comic_in_guild(
+    inter: discord.Interaction, comic_number: int, data: dict, day: Date, hour: str
+) -> str:
+    """
+
+    :param inter:
+    :param comic_number:
+    :param data:
+    :param day:
+    :param hour:
+    :return:
+    """
+    guild_id = str(inter.guild.id)
+    channel_id = str(inter.channel.id)
+    # Remove comic
+    if guild_id in data and channel_id in data[guild_id]["channels"]:
+        if day != Date.Latest:
+            # Verifies that the day and time was set
+            day = date_to_db(day)
+            if (
+                day in data[guild_id]["channels"][channel_id]["date"]
+                and hour in data[guild_id]["channels"][channel_id]["date"][day]
+            ):
+                # fmt: off
+                comic_list: list[int] = data[guild_id]["channels"][channel_id]["date"][day][hour]
+                # fmt: on
+
+                # Verifies if the comic is in the list
+                if comic_number in comic_list:
+                    comic_list.remove(comic_number)
+                    # fmt: off
+                    data[guild_id]["channels"][channel_id]["date"][day][hour] = comic_list
+                    # fmt: on
+
+                else:
+                    return "This comic is not registered for scheduled posts!"
+            else:
+                return "This comic is not registered for scheduled posts!"
+        else:
+            comic_list: list[int] = data[guild_id]["channels"][channel_id]["latest"]
+            if comic_number in comic_list:
+                comic_list.remove(comic_number)
+                data[guild_id]["channels"][channel_id]["latest"] = comic_list
+            else:
+                return "This comic is not registered for scheduled posts!"
+    else:
+        return "This server or channel is not registered for scheduled comics!"
+
+    # Save the database
+    save_json(data)
+
+    return f"{comic_number} removed successfully from the daily list!"
+
+
+def set_role(inter: discord.Interaction, role: discord.Role) -> str:
+    """Set a role in a guild
+
+    :param inter:
+    :param role:
     :return:
     """
     gid = str(inter.guild.id)
-    role = "role"
+    role_str = "role"
     mention = "mention"
     data = load_json(DATABASE_FILE_PATH)
 
@@ -641,9 +683,9 @@ def set_role(inter: discord.Interaction, role_id) -> str:
             return "Please re-enable the mention before daily post by using `bd!post_mention enable`!"
 
         if role not in data[gid]:
-            data[gid].update({"role": role_id.id, "only_daily": False})
+            data[gid].update({role_str: role.id, "only_daily": False})
         else:
-            data[gid]["role"] = role_id.id
+            data[gid][role_str] = role.id
 
         save_json(data)
 
@@ -841,13 +883,13 @@ def get_sub_status(inter, position: int, database: Optional[dict] = None):
 
 
 def add_comic_to_list(
-        comic_values: list[dict],
-        comic: int,
-        bot: commands.Bot,
-        channel: str,
-        comic_list: list[dict],
-        hour: str = "",
-        day: str = "La",
+    comic_values: list[dict],
+    comic: int,
+    bot: commands.Bot,
+    channel: str,
+    comic_list: list[dict],
+    hour: str = "",
+    day: str = "La",
 ) -> list[dict]:
     comic_name = comic_values[comic]["Name"]
 
@@ -863,8 +905,11 @@ def add_comic_to_list(
     return comic_list
 
 
-async def send_comic_embed(inter: discord.Interaction, comic_details: dict[str, Union[str, int]],
-                           next_send: NextSend = NextSend.Deferred):
+async def send_comic_embed(
+    inter: discord.Interaction,
+    comic_details: dict[str, Union[str, int]],
+    next_send: NextSend = NextSend.Deferred,
+):
     """Send a comic embed
 
     :param inter:
@@ -889,7 +934,7 @@ async def send_request_error(inter: discord.Interaction):
 
 
 def website_specific_embed(
-        website_name: str, website: str, nb_per_embed=5
+    website_name: str, website: str, nb_per_embed=5
 ) -> list[discord.Embed]:
     """Create embeds with all the specific comics from a website
 
@@ -922,17 +967,19 @@ class ResponseSender:
     """Class to account for some response types"""
 
     def __init__(
-            self,
-            resp: [
-                discord.InteractionResponse,
-                discord.InteractionMessage,
-                discord.Webhook,
-            ],
+        self,
+        resp: [
+            discord.InteractionResponse,
+            discord.InteractionMessage,
+            discord.Webhook,
+        ],
     ):
         self.resp = resp
 
     @classmethod
-    async def from_next_send(cls, inter: discord.Interaction, next_send: NextSend) -> ResponseSender:
+    async def from_next_send(
+        cls, inter: discord.Interaction, next_send: NextSend
+    ) -> ResponseSender:
         if next_send == NextSend.Normal:
             return cls(inter.response)
         elif next_send == NextSend.Deferred:
@@ -950,7 +997,9 @@ class ResponseSender:
 
 
 async def send_embed(
-        inter: discord.Interaction, embeds: list[discord.Embed], next_send: NextSend = NextSend.Normal
+    inter: discord.Interaction,
+    embeds: list[discord.Embed],
+    next_send: NextSend = NextSend.Normal,
 ):
     """Send embeds, can be of multiple pages
 
@@ -1026,13 +1075,13 @@ async def update_presence(bot: discord.Client):
         activity=discord.Activity(
             type=discord.ActivityType.listening,
             name=f"slash commands and '/help general' in"
-                 f" {len(bot.guilds)} servers!",
+            f" {len(bot.guilds)} servers!",
         ),
     )
 
 
 async def run_blocking(
-        blocking_func: Callable, bot: discord.Client, *args, **kwargs
+    blocking_func: Callable, bot: discord.Client, *args, **kwargs
 ) -> Optional[dict[str, Union[str, int, bool]]]:
     """Run a blocking function as a non-blocking one
 
@@ -1059,17 +1108,17 @@ class MultiPageView(ui.View):
         return interaction.user.id == self.author_id
 
     async def on_error(
-            self,
-            interaction: discord.Interaction,
-            error: Exception,
-            item: discord.ui.Item[Any],
-            /,
+        self,
+        interaction: discord.Interaction,
+        error: Exception,
+        item: discord.ui.Item[Any],
+        /,
     ) -> None:
         await interaction.followup.send(content=error)
 
     @discord.ui.button(label="Last")
     async def last_embed(
-            self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
+        self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
     ):
         if self.current_embed > 0:
             self.current_embed -= 1
@@ -1080,7 +1129,7 @@ class MultiPageView(ui.View):
 
     @discord.ui.button(label="Next")
     async def next_embed(
-            self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
+        self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
     ):
         if self.current_embed < len(self.embeds) - 1:
             self.current_embed += 1
@@ -1091,7 +1140,7 @@ class MultiPageView(ui.View):
 
     @discord.ui.button(label="Exit", style=discord.ButtonStyle.danger)
     async def exit_embed(
-            self, interaction: discord.Interaction, button: discord.ui.Button
+        self, interaction: discord.Interaction, button: discord.ui.Button
     ):
         self.next_embed.disabled = True
         self.last_embed.disabled = True
@@ -1109,10 +1158,84 @@ class MultiPageView(ui.View):
 
 
 async def send_message(
-        inter: discord.Interaction,
-        message: Optional[str] = None,
-        embed: Optional[discord.Embed] = None,
-        next_send: NextSend = NextSend.Normal,
+    inter: discord.Interaction,
+    message: Optional[str] = None,
+    embed: Optional[discord.Embed] = None,
+    next_send: NextSend = NextSend.Normal,
 ):
     resp = await ResponseSender.from_next_send(inter, next_send)
     await resp.send_message(content=message, embed=embed)
+
+
+def clean_database(
+    bot: discord.Client = None,
+    data: dict = None,
+    do_backup: bool = True,
+    strict: bool = False,
+    logger: logging.Logger = None,
+) -> int:
+    """Clean the database from inactive servers
+
+    :param bot:
+    :param data:
+    :param do_backup:
+    :param strict: Strict clean (Bypass role requirement)
+    :param logger:
+    :return:
+    """
+    logger.info("Running database clean...")
+    # Cleans the database from inactive servers
+    if data is None:
+        data = load_json(DATABASE_FILE_PATH)
+
+    if do_backup:
+        save_backup(data, logger)
+
+    guilds_to_clean = []
+    nb_removed = 0
+
+    for guild in data:
+        # To take in account or not if a server still has a role tied to their info
+        to_remove = False
+
+        if bot is not None and bot.get_guild(guild) is None:
+            # If it cannot find the server, bypass all others checks
+            to_remove = True
+
+        if ("role" not in data[guild] or strict) and not to_remove:
+            # The server is available so lets check for other info that might indicate that the server is inactive
+            to_remove = True
+            channels = data[guild]["channels"]
+            for chan in channels:
+                if "latest" in channels[chan]:
+                    if len(channels[chan]["latest"]) != 0:
+                        to_remove = False
+                        break
+
+                if "date" in channels[chan]:
+                    dates = channels[chan]["date"]
+                    for date in dates:
+                        hours = dates[date]
+                        for hour in hours:
+                            if len(hours[hour]) > 0:
+                                to_remove = False
+                                break
+                        if not to_remove:
+                            break
+                    if not to_remove:
+                        break
+
+        if to_remove:
+            guilds_to_clean.append(guild)
+            nb_removed += 1
+
+    # Removes the servers that need to be removed
+    for guild in guilds_to_clean:
+        if guild in data:
+            data.pop(guild)
+
+    if nb_removed > 0:
+        save_json(data)
+
+    logger.info(f"Cleaned the database from {nb_removed} servers")
+    return nb_removed
