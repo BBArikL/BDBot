@@ -212,8 +212,8 @@ def setup_bot():
             with open(local_service_path, "rt") as f:
                 service_file = f.read()
 
-            service_file.replace("{USER}", user)
-            service_file.replace("{PACKAGE_DIRECTORY}", os.getcwd())
+            service_file = service_file.replace("{USER}", user)
+            service_file = service_file.replace("{PACKAGE_DIRECTORY}", os.getcwd())
 
             with open(f"{dst_service_path}/runbdbot.service", "wt") as f:
                 f.write(service_file)
