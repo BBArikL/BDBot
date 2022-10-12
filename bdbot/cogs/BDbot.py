@@ -99,7 +99,7 @@ class BDBot(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add comics
     async def add_all(
-        self, inter: discord.Interaction, date: str = None, hour: str = None
+        self, inter: discord.Interaction, date: Date = None, hour: int = None
     ):
         """Add all comics to a specific channel. Preferred way to add all comics. Mods only"""
         status = discord_utils.add_all(inter, date, hour)
