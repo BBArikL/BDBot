@@ -372,7 +372,12 @@ def new_change(
     comic_number = int(comic["Position"])
 
     return modify_database(
-        inter, param, day=final_date, hour=final_hour, comic_number=comic_number
+        inter,
+        param,
+        day=final_date,
+        hour=final_hour,
+        comic_number=comic_number,
+        comic_name=comic["Name"],
     )
 
 
@@ -408,6 +413,7 @@ def modify_database(
     day: Date = Date.Daily,
     hour: int = 6,
     comic_number: int = None,
+    comic_name: str = None,
 ):
     """
     Saves the new information in the database
@@ -425,9 +431,11 @@ def modify_database(
     hour = str(hour)
 
     if action == Action.Add or action == ExtendedAction.Add_all:
-        return add_comic_in_guild(inter, action, comic_number, data, day, hour)
+        return add_comic_in_guild(
+            inter, action, comic_number, data, day, hour, comic_name
+        )
     elif action == ExtendedAction.Remove_channel:
-        return remove_comic_in_guild(inter, comic_number, data, day, hour)
+        return remove_comic_in_guild(inter, comic_number, data, day, hour, comic_name)
     elif (
         action == ExtendedAction.Remove_guild
         or action == ExtendedAction.Auto_remove_guild
@@ -503,6 +511,7 @@ def add_comic_in_guild(
     data: dict,
     day: Date,
     hour: str,
+    comic_name: str,
 ) -> str:
     """
 
@@ -512,6 +521,7 @@ def add_comic_in_guild(
     :param data:
     :param day:
     :param hour:
+    :param comic_name:
     :return:
     """
     guild_id = str(inter.guild.id)
@@ -589,7 +599,7 @@ def add_comic_in_guild(
     if action == ExtendedAction.Add_all:
         return "All comics added successfully!"
     else:
-        return f"{comic_number} added successfully as a daily comic!"
+        return f"{comic_name} added successfully as a daily comic!"
 
 
 def add_guild_in_db(channel_id, com_list, d, day, guild_id, hour):
@@ -613,7 +623,12 @@ def add_guild_in_db(channel_id, com_list, d, day, guild_id, hour):
 
 
 def remove_comic_in_guild(
-    inter: discord.Interaction, comic_number: int, data: dict, day: Date, hour: str
+    inter: discord.Interaction,
+    comic_number: int,
+    data: dict,
+    day: Date,
+    hour: str,
+    comic_name: str,
 ) -> str:
     """
 
@@ -622,6 +637,7 @@ def remove_comic_in_guild(
     :param data:
     :param day:
     :param hour:
+    :param comic_name:
     :return:
     """
     guild_id = str(inter.guild.id)
@@ -663,7 +679,7 @@ def remove_comic_in_guild(
     # Save the database
     save_json(data)
 
-    return f"{comic_number} removed successfully from the daily list!"
+    return f"{comic_name} removed successfully from the daily list!"
 
 
 def set_role(inter: discord.Interaction, role: discord.Role) -> str:
