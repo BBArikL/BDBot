@@ -4,8 +4,7 @@ Description=BDBot
 [Service]
 WorkingDirectory={PACKAGE_DIRECTORY}
 User={USER}
-ExecStart=/home/{USER}/.local/bin/runbdbot
-Type=forking
+ExecStart=/home/{USER}/.local/bin/bdbot
 Restart=always
 
 [Install]
