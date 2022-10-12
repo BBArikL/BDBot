@@ -1188,7 +1188,7 @@ def clean_database(
     data: dict = None,
     do_backup: bool = True,
     strict: bool = False,
-    logger: logging.Logger = None,
+    logger_: logging.Logger = None,
 ) -> int:
     """Clean the database from inactive servers
 
@@ -1196,16 +1196,16 @@ def clean_database(
     :param data:
     :param do_backup:
     :param strict: Strict clean (Bypass role requirement)
-    :param logger:
+    :param logger_:
     :return:
     """
-    logger.info("Running database clean...")
+    logger_.info("Running database clean...")
     # Cleans the database from inactive servers
     if data is None:
         data = load_json(DATABASE_FILE_PATH)
 
     if do_backup:
-        save_backup(data, logger)
+        save_backup(data, logger_)
 
     guilds_to_clean = []
     nb_removed = 0
@@ -1253,5 +1253,5 @@ def clean_database(
     if nb_removed > 0:
         save_json(data)
 
-    logger.info(f"Cleaned the database from {nb_removed} servers")
+    logger_.info(f"Cleaned the database from {nb_removed} servers")
     return nb_removed
