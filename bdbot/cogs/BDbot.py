@@ -286,8 +286,8 @@ class BDBot(commands.Cog):
                     match_date = matching_date[comic["Date"]]
                     embeds[-1].add_field(
                         name=comic["Name"],
-                        value=f"{'Each ' if match_date not in [Date.Latest, Date.Daily] else ''}{match_date}"
-                        f"{f' at {comic[hr]} h UTC' if match_date not in [Date.Latest, Date.Daily] else ''} in "
+                        value=f"{'Each ' if match_date not in [Date.Latest, Date.Daily] else ''}{match_date.name}"
+                        f"{f' at {comic[hr]} h UTC' if match_date not in [Date.Latest] else ''} in "
                         f"channel {comic['Channel']}",
                     )
                     nb_fields += 1
