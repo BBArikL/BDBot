@@ -154,7 +154,8 @@ def get_comic_info_date(
             # Get the html of the comic site
             try:
                 html = urlopen(details["url"]).read()
-            except HTTPError:
+            except HTTPError as e:
+                logger.error(e.__class__, e)
                 html = None
 
             # Extracts the title of the comic
@@ -267,7 +268,8 @@ def get_comic_info_number(
         # Get the html of the comic site
         try:
             html = urlopen(details["url"]).read()
-        except HTTPError:
+        except HTTPError as e:
+            logger.error(e.__class__, e)
             html = None
 
         if html is not None:
