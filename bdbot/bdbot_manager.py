@@ -1,7 +1,10 @@
+import getpass
 import json
 import logging
 import os
+import platform
 import re
+import shutil
 import sys
 from typing import Optional, Union
 
@@ -148,6 +151,41 @@ def setup_bot():
 
     logger.info("Creating link cache, this might take some time...")
     create_link_cache(logger)
+
+    if platform.system() == "Linux":
+        # Tries to install service file and command to run the bot only on Linux
+        user = getpass.getuser()
+        local_script_path = "misc/runbdbot"
+        local_service_path = "misc/runbdbot.service"
+        script_path = f"/home/{user}/.local/bin"
+        service_path = "/etc/systemd/system/"
+        dst_service_path = f"/home/{user}"
+        command = "sudo systemctl daemon-reload && sudo systemctl enable --now runbdbot.service"
+        install_service = inquirer.confirm(
+            "Do you want to install the shell script to start the bot to\n"
+            f"{script_path}) service file which will need to be copied\n"
+            f" manually at {service_path} with root privileges and enabled\n"
+            f" with '{command}'?"
+        )
+
+        if install_service:
+            # Make sure that the script path is installed at the right place
+            os.makedirs(script_path, exist_ok=True)
+            shutil.copy(local_script_path, script_path)
+
+            with open(local_service_path, "rt") as f:
+                service_file = f.read()
+
+            service_file.replace("{USER}", user)
+            service_file.replace("{PACKAGE_DIRECTORY}", os.getcwd())
+
+            with open(dst_service_path, "wt") as f:
+                f.write(service_file)
+
+            logger.info(
+                f"The service file is now available at {dst_service_path} and is ready to be moved to"
+                f" {service_path}. Do not forget to enable the service with {command}!"
+            )
 
     logger.info("All done! You can start the bot with 'python -m bdbot'!")
 

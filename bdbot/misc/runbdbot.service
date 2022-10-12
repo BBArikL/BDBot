@@ -1,0 +1,12 @@
+[Unit]
+Description=BDBot
+
+[Service]
+WorkingDirectory={PACKAGE_DIRECTORY}
+User={USER}
+ExecStart=/home/{USER}/.local/bin/runbdbot
+Type=forking
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
