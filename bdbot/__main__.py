@@ -8,6 +8,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 from bdbot import discord_utils, utils
+from bdbot.utils import LOGS_DIRECTORY_PATH
 
 
 def main():
@@ -15,7 +16,7 @@ def main():
     Main entry point for the bot
     """
     os.chdir(os.path.dirname(__file__))  # Force the current working directory
-    load_dotenv()
+    load_dotenv(utils.ENV_FILE)
 
     intents = discord.Intents.default()
     bot: discord.ext.commands.AutoShardedBot = commands.AutoShardedBot(
@@ -26,7 +27,7 @@ def main():
         shard_count=4,
     )
     handler = logging.FileHandler(
-        filename=f'data/logs/discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
+        filename=f'{LOGS_DIRECTORY_PATH}discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
         encoding="utf-8",
         mode="w",
     )
@@ -40,7 +41,7 @@ def main():
     logger = logging.getLogger("discord")
 
     logger.info("Writing pid file...")
-    pid_file = "bdbot.pid"
+    pid_file = utils.PID_FILE
     try:
         utils.write_pid(pid_file)
         logger.info(f"Wrote pid to file {pid_file}")

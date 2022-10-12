@@ -11,12 +11,20 @@ from typing import Optional
 
 from randomtimestamp import randomtimestamp
 
-DETAILS_PATH = "misc/comics_details.json"
-FOOTERS_FILE_PATH = "misc/random-footers.txt"
-DATABASE_FILE_PATH = "data/data.json"
-BACKUP_FILE_PATH = "data/backups/BACKUP_DATABASE_"
-REQUEST_FILE_PATH = "data/requests.txt"
-COMIC_LATEST_LINKS_PATH = "data/latest_comics.json"
+BASE_DATA_PATH = (
+    f"{os.getenv('LOCALAPPDATA')}/bdbot/"
+    if os.name == "nt"
+    else f"/home/{os.getenv('USER')}/.local/bdbot/"
+)
+DETAILS_PATH = f"{BASE_DATA_PATH}misc/comics_details.json"
+FOOTERS_FILE_PATH = f"{BASE_DATA_PATH}misc/random-footers.txt"
+DATABASE_FILE_PATH = f"{BASE_DATA_PATH}data/data.json"
+BACKUP_FILE_PATH = f"{BASE_DATA_PATH}data/backups/BACKUP_DATABASE_"
+LOGS_DIRECTORY_PATH = f"{BASE_DATA_PATH}data/logs/"
+REQUEST_FILE_PATH = f"{BASE_DATA_PATH}data/requests.txt"
+COMIC_LATEST_LINKS_PATH = f"{BASE_DATA_PATH}data/latest_comics.json"
+PID_FILE = f"{BASE_DATA_PATH}bdbot.pid"
+ENV_FILE = f"{BASE_DATA_PATH}.env"
 date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su", "La"]
 strip_details: dict = {}
 link_cache: dict = {}

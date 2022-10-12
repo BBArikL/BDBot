@@ -12,8 +12,13 @@ from InquirerPy import inquirer
 from InquirerPy.prompts import ListPrompt, SecretPrompt
 
 from bdbot.utils import (
+    BACKUP_FILE_PATH,
+    BASE_DATA_PATH,
     DATABASE_FILE_PATH,
     DETAILS_PATH,
+    ENV_FILE,
+    FOOTERS_FILE_PATH,
+    LOGS_DIRECTORY_PATH,
     REQUEST_FILE_PATH,
     load_json,
     save_backup,
@@ -50,36 +55,49 @@ def main():
 
 def manage_bot():
     """Manage the bot and its settings"""
-    action = inquirer.select(
-        message="What do you want to do?",
-        choices=[
-            "Database tools - Not implemented",
-            "Verify requests - Not implemented",
-            "Create image link cache",
-            "Setup Bot",
-        ],
-        mandatory=False,
-    ).execute()
+    action = ""
+    while action != "Return":
+        action = inquirer.select(
+            message="What do you want to do?",
+            choices=[
+                "Database tools - Not implemented",
+                "Verify requests - Not implemented",
+                "Create image link cache",
+                "Setup Bot",
+                "Uninstall Bot",
+                "Return",
+            ],
+            mandatory=False,
+        ).execute()
 
-    if action == "Create image link cache":
-        logger.info("Running link cache, please wait up to 1-2 minutes...")
-        os.makedirs("data", exist_ok=True)
-        create_link_cache(logger)
-        logger.info("Link cache created!")
-    if action == "Setup Bot":
-        setup_bot()
+        if action == "Create image link cache":
+            logger.info("Running link cache, please wait up to 1-2 minutes...")
+            os.makedirs("data", exist_ok=True)
+            create_link_cache(logger)
+            logger.info("Link cache created!")
+        elif action == "Setup Bot":
+            setup_bot()
+        elif action == "Uninstall Bot":
+            conf = inquirer.confirm(
+                "Are you sure you want to uninstall the bot?"
+            ).execute()
+            if conf:
+                os.rmdir(BASE_DATA_PATH)
+            else:
+                logger.info("Canceled bot uninstallation")
 
 
 def setup_bot():
     """Sets up the bot to be able to be launched"""
+    os.makedirs(BASE_DATA_PATH, exist_ok=True)
 
     logger.info("Setting up environment variables...")
 
     write_env = True
-    if os.path.exists("./env"):
+    if os.path.exists(ENV_FILE):
         write_env = inquirer.confirm(
             "The file `.env` already exist. Do you want to overwrite it?"
-        )
+        ).execute()
 
     if write_env:
         environment_variables: dict[
@@ -112,6 +130,12 @@ def setup_bot():
                     "commands):"
                 ),
             },
+            "TOP_GG_TOKEN": {
+                "value": "",
+                "inquiry": inquirer.secret(
+                    message="Enter the topgg token (if applicable):"
+                ),
+            },
             "DEBUG": {
                 "value": "",
                 "inquiry": inquirer.select(
@@ -133,13 +157,14 @@ def setup_bot():
                 for envv in environment_variables
             ]
         )
-        usage = "w" if os.path.exists("../.env") else "x"
-        with open(".env", f"{usage}t") as f:
+        usage = "w" if os.path.exists(ENV_FILE) else "x"
+        with open(ENV_FILE, f"{usage}t") as f:
             f.write(output)
 
     logger.info("Creating folders and files...")
-    os.makedirs("data/backups", exist_ok=True)
-    os.makedirs("data/logs", exist_ok=True)
+    os.makedirs(os.path.dirname(BACKUP_FILE_PATH), exist_ok=True)
+    os.makedirs(LOGS_DIRECTORY_PATH, exist_ok=True)
+    os.makedirs(os.path.dirname(DETAILS_PATH), exist_ok=True)
 
     if not os.path.exists(DATABASE_FILE_PATH):
         with open(DATABASE_FILE_PATH, "xt") as f:
@@ -148,6 +173,17 @@ def setup_bot():
     if not os.path.exists(REQUEST_FILE_PATH):
         with open(REQUEST_FILE_PATH, "xt"):
             pass
+
+    logger.info("Copying details and footer files...")
+    continue_copy = True
+    if os.path.exists(DETAILS_PATH):
+        continue_copy = inquirer.confirm(
+            "Details file already seem present, do you want to overwrite them?"
+        ).execute()
+
+    if continue_copy:
+        shutil.copy("misc/comics_details.json", DETAILS_PATH)
+        shutil.copy("misc/random-footers.txt", FOOTERS_FILE_PATH)
 
     logger.info("Creating link cache, this might take some time...")
     create_link_cache(logger)
@@ -166,7 +202,7 @@ def setup_bot():
             f"{script_path}) service file which will need to be copied\n"
             f" manually at {service_path} with root privileges and enabled\n"
             f" with '{command}'?"
-        )
+        ).execute()
 
         if install_service:
             # Make sure that the script path is installed at the right place

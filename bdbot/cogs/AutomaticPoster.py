@@ -97,7 +97,7 @@ class PosterHandler(commands.Cog):
             save_backup(comic_data, logger)
 
             if self.do_cleanup:
-                clean_database(data=comic_data, logger=logger)
+                clean_database(data=comic_data, logger_=logger)
 
         # Construct the list of what comics need to be sent
         for guild in comic_data:
