@@ -83,6 +83,7 @@ async def run(bot: commands.AutoShardedBot, logger: logging.Logger):
 
     logger.info("Loading latest comic links...")
     utils.link_cache = utils.load_json(utils.COMIC_LATEST_LINKS_PATH)
+    utils.link_cache = utils.fill_cache(utils.strip_details, utils.link_cache)
     logger.info("Loaded comic links!")
 
     for filename in os.listdir("cogs"):

@@ -347,7 +347,7 @@ def check_if_latest_link(comic_name: str, current_link: str) -> bool:
     :param current_link:
     :return:
     """
-    return current_link != link_cache[comic_name]
+    return current_link != link_cache.get(comic_name, "")
 
 
 def write_pid(file_path: str):
@@ -369,3 +369,17 @@ def save_request(req: str, author: str, discriminator: Optional[str] = ""):
             f'Request: "{param}" by {author}#{discriminator} on '
             f"{datetime.now(timezone.utc)}\n"
         )
+
+
+def fill_cache(details: dict[str, dict[str, str]], cache: dict[str, str], default: str = "") -> dict[str, str]:
+    """Fill the cache with missing comic cache
+
+    :param details: The comic details
+    :param cache: The comic latest link cache
+    :param default: The default to add to the cache
+    :return: The cache with an entry for all comics
+    """
+    for comic in details:
+        cache.setdefault(details[comic]["Name"], default)
+
+    return cache
