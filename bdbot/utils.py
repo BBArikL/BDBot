@@ -315,7 +315,9 @@ def get_footers() -> list[str]:
     :return:
     """
     if random_footers is None or random_footers == []:
-        return open(FOOTERS_FILE_PATH, "rt").readlines()
+        with open(FOOTERS_FILE_PATH, "rt") as f:
+            lines = f.readlines()
+        return lines
     else:
         return random_footers
 
