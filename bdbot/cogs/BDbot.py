@@ -1,4 +1,3 @@
-import logging
 import math
 import os
 import re
@@ -33,7 +32,7 @@ class BDBot(commands.Cog):
         """On start of the bot"""
         # Change the bot activity
         await discord_utils.update_presence(self.bot)
-        discord_utils.logger.log(logging.INFO, "Logged in as {0.user}".format(self.bot))
+        discord_utils.logger.info(f"Logged in as {self.bot.user}")
         channel_id: int = int(os.getenv("PRIVATE_CHANNEL_SUPPORT_ID"))
 
         channel: discord.TextChannel = self.bot.get_channel(channel_id)
@@ -82,6 +81,22 @@ class BDBot(commands.Cog):
         discord_utils.remove_channel(
             deleted_channel, use=utils.ExtendedAction.Auto_remove_channel
         )
+
+    @commands.Cog.listener()
+    async def on_connect(self):
+        discord_utils.logger.info("Bot has been connected!")
+
+    @commands.Cog.listener()
+    async def on_shard_connect(self, shard_id: int):
+        discord_utils.logger.info(f"Shard of id {shard_id} has been connected to discord gateway.")
+
+    @commands.Cog.listener()
+    async def on_disconnect(self):
+        discord_utils.logger.info("Bot has been disconnected. Retrying to reconnect...")
+
+    @commands.Cog.listener()
+    async def on_shard_disconnect(self, shard_id: int):
+        discord_utils.logger.info(f"Shard of id {shard_id} has been disconnected. Retrying to reconnect...")
 
     @app_commands.command()
     async def git(self, inter: discord.Interaction):
