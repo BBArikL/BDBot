@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Iterable, Optional
 
 import discord
+from discord import app_commands
 from discord.ext import commands, tasks
 
 from bdbot.discord_utils import (
@@ -59,16 +60,17 @@ class PosterHandler(commands.Cog):
         await discord.utils.sleep_until(sleep_date)
         await PosterHandler.post_hourly.start(self)
 
+    @app_commands.command()
     # @app_commands.command(hidden=True, guilds=SERVER)
     # @app_commands.is_owner()
-    async def force_hourly(self, ctx: commands.Context, hour: Optional[int] = None):
+    async def force_hourly(self, inter: discord.Interaction, hour: Optional[int] = None):
         """Force the push of comics to all subscribed servers
 
 
-        :param ctx: The context of the where the command was called.
+        :param inter: The context of the where the command was called.
         :param hour: The hour to simulate
         """
-        await ctx.send(
+        await inter.response.send_message(
             f"Trying to force the hourly post for hour {get_hour() if not hour else hour}h UTC"
         )
         await self.hourly(hour)
@@ -231,13 +233,14 @@ class PosterHandler(commands.Cog):
                     comic_details = await run_blocking(
                         get_new_comic_details,
                         self.bot,
-                        comic_details[comic_keys[i]],
+                        strip_details[comic_keys[i]],
                         Action.Today,
                         latest_check=True,
                     )
-                except Exception:
+                except Exception as e:
                     # Anything can happen (connection problem, etc... and the bot will crash if any error
                     # is raised in the poster loop)
+                    logger.error(f"An error occurred while getting a comic: {e}")
                     comic_details = None
 
                 embed = create_embed(comic_details)  # Creates the embed
