@@ -122,7 +122,7 @@ Robobert: https://github.com/JTexpo/Robobert
         3. Follow the steps to add a new comic
         4. That's it!
       - Manual steps:
-        1. Add a new value in misc/comics_details.json that specifies each value for the comic. (See [this README](misc/ADD_COMIC.md)).
+        1. Add a new value in misc/comics_details.json that specifies each value for the comic. (See [this README](bdbot/misc/ADD_COMIC.md)).
         2. Add a command in bdbot/cogs/Comics.py under the latest comic with aliases that are the same that were added to the json file and change the value of 'comic_name' to the name of the comic added.
         3. That's it!
   - If the comic is NOT hosted on GoComics/Comics Kingdom, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
