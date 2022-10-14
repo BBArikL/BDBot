@@ -23,6 +23,7 @@ from bdbot.utils import (
     load_json,
     save_json,
 )
+logger = logging.getLogger("discord")
 
 # Utilities for web requests to have the fresh comic details
 
@@ -43,21 +44,20 @@ ORIGINAL_DETAILS = {
 MAX_TRIES = 15
 
 
-def create_link_cache(logger: logging.Logger) -> None:
+def create_link_cache(logger_: logging.Logger) -> None:
     """Create a cache of links containing the latest comics links
 
-    :param logger:
-    :return:
+    :param logger_: The logger to use
     """
-    logger.debug("Running link cache...")
+    logger_.debug("Running link cache...")
     comics: dict = load_json(DETAILS_PATH)
     for comic in comics:
-        logger.debug(f"Getting image link for comic {comic} ...")
+        logger_.debug(f"Getting image link for comic {comic} ...")
         comic_url: Optional[dict[str, str]]
         try:
             comic_url = get_new_comic_details(comics[comic], action=Action.Today)
         except (ValueError, AttributeError) as e:
-            logger.error(f"An error occurred for comic {comic}: {e}")
+            logger_.error(f"An error occurred for comic {comic}: {e}")
             comic_url = None
         link_cache.update(
             {
@@ -67,7 +67,7 @@ def create_link_cache(logger: logging.Logger) -> None:
             }
         )
 
-    logger.debug("Saving comics link...")
+    logger_.debug("Saving comics link...")
     save_json(link_cache, COMIC_LATEST_LINKS_PATH)
 
 
@@ -155,7 +155,7 @@ def get_comic_info_date(
             try:
                 html = urlopen(details["url"]).read()
             except HTTPError as e:
-                logger.error(e.__class__, e)
+                logger.error(f"An html error occurred: {e}")
                 html = None
 
             # Extracts the title of the comic
@@ -170,9 +170,8 @@ def get_comic_info_date(
             if details["img_url"] is None:  # Go back one day
                 comic_date = comic_date - timedelta(days=1)
 
-            if (
-                i >= MAX_TRIES and details["img_url"] is None
-            ):  # If it hasn't found anything
+            if i >= MAX_TRIES and details["img_url"] is None:
+                # If it hasn't found anything
                 return None
 
         if details is not None:
@@ -269,7 +268,7 @@ def get_comic_info_number(
         try:
             html = urlopen(details["url"]).read()
         except HTTPError as e:
-            logger.error(e.__class__, e)
+            logger.error(f"An html error occurred: {e}")
             html = None
 
         if html is not None:
