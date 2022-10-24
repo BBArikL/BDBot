@@ -7,6 +7,7 @@ from bdbot import discord_utils, utils
 
 class HelpCommands(commands.Cog):
     """Class responsible for sending help embeds"""
+    help_group = app_commands.Group(name="help", description="Help commands")
 
     def __init__(self, bot: commands.Bot):
         """Constructor of the cog
@@ -14,217 +15,213 @@ class HelpCommands(commands.Cog):
         Initialize all the properties of the cog"""
         self.bot: commands.Bot = bot
 
-    class Help(app_commands.Group):
-        def __init__(self):
-            super().__init__(name="help", description="Help commands")
+    @help_group.command()
+    async def general(self, inter: discord.Interaction):
+        """HelpCommands for BDBot"""
+        embed: discord.Embed
+        if discord_utils.HELP_EMBED is None:
+            strips = utils.strip_details
+            embed = discord.Embed(title="BDBot!")
 
-        @app_commands.command()
-        async def help(self, inter: discord.Interaction):
-            """HelpCommands for BDBot"""
-            embed: discord.Embed
-            if discord_utils.HELP_EMBED is None:
-                strips = utils.strip_details
-                embed = discord.Embed(title="BDBot!")
+            embed.add_field(
+                name="Gocomics",
+                value="Use /help gocomics to get all comics that are supported on the Gocomics "
+                "website.",
+            )
+            embed.add_field(
+                name="Comics Kingdom",
+                value="Use /help comicskingdom to get all comics that are supported on the Comics "
+                "Kingdom website.",
+            )
+            embed.add_field(
+                name="Webtoons",
+                value="Use /help webtoons to get all comics that are supported on the Webtoons "
+                "website.",
+            )
+            for strip in strips:
+                if (
+                    strips[strip]["Main_website"] != "https://www.gocomics.com/"
+                    and strips[strip]["Main_website"]
+                    != "https://comicskingdom.com/"
+                    and strips[strip]["Main_website"]
+                    != "https://www.webtoons.com/en/"
+                ):
+                    embed.add_field(
+                        name=strips[strip]["Name"], value=strips[strip]["Helptxt"]
+                    )
+            embed.add_field(
+                name="Hourly comics commands.",
+                value="Use /help hourly to see available commands for daily comics. "
+                "Post daily at 6:00 AM UTC.",
+            )
 
-                embed.add_field(
-                    name="Gocomics",
-                    value="Use /help gocomics to get all comics that are supported on the Gocomics "
-                    "website.",
-                )
-                embed.add_field(
-                    name="Comics Kingdom",
-                    value="Use /help comicskingdom to get all comics that are supported on the Comics "
-                    "Kingdom website.",
-                )
-                embed.add_field(
-                    name="Webtoons",
-                    value="Use /help webtoons to get all comics that are supported on the Webtoons "
-                    "website.",
-                )
-                for strip in strips:
-                    if (
-                        strips[strip]["Main_website"] != "https://www.gocomics.com/"
-                        and strips[strip]["Main_website"]
-                        != "https://comicskingdom.com/"
-                        and strips[strip]["Main_website"]
-                        != "https://www.webtoons.com/en/"
-                    ):
-                        embed.add_field(
-                            name=strips[strip]["Name"], value=strips[strip]["Helptxt"]
-                        )
-                embed.add_field(
-                    name="Hourly comics commands.",
-                    value="Use /help hourly to see available commands for daily comics. "
-                    "Post daily at 6:00 AM UTC.",
-                )
+            embed.add_field(
+                name="Request",
+                value="Have a request for the bot? Post your request at "
+                "https://github.com/BBArikL/BDBot/issues/new?assignees=&labels=enhancement"
+                "&template=comic-request.md&title=New+Comic+request for maximum visibility or "
+                "use `/request` to leave a message to the developer!",
+            )
+            embed.add_field(
+                name="Status",
+                value="Gives back the status of the bot.\nCommand:\n`/status`",
+            )
+            embed.add_field(
+                name="Ping",
+                value="Pong! Gives back the bot latency.\nCommand:\n`/ping`",
+            )
+            embed.add_field(
+                name="Uptime", value="Gives back the uptime.\nCommand:\n`/up`"
+            )
+            embed.add_field(
+                name="FAQ",
+                value="Have any question on the bot? This FAQ (`/faq`) might have the "
+                "response you need!",
+            )
+            embed.add_field(
+                name="New commands",
+                value="See the the newly added commands by using `/new`",
+            )
+            embed.add_field(
+                name="Git",
+                value="Gives the link of the git page.\nCommand:\n`/git`",
+            )
+            embed.add_field(
+                name="Invite",
+                value="Gives a link to add the bot to your servers!\nCommand:\n`/invite`",
+            )
+            embed.add_field(
+                name="Vote", value="Vote for the bot on Top.gg!\nCommand:\n`/vote`"
+            )
 
-                embed.add_field(
-                    name="Request",
-                    value="Have a request for the bot? Post your request at "
-                    "https://github.com/BBArikL/BDBot/issues/new?assignees=&labels=enhancement"
-                    "&template=comic-request.md&title=New+Comic+request for maximum visibility or "
-                    "use `/request` to leave a message to the developer!",
-                )
-                embed.add_field(
-                    name="Status",
-                    value="Gives back the status of the bot.\nCommand:\n`/status`",
-                )
-                embed.add_field(
-                    name="Ping",
-                    value="Pong! Gives back the bot latency.\nCommand:\n`/ping`",
-                )
-                embed.add_field(
-                    name="Uptime", value="Gives back the uptime.\nCommand:\n`/up`"
-                )
-                embed.add_field(
-                    name="FAQ",
-                    value="Have any question on the bot? This FAQ (`/faq`) might have the "
-                    "response you need!",
-                )
-                embed.add_field(
-                    name="New commands",
-                    value="See the the newly added commands by using `/new`",
-                )
-                embed.add_field(
-                    name="Git",
-                    value="Gives the link of the git page.\nCommand:\n`/git`",
-                )
-                embed.add_field(
-                    name="Invite",
-                    value="Gives a link to add the bot to your servers!\nCommand:\n`/invite`",
-                )
-                embed.add_field(
-                    name="Vote", value="Vote for the bot on Top.gg!\nCommand:\n`/vote`"
-                )
+            # Saves the embed for later use
+            utils.HELP_EMBED = embed
+        else:
+            embed = discord_utils.HELP_EMBED  # Get the cached value
 
-                # Saves the embed for later use
-                utils.HELP_EMBED = embed
-            else:
-                embed = discord_utils.HELP_EMBED  # Get the cached value
+        await discord_utils.send_embed(inter, [embed])
 
-            await discord_utils.send_embed(inter, [embed])
+    @help_group.command()
+    async def hourly(self, inter: discord.Interaction):
+        """HelpCommands for hourly commands"""
+        embed: discord.Embed
 
-        @app_commands.command()
-        async def hourly(self, inter: discord.Interaction):
-            """HelpCommands for hourly commands"""
-            embed: discord.Embed
+        if discord_utils.HOURLY_EMBED is None:
 
-            if discord_utils.HOURLY_EMBED is None:
+            embed = discord.Embed(
+                title="Daily commands!",
+                description="Date and hour are optional arguments that can specify when the the "
+                "bot should send the comic. A date should be one of the seven days "
+                "of the week and the hour a number representing the time in a 24h "
+                "clock in UTC time. If not specified, defaults to the current time "
+                "in UTC.",
+            )
+            embed.add_field(
+                name="Post",
+                value="The bot did not post the comics or you want to be sure that all comics "
+                "are correctly set up? Use `/post <date> <hour>` to force the post of "
+                "comics set at the specified time.",
+            )
+            embed.add_field(
+                name="Add",
+                value="Use `/<name_of_comic> add <date> <hour>` to add the comic to the daily list of "
+                "the channel.",
+            )
+            embed.add_field(
+                name="Add all",
+                value="Use `/add_all <date> <hour>` to add all the comics to a specific day of the "
+                "week and hour.",
+            )
+            embed.add_field(
+                name="Remove",
+                value="Use `/<name_of_comic> remove <date> <hour>` to remove the comic"
+                " from the daily list.",
+            )
+            embed.add_field(
+                name="Remove channel",
+                value="Use `/remove_channel` to unsubscribe your channel from all the comics",
+            )
+            embed.add_field(
+                name="Remove all",
+                value="Use `/remove_all` to unsubscribe your server from all the comics"
+                " in all the channels.",
+            )
+            embed.add_field(
+                name="Subscriptions",
+                value="Use `/sub` to view all subscribed comics for this server.",
+            )
+            embed.add_field(
+                name="Set role mention",
+                value="Use `/set_role @<role>` to add a role to mention for comics posts. To remove, "
+                "use `/remove_role`.",
+            )
+            embed.add_field(
+                name="Mange role mention",
+                value="Use `/set_mention daily/all` to change the mention policy for the bot in the "
+                "server. This does not affect daily comics posted at 6h AM UTC. If the mention "
+                "policy is set to 'all', the bot will mention the role at each comic post, "
+                "otherwise it will only mention the role at 6h AM UTC daily.",
+            )
+            embed.add_field(
+                name="Enable/Disable mention",
+                value="Use `/post_mention` to enable/disable server-wide the mention right before the"
+                " automatic comic posts.",
+            )
+            embed.add_field(
+                name="Get mention policy",
+                value="Use `/get_mention` to get the server's mention policy.",
+            )
 
-                embed = discord.Embed(
-                    title="Daily commands!",
-                    description="Date and hour are optional arguments that can specify when the the "
-                    "bot should send the comic. A date should be one of the seven days "
-                    "of the week and the hour a number representing the time in a 24h "
-                    "clock in UTC time. If not specified, defaults to the current time "
-                    "in UTC.",
-                )
-                embed.add_field(
-                    name="Post",
-                    value="The bot did not post the comics or you want to be sure that all comics "
-                    "are correctly set up? Use `/post <date> <hour>` to force the post of "
-                    "comics set at the specified time.",
-                )
-                embed.add_field(
-                    name="Add",
-                    value="Use `/<name_of_comic> add <date> <hour>` to add the comic to the daily list of "
-                    "the channel.",
-                )
-                embed.add_field(
-                    name="Add all",
-                    value="Use `/add_all <date> <hour>` to add all the comics to a specific day of the "
-                    "week and hour.",
-                )
-                embed.add_field(
-                    name="Remove",
-                    value="Use `/<name_of_comic> remove <date> <hour>` to remove the comic"
-                    " from the daily list.",
-                )
-                embed.add_field(
-                    name="Remove channel",
-                    value="Use `/remove_channel` to unsubscribe your channel from all the comics",
-                )
-                embed.add_field(
-                    name="Remove all",
-                    value="Use `/remove_all` to unsubscribe your server from all the comics"
-                    " in all the channels.",
-                )
-                embed.add_field(
-                    name="Subscriptions",
-                    value="Use `/sub` to view all subscribed comics for this server.",
-                )
-                embed.add_field(
-                    name="Set role mention",
-                    value="Use `/set_role @<role>` to add a role to mention for comics posts. To remove, "
-                    "use `/remove_role`.",
-                )
-                embed.add_field(
-                    name="Mange role mention",
-                    value="Use `/set_mention daily/all` to change the mention policy for the bot in the "
-                    "server. This does not affect daily comics posted at 6h AM UTC. If the mention "
-                    "policy is set to 'all', the bot will mention the role at each comic post, "
-                    "otherwise it will only mention the role at 6h AM UTC daily.",
-                )
-                embed.add_field(
-                    name="Enable/Disable mention",
-                    value="Use `/post_mention` to enable/disable server-wide the mention right before the"
-                    " automatic comic posts.",
-                )
-                embed.add_field(
-                    name="Get mention policy",
-                    value="Use `/get_mention` to get the server's mention policy.",
-                )
+            utils.HOURLY_EMBED = embed
+        else:
+            embed = discord_utils.HOURLY_EMBED
 
-                utils.HOURLY_EMBED = embed
-            else:
-                embed = discord_utils.HOURLY_EMBED
+        await discord_utils.send_embed(inter, [embed])
 
-            await discord_utils.send_embed(inter, [embed])
+    @help_group.command()
+    async def gocomics(self, inter: discord.Interaction):
+        """Gocomics help"""
+        website_name = "Gocomics"
+        website = "https://www.gocomics.com/"
+        embeds: list[discord.Embed]
 
-        @app_commands.command()
-        async def gocomics(self, inter: discord.Interaction):
-            """Gocomics help"""
-            website_name = "Gocomics"
-            website = "https://www.gocomics.com/"
-            embeds: list[discord.Embed]
+        if discord_utils.GOCOMICS_EMBED is None:
+            embeds = discord_utils.website_specific_embed(website_name, website)
+            utils.GOCOMICS_EMBED = embeds
+        else:
+            embeds = discord_utils.GOCOMICS_EMBED
 
-            if discord_utils.GOCOMICS_EMBED is None:
-                embeds = discord_utils.website_specific_embed(website_name, website)
-                utils.GOCOMICS_EMBED = embeds
-            else:
-                embeds = discord_utils.GOCOMICS_EMBED
+        await discord_utils.send_embed(inter, embeds)
 
-            await discord_utils.send_embed(inter, embeds)
+    @help_group.command()
+    async def comicskingdom(self, inter: discord.Interaction):
+        """Comics Kingdom help"""
+        website_name = "Comics Kingdom"
+        website = "https://comicskingdom.com/"
+        embeds: list[discord.Embed]
 
-        @app_commands.command()
-        async def comicskingdom(self, inter: discord.Interaction):
-            """Comics Kingdom help"""
-            website_name = "Comics Kingdom"
-            website = "https://comicskingdom.com/"
-            embeds: list[discord.Embed]
+        if discord_utils.KINGDOM_EMBED is None:
+            embeds = discord_utils.website_specific_embed(website_name, website)
+            utils.KINGDOM_EMBED = embeds
+        else:
+            embeds = discord_utils.KINGDOM_EMBED
 
-            if discord_utils.KINGDOM_EMBED is None:
-                embeds = discord_utils.website_specific_embed(website_name, website)
-                utils.KINGDOM_EMBED = embeds
-            else:
-                embeds = discord_utils.KINGDOM_EMBED
+        await discord_utils.send_embed(inter, embeds)
 
-            await discord_utils.send_embed(inter, embeds)
+    @help_group.command()
+    async def webtoons(self, inter: discord.Interaction):
+        """Webtoons help"""
+        website_name = "Webtoons"
+        website = "https://www.webtoons.com/en/"
+        embeds: list[discord.Embed]
 
-        @app_commands.command()
-        async def webtoons(self, inter: discord.Interaction):
-            """Webtoons help"""
-            website_name = "Webtoons"
-            website = "https://www.webtoons.com/en/"
-            embeds: list[discord.Embed]
+        if discord_utils.WEBTOONS_EMBED is None:
+            embeds = discord_utils.website_specific_embed(website_name, website)
+            utils.WEBTOONS_EMBED = embeds
+        else:
+            embeds = discord_utils.WEBTOONS_EMBED
 
-            if discord_utils.WEBTOONS_EMBED is None:
-                embeds = discord_utils.website_specific_embed(website_name, website)
-                utils.WEBTOONS_EMBED = embeds
-            else:
-                embeds = discord_utils.WEBTOONS_EMBED
-
-            await discord_utils.send_embed(inter, embeds)
+        await discord_utils.send_embed(inter, embeds)
 
     @app_commands.command()
     async def new(self, inter: discord.Interaction):
