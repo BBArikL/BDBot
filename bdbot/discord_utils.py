@@ -29,7 +29,7 @@ from bdbot.utils import (
     parse_all,
     save_backup,
     save_json,
-    strip_details,
+    get_all_strips,
 )
 from bdbot.Web_requests_manager import get_new_comic_details
 
@@ -425,6 +425,7 @@ def modify_database(
     :param day:
     :param hour:
     :param comic_number:
+    :param comic_name:
     :return:
     """
     data = load_json(DATABASE_FILE_PATH)
@@ -959,7 +960,7 @@ def website_specific_embed(
     :param website:
     :return: The list of embeds
     """
-    strips = strip_details
+    strips = get_all_strips()
     i = 0
     embeds: list[discord.Embed] = []
 
