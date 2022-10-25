@@ -221,7 +221,7 @@ def parameters_interpreter(
         # or random comic
         # await comic_send(inter, comic_details, action)
         return comic_send, {"inter": inter, "comic": comic_details, "action": action}
-    elif action in [Action.Add, Action.Random]:
+    elif action in [Action.Add, Action.Remove]:
         # Add or remove a comic to the daily list for a guild
         status = new_change(inter, comic_details, action, date=date, hour=hour)
         # await send_message(inter, status)
