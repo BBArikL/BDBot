@@ -19,12 +19,11 @@ def main():
     load_dotenv(utils.ENV_FILE)
 
     intents = discord.Intents.default()
-    bot: discord.ext.commands.AutoShardedBot = commands.AutoShardedBot(
+    bot: discord.ext.commands.Bot = commands.Bot(
         intents=intents,
         command_prefix="bd!",
         help_command=None,
         description="BDBot now supports slash commands! Re-invite the bot with /inv!",
-        shard_count=4,
     )
     handler = logging.FileHandler(
         filename=f'{LOGS_DIRECTORY_PATH}discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
@@ -53,7 +52,7 @@ def main():
     asyncio.run(run(bot, logger))  # Runs the bot with the private bot token
 
 
-async def run(bot: commands.AutoShardedBot, logger: logging.Logger):
+async def run(bot: commands.Bot, logger: logging.Logger):
     """Loads all the cogs and start the bot
 
     :param bot: The bot
