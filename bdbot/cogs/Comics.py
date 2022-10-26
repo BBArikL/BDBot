@@ -1,4 +1,5 @@
 import random
+import re
 from typing import Any, Callable, Union
 
 import discord
@@ -76,14 +77,16 @@ class Comic(commands.Cog):
 
         for comic in comics_details:
             comic_name: str = comics_details[comic]["Name"]
+            normalized_name = comic_name.lower().replace(" ", "_")
+            normalized_name = re.sub("[^\w\\-_]", "", normalized_name)
             comic_command = app_commands.Command(
-                name=comic_name.lower().replace(" ", "_"),
+                name=normalized_name,
                 description=comic_name,
                 callback=define_comic_callback(comics_details[comic]))
             # No built-in functions for adding autocomplete choices when creating callbacks in a factory way
             comic_command._params.update({"hour": get_possible_hours()})  # noqa: See above
 
-            self.client.add_command(comic_command)
+            self.client.tree.add_command(comic_command)
 
     # --- Start of functions --- #
     # --- If you want to add another comic, add it here between this and the 'END OF COMICS PARAMETERS'. --- #
@@ -1170,8 +1173,8 @@ class Comic(commands.Cog):
     #
     # @app_commands.command()
     # @app_commands.choices(hour=get_possible_hours())
-    # async def war_and_peas(
     #     self,
+    # async def war_and_peas(
     #     inter: discord.Interaction,
     #     action: Action,
     #     date: Date = None,
