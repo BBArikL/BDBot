@@ -5,7 +5,6 @@ from typing import Any, Callable, Union
 import discord
 from discord import app_commands
 from discord.ext import commands
-
 from bdbot.discord_utils import get_possible_hours, parameters_interpreter, NextSend
 from bdbot.utils import Action, Date, Month, get_strip_details, get_all_strips
 
@@ -84,7 +83,7 @@ class Comic(commands.Cog):
                 description=comic_name,
                 callback=define_comic_callback(comics_details[comic]))
             # No built-in functions for adding autocomplete choices when creating callbacks in a factory way
-            comic_command._params.update({"hour": get_possible_hours()})  # noqa: See above
+            comic_command._params.get("hour").choices = get_possible_hours()  # noqa: See above
 
             self.client.tree.add_command(comic_command)
 
