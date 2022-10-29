@@ -154,7 +154,7 @@ class BDBot(commands.Cog):
         manage_guild=True
     )  # Only mods can delete the role
     async def remove_role(self, inter: discord.Interaction):
-        """Deletes the role mention.Mods only"""
+        """Deletes the role mention. Mods only"""
         status = discord_utils.remove_role(inter)
         await send_message(inter, status)
 
@@ -163,7 +163,7 @@ class BDBot(commands.Cog):
     async def set_mention(
         self, inter: discord.Interaction, choice: utils.MentionPolicy
     ):
-        """Set the role mention policy.Mods only"""
+        """Set the role mention policy. Mods only"""
         status = discord_utils.set_mention(inter, choice == utils.MentionPolicy.Daily)
         await send_message(inter, status)
 
@@ -309,9 +309,9 @@ class BDBot(commands.Cog):
 
                 await discord_utils.send_embed(inter, embeds, NextSend.Deferred)
             else:
-                await send_message(inter, "This server is not subscribed to any comic!")
+                await send_message(inter, "This server is not subscribed to any comic!", next_send=NextSend.Deferred)
         else:
-            await send_message(inter, "This server is not subscribed to any comic!")
+            await send_message(inter, "This server is not subscribed to any comic!", next_send=NextSend.Deferred)
 
     @app_commands.command()
     async def ping(self, inter: discord.Interaction):
