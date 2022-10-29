@@ -414,7 +414,7 @@ def modify_database(
     hour: int = 6,
     comic_number: int = None,
     comic_name: str = None,
-):
+) -> str:
     """
     Saves the new information in the database
 
@@ -435,7 +435,7 @@ def modify_database(
         return add_comic_in_guild(
             inter, action, comic_number, data, day, hour, comic_name
         )
-    elif action == ExtendedAction.Remove_channel:
+    elif action == Action.Remove:
         return remove_comic_in_guild(inter, comic_number, data, day, hour, comic_name)
     elif (
         action == ExtendedAction.Remove_guild
@@ -448,7 +448,7 @@ def modify_database(
     ):
         return remove_channel_in_db(inter, action, data)
 
-    return None
+    return "Database action not understood!"
 
 
 def remove_channel_in_db(
@@ -679,7 +679,6 @@ def remove_comic_in_guild(
 
     # Save the database
     save_json(data)
-
     return f"{comic_name} removed successfully from the daily list!"
 
 
