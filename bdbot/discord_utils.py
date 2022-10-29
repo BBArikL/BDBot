@@ -463,9 +463,9 @@ def remove_channel_in_db(
     """
     guild_id = str(inter.guild.id)
     channel_id = ""
-    if action == "remove_channel":
+    if action == ExtendedAction.Remove_channel:
         channel_id = str(inter.channel.id)
-    elif action == "auto_remove_channel":
+    elif action == ExtendedAction.Auto_remove_channel:
         channel_id = str(inter.id)  # it is a channel
     # Remove a guild from the list
     if guild_id in data:
@@ -477,7 +477,7 @@ def remove_channel_in_db(
         return "This server is not registered for any scheduled comics!"
     # Save the database
     save_json(data)
-    return "All daily comics removed successfully from this channel!"
+    return f"All daily comics removed successfully from channel {inter.message.channel.mention}!"
 
 
 def remove_guild_in_db(
@@ -491,9 +491,9 @@ def remove_guild_in_db(
     :return:
     """
     guild_id = ""
-    if action == "remove_guild":
+    if action == ExtendedAction.Remove_guild:
         guild_id = str(inter.guild.id)
-    elif action == "auto_remove_guild":
+    elif action == ExtendedAction.Auto_remove_guild:
         guild_id = str(inter.id)  # it is a guild
     # Remove a guild from the list
     if guild_id in data:
@@ -502,7 +502,7 @@ def remove_guild_in_db(
         return "This server is not registered for any scheduled comics!"
     # Save the database
     save_json(data)
-    return "All daily comics removed successfully!"
+    return f"All daily comics removed successfully from guild {inter.guild.name}!"
 
 
 def add_comic_in_guild(
