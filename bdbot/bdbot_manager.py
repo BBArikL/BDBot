@@ -353,15 +353,6 @@ def add_comic(comics: dict):
         comics.update(final_comic_dict)
         save_json(comics, file_path=DETAILS_PATH)
         logger.info("Update done!")
-
-        # Create a command
-        logger.info("Creating command...")
-        command = create_command(final_comic_dict)
-        logger.info("Here is your command:\n'''")
-        logger.info(command)
-        logger.info(
-            f"'''\nAdd it to the end of {os.path.dirname(__file__)}/cogs/Comic.py to make the comic executable."
-        )
     else:  # Adds the details to a temporary file
         absolute_path = os.getcwd() + "/" + TEMP_FILE_PATH
         logger.info(f"Writing dictionary to a temporary location.... ({absolute_path})")
@@ -425,26 +416,6 @@ def process_inputs(
             "Helptxt": helptxt,
         }
     }
-
-
-def create_command(cmc: dict) -> str:
-    """
-
-    :param cmc:
-    :return:
-    """
-    comic = cmc.get(list(cmc.keys())[0])
-    normalized_name = comic["Name"].replace(" ", "_").lower()
-    return f"""
-    @commands.hybrid_command()
-    async def {normalized_name}(self, ctx: discord.ext.commands.Context, use: str = None, date: str = None,
-                                hour: str = None):
-        \"\"\"{comic['Name']}\"\"\"
-        comic_name = '{comic['Name'].replace(" ", "")}'
-
-        # Interprets the parameters given by the user
-        await utils.parameters_interpreter(ctx, utils.get_strip_details(comic_name), param=use, date=date, hour=hour)
-    """
 
 
 def delete(comics: dict, comic: str):
@@ -556,7 +527,7 @@ def modify(comics: dict, comic: str):
 
     while comic_property != "Return":
         comic_property = inquirer.select(
-            message=f"Which comic_property of the comic {comic_name} do you want to edit?",
+            message=f"Which property of the comic {comic_name} do you want to edit?",
             choices=[prop for prop in comic_dict] + ["Return"],
             mandatory=False,
         ).execute()
