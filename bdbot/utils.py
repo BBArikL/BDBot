@@ -302,6 +302,7 @@ def get_strip_details(comic_name: str):
 def get_all_strips():
     return strip_details
 
+
 def get_random_footer() -> str:
     """Get a random footer
 
