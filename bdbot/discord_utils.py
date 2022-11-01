@@ -1299,5 +1299,4 @@ async def on_error(
 
 
 async def is_owner(inter: discord.Interaction):
-    print(OWNER, inter.user.id)
     return inter.user.id == OWNER
