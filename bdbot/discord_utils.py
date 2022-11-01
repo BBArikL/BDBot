@@ -10,6 +10,7 @@ from typing import Any, Callable, Optional, Union
 
 import discord
 from discord import app_commands, ui
+from discord.app_commands import AppCommandError
 from discord.ext import commands
 
 from bdbot.utils import (
@@ -1255,3 +1256,42 @@ def clean_database(
 
     logger_.info(f"Cleaned the database from {nb_removed} servers")
     return nb_removed
+
+
+async def on_error(
+       inter: discord.Interaction, error: AppCommandError
+):
+    """
+
+    :param inter:
+    :param error:
+    :return:
+    """
+    # Handles errors
+    logger.error(f"Handling exception in commands:\n{error.__class__.__name__}:{error}")
+
+    if isinstance(error, app_commands.CommandNotFound):  # Command not found
+        await send_message(inter, "Invalid command. Try /help general to search for usable commands.", ephemeral=True)
+    elif isinstance(error, app_commands.MissingPermissions):
+        await send_message(inter, "You do not have the permission to do that!", ephemeral=True)
+    elif isinstance(error, app_commands.CheckFailure):
+        await send_message(
+            inter,
+            "One or more checks did not pass... Maybe you need more permissions to run this command!",
+            ephemeral=True
+        )
+    elif isinstance(error, AppCommandError):
+        await send_message(
+            inter,
+            "The command failed. Please report this issue on Github here: "
+            f"https://github.com/BBArikL/BDBot . The error is: {error.__class__.__name__}: {error}",
+            ephemeral=True
+        )
+    else:  # Not supported errors
+        await send_message(
+            inter,
+            f"Error not supported. Visit https://github.com/BBArikL/BDBot to report "
+            f"the issue. The error is: {error.__class__.__name__}: {error}",
+            ephemeral=True
+        )
+

@@ -11,7 +11,7 @@ from discord.ext import commands
 
 from bdbot import discord_utils, utils
 from bdbot.cogs.AutomaticPoster import PosterHandler
-from bdbot.discord_utils import NextSend, send_message
+from bdbot.discord_utils import NextSend, send_message, SERVER, on_error, is_owner
 from bdbot.utils import Date
 
 
@@ -26,6 +26,7 @@ class BDBot(commands.Cog):
         self.bot: commands.Bot = bot
         self.topggpy = None
         self.start_time: datetime = datetime.now(timezone.utc)
+        self.bot.tree.error(on_error)
 
     @commands.Cog.listener()
     async def on_ready(self):
