@@ -1,0 +1,11 @@
+[Unit]
+Description=BDBot
+
+[Service]
+WorkingDirectory={PACKAGE_DIRECTORY}
+User={USER}
+ExecStart=/home/{USER}/.local/bin/bdbot
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

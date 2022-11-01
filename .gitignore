@@ -152,5 +152,5 @@ cython_debug/
 .idea/
 
 # Project-specific ignores
-src/data
+data/
 *.pid

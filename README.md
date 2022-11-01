@@ -10,13 +10,6 @@ Discord bot that post bd strips. Simple as that!
 <img src="https://img.shields.io/github/license/BBArikL/BDBot" alt="License of BDBot">
 <img src="https://img.shields.io/github/last-commit/BBArikL/BDBot" alt="Last commit indicator">
 
-**IMPORTANT: Due to a misconception in how the new discord.py and discord update worked, the bot has had issues since the last day of August. A patch is on the way and will be applied before October 1st.**
-
-**IMPORTANT: If you cannot send slash commands, make sure to re-invite the bot with the link here:**
-
-https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=277025647680&scope=bot%20applications.commands
-
-
 ## Comics:
 ### Added:
 - Garfield https://www.gocomics.com/garfield/
@@ -67,6 +60,7 @@ https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permission
 
 ## Related GitHub pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
+
 Robobert: https://github.com/JTexpo/Robobert
 
 ## What to learn from this project?
@@ -98,13 +92,13 @@ Robobert: https://github.com/JTexpo/Robobert
 
 ## Current state of the project
 - Functionalities
-  - '/<comic_name>' Information embed on the requested comic.
-  - '/help' : Help embed
-  - '/git' command : Redirects to this GitHub page
-  - '/invite' command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
-  - Daily Command: use '/<name_of_comic> add/remove' to add or remove a comic from the daily list for the server.
-  - Use '/remove_all' to remove all comics from the daily list for the server.
-  - Use '/remove_channel' to remove all comics in the channel.
+  - `/<comic_name>` Information embed on the requested comic.
+  - `/help` : Help embed
+  - `/git` command : Redirects to this GitHub page
+  - `/invite` command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
+  - Daily Command: use `/<name_of_comic> add/remove` to add or remove a comic from the daily list for the server.
+  - Use `/remove_all` to remove all comics from the daily list for the server.
+  - Use `/remove_channel` to remove all comics in the channel.
   - Tell me if I forgot some commands here!
 
 - Bugs
@@ -113,13 +107,9 @@ Robobert: https://github.com/JTexpo/Robobert
 - Anything else to know?
   - Why can't I go farther than 7 comics on Comics Kingdom? Comics Kingdom use a special premium subscription plan to view all comics. There is no known way to get around it and getting the subscription and after distributing the comic for free could cause some undesirable consequences in the future.
   - Why is there only 2 images for Webtoons? Webtoons only gives out two images link to the comic in their rss feed. Finding each image link is way more complicated than this and is not in place now.
-  - The error manager ('Errors.py') might be sometimes commented out because I want to see the errors directly in the terminal. Please tell me if I forget to remove those multi-line comments.
   - You want to do a pull request to add your favourite comic? 
     - Preferably, Gocomics and Comics Kingdom comics are the easiest to implement, so try to stick with that if your comic is hosted there. 
-      - Steps:
-        1. Add a new value in misc/comics_details.json that specifies each value for the comic. (See [this README](src/misc/ADD_COMIC.md)).
-        2. Add a command in Scripts/Comics.py under the latest comic with aliases that are the same that were added to the json file and change the value of 'comic_name' to the name of the comic added.
-        3. That's it!
+      - Please see [this README](CONTRIBUTING.md) for complete instructions
   - If the comic is NOT hosted on GoComics/Comics Kingdom, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
   - Any pull requests that was not approved from another site will be automatically rejected, and you will be asked to follow the procedure cited.
   - 'Beta' and 'main'?
@@ -143,6 +133,6 @@ Robobert: https://github.com/JTexpo/Robobert
     - Discord discriminator
     - Date and time of the request
     - The request
-    - If you want to delete this information (and the associated requests), use `/request_delete`
+    - If you want to delete this information (and the associated requests), use `/delete_request`
 
 
