@@ -31,6 +31,10 @@ class BDBot(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         """On start of the bot"""
+        # Set owner id
+        app_info = await self.bot.application_info()
+        discord_utils.OWNER = self.bot.owner_id = app_info.owner.id
+
         # Change the bot activity
         await discord_utils.update_presence(self.bot)
         discord_utils.logger.info(f"Logged in as {self.bot.user}")
@@ -40,7 +44,7 @@ class BDBot(commands.Cog):
 
         # Sends this message whenever restarting the bot
         await channel.send("Bot restarted. I will now try to sync the commands.")
-        #
+
         # Sync the commands
         guild: Union[None, discord.Guild] = None
         command_tree: discord.app_commands.CommandTree = self.bot.tree
@@ -76,7 +80,7 @@ class BDBot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_private_channel_delete(
-        self, deleted_channel: discord.abc.GuildChannel
+            self, deleted_channel: discord.abc.GuildChannel
     ):
         """When a private channel is deleted"""
         discord_utils.remove_channel(
@@ -115,7 +119,7 @@ class BDBot(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add comics
     async def add_all(
-        self, inter: discord.Interaction, date: Date = None, hour: int = None
+            self, inter: discord.Interaction, date: Date = None, hour: int = None
     ):
         """Add all comics to a specific channel. Preferred way to add all comics. Mods only"""
         status = discord_utils.add_all(inter, date, hour)
@@ -162,7 +166,7 @@ class BDBot(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
     async def set_mention(
-        self, inter: discord.Interaction, choice: utils.MentionPolicy
+            self, inter: discord.Interaction, choice: utils.MentionPolicy
     ):
         """Set the role mention policy. Mods only"""
         status = discord_utils.set_mention(inter, choice == utils.MentionPolicy.Daily)
@@ -178,7 +182,7 @@ class BDBot(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
     async def post_mention(
-        self, inter: discord.Interaction, choice: utils.MentionChoice
+            self, inter: discord.Interaction, choice: utils.MentionChoice
     ):
         """Change the mention policy for the server. Mods only"""
         status = discord_utils.set_post_mention(
@@ -195,8 +199,9 @@ class BDBot(commands.Cog):
             "https://discordbotlist.com/bots/bdbot",
         )
 
-    # #@app_commands.command(hidden=True, guilds=discord_utils.SERVER)
-    @commands.is_owner()
+    @app_commands.command()
+    @app_commands.guilds(SERVER.id)
+    @app_commands.checks.check(is_owner)
     async def nb_guild(self, inter: discord.Interaction):
         """Gets the number of guilds that the bot is in (for analytics)"""
 
@@ -303,8 +308,8 @@ class BDBot(commands.Cog):
                     embeds[-1].add_field(
                         name=comic["Name"],
                         value=f"{'Each ' if match_date not in [Date.Latest, Date.Daily] else ''}{match_date.name}"
-                        f"{f' at {comic[hr]} h UTC' if match_date not in [Date.Latest] else ''} in "
-                        f"channel {comic['Channel']}",
+                              f"{f' at {comic[hr]} h UTC' if match_date not in [Date.Latest] else ''} in "
+                              f"channel {comic['Channel']}",
                     )
                     nb_fields += 1
 
@@ -332,7 +337,7 @@ class BDBot(commands.Cog):
         )
 
     # @app_commands.command(hidden=True, server=discord_utils.SERVER)
-    # @commands.is_owner()
+    # @app_commands.checks.check(is_owner)
     # async def vrequest(self, inter: discord.Interaction):
     #    """Verifies the requests"""
     #    with open(utils.REQUEST_FILE_PATH, 'rt') as f:
@@ -340,23 +345,26 @@ class BDBot(commands.Cog):
     #
     #    await send_message(inter, "Here are the requests:\n```\n" + "\n".join(r) + "\n```")
 
-    # @app_commands.command(hidden=True, server=discord_utils.SERVER)
-    # @commands.is_owner()
-    # async def nb_active(self, inter: discord.Interaction):
-    #    """Returns the number of servers using the hourly poster service"""
-    #    await send_message(inter, "There is " + str(
-    #        len(utils.load_json(utils.DATABASE_FILE_PATH))) + "servers using the hourly "
-    #                                                          "poster service.")
+    @app_commands.command()
+    @app_commands.guilds(SERVER.id)
+    @app_commands.checks.check(is_owner)
+    async def nb_active(self, inter: discord.Interaction):
+        """Returns the number of servers using the hourly poster service"""
+        await send_message(inter, "There is " + str(
+            len(utils.load_json(utils.DATABASE_FILE_PATH))) + "servers using the hourly "
+                                                              "poster service.")
 
-    # #@app_commands.command(hidden=True, server=discord_utils.SERVER)
-    # @commands.is_owner()
-    # async def kill(self, inter: discord.Interaction):
-    #    """Close the bot connection"""
-    #    await send_message(inter, "Closing bot....")
-    #    await self.bot.close()
+    @app_commands.command()
+    @app_commands.guilds(SERVER.id)
+    @app_commands.checks.check(is_owner)
+    async def kill(self, inter: discord.Interaction):
+        """Close the bot connection"""
+        await send_message(inter, "Closing bot....")
+        await self.bot.close()
 
-    # #@app_commands.command(hidden=True, server=discord_utils.SERVER)
-    @commands.is_owner()
+    @app_commands.command()
+    @app_commands.guilds(SERVER.id)
+    @app_commands.checks.check(is_owner)
     async def reload(self, inter: discord.Interaction):
         """
         Reload comics.

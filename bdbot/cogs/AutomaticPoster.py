@@ -11,6 +11,7 @@ from bdbot.discord_utils import (
     logger,
     run_blocking,
     send_chan_embed,
+    SERVER, send_message, is_owner,
 )
 from bdbot.utils import (
     COMIC_LATEST_LINKS_PATH,
@@ -25,7 +26,7 @@ from bdbot.utils import (
     parse_all,
     save_backup,
     save_json,
-    strip_details,
+    strip_details, restore_backup,
 )
 from bdbot.Web_requests_manager import get_new_comic_details
 
@@ -61,8 +62,8 @@ class PosterHandler(commands.Cog):
         await PosterHandler.post_hourly.start(self)
 
     @app_commands.command()
-    # @app_commands.command(hidden=True, guilds=SERVER)
-    # @app_commands.is_owner()
+    @app_commands.guilds(SERVER.id)
+    @commands.is_owner()
     async def force_hourly(self, inter: discord.Interaction, hour: Optional[int] = None):
         """Force the push of comics to all subscribed servers
 
@@ -113,7 +114,7 @@ class PosterHandler(commands.Cog):
         logger.info("Finished automatic poster.")
 
     def get_comic_info_for_guild(
-        self, guild_data: dict, comic_list: dict, post_days: Iterable[Date], hour: str
+            self, guild_data: dict, comic_list: dict, post_days: Iterable[Date], hour: str
     ):
         """Get the comic info for each server. This method mutate 'comic_list' for each comic.
 
@@ -151,12 +152,12 @@ class PosterHandler(commands.Cog):
                                 )
 
     def set_comic_to_post(
-        self,
-        guild_data: dict,
-        channel: str,
-        comic_list: dict,
-        comics_to_add: list[int],
-        hour: str,
+            self,
+            guild_data: dict,
+            channel: str,
+            comic_list: dict,
+            comics_to_add: list[int],
+            hour: str,
     ) -> dict:
         """Set one comic to post on one channel
 
@@ -171,10 +172,10 @@ class PosterHandler(commands.Cog):
             role: Optional[discord.Role] = None
 
             if (
-                ("only_daily" in guild_data)
-                and (not guild_data["only_daily"] or hour == "6")
-                and ("role" in guild_data)
-                and to_mention
+                    ("only_daily" in guild_data)
+                    and (not guild_data["only_daily"] or hour == "6")
+                    and ("role" in guild_data)
+                    and to_mention
             ):
                 # Check if:
                 # - A role is set
@@ -200,11 +201,11 @@ class PosterHandler(commands.Cog):
         return comic_list
 
     async def check_comics_and_post(
-        self,
-        comic_list: dict,
-        comic_details: dict,
-        comic_keys: list[str],
-        called_channel: Optional[discord.TextChannel] = None,
+            self,
+            comic_list: dict,
+            comic_details: dict,
+            comic_keys: list[str],
+            called_channel: Optional[discord.TextChannel] = None,
     ):
         """Load comics and check if they are the latest ones.
         Finally, post the comic to the channels.
@@ -277,15 +278,15 @@ class PosterHandler(commands.Cog):
             await called_channel.send("No comics to send!")
 
     async def load_channel_and_send(
-        self,
-        comic_number: int,
-        comic_list: dict,
-        channel: str,
-        embed: discord.Embed,
-        is_latest: bool,
-        available_channels: dict,
-        not_available_channels: dict,
-        called_channel: Optional[discord.TextChannel] = None,
+            self,
+            comic_number: int,
+            comic_list: dict,
+            channel: str,
+            embed: discord.Embed,
+            is_latest: bool,
+            available_channels: dict,
+            not_available_channels: dict,
+            called_channel: Optional[discord.TextChannel] = None,
     ) -> int:
         """Sends the loaded comic to the specified channel
 
@@ -308,8 +309,8 @@ class PosterHandler(commands.Cog):
             else []
         )
         if comic_number in comic_list[channel]["comics"] and (
-            comic_number not in latest_comics
-            or (comic_number in latest_comics and is_latest)
+                comic_number not in latest_comics
+                or (comic_number in latest_comics and is_latest)
         ):
             # Then, gets the channel object by its ID
             channel_id = int(comic_list[channel]["channel"])
@@ -326,18 +327,18 @@ class PosterHandler(commands.Cog):
                 )  # Use the cached channel object
 
             if (
-                chan is not None
-                and channel_id not in not_available_channels
-                and chan.permissions_for(
+                    chan is not None
+                    and channel_id not in not_available_channels
+                    and chan.permissions_for(
                     chan.guild.get_member(self.bot.user.id)
-                ).send_messages
+                    ).send_messages
             ):
                 # Makes sure that the channel is available (e.g. channel object is not None and the bot
                 # can send messages)
                 try:
                     if (
-                        not comic_list[channel]["hasBeenMentioned"]
-                        and comic_list[channel]["wantMention"]
+                            not comic_list[channel]["hasBeenMentioned"]
+                            and comic_list[channel]["wantMention"]
                     ):
                         # Checks if the channel want the original mention ('Comics for <date>, <hour> UTC @<role>')
                         if comic_list[channel]["role"] is not None:
@@ -364,16 +365,15 @@ class PosterHandler(commands.Cog):
                     error_msg = f"An error occurred in the hourly poster: {e.__class__.__name__}: {e}"
                     logger.error(error_msg)
 
-                    if (
-                        called_channel is not None
-                    ):  # Send the error message to the channel too
+                    if called_channel is not None:
+                        # Send the error message to the channel too
                         await called_channel.send(error_msg)
             else:
                 not_available_channels.update(
                     {channel_id: None}
                 )  # Remembers that the channel is not available
                 if (
-                    called_channel is not None
+                        called_channel is not None
                 ):  # If it can, send a message to the channel if an error occurred
                     if chan is None:
                         chan = comic_list[channel]["channel"]
@@ -389,9 +389,9 @@ class PosterHandler(commands.Cog):
 
         return 0  # If it encountered an issue or there is no comic to send, return 0
 
-    # @app_commands.command()
-    # @app_commands.checks.has_permissions(manage_guild=True)
-    # @app_commands.guild_only()
+    @app_commands.command()
+    @app_commands.checks.has_permissions(manage_guild=True)
+    @app_commands.guild_only()
     async def post(self, ctx: commands.Context, date: str = None, hour: str = None):
         """Force the comic post for a single server.
 
@@ -435,40 +435,43 @@ class PosterHandler(commands.Cog):
         else:  # Warns that no comic are available
             await ctx.send("This server is not subscribed to any comic!")
 
-    # # @app_commands.command(hidden=True, guilds=SERVER)
-    # # @app_commands.is_owner()
-    # async def update_database_clean(self, ctx: commands.Context):
-    #     """Clean the database from servers that don't have any comics saved
-    #
-    #     :param ctx: The context of the where the command was called.
-    #     """
-    #     nb_removed = clean_database(strict=True, logger=logger)
-    #
-    #     await ctx.send(f'Cleaned the database from {nb_removed} inactive server(s).')
-    #
-    # # @app_commands.command(hidden=True, guilds=SERVER)
-    # # @app_commands.is_owner()
-    # async def restore_last_backup(self, ctx: commands.Context):
-    #     """Restore a previous backup
-    #
-    #     :param ctx: The context of the where the command was called.
-    #     """
-    #     # Stops the database cleaning and restore the last backup
-    #     self.do_cleanup = False
-    #     restore_backup()
-    #
-    #     await ctx.send("Last backup restored! Please reboot the bot to re-enable automatic cleanups!")
+    @app_commands.command()
+    @app_commands.guilds(SERVER.id)
+    @app_commands.checks.check(is_owner)
+    async def update_database_clean(self, inter: discord.Interaction):
+        """Clean the database from servers that don't have any comics saved
 
-    # @app_commands.command()
-    # @app_commands.checks.is_owner()
-    # async def do_backup(self, ctx: commands.Context):
-    #    """Force a backup
-    #
-    #    :param ctx: The context of the where the command was called.
-    #    """
-    #    # Force a backup
-    #    save_backup(load_json(DATABASE_FILE_PATH), logger)
-    #    await ctx.send("Backup done!")
+        :param inter: The context of the where the command was called.
+        """
+        nb_removed = clean_database(strict=True, logger_=logger)
+
+        await send_message(inter, f'Cleaned the database from {nb_removed} inactive server(s).')
+
+    @app_commands.command()
+    @app_commands.guilds(SERVER.id)
+    @commands.is_owner()
+    async def restore_last_backup(self, inter: discord.Interaction):
+        """Restore a previous backup
+
+        :param inter: The context of the where the command was called.
+        """
+        # Stops the database cleaning and restore the last backup
+        self.do_cleanup = False
+        restore_backup()
+
+        await send_message(inter, "Last backup restored! Please reboot the bot to re-enable automatic cleanups!")
+
+    @app_commands.command()
+    @app_commands.guilds(SERVER.id)
+    @commands.is_owner()
+    async def do_backup(self, inter: discord.Interaction):
+        """Force a backup
+
+       :param inter: The context of the where the command was called.
+       """
+        # Force a backup
+        save_backup(load_json(DATABASE_FILE_PATH), logger)
+        await send_message(inter, "Backup done!")
 
 
 async def setup(bot: commands.Bot):

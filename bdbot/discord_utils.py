@@ -13,6 +13,7 @@ from discord import app_commands, ui
 from discord.app_commands import AppCommandError
 from discord.ext import commands
 
+from bdbot.Web_requests_manager import get_new_comic_details
 from bdbot.utils import (
     DATABASE_FILE_PATH,
     DETAILS_PATH,
@@ -32,7 +33,6 @@ from bdbot.utils import (
     save_json,
     get_all_strips,
 )
-from bdbot.Web_requests_manager import get_new_comic_details
 
 SERVER: Optional[discord.Object] = None
 HELP_EMBED: Optional[discord.Embed] = None
@@ -42,6 +42,7 @@ FAQ_EMBED: Optional[discord.Embed] = None
 GOCOMICS_EMBED: Optional[list[discord.Embed]] = None
 KINGDOM_EMBED: Optional[list[discord.Embed]] = None
 WEBTOONS_EMBED: Optional[list[discord.Embed]] = None
+OWNER: Optional[int] = None
 logger = logging.getLogger("discord")
 
 
@@ -1296,3 +1297,7 @@ async def on_error(
             ephemeral=True
         )
 
+
+async def is_owner(inter: discord.Interaction):
+    print(OWNER, inter.user.id)
+    return inter.user.id == OWNER

@@ -70,8 +70,6 @@ async def run(bot: commands.Bot, logger: logging.Logger):
         )
         discord_utils.SERVER = None
 
-    logger.info("Cogs successfully loaded!")
-
     logger.info("Loading comic details...")
     utils.strip_details = utils.load_json(utils.DETAILS_PATH)
     logger.info("Loaded comic details!")
@@ -88,6 +86,8 @@ async def run(bot: commands.Bot, logger: logging.Logger):
     for filename in os.listdir("cogs"):
         if filename.endswith("py") and filename != "__init__.py":
             await bot.load_extension(f"bdbot.cogs.{filename[:-3]}")
+
+    logger.info("Cogs successfully loaded!")
 
     async with bot:
         await bot.start(os.getenv("TOKEN"))
