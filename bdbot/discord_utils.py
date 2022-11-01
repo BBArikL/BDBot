@@ -1179,9 +1179,10 @@ async def send_message(
     message: Optional[str] = None,
     embed: Optional[discord.Embed] = None,
     next_send: NextSend = NextSend.Normal,
+    **kwargs,
 ):
     resp = await ResponseSender.from_next_send(inter, next_send)
-    await resp.send_message(content=message, embed=embed)
+    await resp.send_message(content=message, embed=embed, **kwargs)
 
 
 def clean_database(
