@@ -11,6 +11,7 @@ from discord.ext import commands
 
 from bdbot import discord_utils, utils
 from bdbot.cogs.AutomaticPoster import PosterHandler
+from bdbot.cogs.Comics import Comic
 from bdbot.discord_utils import NextSend, send_message, SERVER, on_error, is_owner
 from bdbot.utils import Date
 
@@ -372,11 +373,13 @@ class BDBot(commands.Cog):
         :param inter: Discord message context.
         """
         await send_message(inter, "Reloading comics....")
+        await self.bot.remove_cog("Comic")
         utils.strip_details = utils.load_json(utils.DETAILS_PATH)
+        await self.bot.add_cog(Comic(self.bot))
         utils.GOCOMICS_EMBED = None
         utils.KINGDOM_EMBED = None
         utils.WEBTOONS_EMBED = None
-        await send_message(inter, "Reloaded comics!")
+        await send_message(inter, "Reloaded comics!", next_send=NextSend.Followup)
 
     # ---- End of commands ----#
     # ---- End of BDBot ----#
@@ -391,8 +394,8 @@ class BotRequest(ui.Modal, title="Request"):
         utils.save_request(
             self.request.value, interaction.user.name, interaction.user.discriminator
         )
-        await send_message(interaction, "Request saved! Thank you for using BDBot!")
+        await send_message(interaction, "Request saved! Thank you for using BDBot!", ephemeral=True)
 
 
-async def setup(client):  # Initialize the cog
-    await client.add_cog(BDBot(client))
+async def setup(bot: discord.ext.commands.Bot):  # Initialize the cog
+    await bot.add_cog(BDBot(bot))

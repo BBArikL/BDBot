@@ -70,7 +70,7 @@ class Comic(commands.Cog):
 
         :param bot: The discord Bot
         """
-        self.client = bot
+        self.bot = bot
 
         comics_details = get_all_strips()
 
@@ -85,7 +85,16 @@ class Comic(commands.Cog):
             # No built-in functions for adding autocomplete choices when creating callbacks in a factory way
             comic_command._params.get("hour").choices = get_possible_hours()  # noqa: See above
 
-            self.client.tree.add_command(comic_command)
+            self.bot.tree.add_command(comic_command)
+
+    async def cog_unload(self) -> None:
+        comics_details = get_all_strips()
+
+        for comic in comics_details:
+            comic_name: str = comics_details[comic]["Name"]
+            normalized_name = comic_name.lower().replace(" ", "_")
+            normalized_name = re.sub("[^\\w\\-_]", "", normalized_name)
+            self.bot.tree.remove_command(normalized_name)
 
     # --- Start of functions --- #
     @app_commands.command()
