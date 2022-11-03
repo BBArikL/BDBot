@@ -11,7 +11,7 @@ from bdbot.discord_utils import (
     logger,
     run_blocking,
     send_chan_embed,
-    SERVER, send_message, is_owner,
+    SERVER, send_message, is_owner, NextSend,
 )
 from bdbot.utils import (
     COMIC_LATEST_LINKS_PATH,
@@ -47,9 +47,9 @@ class PosterHandler(commands.Cog):
 
     # @app_commands.command(hidden=True, guilds=SERVER)
     # @app_commands.is_owner()
-    async def start_hourly(self, ctx: commands.Context):
+    async def start_hourly(self, inter: discord.Interaction):
         """Starts the PosterHandler loop"""
-        await ctx.send("Hourly loop started! Hourly comics are posted at each hour.")
+        await send_message(inter, "Hourly loop started! Hourly comics are posted at each hour.")
 
         await PosterHandler.wait_for_next_hour(self)
 
@@ -392,17 +392,17 @@ class PosterHandler(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
     @app_commands.guild_only()
-    async def post(self, ctx: commands.Context, date: str = None, hour: str = None):
+    async def post(self, inter: discord.Interaction, date: str = None, hour: str = None):
         """Force the comic post for a single server.
 
-        :param ctx: The context of the where the command was called.
+        :param inter: The interaction of the where the command was called.
         :param date: The date to simulate
         :param hour: The hour to simulate
         """
         comic_data: dict = load_json(DATABASE_FILE_PATH)
         comic_list: dict = {}
         comic_keys: list[str] = list(strip_details.keys())
-        guild_id: str = str(ctx.guild.id)
+        guild_id: str = str(inter.guild.id)
 
         if guild_id in comic_data:
             # Gets date and hour of force post
@@ -412,7 +412,8 @@ class PosterHandler(commands.Cog):
                 default_date=get_today(),
                 default_hour=get_hour(),
             )
-            await ctx.send(
+            await send_message(
+                inter,
                 f"Looking for comics to post for date: {final_date} at "
                 f"{final_hour}h UTC"
             )
@@ -428,12 +429,12 @@ class PosterHandler(commands.Cog):
             # If there is comic to send
             if len(comic_list) > 0:
                 await self.check_comics_and_post(
-                    comic_list, strip_details, comic_keys, called_channel=ctx.channel
+                    comic_list, strip_details, comic_keys, called_channel=inter.channel()
                 )
             else:
-                await ctx.send("No comics to send!")
+                await send_message(inter, "No comics to send!", next_send=NextSend.Followup)
         else:  # Warns that no comic are available
-            await ctx.send("This server is not subscribed to any comic!")
+            await send_message(inter, "This server is not subscribed to any comic!")
 
     @app_commands.command()
     @app_commands.guilds(SERVER.id)
