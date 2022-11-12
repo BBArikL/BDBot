@@ -1,3 +1,4 @@
+import asyncio
 import math
 import os
 import re
@@ -7,12 +8,13 @@ from typing import Union
 import discord
 import topgg
 from discord import app_commands, ui
+from discord.app_commands import AppCommand
 from discord.ext import commands
 
 from bdbot import discord_utils, utils
 from bdbot.cogs.AutomaticPoster import PosterHandler
 from bdbot.cogs.Comics import Comic
-from bdbot.discord_utils import NextSend, send_message, SERVER, on_error, is_owner
+from bdbot.discord_utils import SERVER, NextSend, is_owner, on_error, send_message
 from bdbot.utils import Date
 
 
@@ -81,7 +83,7 @@ class BDBot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_private_channel_delete(
-            self, deleted_channel: discord.abc.GuildChannel
+        self, deleted_channel: discord.abc.GuildChannel
     ):
         """When a private channel is deleted"""
         discord_utils.remove_channel(
@@ -94,7 +96,9 @@ class BDBot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_shard_connect(self, shard_id: int):
-        discord_utils.logger.info(f"Shard of id {shard_id} has been connected to discord gateway.")
+        discord_utils.logger.info(
+            f"Shard of id {shard_id} has been connected to discord gateway."
+        )
 
     @commands.Cog.listener()
     async def on_disconnect(self):
@@ -102,7 +106,9 @@ class BDBot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_shard_disconnect(self, shard_id: int):
-        discord_utils.logger.info(f"Shard of id {shard_id} has been disconnected. Retrying to reconnect...")
+        discord_utils.logger.info(
+            f"Shard of id {shard_id} has been disconnected. Retrying to reconnect..."
+        )
 
     @app_commands.command()
     async def git(self, inter: discord.Interaction):
@@ -120,7 +126,7 @@ class BDBot(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add comics
     async def add_all(
-            self, inter: discord.Interaction, date: Date = None, hour: int = None
+        self, inter: discord.Interaction, date: Date = None, hour: int = None
     ):
         """Add all comics to a specific channel. Preferred way to add all comics. Mods only"""
         status = discord_utils.add_all(inter, date, hour)
@@ -167,7 +173,7 @@ class BDBot(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
     async def set_mention(
-            self, inter: discord.Interaction, choice: utils.MentionPolicy
+        self, inter: discord.Interaction, choice: utils.MentionPolicy
     ):
         """Set the role mention policy. Mods only"""
         status = discord_utils.set_mention(inter, choice == utils.MentionPolicy.Daily)
@@ -183,7 +189,7 @@ class BDBot(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
     async def post_mention(
-            self, inter: discord.Interaction, choice: utils.MentionChoice
+        self, inter: discord.Interaction, choice: utils.MentionChoice
     ):
         """Change the mention policy for the server. Mods only"""
         status = discord_utils.set_post_mention(
@@ -309,16 +315,24 @@ class BDBot(commands.Cog):
                     embeds[-1].add_field(
                         name=comic["Name"],
                         value=f"{'Each ' if match_date not in [Date.Latest, Date.Daily] else ''}{match_date.name}"
-                              f"{f' at {comic[hr]} h UTC' if match_date not in [Date.Latest] else ''} in "
-                              f"channel {comic['Channel']}",
+                        f"{f' at {comic[hr]} h UTC' if match_date not in [Date.Latest] else ''} in "
+                        f"channel {comic['Channel']}",
                     )
                     nb_fields += 1
 
                 await discord_utils.send_embed(inter, embeds, NextSend.Deferred)
             else:
-                await send_message(inter, "This server is not subscribed to any comic!", next_send=NextSend.Deferred)
+                await send_message(
+                    inter,
+                    "This server is not subscribed to any comic!",
+                    next_send=NextSend.Deferred,
+                )
         else:
-            await send_message(inter, "This server is not subscribed to any comic!", next_send=NextSend.Deferred)
+            await send_message(
+                inter,
+                "This server is not subscribed to any comic!",
+                next_send=NextSend.Deferred,
+            )
 
     @app_commands.command()
     async def ping(self, inter: discord.Interaction):
@@ -337,29 +351,66 @@ class BDBot(commands.Cog):
             f"The bot has been up for {delta.days} days, {hours} hours, {minutes} minutes and {seconds} seconds.",
         )
 
-    # @app_commands.command(hidden=True, server=discord_utils.SERVER)
-    # @app_commands.checks.check(is_owner)
-    # async def vrequest(self, inter: discord.Interaction):
-    #    """Verifies the requests"""
-    #    with open(utils.REQUEST_FILE_PATH, 'rt') as f:
-    #        r = f.readlines()
-    #
-    #    await send_message(inter, "Here are the requests:\n```\n" + "\n".join(r) + "\n```")
+    @app_commands.command()
+    @app_commands.guilds(SERVER.id)
+    @app_commands.checks.check(is_owner)
+    async def reset_all_commands(self, inter: discord.Interaction):
+        """Reset all commands"""
+        await send_message(inter, "Resetting all commands, this might take a while....")
+
+        error_msg = "An error occurred while resetting commands:"
+        try:
+            # Clearing bot-aware commands
+            self.bot.commands.clear()
+            self.bot.tree.clear_commands(guild=None)
+            self.bot.tree.clear_commands(guild=SERVER)
+        except Exception as e:
+            discord_utils.logger.error(f"{error_msg} {e}")
+
+        all_commands = await self.bot.tree.fetch_commands()
+        for comm in all_commands:
+            await asyncio.sleep(0.5)
+            try:
+                await comm.delete()
+            except Exception as e:
+                discord_utils.logger.error(f"{error_msg} {e}")
+
+            try:
+                self.bot.tree.remove_command(comm.name, type=AppCommand)
+            except Exception as e:
+                discord_utils.logger.error(f"{error_msg} {e}")
+
+        server_commands = await self.bot.tree.sync(guild=SERVER)
+        global_commands = await self.bot.tree.sync()
+        await send_message(
+            inter,
+            f"All commands reset!\n"
+            f"Remaining commands:\n"
+            f" - Server commands: {len(server_commands)}\n"
+            f" - Global commands: {len(global_commands)}\n"
+            f" - Discord commands: {len(await self.bot.tree.fetch_commands())}",
+            next_send=NextSend.Followup,
+        )
 
     @app_commands.command()
     @app_commands.guilds(SERVER.id)
     @app_commands.checks.check(is_owner)
     async def nb_active(self, inter: discord.Interaction):
         """Returns the number of servers using the hourly poster service"""
-        await send_message(inter, "There is " + str(
-            len(utils.load_json(utils.DATABASE_FILE_PATH))) + "servers using the hourly "
-                                                              "poster service.")
+        await send_message(
+            inter,
+            "There is "
+            + str(len(utils.load_json(utils.DATABASE_FILE_PATH)))
+            + "servers using the hourly "
+            "poster service.",
+        )
 
     @app_commands.command()
     @app_commands.guilds(SERVER.id)
     @app_commands.checks.check(is_owner)
     async def kill(self, inter: discord.Interaction):
         """Close the bot connection"""
+        discord_utils.logger.info("Closing bot....")
         await send_message(inter, "Closing bot....")
         await self.bot.close()
 
@@ -394,7 +445,9 @@ class BotRequest(ui.Modal, title="Request"):
         utils.save_request(
             self.request.value, interaction.user.name, interaction.user.discriminator
         )
-        await send_message(interaction, "Request saved! Thank you for using BDBot!", ephemeral=True)
+        await send_message(
+            interaction, "Request saved! Thank you for using BDBot!", ephemeral=True
+        )
 
 
 async def setup(bot: discord.ext.commands.Bot):  # Initialize the cog

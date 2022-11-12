@@ -13,7 +13,6 @@ from discord import app_commands, ui
 from discord.app_commands import AppCommandError
 from discord.ext import commands
 
-from bdbot.Web_requests_manager import get_new_comic_details
 from bdbot.utils import (
     DATABASE_FILE_PATH,
     DETAILS_PATH,
@@ -23,6 +22,7 @@ from bdbot.utils import (
     Month,
     clean_url,
     date_to_db,
+    get_all_strips,
     get_date,
     get_first_date,
     get_link,
@@ -31,8 +31,8 @@ from bdbot.utils import (
     parse_all,
     save_backup,
     save_json,
-    get_all_strips,
 )
+from bdbot.Web_requests_manager import get_new_comic_details
 
 SERVER: Optional[discord.Object] = None
 HELP_EMBED: Optional[discord.Embed] = None
@@ -479,7 +479,10 @@ def remove_channel_in_db(
         return "This server is not registered for any scheduled comics!"
     # Save the database
     save_json(data)
-    return f"All daily comics removed successfully from channel {inter.message.channel.mention}!"
+    return (
+        f"All daily comics removed successfully from channel"
+        f" {inter.message.channel.mention if action == ExtendedAction.Remove_channel else ''}!"
+    )
 
 
 def remove_guild_in_db(
@@ -504,7 +507,10 @@ def remove_guild_in_db(
         return "This server is not registered for any scheduled comics!"
     # Save the database
     save_json(data)
-    return f"All daily comics removed successfully from guild {inter.guild.name}!"
+    return (
+        f"All daily comics removed successfully from guild "
+        f"{inter.guild.name if action == ExtendedAction.Remove_guild else ''}!"
+    )
 
 
 def add_comic_in_guild(
@@ -774,13 +780,13 @@ def get_mention(inter: discord.Interaction, bot: commands.Bot) -> (str, str):
                 "",
             )
         role: discord.Role = discord.Guild.get_role(
-            bot.get_guild(data[gid]["server_id"]), int(data[gid]["Role"])
+            bot.get_guild(data[gid]["server_id"]), int(data[gid].get("Role", 0))
         )
         role_mention: str
         if role is not None:
             role_mention = role.name
         else:
-            role_mention = data[gid]["Role"]
+            role_mention = data[gid].get("Role", 0)
 
         if only_daily in data[gid]:
             men = f"{role_mention} only for daily comics posts"
@@ -1226,11 +1232,14 @@ def clean_database(
             to_remove = True
             channels = data[guild]["channels"]
             for chan in channels:
+
+                # Check if the channel has any latest comics scheduled
                 if "latest" in channels[chan]:
                     if len(channels[chan]["latest"]) != 0:
                         to_remove = False
                         break
 
+                # Check if the channel has any comics scheduled at a fixed hour
                 if "date" in channels[chan]:
                     dates = channels[chan]["date"]
                     for date in dates:
@@ -1260,9 +1269,7 @@ def clean_database(
     return nb_removed
 
 
-async def on_error(
-       inter: discord.Interaction, error: AppCommandError
-):
+async def on_error(inter: discord.Interaction, error: AppCommandError):
     """
 
     :param inter:
@@ -1273,28 +1280,34 @@ async def on_error(
     logger.error(f"Handling exception in commands:\n{error.__class__.__name__}:{error}")
 
     if isinstance(error, app_commands.CommandNotFound):  # Command not found
-        await send_message(inter, "Invalid command. Try /help general to search for usable commands.", ephemeral=True)
+        await send_message(
+            inter,
+            "Invalid command. Try /help general to search for usable commands.",
+            ephemeral=True,
+        )
     elif isinstance(error, app_commands.MissingPermissions):
-        await send_message(inter, "You do not have the permission to do that!", ephemeral=True)
+        await send_message(
+            inter, "You do not have the permission to do that!", ephemeral=True
+        )
     elif isinstance(error, app_commands.CheckFailure):
         await send_message(
             inter,
             "One or more checks did not pass... Maybe you need more permissions to run this command!",
-            ephemeral=True
+            ephemeral=True,
         )
     elif isinstance(error, AppCommandError):
         await send_message(
             inter,
             "The command failed. Please report this issue on Github here: "
             f"https://github.com/BBArikL/BDBot . The error is: {error.__class__.__name__}: {error}",
-            ephemeral=True
+            ephemeral=True,
         )
     else:  # Not supported errors
         await send_message(
             inter,
             f"Error not supported. Visit https://github.com/BBArikL/BDBot to report "
             f"the issue. The error is: {error.__class__.__name__}: {error}",
-            ephemeral=True
+            ephemeral=True,
         )
 
 
