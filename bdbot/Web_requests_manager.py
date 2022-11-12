@@ -23,6 +23,7 @@ from bdbot.utils import (
     load_json,
     save_json,
 )
+
 logger = logging.getLogger("discord")
 
 # Utilities for web requests to have the fresh comic details
@@ -158,17 +159,18 @@ def get_comic_info_date(
                 logger.error(f"An html error occurred: {e}")
                 html = None
 
-            # Extracts the title of the comic
-            details["title"] = extract_meta_content(html, "title")
+            if html is not None or html != "":
+                # Extracts the title of the comic
+                details["title"] = extract_meta_content(html, "title")
 
-            # Finds the url of the image
-            details["img_url"] = extract_meta_content(html, "image")
+                # Finds the url of the image
+                details["img_url"] = extract_meta_content(html, "image")
 
-            # Finds the final url
-            details["url"] = extract_meta_content(html, "url")
+                # Finds the final url
+                details["url"] = extract_meta_content(html, "url")
 
-            if details["img_url"] is None:  # Go back one day
-                comic_date = comic_date - timedelta(days=1)
+                if details["img_url"] is None:  # Go back one day
+                    comic_date = comic_date - timedelta(days=1)
 
             if i >= MAX_TRIES and details["img_url"] is None:
                 # If it hasn't found anything
@@ -409,36 +411,41 @@ def get_comic_info_rss(
             # Webtoon
             details["url"] = main_website + f"&episode_no={comic_date}"
     else:
-        feed = Parser(xml=get(rss_site).text, limit=comic_nb + 1).parse().feed[comic_nb]
-        # Get information
-        tz: str
-        weekday: str
-        if strip_details["Main_website"] == "https://www.webtoons.com/en/":
-            if feed.title != "":
-                details["title"] = f"{feed.title}"
-            weekday = "A"
-            tz = "Z"
+        site_content = get(rss_site).text
+
+        if site_content is not None and site_content != "":
+            feed = Parser(xml=site_content, limit=comic_nb + 1).parse().feed[comic_nb]
+            # Get information
+            tz: str
+            weekday: str
+            if strip_details["Main_website"] == "https://www.webtoons.com/en/":
+                if feed.title != "":
+                    details["title"] = f"{feed.title}"
+                weekday = "A"
+                tz = "Z"
+            else:
+                weekday = "a"
+                tz = "z"
+
+            new_date = datetime.strptime(
+                feed.publish_date, f"%{weekday}, %d %b %Y %H:%M:%S %{tz}"
+            )
+            details["day"] = new_date.strftime("%d")
+            details["month"] = new_date.strftime("%m")
+            details["year"] = new_date.strftime("%Y")
+
+            details["url"] = feed.link
+
+            img_index = 0
+            if (
+                len(feed.description_images) > 1
+            ):  # general check for a second image to embed
+                details["sub_img_url"] = feed.description_images[img_index].source
+                img_index += 1
+
+            details["img_url"] = feed.description_images[img_index].source
         else:
-            weekday = "a"
-            tz = "z"
-
-        new_date = datetime.strptime(
-            feed.publish_date, f"%{weekday}, %d %b %Y %H:%M:%S %{tz}"
-        )
-        details["day"] = new_date.strftime("%d")
-        details["month"] = new_date.strftime("%m")
-        details["year"] = new_date.strftime("%Y")
-
-        details["url"] = feed.link
-
-        img_index = 0
-        if (
-            len(feed.description_images) > 1
-        ):  # general check for a second image to embed
-            details["sub_img_url"] = feed.description_images[img_index].source
-            img_index += 1
-
-        details["img_url"] = feed.description_images[img_index].source
+            details = None
 
     if details is not None:
         finalize_comic(strip_details, details, latest_check)
