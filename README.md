@@ -98,8 +98,8 @@ There are 2 ways to set up scheduled comics:
 
 ## Current state of the project
 - Functionalities
-  - `/<comic_name>` Information embed on the requested comic.
-  - `/help` : Help embed
+  - `/<comic_name>` Use comic <comic_name>
+  - `/help general` : Help embed
   - `/git` command : Redirects to this GitHub page
   - `/invite` command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
   - Daily Command: use `/<name_of_comic> add/remove` to add or remove a comic from the daily list for the server.

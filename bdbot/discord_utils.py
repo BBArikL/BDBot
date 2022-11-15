@@ -36,7 +36,7 @@ from bdbot.Web_requests_manager import get_new_comic_details
 
 SERVER: Optional[discord.Object] = None
 HELP_EMBED: Optional[discord.Embed] = None
-HOURLY_EMBED: Optional[discord.Embed] = None
+SCHEDULE_EMBED: Optional[discord.Embed] = None
 NEW_EMBED: Optional[discord.Embed] = None
 FAQ_EMBED: Optional[discord.Embed] = None
 GOCOMICS_EMBED: Optional[list[discord.Embed]] = None

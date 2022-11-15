@@ -3,7 +3,7 @@ import math
 import os
 import re
 from datetime import datetime, timezone
-from typing import Union
+from typing import Optional, Union
 
 import discord
 import topgg
@@ -109,6 +109,25 @@ class BDBot(commands.Cog):
         discord_utils.logger.info(
             f"Shard of id {shard_id} has been disconnected. Retrying to reconnect..."
         )
+
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild: discord.Guild):
+        message_channel: Optional[discord.TextChannel] = None
+        channels = guild.text_channels
+
+        for channel in channels:
+            if channel.permissions_for(
+                guild.get_member(self.bot.user.id)
+            ).send_messages:
+                message_channel = channel
+                break
+
+        if message_channel is not None:
+            await message_channel.send(
+                "Thanks for choosing BDBot! Use `/help general` for a list of commands and"
+                " comics available and `/help schedule` to know how to set up your server to"
+                " receive comics automatically!"
+            )
 
     @app_commands.command()
     async def git(self, inter: discord.Interaction):

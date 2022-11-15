@@ -50,7 +50,7 @@ class HelpCommands(commands.Cog):
                     )
             embed.add_field(
                 name="Hourly comics commands.",
-                value="Use /help hourly to see available commands for daily comics. "
+                value="Use /help schedule to see available commands for daily comics. "
                 "Post daily at 6:00 AM UTC.",
             )
 
@@ -101,11 +101,11 @@ class HelpCommands(commands.Cog):
         await discord_utils.send_embed(inter, [embed])
 
     @help_group.command()
-    async def hourly(self, inter: discord.Interaction):
-        """Get help to setup an automatic comic post"""
+    async def schedule(self, inter: discord.Interaction):
+        """Get help to schedule an automatic comic post"""
         embed: discord.Embed
 
-        if discord_utils.HOURLY_EMBED is None:
+        if discord_utils.SCHEDULE_EMBED is None:
 
             embed = discord.Embed(
                 title="Daily commands!",
@@ -178,7 +178,7 @@ class HelpCommands(commands.Cog):
 
             utils.HOURLY_EMBED = embed
         else:
-            embed = discord_utils.HOURLY_EMBED
+            embed = discord_utils.SCHEDULE_EMBED
 
         await discord_utils.send_embed(inter, [embed])
 
@@ -324,7 +324,7 @@ class HelpCommands(commands.Cog):
             )
             embed.add_field(
                 name="How can I receive scheduled comics?",
-                value="You can use `/help hourly` to get help on how to schedule comics.",
+                value="You can use `/help schedule` to get help on how to schedule comics.",
             )
             embed.add_field(
                 name="What information is collected by using this bot?",
