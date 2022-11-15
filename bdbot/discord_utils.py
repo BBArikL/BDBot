@@ -1057,7 +1057,7 @@ async def send_chan_embed(channel: discord.TextChannel, embed: discord.Embed):
 
 
 def get_possible_hours():
-    return [app_commands.Choice(name=str(h), value=h) for h in range(1, 25)]
+    return [app_commands.Choice(name=str(h), value=h) for h in range(0, 24)]
 
 
 def get_possible_days():
