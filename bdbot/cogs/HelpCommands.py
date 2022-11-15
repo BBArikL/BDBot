@@ -7,6 +7,7 @@ from bdbot import discord_utils, utils
 
 class HelpCommands(commands.Cog):
     """Class responsible for sending help embeds"""
+
     help_group = app_commands.Group(name="help", description="Help commands")
 
     def __init__(self, bot: commands.Bot):
@@ -17,7 +18,7 @@ class HelpCommands(commands.Cog):
 
     @help_group.command()
     async def general(self, inter: discord.Interaction):
-        """HelpCommands for BDBot"""
+        """Help commands for BDBot"""
         embed: discord.Embed
         if discord_utils.HELP_EMBED is None:
             strips = utils.strip_details
@@ -41,10 +42,8 @@ class HelpCommands(commands.Cog):
             for strip in strips:
                 if (
                     strips[strip]["Main_website"] != "https://www.gocomics.com/"
-                    and strips[strip]["Main_website"]
-                    != "https://comicskingdom.com/"
-                    and strips[strip]["Main_website"]
-                    != "https://www.webtoons.com/en/"
+                    and strips[strip]["Main_website"] != "https://comicskingdom.com/"
+                    and strips[strip]["Main_website"] != "https://www.webtoons.com/en/"
                 ):
                     embed.add_field(
                         name=strips[strip]["Name"], value=strips[strip]["Helptxt"]
@@ -103,7 +102,7 @@ class HelpCommands(commands.Cog):
 
     @help_group.command()
     async def hourly(self, inter: discord.Interaction):
-        """HelpCommands for hourly commands"""
+        """Get help to setup an automatic comic post"""
         embed: discord.Embed
 
         if discord_utils.HOURLY_EMBED is None:
@@ -111,9 +110,14 @@ class HelpCommands(commands.Cog):
             embed = discord.Embed(
                 title="Daily commands!",
                 description="Date and hour are optional arguments that can specify when the the "
-                "bot should send the comic. A date should be one of the seven days "
-                "of the week and the hour a number representing the time in a 24h "
-                "clock in UTC time. If not specified, defaults to the current time "
+                "bot should send the comic. \n"
+                "There are 2 ways to set up scheduled comics:\n"
+                "Latest: Get only the latest comics when they are posted, no need to set up an "
+                "exact day of the week or an hour of the day.\n"
+                "Regular: Get the comic at a regular day and hour of the week."
+                " A date should be one of the seven days of the week and the "
+                "hour a number representing the time in a 24h clock in UTC time"
+                " (0h to 23h). If not specified, defaults to the current time "
                 "in UTC.",
             )
             embed.add_field(

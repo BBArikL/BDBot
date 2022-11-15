@@ -88,7 +88,13 @@ Robobert: https://github.com/JTexpo/Robobert
 ![specific comic](https://github.com/BBArikL/BDBot/blob/assets/comic-demo-3.png)
 
 - Subscribe to a comic
+There are 2 ways to set up scheduled comics: 
+  - Latest: Get only the latest comics when they are posted, no need to set up an exact day of the week or an hour of the day.
+  - Regular: Get the comic at a regular day and hour of the week. A date should be one of the seven days of the week and the hour a number representing the time in a 24h clock in UTC time (0h to 23h). If not specified, defaults to the current time in UTC.
+
 ![comic subscription](https://github.com/BBArikL/BDBot/blob/assets/comic-demo-4.png)
+
+
 
 ## Current state of the project
 - Functionalities
