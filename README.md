@@ -88,12 +88,18 @@ Robobert: https://github.com/JTexpo/Robobert
 ![specific comic](https://github.com/BBArikL/BDBot/blob/assets/comic-demo-3.png)
 
 - Subscribe to a comic
+There are 2 ways to set up scheduled comics: 
+  - Latest: Get only the latest comics when they are posted, no need to set up an exact day of the week or an hour of the day.
+  - Regular: Get the comic at a regular day and hour of the week. A date should be one of the seven days of the week and the hour a number representing the time in a 24h clock in UTC time (0h to 23h). If not specified, defaults to the current time in UTC.
+
 ![comic subscription](https://github.com/BBArikL/BDBot/blob/assets/comic-demo-4.png)
+
+
 
 ## Current state of the project
 - Functionalities
-  - `/<comic_name>` Information embed on the requested comic.
-  - `/help` : Help embed
+  - `/<comic_name>` Use comic <comic_name>
+  - `/help general` : Help embed
   - `/git` command : Redirects to this GitHub page
   - `/invite` command : Generate a link to invite the bot to your server ([or use this link](https://discord.com/api/oauth2/authorize?client_id=807780409362481163&permissions=0&scope=bot))
   - Daily Command: use `/<name_of_comic> add/remove` to add or remove a comic from the daily list for the server.

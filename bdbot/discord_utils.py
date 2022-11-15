@@ -36,7 +36,7 @@ from bdbot.Web_requests_manager import get_new_comic_details
 
 SERVER: Optional[discord.Object] = None
 HELP_EMBED: Optional[discord.Embed] = None
-HOURLY_EMBED: Optional[discord.Embed] = None
+SCHEDULE_EMBED: Optional[discord.Embed] = None
 NEW_EMBED: Optional[discord.Embed] = None
 FAQ_EMBED: Optional[discord.Embed] = None
 GOCOMICS_EMBED: Optional[list[discord.Embed]] = None
@@ -1057,7 +1057,7 @@ async def send_chan_embed(channel: discord.TextChannel, embed: discord.Embed):
 
 
 def get_possible_hours():
-    return [app_commands.Choice(name=str(h), value=h) for h in range(1, 25)]
+    return [app_commands.Choice(name=str(h), value=h) for h in range(0, 24)]
 
 
 def get_possible_days():

@@ -7,6 +7,7 @@ from bdbot import discord_utils, utils
 
 class HelpCommands(commands.Cog):
     """Class responsible for sending help embeds"""
+
     help_group = app_commands.Group(name="help", description="Help commands")
 
     def __init__(self, bot: commands.Bot):
@@ -17,7 +18,7 @@ class HelpCommands(commands.Cog):
 
     @help_group.command()
     async def general(self, inter: discord.Interaction):
-        """HelpCommands for BDBot"""
+        """Help commands for BDBot"""
         embed: discord.Embed
         if discord_utils.HELP_EMBED is None:
             strips = utils.strip_details
@@ -41,17 +42,15 @@ class HelpCommands(commands.Cog):
             for strip in strips:
                 if (
                     strips[strip]["Main_website"] != "https://www.gocomics.com/"
-                    and strips[strip]["Main_website"]
-                    != "https://comicskingdom.com/"
-                    and strips[strip]["Main_website"]
-                    != "https://www.webtoons.com/en/"
+                    and strips[strip]["Main_website"] != "https://comicskingdom.com/"
+                    and strips[strip]["Main_website"] != "https://www.webtoons.com/en/"
                 ):
                     embed.add_field(
                         name=strips[strip]["Name"], value=strips[strip]["Helptxt"]
                     )
             embed.add_field(
                 name="Hourly comics commands.",
-                value="Use /help hourly to see available commands for daily comics. "
+                value="Use /help schedule to see available commands for daily comics. "
                 "Post daily at 6:00 AM UTC.",
             )
 
@@ -102,18 +101,23 @@ class HelpCommands(commands.Cog):
         await discord_utils.send_embed(inter, [embed])
 
     @help_group.command()
-    async def hourly(self, inter: discord.Interaction):
-        """HelpCommands for hourly commands"""
+    async def schedule(self, inter: discord.Interaction):
+        """Get help to schedule an automatic comic post"""
         embed: discord.Embed
 
-        if discord_utils.HOURLY_EMBED is None:
+        if discord_utils.SCHEDULE_EMBED is None:
 
             embed = discord.Embed(
                 title="Daily commands!",
                 description="Date and hour are optional arguments that can specify when the the "
-                "bot should send the comic. A date should be one of the seven days "
-                "of the week and the hour a number representing the time in a 24h "
-                "clock in UTC time. If not specified, defaults to the current time "
+                "bot should send the comic. \n"
+                "There are 2 ways to set up scheduled comics:\n"
+                "Latest: Get only the latest comics when they are posted, no need to set up an "
+                "exact day of the week or an hour of the day.\n"
+                "Regular: Get the comic at a regular day and hour of the week."
+                " A date should be one of the seven days of the week and the "
+                "hour a number representing the time in a 24h clock in UTC time"
+                " (0h to 23h). If not specified, defaults to the current time "
                 "in UTC.",
             )
             embed.add_field(
@@ -174,7 +178,7 @@ class HelpCommands(commands.Cog):
 
             utils.HOURLY_EMBED = embed
         else:
-            embed = discord_utils.HOURLY_EMBED
+            embed = discord_utils.SCHEDULE_EMBED
 
         await discord_utils.send_embed(inter, [embed])
 
@@ -320,7 +324,7 @@ class HelpCommands(commands.Cog):
             )
             embed.add_field(
                 name="How can I receive scheduled comics?",
-                value="You can use `/help hourly` to get help on how to schedule comics.",
+                value="You can use `/help schedule` to get help on how to schedule comics.",
             )
             embed.add_field(
                 name="What information is collected by using this bot?",
