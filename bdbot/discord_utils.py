@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Optional, Union
 
 import discord
-from discord import app_commands, ui
+from discord import ClientException, HTTPException, NotFound, app_commands, ui
 from discord.app_commands import AppCommandError
 from discord.ext import commands
 
@@ -305,10 +305,10 @@ def extract_date_comic(
     try:
         comic_date = datetime(day=day, month=month.value, year=year)
         first_date = datetime.strptime(get_first_date(comic_details), "%Y, %m, %d")
-    except ValueError:
+    except (ValueError, AttributeError, TypeError):
         return send_message, {
             "inter": inter,
-            "message": "This is not a valid date format! The format is : DD/MM/YYYY.",
+            "message": "This is not a valid date format! Please input a day, a month and a year!",
         }
 
     if (
@@ -559,6 +559,9 @@ def add_comic_in_guild(
         if day != Date.Latest:
             # Checks if the day, the hour and the comic was already set for the channel
             day = date_to_db(day)
+
+            if "date" not in d[guild_id]["channels"][channel_id]:
+                d[guild_id]["channels"][channel_id].update({"date": {}})
 
             if day not in d[guild_id]["channels"][channel_id]["date"]:
                 d[guild_id]["channels"][channel_id]["date"].update(
@@ -992,10 +995,11 @@ class ResponseSender:
 
     def __init__(
         self,
-        resp: [
+        resp: Union[
             discord.InteractionResponse,
             discord.InteractionMessage,
             discord.Webhook,
+            None,
         ],
     ):
         self.resp = resp
@@ -1018,6 +1022,17 @@ class ResponseSender:
             await self.resp.send_message(*args, **kwargs)
         elif isinstance(self.resp, discord.Webhook):
             await self.resp.send(*args, **kwargs)
+        # If none, discard message
+
+    @classmethod
+    async def from_interaction(cls, inter: discord.Interaction):
+        try:
+            await inter.original_response()
+            return cls(inter.followup)
+        except (HTTPException, NotFound):
+            return cls(inter.response)
+        except ClientException:
+            return cls(None)
 
 
 async def send_embed(
@@ -1278,33 +1293,30 @@ async def on_error(inter: discord.Interaction, error: AppCommandError):
     """
     # Handles errors
     logger.error(f"Handling exception in commands:\n{error.__class__.__name__}:{error}")
+    responder = await ResponseSender.from_interaction(inter)
 
     if isinstance(error, app_commands.CommandNotFound):  # Command not found
-        await send_message(
-            inter,
+        await responder.send_message(
             "Invalid command. Try /help general to search for usable commands.",
             ephemeral=True,
         )
     elif isinstance(error, app_commands.MissingPermissions):
-        await send_message(
-            inter, "You do not have the permission to do that!", ephemeral=True
+        await responder.send_message(
+            "You do not have the permission to do that!", ephemeral=True
         )
     elif isinstance(error, app_commands.CheckFailure):
-        await send_message(
-            inter,
+        await responder.send_message(
             "One or more checks did not pass... Maybe you need more permissions to run this command!",
             ephemeral=True,
         )
     elif isinstance(error, AppCommandError):
-        await send_message(
-            inter,
+        await responder.send_message(
             "The command failed. Please report this issue on Github here: "
             f"https://github.com/BBArikL/BDBot . The error is: {error.__class__.__name__}: {error}",
             ephemeral=True,
         )
     else:  # Not supported errors
-        await send_message(
-            inter,
+        await responder.send_message(
             f"Error not supported. Visit https://github.com/BBArikL/BDBot to report "
             f"the issue. The error is: {error.__class__.__name__}: {error}",
             ephemeral=True,
@@ -1313,3 +1325,37 @@ async def on_error(inter: discord.Interaction, error: AppCommandError):
 
 async def is_owner(inter: discord.Interaction):
     return inter.user.id == OWNER
+
+
+async def send_mention(
+    chan: discord.TextChannel,
+    channel: str,
+    comic_list: dict[str, Any],
+    post_time: datetime,
+):
+    """
+
+    :param chan:
+    :param channel:
+    :param comic_list:
+    :param post_time:
+    :return:
+    """
+    if (
+        not comic_list[channel]["hasBeenMentioned"]
+        and comic_list[channel]["wantMention"]
+    ):
+        # Checks if the channel want the original mention ('Comics for <date>, <hour> UTC @<role>')
+        if comic_list[channel]["role"] is not None:
+            # Checks if there is a role to mention
+            role_mention = comic_list[channel]["role"].mention
+        else:
+            role_mention = ""
+
+        await chan.send(
+            f"Comics for "
+            f"{post_time.strftime('%A %B %dth %Y, %H h UTC')}"
+            f" {role_mention}"
+        )
+        # Sets the channel as already mentioned
+        comic_list[channel]["hasBeenMentioned"] = True

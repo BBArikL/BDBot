@@ -57,34 +57,40 @@ def manage_bot():
     """Manage the bot and its settings"""
     action = ""
     while action != "Return":
+        choices = {
+            "Database tools - Not implemented": todo,
+            "Verify requests - Not implemented": todo,
+            "Create image link cache": link_cache_generate,
+            "Refresh configuration files (to do after every update": refresh_conf_files,
+            "Setup Bot": setup_bot,
+            "Uninstall Bot": uninstall_bot,
+            "Return": todo,
+        }
+
         action = inquirer.select(
             message="What do you want to do?",
-            choices=[
-                "Database tools - Not implemented",
-                "Verify requests - Not implemented",
-                "Create image link cache",
-                "Setup Bot",
-                "Uninstall Bot",
-                "Return",
-            ],
+            choices=list(choices.keys()),
             mandatory=False,
         ).execute()
 
-        if action == "Create image link cache":
-            logger.info("Running link cache, please wait up to 1-2 minutes...")
-            os.makedirs("data", exist_ok=True)
-            create_link_cache(logger)
-            logger.info("Link cache created!")
-        elif action == "Setup Bot":
-            setup_bot()
-        elif action == "Uninstall Bot":
-            conf = inquirer.confirm(
-                "Are you sure you want to uninstall the bot?"
-            ).execute()
-            if conf:
-                os.rmdir(BASE_DATA_PATH)
-            else:
-                logger.info("Canceled bot uninstallation")
+        choices[action]()
+
+
+def uninstall_bot():
+    """Uninstall bot files"""
+    conf = inquirer.confirm("Are you sure you want to uninstall the bot?").execute()
+    if conf:
+        os.rmdir(BASE_DATA_PATH)
+    else:
+        logger.info("Canceled bot uninstallation")
+
+
+def link_cache_generate():
+    """Regenerate the link cache"""
+    logger.info("Running link cache, please wait up to 1-2 minutes...")
+    os.makedirs("data", exist_ok=True)
+    create_link_cache(logger)
+    logger.info("Link cache created!")
 
 
 def setup_bot():
@@ -241,6 +247,11 @@ def manage_comics():
 
 
 def choose_comic(action: str, comics: dict):
+    """Choose a comic
+
+    :param action: The action to do with the comic
+    :param comics: The list of comics
+    """
     comic = inquirer.fuzzy(
         message=f"What comic do you want to {action.lower()}?",
         choices=[f"{comics[x]['Position']}. {comics[x]['Name']}" for x in comics]
@@ -377,20 +388,20 @@ def process_inputs(
     image: str,
     helptxt: str,
 ) -> dict:
-    """
+    """Create the comic json
 
-    :param name:
-    :param author:
-    :param web_name:
-    :param main_website:
-    :param working_type:
-    :param description:
-    :param position:
-    :param first_date:
-    :param color:
-    :param image:
-    :param helptxt:
-    :return:
+    :param name: Comic name
+    :param author: Comic author
+    :param web_name: Comic website
+    :param main_website: Comic's main website
+    :param working_type: Comic's working type
+    :param description: Comic description
+    :param position: Comic position
+    :param first_date: Comic first date
+    :param color: Comic color
+    :param image: Comic image
+    :param helptxt: Comic help text
+    :return: The comic dict
     """
     websites = {
         "Gocomics": "https://www.gocomics.com/",
@@ -455,7 +466,7 @@ def delete(comics: dict, comic: str):
             "be made in case this step breaks the database.)"
         ).execute()
         if update_database:
-            database_update(comic_number)
+            remove_comic_from_database(comic_number)
         else:
             logger.info("The database has not been modified.")
 
@@ -464,8 +475,7 @@ def delete(comics: dict, comic: str):
 
 
 def open_json_if_exist(absolute_path: str) -> dict:
-    """
-    Load a json from a file if it exists, create it otherwise.
+    """Load a json from a file if it exists, create it otherwise.
 
     :param absolute_path: The path to the
     :return: The dictionary of data in the json file
@@ -478,11 +488,10 @@ def open_json_if_exist(absolute_path: str) -> dict:
         return temp_comic_data
 
 
-def database_update(comic_number: int):
-    """
+def remove_comic_from_database(comic_number: int):
+    """Remove comic from database, based on comic number
 
-    :param comic_number:
-    :return:
+    :param comic_number: The comic number to remove
     """
     logger.info("Updating database....")
     data = open_json_if_exist(DATABASE_FILE_PATH)
@@ -513,11 +522,10 @@ def database_update(comic_number: int):
 
 
 def modify(comics: dict, comic: str):
-    """
+    """Modify a comic
 
-    :param comics:
-    :param comic:
-    :return:
+    :param comics: The list of comics
+    :param comic: The name of the comic to modify
     """
     comic_property: str = ""
     comic_number, comic_name = comic.split(". ")
@@ -541,11 +549,11 @@ def modify(comics: dict, comic: str):
 
 
 def modify_property(comic_dict: dict, comic_property: str) -> dict:
-    """
+    """Modify a comic's property
 
-    :param comic_dict:
-    :param comic_property:
-    :return:
+    :param comic_dict: The information about the comic
+    :param comic_property: The property to change
+    :return: The modified comic
     """
     property_value = comic_dict[comic_property]
     logger.info(
@@ -577,6 +585,28 @@ def modify_property(comic_dict: dict, comic_property: str) -> dict:
             logger.info(f"{comic_property!r} has not been changed.")
 
     return comic_dict
+
+
+def refresh_conf_files():
+    """Refresh config (misc files)"""
+    logger.info("Refreshing config files...")
+    logger.info(
+        "If you made changes to the existing config files,"
+        " please stash them away because this process will crush them."
+    )
+    conf = inquirer.confirm("Please confirm to continue the process")
+
+    if not conf:
+        logger.info("Operation aborted")
+        return
+
+    # Copy files over
+    shutil.copy("misc/comics_details.json", DETAILS_PATH)
+    shutil.copy("misc/random-footers.txt", FOOTERS_FILE_PATH)
+
+
+def todo():
+    pass
 
 
 if __name__ == "__main__":
