@@ -305,10 +305,10 @@ def extract_date_comic(
     try:
         comic_date = datetime(day=day, month=month.value, year=year)
         first_date = datetime.strptime(get_first_date(comic_details), "%Y, %m, %d")
-    except ValueError:
+    except (ValueError, AttributeError, TypeError):
         return send_message, {
             "inter": inter,
-            "message": "This is not a valid date format! The format is : DD/MM/YYYY.",
+            "message": "This is not a valid date format! Please input a day, a month and a year!",
         }
 
     if (
