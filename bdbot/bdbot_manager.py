@@ -579,5 +579,27 @@ def modify_property(comic_dict: dict, comic_property: str) -> dict:
     return comic_dict
 
 
+def refresh_conf_files():
+    """Refresh config (misc files)"""
+    logger.info("Refreshing config files...")
+    logger.info(
+        "If you made changes to the existing config files,"
+        " please stash them away because this process will crush them."
+    )
+    conf = inquirer.confirm("Please confirm to continue the process")
+
+    if not conf:
+        logger.info("Operation aborted")
+        return
+
+    # Copy files over
+    shutil.copy("misc/comics_details.json", DETAILS_PATH)
+    shutil.copy("misc/random-footers.txt", FOOTERS_FILE_PATH)
+
+
+def todo():
+    pass
+
+
 if __name__ == "__main__":
     main()
