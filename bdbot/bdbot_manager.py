@@ -61,7 +61,7 @@ def manage_bot():
             "Database tools - Not implemented": todo,
             "Verify requests - Not implemented": todo,
             "Create image link cache": link_cache_generate,
-            "Refresh configuration files (to do after every update": refresh_conf_files,
+            "Refresh configuration files (to do after every update)": refresh_conf_files,
             "Setup Bot": setup_bot,
             "Uninstall Bot": uninstall_bot,
             "Return": todo,
@@ -594,7 +594,7 @@ def refresh_conf_files():
         "If you made changes to the existing config files,"
         " please stash them away because this process will crush them."
     )
-    conf = inquirer.confirm("Please confirm to continue the process")
+    conf = inquirer.confirm("Please confirm to continue the process").execute()
 
     if not conf:
         logger.info("Operation aborted")
