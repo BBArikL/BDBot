@@ -560,6 +560,9 @@ def add_comic_in_guild(
             # Checks if the day, the hour and the comic was already set for the channel
             day = date_to_db(day)
 
+            if "date" not in d[guild_id]["channels"][channel_id]:
+                d[guild_id]["channels"][channel_id].update({"date": {}})
+
             if day not in d[guild_id]["channels"][channel_id]["date"]:
                 d[guild_id]["channels"][channel_id]["date"].update(
                     {day: {hour: com_list}}
