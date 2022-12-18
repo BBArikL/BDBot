@@ -72,6 +72,15 @@ match_date = {
     "D": Date.Daily,
     "La": Date.Latest,
 }
+weekday_lst = {
+    1: Date.Monday,
+    2: Date.Thursday,
+    3: Date.Wednesday,
+    4: Date.Tuesday,
+    5: Date.Friday,
+    6: Date.Saturday,
+    7: Date.Sunday,
+}
 
 
 class Month(enum.Enum):
@@ -377,7 +386,9 @@ def save_request(req: str, author: str, discriminator: Optional[str] = ""):
         )
 
 
-def fill_cache(details: dict[str, dict[str, str]], cache: dict[str, str], default: str = "") -> dict[str, str]:
+def fill_cache(
+    details: dict[str, dict[str, str]], cache: dict[str, str], default: str = ""
+) -> dict[str, str]:
     """Fill the cache with missing comic cache
 
     :param details: The comic details
@@ -389,3 +400,21 @@ def fill_cache(details: dict[str, dict[str, str]], cache: dict[str, str], defaul
         cache.setdefault(details[comic]["Name"], default)
 
     return cache
+
+
+def get_last_corresponding_date(final_date: Date, final_hour: str):
+    """Modifies the 'current' date to correspond to the user choice
+
+    :param final_date: The selected date of the week
+    :param final_hour: The selected hour of the week
+    :return: A post time to mimic a post date
+    """
+    now = datetime.now(timezone.utc)
+    if final_date != Date.Daily and final_date != Date.Latest:
+        # Don't change the date if daily or latest
+        while final_date != weekday_lst[now.isoweekday()]:
+            now -= timedelta(days=1)
+    post_time = datetime(
+        year=now.year, month=now.month, day=now.day, hour=int(final_hour)
+    )
+    return post_time
