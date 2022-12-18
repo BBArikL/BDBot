@@ -241,6 +241,11 @@ def manage_comics():
 
 
 def choose_comic(action: str, comics: dict):
+    """Choose a comic
+
+    :param action: The action to do with the comic
+    :param comics: The list of comics
+    """
     comic = inquirer.fuzzy(
         message=f"What comic do you want to {action.lower()}?",
         choices=[f"{comics[x]['Position']}. {comics[x]['Name']}" for x in comics]
@@ -377,20 +382,20 @@ def process_inputs(
     image: str,
     helptxt: str,
 ) -> dict:
-    """
+    """Create the comic json
 
-    :param name:
-    :param author:
-    :param web_name:
-    :param main_website:
-    :param working_type:
-    :param description:
-    :param position:
-    :param first_date:
-    :param color:
-    :param image:
-    :param helptxt:
-    :return:
+    :param name: Comic name
+    :param author: Comic author
+    :param web_name: Comic website
+    :param main_website: Comic's main website
+    :param working_type: Comic's working type
+    :param description: Comic description
+    :param position: Comic position
+    :param first_date: Comic first date
+    :param color: Comic color
+    :param image: Comic image
+    :param helptxt: Comic help text
+    :return: The comic dict
     """
     websites = {
         "Gocomics": "https://www.gocomics.com/",
@@ -455,7 +460,7 @@ def delete(comics: dict, comic: str):
             "be made in case this step breaks the database.)"
         ).execute()
         if update_database:
-            database_update(comic_number)
+            remove_comic_from_database(comic_number)
         else:
             logger.info("The database has not been modified.")
 
@@ -464,8 +469,7 @@ def delete(comics: dict, comic: str):
 
 
 def open_json_if_exist(absolute_path: str) -> dict:
-    """
-    Load a json from a file if it exists, create it otherwise.
+    """Load a json from a file if it exists, create it otherwise.
 
     :param absolute_path: The path to the
     :return: The dictionary of data in the json file
@@ -478,11 +482,10 @@ def open_json_if_exist(absolute_path: str) -> dict:
         return temp_comic_data
 
 
-def database_update(comic_number: int):
-    """
+def remove_comic_from_database(comic_number: int):
+    """Remove comic from database, based on comic number
 
-    :param comic_number:
-    :return:
+    :param comic_number: The comic number to remove
     """
     logger.info("Updating database....")
     data = open_json_if_exist(DATABASE_FILE_PATH)
@@ -513,11 +516,10 @@ def database_update(comic_number: int):
 
 
 def modify(comics: dict, comic: str):
-    """
+    """Modify a comic
 
-    :param comics:
-    :param comic:
-    :return:
+    :param comics: The list of comics
+    :param comic: The name of the comic to modify
     """
     comic_property: str = ""
     comic_number, comic_name = comic.split(". ")
@@ -541,11 +543,11 @@ def modify(comics: dict, comic: str):
 
 
 def modify_property(comic_dict: dict, comic_property: str) -> dict:
-    """
+    """Modify a comic's property
 
-    :param comic_dict:
-    :param comic_property:
-    :return:
+    :param comic_dict: The information about the comic
+    :param comic_property: The property to change
+    :return: The modified comic
     """
     property_value = comic_dict[comic_property]
     logger.info(
