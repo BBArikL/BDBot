@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Optional, Union
 
 import discord
-from discord import app_commands, ui
+from discord import ClientException, HTTPException, NotFound, app_commands, ui
 from discord.app_commands import AppCommandError
 from discord.ext import commands
 
@@ -992,10 +992,11 @@ class ResponseSender:
 
     def __init__(
         self,
-        resp: [
+        resp: Union[
             discord.InteractionResponse,
             discord.InteractionMessage,
             discord.Webhook,
+            None,
         ],
     ):
         self.resp = resp
@@ -1018,6 +1019,17 @@ class ResponseSender:
             await self.resp.send_message(*args, **kwargs)
         elif isinstance(self.resp, discord.Webhook):
             await self.resp.send(*args, **kwargs)
+        # If none, discard message
+
+    @classmethod
+    async def from_interaction(cls, inter: discord.Interaction):
+        try:
+            await inter.original_response()
+            return cls(inter.followup)
+        except (HTTPException, NotFound):
+            return cls(inter.response)
+        except ClientException:
+            return cls(None)
 
 
 async def send_embed(
@@ -1278,33 +1290,30 @@ async def on_error(inter: discord.Interaction, error: AppCommandError):
     """
     # Handles errors
     logger.error(f"Handling exception in commands:\n{error.__class__.__name__}:{error}")
+    responder = await ResponseSender.from_interaction(inter)
 
     if isinstance(error, app_commands.CommandNotFound):  # Command not found
-        await send_message(
-            inter,
+        await responder.send_message(
             "Invalid command. Try /help general to search for usable commands.",
             ephemeral=True,
         )
     elif isinstance(error, app_commands.MissingPermissions):
-        await send_message(
-            inter, "You do not have the permission to do that!", ephemeral=True
+        await responder.send_message(
+            "You do not have the permission to do that!", ephemeral=True
         )
     elif isinstance(error, app_commands.CheckFailure):
-        await send_message(
-            inter,
+        await responder.send_message(
             "One or more checks did not pass... Maybe you need more permissions to run this command!",
             ephemeral=True,
         )
     elif isinstance(error, AppCommandError):
-        await send_message(
-            inter,
+        await responder.send_message(
             "The command failed. Please report this issue on Github here: "
             f"https://github.com/BBArikL/BDBot . The error is: {error.__class__.__name__}: {error}",
             ephemeral=True,
         )
     else:  # Not supported errors
-        await send_message(
-            inter,
+        await responder.send_message(
             f"Error not supported. Visit https://github.com/BBArikL/BDBot to report "
             f"the issue. The error is: {error.__class__.__name__}: {error}",
             ephemeral=True,
