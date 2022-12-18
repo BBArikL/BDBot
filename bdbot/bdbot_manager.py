@@ -57,34 +57,40 @@ def manage_bot():
     """Manage the bot and its settings"""
     action = ""
     while action != "Return":
+        choices = {
+            "Database tools - Not implemented": todo,
+            "Verify requests - Not implemented": todo,
+            "Create image link cache": link_cache_generate,
+            "Refresh configuration files (to do after every update": refresh_conf_files,
+            "Setup Bot": setup_bot,
+            "Uninstall Bot": uninstall_bot,
+            "Return": todo,
+        }
+
         action = inquirer.select(
             message="What do you want to do?",
-            choices=[
-                "Database tools - Not implemented",
-                "Verify requests - Not implemented",
-                "Create image link cache",
-                "Setup Bot",
-                "Uninstall Bot",
-                "Return",
-            ],
+            choices=list(choices.keys()),
             mandatory=False,
         ).execute()
 
-        if action == "Create image link cache":
-            logger.info("Running link cache, please wait up to 1-2 minutes...")
-            os.makedirs("data", exist_ok=True)
-            create_link_cache(logger)
-            logger.info("Link cache created!")
-        elif action == "Setup Bot":
-            setup_bot()
-        elif action == "Uninstall Bot":
-            conf = inquirer.confirm(
-                "Are you sure you want to uninstall the bot?"
-            ).execute()
-            if conf:
-                os.rmdir(BASE_DATA_PATH)
-            else:
-                logger.info("Canceled bot uninstallation")
+        choices[action]()
+
+
+def uninstall_bot():
+    """Uninstall bot files"""
+    conf = inquirer.confirm("Are you sure you want to uninstall the bot?").execute()
+    if conf:
+        os.rmdir(BASE_DATA_PATH)
+    else:
+        logger.info("Canceled bot uninstallation")
+
+
+def link_cache_generate():
+    """Regenerate the link cache"""
+    logger.info("Running link cache, please wait up to 1-2 minutes...")
+    os.makedirs("data", exist_ok=True)
+    create_link_cache(logger)
+    logger.info("Link cache created!")
 
 
 def setup_bot():
