@@ -1325,3 +1325,37 @@ async def on_error(inter: discord.Interaction, error: AppCommandError):
 
 async def is_owner(inter: discord.Interaction):
     return inter.user.id == OWNER
+
+
+async def send_mention(
+    chan: discord.TextChannel,
+    channel: str,
+    comic_list: dict[str, Any],
+    post_time: datetime,
+):
+    """
+
+    :param chan:
+    :param channel:
+    :param comic_list:
+    :param post_time:
+    :return:
+    """
+    if (
+        not comic_list[channel]["hasBeenMentioned"]
+        and comic_list[channel]["wantMention"]
+    ):
+        # Checks if the channel want the original mention ('Comics for <date>, <hour> UTC @<role>')
+        if comic_list[channel]["role"] is not None:
+            # Checks if there is a role to mention
+            role_mention = comic_list[channel]["role"].mention
+        else:
+            role_mention = ""
+
+        await chan.send(
+            f"Comics for "
+            f"{post_time.strftime('%A %B %dth %Y, %H h UTC')}"
+            f" {role_mention}"
+        )
+        # Sets the channel as already mentioned
+        comic_list[channel]["hasBeenMentioned"] = True
