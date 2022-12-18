@@ -5,19 +5,20 @@ from typing import Any, Callable, Union
 import discord
 from discord import app_commands
 from discord.ext import commands
-from bdbot.discord_utils import get_possible_hours, parameters_interpreter, NextSend
-from bdbot.utils import Action, Date, Month, get_strip_details, get_all_strips
+
+from bdbot.discord_utils import NextSend, get_possible_hours, parameters_interpreter
+from bdbot.utils import Action, Date, Month, get_all_strips, get_strip_details
 
 
 def define_comic_callback(comic_strip_details: dict[str, Union[str, int]]):
     async def date_comic_callback(
-            inter: discord.Interaction,
-            action: Action,
-            date: Date = None,
-            hour: int = None,
-            day: int = None,
-            month: Month = None,
-            year: int = None,
+        inter: discord.Interaction,
+        action: Action,
+        date: Date = None,
+        hour: int = None,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
     ):
         # Interprets the parameters given by the user
         func, params = parameters_interpreter(
@@ -33,11 +34,11 @@ def define_comic_callback(comic_strip_details: dict[str, Union[str, int]]):
         await func(**params)
 
     async def number_comic_callback(
-            inter: discord.Interaction,
-            action: Action,
-            date: Date = None,
-            hour: int = None,
-            comic_number: int = None
+        inter: discord.Interaction,
+        action: Action,
+        date: Date = None,
+        hour: int = None,
+        comic_number: int = None,
     ):
         # Interprets the parameters given by the user
         func, params = parameters_interpreter(
@@ -46,15 +47,17 @@ def define_comic_callback(comic_strip_details: dict[str, Union[str, int]]):
             action=action,
             date=date,
             hour=hour,
-            comic_number=comic_number
+            comic_number=comic_number,
         )
 
         await func(**params)
 
     comic_callback_func: Callable
 
-    if comic_strip_details["Working_type"] == "date" or \
-            comic_strip_details["Main_website"] == "https://garfieldminusgarfield.net/":
+    if (
+        comic_strip_details["Working_type"] == "date"
+        or comic_strip_details["Main_website"] == "https://garfieldminusgarfield.net/"
+    ):
         comic_callback_func = date_comic_callback
     else:
         comic_callback_func = number_comic_callback
@@ -81,9 +84,12 @@ class Comic(commands.Cog):
             comic_command = app_commands.Command(
                 name=normalized_name,
                 description=comic_name,
-                callback=define_comic_callback(comics_details[comic]))
+                callback=define_comic_callback(comics_details[comic]),
+            )
             # No built-in functions for adding autocomplete choices when creating callbacks in a factory way
-            comic_command._params.get("hour").choices = get_possible_hours()  # noqa: See above
+            comic_command._params.get(
+                "hour"
+            ).choices = get_possible_hours()  # noqa: See above
 
             self.bot.tree.add_command(comic_command)
 
@@ -100,15 +106,15 @@ class Comic(commands.Cog):
     @app_commands.command()
     @app_commands.choices(hour=get_possible_hours())
     async def random(
-            self,
-            inter: discord.Interaction,
-            action: Action,
-            date: Date = None,
-            hour: int = None,
-            day: int = None,
-            month: Month = None,
-            year: int = None,
-            comic_number: int = None,
+        self,
+        inter: discord.Interaction,
+        action: Action,
+        date: Date = None,
+        hour: int = None,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """Random comic"""
         func, params = parameters_interpreter(
@@ -128,15 +134,15 @@ class Comic(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     @app_commands.choices(hour=get_possible_hours())
     async def all(
-            self,
-            inter: discord.Interaction,
-            action: Action,
-            date: Date = None,
-            hour: int = None,
-            day: int = None,
-            month: Month = None,
-            year: int = None,
-            comic_number: int = None,
+        self,
+        inter: discord.Interaction,
+        action: Action,
+        date: Date = None,
+        hour: int = None,
+        day: int = None,
+        month: Month = None,
+        year: int = None,
+        comic_number: int = None,
     ):
         """All comics. Mods only"""
         first = True
