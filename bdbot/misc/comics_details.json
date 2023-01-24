@@ -543,5 +543,83 @@
         "Color": "249E44",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/crcap/large_rec-201701251555.jpg",
         "Helptxt": "Join Andy and Flo Capp through their adventures!"
+    },
+    "Ziggy": {
+        "Name": "Ziggy",
+        "Author": "Tom Wilson & Tom II",
+        "Web_name": "ziggy",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": " Poor Ziggy. He\u2019s perpetually one step behind, one nickel short, one lane away from the fast lane. But we love him for it, because everyone feels like Ziggy now and then.\nWebsite: https://www.gocomics.com/ziggy\nAbout: https://www.gocomics.com/ziggy/about",
+        "Position": 42,
+        "First_date": "1971, 6, 27",
+        "Color": "B45B50",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/zi/mid_rec-201701251555.jpg",
+        "Helptxt": "Join Ziggy's adventures through life with humor!"
+    },
+    "JunkDrawer": {
+        "Name": "Junk Drawer",
+        "Author": "Ellis Rosen",
+        "Web_name": "junk-drawer",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Junk Drawer is a single panel comic that celebrates failed endeavors. There are no consistent characters or settings, instead there is an ongoing theme of finding humor in situations gone wrong. Much like a junk drawer you might find in someone\u2019s home, this comic is a collection of charms that may not have a use but are valuable anyway. Looking at each one of these comics, it\u2019s clear that there is not going to be a good outcome. But at least it\u2019s funny.\nWebsite: https://ellis-rosen.format.com/\nFacebook: https://www.instagram.com/ellisjrosen/\nTwitter: https://twitter.com/EllisRosen\nAbout: https://www.gocomics.com/junk-drawer/about",
+        "Position": 43,
+        "First_date": "2019, 9, 23",
+        "Color": "B199B5",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/jun/mid_jun_u_201909131421.png",
+        "Helptxt": "A comic full of little stories to find humor in situations gone wrong."
+    },
+    "WorkingDaze": {
+        "Name": "Working Daze",
+        "Author": "John Zakour and Scott Roberts",
+        "Web_name": "working-daze",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "  Working Daze follows the employees trapped at MacroMicroMedia. MMM is a wanna-be software giant, and it's staffed by geeks and clueless management types. VP Rita will try anything that might make a little money (though her ideas usually don't.) Underpaid Dana carries he place and keeps it running, while overpaid Ed sleeps all day. Roy and Kathy are made for each other, and everyman Jay never knows when to keep his opinions to himself. Writer/creator John Zakour is a humor/sci-fi writer, whose work includes the Zach Johnson detective novels. Artist Scott Roberts was a longtime contributor to Nickelodeon Magazine, and is the author of the fantasy novel The Troubling Stone. John and Scott met when they both worked on the Rugrats newspaper strip.\nWebsite: https://workingdaze.blogspot.com/\nFacebook: https://www.facebook.com/WorkingDazeComic/\nTwitter: https://twitter.com/WorkingDaze_Roy\nAbout: https://www.gocomics.com/working-daze/about",
+        "Position": 44,
+        "First_date": "2002, 2, 11",
+        "Color": "749D4D",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/wd/mid_u-201701251614.png",
+        "Helptxt": "Follow the adventures at MacroMicroMedia where geeks and bad management thrives!"
+    },
+    "Compu-Toon": {
+        "Name": "Compu-Toon",
+        "Author": "Charles Boyce",
+        "Web_name": "compu-toon",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "  If you\u2019ve ever struggled to turn your cell phone off, thought cookies were just a delicious snack, and tried in vain to talk to a human customer service rep, Charles Boyce has created a strip for you. Compu-toon reminds us that technological innovations haven\u2019t necessarily made our lives any easier -- maybe just more funny.\nFacebook: https://www.facebook.com/people/Compu-Toon/100067759376774/\nAbout: https://www.gocomics.com/compu-toon/about",
+        "Position": 45,
+        "First_date": "2001, 4, 23",
+        "Color": "664638",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/tmcom/mid_u-201701251611.png",
+        "Helptxt": "If you ever felt that tech is'nt always easy, Compu-Toon is the comic for you!"
+    },
+    "PixieandBrutus": {
+        "Name": "Pixie and Brutus",
+        "Author": "Pet Foolery",
+        "Web_name": "/en/challenge/pixie-and-brutus/list?title_no=452175",
+        "Main_website": "https://www.webtoons.com/en/",
+        "Working_type": "rss",
+        "Description": "This series focus's on the unlikely friendship between Pixie, a tiny, innocent, joyful kitten, and Brutus, a huge scar-faced retired military dog.",
+        "Position": 46,
+        "First_date": "1",
+        "Color": "A55058",
+        "Image": "https://swebtoon-phinf.pstatic.net/20210930_75/1632938338200n948T_JPEG/72e010f9-3e0b-4a58-a933-36d67d02834f.jpg",
+        "Helptxt": "Follow the adventures of Pixie the kitten and Brutus the dog!"
+    },
+    "Sarah'sScribbles": {
+        "Name": "Sarah's Scribbles",
+        "Author": "Sarah Ansdersen",
+        "Web_name": "sarahs-scribbles",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Sarah doesn't like waking up in the morning, being productive, or dealing with social situations. \u201cSarah's Scribbles\u201d is a comic strip that follows her life, finding humor in that which is weird, awkward, and embarrassing. This comic is for barely-functioning people, created by a barely-functioning person.\nWebsite: https://sarahcandersen.com/\nFacebook: https://www.facebook.com/DoodleTimeSarah\nTwitter: https://twitter.com/SarahCAndersen\nPatreon: https://www.patreon.com/SarahsScribbles\nAbout: https://sarahcandersen.com/about",
+        "Position": 47,
+        "First_date": "2014, 1, 2",
+        "Color": "E8545A",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/sasc/mid_rec-201701251558.jpg",
+        "Helptxt": "Follow the funny life of Sarah Anderson where everyone can relate! "
     }
 }
