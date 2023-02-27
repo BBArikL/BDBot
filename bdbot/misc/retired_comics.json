@@ -12,5 +12,31 @@
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/cq/mid_rec-201701251557.jpg",
         "Aliases": "'InspectorDanger' 'Inspector', 'inspector', 'crime', 'crimequiz'",
         "Helptxt": "Solve crime puzzles every Monday with Inspector Danger and his assistant Alfie!"
+    },
+    "Dilbert": {
+        "Name": "Dilbert",
+        "Author": "Scott Adams",
+        "Web_name": "dilbert",
+        "Main_website": "https://dilbert.com/",
+        "Working_type": "date",
+        "Description": "Dilbert launched in 1989 in a handful of newspapers. Now Dilbert appears in over 2,000 newspapers, in 57 countries, and in 19 languages.\n\nMore representations of Dilbert in media:\nCalvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/\n\nWebsite: https://dilbert.com/\nFacebook: https://facebook.com/dilbert/\nTwitter: https://twitter.com/Dilbert_Daily\nMore info: https://dilbert.com/about\n\nSee also:\nDilbert classics",
+        "Position": 6,
+        "First_date": "1989, 4, 16",
+        "Color": "C20C21",
+        "Image": "https://dilbert.com/assets/packs/images/dilbert_character_top-b1b24dba0f6ee1cb0bea8de1eb84b5fe.png",
+        "Helptxt": "A day in the office with Dilbert, Dogbert and the pointy-haired boss."
+    },
+    "Dilbert-Classics": {
+        "Name": "Dilbert Classics",
+        "Author": "Scott Adams",
+        "Web_name": "dilbert-classics",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Dilbert Classics allows you the luxury of pushing the reset button with us, taking the iconic strip back to its first frames. Starting from the beginning and running each strip in succession from its first day of circulation, join in on the genesis of these stories. We're going to the days of fax and dial-up Internet connection frustration, people!\n\nMore representations of Dilbert in media:\nCalvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/\n\nWebsite: https://dilbert.com/\nFacebook: https://facebook.com/dilbert/\nTwitter: https://twitter.com/Dilbert_Daily\nMore info: https://www.gocomics.com/dilbert-classics/about\n\nSee also:\nDilbert",
+        "Position": 6,
+        "First_date": "2012, 6, 13",
+        "Color": "6D9BB7",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/dc/large_rec-201701251557.jpg",
+        "Helptxt": "Dilbert classics revisit the old days of dial-up internet and fax in the office of the pointy-haired boss and Dogbert!"
     }
 }

@@ -18,8 +18,6 @@ Discord bot that post bd strips. Simple as that!
 - Garfield's classics https://www.gocomics.com/garfield-classics
 - Peanuts https://www.gocomics.com/peanuts
 - Peanuts Begins https://www.gocomics.com/peanuts-begins
-- Dilbert https://dilbert.com/
-- Dilbert classics https://www.gocomics.com/dilbert-classics
 - Cyanide and Happiness https://explosm.net/
 - Frazz https://www.gocomics.com/frazz
 - Garfield minus Garfield https://garfieldminusgarfield.net/
@@ -57,6 +55,19 @@ Discord bot that post bd strips. Simple as that!
 - Poorly Drawn Lines https://www.gocomics.com/en/poorly-drawn-lines
 - Heathcliff https://www.gocomics.com/heathcliff
 - Andy Capp https://www.gocomics.com/andycapp
+- Ziggy https://www.gocomics.com/ziggy 
+- Junk Drawer https://www.gocomics.com/junk-drawer
+- Working Daze https://www.gocomics.com/working-daze
+- Compu-Toon https://www.gocomics.com/compu-toon
+- Pixie and Brutus https://www.webtoons.com/en/challenge/pixie-and-brutus/list?title_no=452175
+- Sarah's Scribbles https://www.gocomics.com/sarahs-scribbles
+
+### Removed comics
+Dilbert: See https://www.bbc.com/news/world-us-canada-64775250 . Functionality is still there but this is a public bot and I cannot take the risk of keeping it.
+
+~~- Dilbert https://dilbert.com/~~
+
+~~- Dilbert classics https://www.gocomics.com/dilbert-classics~~
 
 ## Related GitHub pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
