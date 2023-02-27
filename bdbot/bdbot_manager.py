@@ -502,23 +502,43 @@ def remove_comic_from_database(comic_number: int):
         guild = data[gid]
         for channel in guild["channels"]:
             channel_data = guild["channels"][channel]
-            for date in channel_data["date"]:
-                date_data = channel_data["date"][date]
-                for hour in date_data:
-                    hour_data: list = date_data[hour]
-                    if comic_number_remove in hour_data:
-                        hour_data.remove(comic_number_remove)
 
-                    new_hour_data = []
-                    for cmc_nb in hour_data:
-                        if cmc_nb > comic_number_remove:
-                            new_hour_data.append(cmc_nb - 1)
-                        else:
-                            new_hour_data.append(cmc_nb)
-                    data[gid]["channels"][channel]["date"][date][hour] = new_hour_data
+            if "latest" in channel_data:
+                data[gid]["channels"][channel]["latest"] = remove_from_array(
+                    channel_data["latest"], comic_number_remove
+                )
+
+            if "date" in channel_data:
+                for date in channel_data["date"]:
+                    date_data = channel_data["date"][date]
+                    for hour in date_data:
+                        hour_data: list = date_data[hour]
+                        data[gid]["channels"][channel]["date"][date][
+                            hour
+                        ] = remove_from_array(hour_data, comic_number_remove)
 
     save_json(data)
     logger.info("Database update done!")
+
+
+def remove_from_array(array, comic_number_remove) -> list[str]:
+    """Remove the comic number from the array and shift all other numbers
+
+    :param array:
+    :param comic_number_remove:
+    :return:
+    """
+    new_arr = []
+    if comic_number_remove in array:
+        array.remove(comic_number_remove)
+
+    for cmc_nb in array:
+        if cmc_nb > comic_number_remove:
+            new_arr.append(cmc_nb - 1)
+        else:
+            new_arr.append(cmc_nb)
+
+    return new_arr
 
 
 def modify(comics: dict, comic: str):
