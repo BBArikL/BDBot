@@ -2,7 +2,7 @@ beautifulsoup4==4.11.1
 discord.py==2.1.0
 python-dotenv==0.21.0
 randomtimestamp==2.2
-requests==2.28.1
+requests==2.28.2
 rss_parser==0.2.4
 topggpy==1.4.0
 poetry==1.2.2
