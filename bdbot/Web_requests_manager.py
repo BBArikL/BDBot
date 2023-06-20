@@ -9,6 +9,7 @@ from urllib.request import urlopen
 from bs4 import BeautifulSoup
 from requests import get
 from rss_parser import Parser
+from rss_parser.models.rss import RSS
 
 from bdbot.utils import (
     COMIC_LATEST_LINKS_PATH,
@@ -414,13 +415,14 @@ def get_comic_info_rss(
         site_content = get(rss_site).text
 
         if site_content is not None and site_content != "":
-            feed = Parser(xml=site_content, limit=comic_nb + 1).parse().feed[comic_nb]
+            rss: RSS = Parser.parse(data=site_content, schema=RSS)
+            feed = rss.channel.content.items[comic_nb].content
             # Get information
             tz: str
             weekday: str
             if strip_details["Main_website"] == "https://www.webtoons.com/en/":
-                if feed.title != "":
-                    details["title"] = f"{feed.title}"
+                if feed.title.content != "":
+                    details["title"] = feed.title.content
                 weekday = "A"
                 tz = "Z"
             else:
@@ -428,22 +430,26 @@ def get_comic_info_rss(
                 tz = "z"
 
             new_date = datetime.strptime(
-                feed.publish_date, f"%{weekday}, %d %b %Y %H:%M:%S %{tz}"
+                feed.pub_date.content, f"%{weekday}, %d %b %Y %H:%M:%S %{tz}"
             )
             details["day"] = new_date.strftime("%d")
             details["month"] = new_date.strftime("%m")
             details["year"] = new_date.strftime("%Y")
 
-            details["url"] = feed.link
+            details["url"] = feed.link.content
 
             img_index = 0
-            if (
-                len(feed.description_images) > 1
-            ):  # general check for a second image to embed
-                details["sub_img_url"] = feed.description_images[img_index].source
+            description_soup = BeautifulSoup(feed.description.content, "html.parser")
+            description_images = [
+                {"alt": image.get("alt", ""), "source": image.get("src")}
+                for image in description_soup.findAll("img")
+            ]
+
+            if len(description_images) > 1:  # general check for a second image to embed
+                details["sub_img_url"] = description_images[img_index]["source"]
                 img_index += 1
 
-            details["img_url"] = feed.description_images[img_index].source
+            details["img_url"] = description_images[img_index]["source"]
         else:
             details = None
 
