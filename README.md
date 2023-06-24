@@ -61,6 +61,10 @@ Discord bot that post bd strips. Simple as that!
 - Compu-Toon https://www.gocomics.com/compu-toon
 - Pixie and Brutus https://www.webtoons.com/en/challenge/pixie-and-brutus/list?title_no=452175
 - Sarah's Scribbles https://www.gocomics.com/sarahs-scribbles
+- Speed Bump https://www.gocomics.com/speedbump
+- Wallace the Brave https://www.gocomics.com/wallace-the-brave/characters
+- Ripley's believe it or Not https://www.gocomics.com/ripleysbelieveitornot 
+
 
 ### Removed comics
 Dilbert: See https://www.bbc.com/news/world-us-canada-64775250 . Functionality is still there but this is a public bot and I cannot take the risk of keeping it.

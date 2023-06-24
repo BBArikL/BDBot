@@ -11,20 +11,24 @@ from typing import Optional
 
 from randomtimestamp import randomtimestamp
 
-BASE_DATA_PATH = (
-    f"{os.getenv('LOCALAPPDATA')}/bdbot/"
+PROD_DATA_PATH = (
+    os.path.join(os.getenv("LOCALAPPDATA"), "bdbot")
     if os.name == "nt"
-    else f"/home/{os.getenv('USER')}/.local/bdbot/"
+    else os.path.join("home", os.getenv("USER"), ".local", "bdbot")
 )
-DETAILS_PATH = f"{BASE_DATA_PATH}misc/comics_details.json"
-FOOTERS_FILE_PATH = f"{BASE_DATA_PATH}misc/random-footers.txt"
-DATABASE_FILE_PATH = f"{BASE_DATA_PATH}data/data.json"
-BACKUP_FILE_PATH = f"{BASE_DATA_PATH}data/backups/BACKUP_DATABASE_"
-LOGS_DIRECTORY_PATH = f"{BASE_DATA_PATH}data/logs/"
-REQUEST_FILE_PATH = f"{BASE_DATA_PATH}data/requests.txt"
-COMIC_LATEST_LINKS_PATH = f"{BASE_DATA_PATH}data/latest_comics.json"
-PID_FILE = f"{BASE_DATA_PATH}bdbot.pid"
-ENV_FILE = f"{BASE_DATA_PATH}.env"
+DEV_DATA_PATH = os.path.dirname(__file__)
+BASE_DATA_PATH = PROD_DATA_PATH if not os.getenv("DEV") else DEV_DATA_PATH
+MISC_PATH = os.path.join(BASE_DATA_PATH, "misc")
+DATA_PATH = os.path.join(BASE_DATA_PATH, "data")
+DETAILS_PATH = os.path.join(MISC_PATH, "comics_details.json")
+FOOTERS_FILE_PATH = os.path.join(MISC_PATH, "random-footers.txt")
+DATABASE_FILE_PATH = os.path.join(DATA_PATH, "data.json")
+BACKUP_FILE_PATH = os.path.join(DATA_PATH, "backups", "BACKUP_DATABASE_")
+LOGS_DIRECTORY_PATH = os.path.join(DATA_PATH, "logs/")
+REQUEST_FILE_PATH = os.path.join(DATA_PATH, "requests.txt")
+COMIC_LATEST_LINKS_PATH = os.path.join(BASE_DATA_PATH, "latest_comics.json")
+PID_FILE = os.path.join(BASE_DATA_PATH, "bdbot.pid")
+ENV_FILE = os.path.join(BASE_DATA_PATH, ".env")
 date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su", "La"]
 strip_details: dict = {}
 link_cache: dict = {}
