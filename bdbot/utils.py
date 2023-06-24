@@ -18,7 +18,6 @@ PROD_DATA_PATH = (
 )
 DEV_DATA_PATH = os.path.dirname(__file__)
 BASE_DATA_PATH = PROD_DATA_PATH if not os.getenv("DEV") else DEV_DATA_PATH
-print(BASE_DATA_PATH)
 MISC_PATH = os.path.join(BASE_DATA_PATH, "misc")
 DATA_PATH = os.path.join(BASE_DATA_PATH, "data")
 DETAILS_PATH = os.path.join(MISC_PATH, "comics_details.json")
