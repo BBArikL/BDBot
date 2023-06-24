@@ -58,6 +58,7 @@ def create_embed(comic_details: Optional[dict] = None):
     :param comic_details:
     :return:
     """
+    embed: discord.Embed
     if comic_details is not None:
         # Embeds the comic
         comic_name = comic_details["Name"]
@@ -95,8 +96,6 @@ def create_embed(comic_details: Optional[dict] = None):
         embed.set_image(url=img_url)
 
         embed.set_footer(text=get_random_footer())
-
-        return embed
     else:
         # Error message
         embed = discord.Embed(title="No comic found!")
@@ -106,7 +105,7 @@ def create_embed(comic_details: Optional[dict] = None):
             value="Try another date / number!",
         )
 
-        return embed
+    return embed
 
 
 async def send_comic_info(
@@ -824,7 +823,6 @@ def remove_role(inter):
 
     if gid in data:
         if role in data[gid]:
-
             data[gid].pop(role)
             data[gid].pop(only_daily)
 
@@ -895,7 +893,6 @@ def get_sub_status(inter, position: int, database: Optional[dict] = None):
     if guild_id in database:
         guild_data = database[guild_id]
         for channel in guild_data["channels"]:
-
             if "latest" in guild_data["channels"][channel]:
                 if position in guild_data["channels"][channel]["latest"]:
                     return True
@@ -1247,7 +1244,6 @@ def clean_database(
             to_remove = True
             channels = data[guild]["channels"]
             for chan in channels:
-
                 # Check if the channel has any latest comics scheduled
                 if "latest" in channels[chan]:
                     if len(channels[chan]["latest"]) != 0:

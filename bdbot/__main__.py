@@ -26,7 +26,10 @@ def main():
         description="BDBot now supports slash commands! Re-invite the bot with /inv!",
     )
     handler = logging.FileHandler(
-        filename=f'{LOGS_DIRECTORY_PATH}discord_{datetime.now().strftime("%Y_%m_%d_%H_%M")}.log',
+        filename=os.path.join(
+            LOGS_DIRECTORY_PATH,
+            f"discord_{datetime.now().strftime('%Y_%m_%d_%H_%M')}.log",
+        ),
         encoding="utf-8",
         mode="w",
     )
@@ -85,7 +88,8 @@ async def run(bot: commands.Bot, logger: logging.Logger):
 
     for filename in os.listdir("cogs"):
         if filename.endswith("py") and filename != "__init__.py":
-            await bot.load_extension(f"bdbot.cogs.{filename[:-3]}")
+            file_name, _ = os.path.splitext(filename)
+            await bot.load_extension(f"bdbot.cogs.{file_name}")
 
     logger.info("Cogs successfully loaded!")
 
