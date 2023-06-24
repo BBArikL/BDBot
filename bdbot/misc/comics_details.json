@@ -595,5 +595,18 @@
         "Color": "E8545A",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/sasc/mid_rec-201701251558.jpg",
         "Helptxt": "Follow the funny life of Sarah Anderson where everyone can relate! "
+    },
+    "SpeedBump": {
+        "Name": "Speed Bump",
+        "Author": "Dave Coverly",
+        "Web_name": "speedbump",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Dave Coverly admits there is no overriding theme, no tidy little philosophy that precisely describes what Speed Bump is about. \"Basically,\" he says, \"if life were a movie, these would be the outtakes.\"\nWebsite: https://www.speedbump.com/\nTwitter: http://twitter.com/speedbumpcomic\nAbout: https://www.gocomics.com/speedbump/about",
+        "Position": 46,
+        "First_date": "2002, 1, 1",
+        "Color": "DBCEAF",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/crspe/mid_u-201701251612.png",
+        "Helptxt": "Cartoons for idea people!"
     }
 }
