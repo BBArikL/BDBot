@@ -621,5 +621,18 @@
         "Color": "DCC7B5",
         "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/wtb/mid_wtb_u_202204181313.png",
         "Helptxt": "Follow the adventures of Wallace and his friends Spud and Amelia! "
+    },
+    "Ripley'sBelieveItorNot": {
+        "Name": "Ripley's Believe It or Not",
+        "Author": "Ripley's Believe It or Not!",
+        "Web_name": "ripleysbelieveitornot",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Ripley's Believe It or Not! has been presenting the incredible and the unusual in illustrated form since Robert Ripley's first \"Champs and Chumps\" comic was published in the New York Globe on December 19, 1918. From there, Ripley set off to search the world for more incredibly hard to believe, but undeniably true stories to drawtraveling to 201 countries in 35 years.Today, artist Kieran Casta\u00f1o is the eighth cartoonist to take up the pen of this legacy panel. Kieran resides in Central Florida with his bird Rosie and pup Trini  who can often be spotted in his work.\n\nSupporting Kieran is Ripley\u2019s Research Team, committed to finding the strangest stories, fact-checking sources, and filtering through the hundreds of weekly submissions that help bring this all-true cartoon to life. To submit your own Believe It or Not! fact, click here! \n\nDid you know the Ripley\u2019s cartoon has changed history in more ways than one? In a 1929 panel, Robert Ripley pointed out that America had no national anthem, which led to legislation making the Star Spangled Banner the county\u2019s official anthem!\n\nWebsite: https://www.ripleys.com/\nFacebook: http://facebook.com/RipleysBelieveItorNot\nTwitter: http://twitter.com/Ripleys\nAbout: https://www.ripleys.com/ripleys-attractions/",
+        "Position": 48,
+        "First_date": "1996, 1, 1",
+        "Color": "E91C2C",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/rp/mid_rp_u_202212280802.png",
+        "Helptxt": "The incredible and unusuals, all at the same place every day!"
     }
 }
