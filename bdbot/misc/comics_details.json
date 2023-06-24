@@ -608,5 +608,18 @@
         "Color": "DBCEAF",
         "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/crspe/mid_u-201701251612.png",
         "Helptxt": "Cartoons for idea people!"
+    },
+    "WallacetheBrave": {
+        "Name": "Wallace the Brave",
+        "Author": "Will Henry",
+        "Web_name": "wallace-the-brave",
+        "Main_website": "https://www.gocomics.com/",
+        "Working_type": "date",
+        "Description": "Welcome to Snug Harbor! Will Henry's \u201cWallace the Brave\u201d is a whimsical comic strip that centers around a bold and curious little boy named Wallace, his best friend Spud and the new girl in town, Amelia. Wallace lives in the quaint and funky town of Snug Harbor with his fisherman father, plant loving mother and feral little brother, Sterling.\nFacebook: http://facebook.com/WallacetheBrave/\nTwitter: http://twitter.com/MrWillHenry\nAbout: https://www.gocomics.com/wallace-the-brave/about",
+        "Position": 47,
+        "First_date": "2015, 6, 29",
+        "Color": "DCC7B5",
+        "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/wtb/mid_wtb_u_202204181313.png",
+        "Helptxt": "Follow the adventures of Wallace and his friends Spud and Amelia! "
     }
 }
