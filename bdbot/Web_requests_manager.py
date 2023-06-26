@@ -2,14 +2,19 @@ import json
 import logging
 import random
 from datetime import date, datetime, timedelta
-from typing import Optional, Union
+from typing import List, Optional, Union
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
+from pydantic import Field
 from requests import get
 from rss_parser import Parser
+from rss_parser.models import XMLBaseModel
+from rss_parser.models.channel import Channel
+from rss_parser.models.item import Item
 from rss_parser.models.rss import RSS
+from rss_parser.models.types import Tag
 
 from bdbot.utils import (
     COMIC_LATEST_LINKS_PATH,
@@ -354,6 +359,23 @@ def get_comic_info_number(
     return details
 
 
+class GarfieldMinusGarfieldItem(Item):
+    category: Optional[Tag[List[str]]] = None
+
+
+class GarfieldMinusGarfieldChannel(Channel):
+    items: Optional[List[Tag[GarfieldMinusGarfieldItem]]] = Field(
+        alias="item", default=[]
+    )
+
+    category: Optional[Tag[List[str]]] = None  # Newspapers
+    "Specify one or more categories that the channel belongs to. Follows the same rules as the <item.py>-level " "category element."  # noqa
+
+
+class GarfieldMinusGarfieldRSS(RSS, XMLBaseModel):
+    channel: Tag[GarfieldMinusGarfieldChannel]
+
+
 def get_comic_info_rss(
     strip_details,
     action: Union[Action, ExtendedAction] = None,
@@ -415,7 +437,12 @@ def get_comic_info_rss(
         site_content = get(rss_site).text
 
         if site_content is not None and site_content != "":
-            rss: RSS = Parser.parse(data=site_content, schema=RSS)
+            rss: RSS = Parser.parse(
+                data=site_content,
+                schema=RSS
+                if strip_details["Main_website"] == "https://www.webtoons.com/en/"
+                else GarfieldMinusGarfieldRSS,
+            )
             feed = rss.channel.content.items[comic_nb].content
             # Get information
             tz: str
@@ -445,11 +472,15 @@ def get_comic_info_rss(
                 for image in description_soup.findAll("img")
             ]
 
-            if len(description_images) > 1:  # general check for a second image to embed
-                details["sub_img_url"] = description_images[img_index]["source"]
-                img_index += 1
-
-            details["img_url"] = description_images[img_index]["source"]
+            if len(description_images) > 0:
+                if (
+                    len(description_images) > 1
+                ):  # general check for a second image to embed
+                    details["sub_img_url"] = description_images[img_index]["source"]
+                    img_index += 1
+                details["img_url"] = description_images[img_index]["source"]
+            else:
+                details["img_url"] = fall_back_img
         else:
             details = None
 

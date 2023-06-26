@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from bdbot import discord_utils, utils
 from bdbot.utils import LOGS_DIRECTORY_PATH
+from bdbot.Web_requests_manager import create_link_cache
 
 
 def main():
@@ -82,6 +83,8 @@ async def run(bot: commands.Bot, logger: logging.Logger):
     logger.info("Loaded random footers!")
 
     logger.info("Loading latest comic links...")
+    if not os.path.exists(utils.COMIC_LATEST_LINKS_PATH):
+        create_link_cache(logger)
     utils.link_cache = utils.load_json(utils.COMIC_LATEST_LINKS_PATH)
     utils.link_cache = utils.fill_cache(utils.strip_details, utils.link_cache)
     logger.info("Loaded comic links!")
