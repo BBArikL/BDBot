@@ -1308,13 +1308,13 @@ async def on_error(inter: discord.Interaction, error: AppCommandError):
     elif isinstance(error, AppCommandError):
         await responder.send_message(
             "The command failed. Please report this issue on Github here: "
-            f"https://github.com/BBArikL/BDBot . The error is: {error.__class__.__name__}: {error}",
+            f"https://github.com/BBArikL/BDBot . The error is: {error.__class__.__name__}: {error.__str__()[:500]}",
             ephemeral=True,
         )
     else:  # Not supported errors
         await responder.send_message(
             f"Error not supported. Visit https://github.com/BBArikL/BDBot to report "
-            f"the issue. The error is: {error.__class__.__name__}: {error}",
+            f"the issue. The error is: {error.__class__.__name__}: {error.__str__()[:500]}",
             ephemeral=True,
         )
 
