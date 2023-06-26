@@ -14,10 +14,10 @@ from randomtimestamp import randomtimestamp
 PROD_DATA_PATH = (
     os.path.join(os.getenv("LOCALAPPDATA"), "bdbot")
     if os.name == "nt"
-    else os.path.join("home", os.getenv("USER"), ".local", "bdbot")
+    else os.path.join("/home", os.getenv("USER"), ".local", "bdbot")
 )
 DEV_DATA_PATH = os.path.dirname(__file__)
-BASE_DATA_PATH = PROD_DATA_PATH if not os.getenv("DEV") else DEV_DATA_PATH
+BASE_DATA_PATH = PROD_DATA_PATH if not os.getenv("DEBUG") else DEV_DATA_PATH
 MISC_PATH = os.path.join(BASE_DATA_PATH, "misc")
 DATA_PATH = os.path.join(BASE_DATA_PATH, "data")
 DETAILS_PATH = os.path.join(MISC_PATH, "comics_details.json")
