@@ -21,7 +21,7 @@ poetry = "^1.8.2"
 pytest = "^8.1.1"
 flake8 = "^7.0.0"
 isort = "^5.13.2"
-black = "^24.3.0"
+black = "^24.4.0"
 pre-commit = "^3.7.0"
 
 
