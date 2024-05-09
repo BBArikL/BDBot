@@ -87,9 +87,9 @@ class Comic(commands.Cog):
                 callback=define_comic_callback(comics_details[comic]),
             )
             # No built-in functions for adding autocomplete choices when creating callbacks in a factory way
-            comic_command._params.get(
-                "hour"
-            ).choices = get_possible_hours()  # noqa: See above
+            comic_command._params.get("hour").choices = (  # noqa: See above
+                get_possible_hours()
+            )
 
             self.bot.tree.add_command(comic_command)
 

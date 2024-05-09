@@ -1,5 +1,4 @@
 import asyncio
-import math
 import os
 import re
 from datetime import datetime, timezone
@@ -7,14 +6,22 @@ from typing import Optional, Union
 
 import discord
 import topgg
-from discord import app_commands, ui
+from discord import app_commands
 from discord.app_commands import AppCommand
 from discord.ext import commands
 
-from bdbot import discord_utils, utils
-from bdbot.cogs.AutomaticPoster import PosterHandler
-from bdbot.cogs.Comics import Comic
-from bdbot.discord_utils import SERVER, NextSend, is_owner, on_error, send_message
+from bdbot import utils
+from bdbot.discord import discord_utils
+from bdbot.discord.bot_request import BotRequest
+from bdbot.discord.cogs.AutomaticPoster import PosterHandler
+from bdbot.discord.cogs.Comics import Comic
+from bdbot.discord.discord_utils import (
+    SERVER,
+    NextSend,
+    is_owner,
+    on_error,
+    send_message,
+)
 from bdbot.utils import Date
 
 
@@ -65,9 +72,8 @@ class BDBot(commands.Cog):
         )
 
         async with self.bot:
-            await PosterHandler.wait_for_next_hour(
-                PosterHandler(self.bot)
-            )  # Wait for daily poster
+            # Wait for daily poster
+            await PosterHandler.wait_for_next_hour(PosterHandler(self.bot))
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
@@ -142,8 +148,9 @@ class BDBot(commands.Cog):
         inv = discord_utils.get_url()
         await send_message(inter, f"Share the bot! {inv}")
 
+    # Only mods can add comics
     @app_commands.command()
-    @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add comics
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def add_all(
         self, inter: discord.Interaction, date: Date = None, hour: int = None
     ):
@@ -151,26 +158,25 @@ class BDBot(commands.Cog):
         status = discord_utils.add_all(inter, date, hour)
         await send_message(inter, status)
 
+    # Only mods can delete the server from the database
     @app_commands.command()
-    @app_commands.checks.has_permissions(
-        manage_guild=True
-    )  # Only mods can delete the server from the database
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def remove_all(self, inter: discord.Interaction):
         """Remove the guild from the database. Preferred way to remove all comics.Mods only"""
         status = discord_utils.remove_guild(inter)
         await send_message(inter, status)
 
+    # Only mods can delete the channel from the database
     @app_commands.command()
-    @app_commands.checks.has_permissions(
-        manage_guild=True
-    )  # Only mods can delete the channel from the database
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def remove_channel(self, inter: discord.Interaction):
         """Remove the channel from the database.Mods only"""
         status = discord_utils.remove_channel(inter)
         await send_message(inter, status)
 
+    # Only mods can add a role
     @app_commands.command()
-    @app_commands.checks.has_permissions(manage_guild=True)  # Only mods can add a role
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def set_role(self, inter: discord.Interaction, role: discord.Role):
         """Add a role to be notified. Mods only"""
         if discord.Guild.get_role(inter.guild, role.id) is not None:
@@ -180,10 +186,9 @@ class BDBot(commands.Cog):
         else:
             await send_message(inter, "The role is invalid or not provided!")
 
+    # Only mods can delete the role
     @app_commands.command()
-    @app_commands.checks.has_permissions(
-        manage_guild=True
-    )  # Only mods can delete the role
+    @app_commands.checks.has_permissions(manage_guild=True)
     async def remove_role(self, inter: discord.Interaction):
         """Deletes the role mention. Mods only"""
         status = discord_utils.remove_role(inter)
@@ -361,14 +366,8 @@ class BDBot(commands.Cog):
     @app_commands.command()
     async def uptime(self, inter: discord.Interaction):
         """Get the bot uptime"""
-        delta = datetime.now(timezone.utc) - self.start_time
-        hours = math.floor(delta.seconds / 3600)
-        minutes = math.floor((delta.seconds - hours * 3600) / 60)
-        seconds = math.floor(delta.seconds - ((minutes * 60) + (hours * 3600)))
-        await send_message(
-            inter,
-            f"The bot has been up for {delta.days} days, {hours} hours, {minutes} minutes and {seconds} seconds.",
-        )
+        uptime_message = self.get_uptime(self.start_time)
+        await send_message(inter, uptime_message)
 
     @app_commands.command()
     @app_commands.guilds(SERVER.id)
@@ -453,20 +452,6 @@ class BDBot(commands.Cog):
 
     # ---- End of commands ----#
     # ---- End of BDBot ----#
-
-
-class BotRequest(ui.Modal, title="Request"):
-    """Request for the bot"""
-
-    request = ui.TextInput(label="Request")
-
-    async def on_submit(self, interaction: discord.Interaction) -> None:
-        utils.save_request(
-            self.request.value, interaction.user.name, interaction.user.discriminator
-        )
-        await send_message(
-            interaction, "Request saved! Thank you for using BDBot!", ephemeral=True
-        )
 
 
 async def setup(bot: discord.ext.commands.Bot):  # Initialize the cog

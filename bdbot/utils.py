@@ -9,8 +9,6 @@ from datetime import datetime, timedelta, timezone
 from os import path
 from typing import Optional
 
-from randomtimestamp import randomtimestamp
-
 PROD_DATA_PATH = (
     os.path.join(os.getenv("LOCALAPPDATA"), "bdbot")
     if os.name == "nt"
@@ -191,19 +189,6 @@ def get_date(date: str):
     return datetime.strptime(date, "%Y, %m, %d").strftime("%A %d, %Y")
 
 
-def get_first_date(comic: dict) -> str:
-    """Get the first date of the comic
-
-    :param comic:
-    :return:
-    """
-    if comic["Main_website"] == "https://comicskingdom.com/":
-        # Comics kingdom only lets us go back 7 days in the past
-        return (datetime.today() - timedelta(days=7)).strftime("%Y, %m, %d")
-    else:
-        return comic["First_date"]
-
-
 def get_today() -> Date:
     """Get the day
 
@@ -237,9 +222,7 @@ def clean_url(url: str, file_forms: Optional[list] = None) -> str:
     for file_form in file_forms:
         url = re.sub(f"\\.{file_form}\\?.*$", f".{file_form}", url)
 
-    url = url.replace(" ", "%20")
-
-    return url
+    return url.replace(" ", "%20")
 
 
 def get_link(comic: dict, day: Optional[datetime] = None) -> str:
@@ -275,32 +258,6 @@ def get_date_formatted(day: Optional[datetime] = None, form: str = "/") -> str:
         return day.strftime(f"%Y{form}%m{form}%d")
     else:
         return ""
-
-
-def get_random_link(comic: dict) -> (str, Optional[datetime]):
-    """Returns a random comic url
-
-    :param comic:
-    :return:
-    """
-    if comic["Main_website"] == "https://www.gocomics.com/":
-        return f'{comic["Main_website"]}random/{comic["Web_name"]}', None
-    else:
-        first_date = datetime.strptime(get_first_date(comic), "%Y, %m, %d")
-        random_date: datetime = randomtimestamp(
-            start=first_date,
-            end=datetime.today().replace(hour=0, minute=0, second=0, microsecond=0),
-        )
-        middle_params = ""
-        if comic["Main_website"] == "https://comicskingdom.com/":
-            middle_params = comic["Web_name"]
-        elif comic["Main_website"] == "https://dilbert.com/":
-            middle_params = "strip"
-
-        return (
-            f'{comic["Main_website"]}{middle_params}/{random_date.strftime("%Y-%m-%d")}',
-            random_date,
-        )
 
 
 def get_strip_details(comic_name: str):
