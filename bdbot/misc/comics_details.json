@@ -7,7 +7,7 @@
         "Working_type": "date",
         "Description": "A cynical, lazy, lasagna-loving, Monday-hating, dog-punting, mailman-mauling fat cat. Garfield's passion for food and sleep is matched only by his aversion to diet and exercise. Garfield and his human Jon Arbuckle debuted on June 19, 1978, and have been enduring/endearing one another ever since.\nGarfield got a lot of representation in media and experimental cartoons such as:\nGarkov: https://joshmillard.com/garkov/\nPermanent Monday: https://permanent-monday.blogspot.com/\nBarfield loses his lunch (Not intended for readers under 18 years of age): http://www.thereverend.com/barfield/index.html\nCalvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/\nUltimate Garfield: https://www.sparehed.com/2009/11/22/ultimate-garfield/\nNothing Garfield: https://www.sparehed.com/2007/08/08/nothing-garfield/\nLasagna Cat: https://www.youtube.com/channel/UC2AQkHXNVA-w9FA1m9VqO7A\nGarfield minus Garfield (also supported trough /garfield_minus_garfield): https://garfieldminusgarfield.net/\n\nWebsite: https://www.garfield.com/\nFacebook: https://facebook.com/Garfield/\nTwitter: https://twitter.com/Garfield\nMore info: https://www.gocomics.com/garfield/characters-garfield\n\nSee also:\nGarfield Classics,\nGarfield minus Garfield,\nJon,\nPeanuts",
         "Position": 0,
-        "First_date": "1978, 6, 19",
+        "First_date": "1978-6-19",
         "Color": "FFA202",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/ga/mid_rec-201701251556.jpg",
         "Helptxt": "The only, the superb, Garfield!"
@@ -20,7 +20,7 @@
         "Working_type": "date",
         "Description": "Garfield Classics takes us back to the beginning to remind us why we fell in love with the lazy, cynical orange cat who loves lasagna, coffee, and his remote control.\n\nFacebook: https://facebook.com/Garfield/\nTwitter: https://twitter.com/Garfield\nMore info: https://www.gocomics.com/garfield-classics/\n\nSee also:\nGarfield,\nGarfield minus Garfield,\nJon,\nPeanuts",
         "Position": 1,
-        "First_date": "2016, 6, 20",
+        "First_date": "2016-6-20",
         "Color": "FFA202",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/gacl/mid_rec-201701251558.jpg",
         "Helptxt": "Revisit the work of Jim Davis through the best garfield comics!"
@@ -33,7 +33,7 @@
         "Working_type": "date",
         "Description": "One of the most famous and popular comic strips of all time, Bill Watterson's Calvin and Hobbes has been a timeless worldwide favorite since its introduction in 1985. The beloved comic follows the richly imaginative adventures of 6-year-old Calvin and his trusty tiger, Hobbes. Whether you enjoyed it as a child while expanding your vocabulary, as an adult in the newspaper or if you are reacquainting yourself with these cultural icons, Calvin and Hobbes will continue to astound and delight you.\n\nMore representations of C&H in media:\nCalvin Dilbert and Garfield combo comic: https://www.sparehed.com/2014/04/16/calvin-garfield/\nCalvin on ritalin: https://www.sparehed.com/2009/08/24/calvin-on-retalin/\n\nWebsite: https://www.calvinandhobbes.com/\nFacebook: https://facebook.com/CalvinAndHobbes/\nTwitter: https://twitter.com/calvinandhobbes\nMore info: https://www.gocomics.com/calvinandhobbes/about\n\nSee also:\nPeanuts",
         "Position": 2,
-        "First_date": "1985, 11, 18",
+        "First_date": "1985-11-18",
         "Color": "F0A921",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/ch/large_rec-201701251556.jpg",
         "Helptxt": "The iconic duo of Calvin and Hobbes is assured to bring back memories of the good days of childhood."
@@ -59,7 +59,7 @@
         "Working_type": "date",
         "Description": "The iconic strip Peanuts is an enduring classic since the 1950s, and is still assured to make you laugh!\n\nFacebook: https://facebook.com/Snoopy/\nTwitter: https://twitter.com/Snoopy\nMore info: https://www.gocomics.com/peanuts/characters\n\nSee also:\nPeanuts Begins,\nGarfield,\nCalvin and Hobbes",
         "Position": 4,
-        "First_date": "1950, 10, 2",
+        "First_date": "1950-10-2",
         "Color": "6D9BB7",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/pe/large_rec-201701251556.jpg",
         "Helptxt": "Charles Schulz's classic about the adventures of Charlie Brown, Snoopy and the gang."
@@ -72,7 +72,7 @@
         "Working_type": "date",
         "Description": "Stroll down memory lane with Charlie Brown, Snoopy, Lucy, Linus and the whole gang as they retrace the adventures what began on newspaper funny pages in 1950. Those were the days!\n\nDisclaimer from GoComics: This historic comic is presented in its original form, unedited from the time period in which it was created. These images may contain harmful stereotypes, problematic and antiquated ideologies, or otherwise negative cultural depictions and themes indicative of the context in which it first appeared. We run these vintage comic strips to preserve a digital archive of the medium's early examples.\n\nFacebook: https://facebook.com/Snoopy/\nTwitter: https://twitter.com/Snoopy\nMore info: https://www.gocomics.com/peanuts-begins/about\n\nSee also:\nPeanuts",
         "Position": 5,
-        "First_date": "1950, 10, 2",
+        "First_date": "1950-10-2",
         "Color": "6D9BB7",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/pecl/large_rec-201701251558.jpg",
         "Helptxt": "The original comics of Charles Schulz's Peanuts, revisited!"
@@ -85,7 +85,7 @@
         "Working_type": "number",
         "Description": "Cyanide & Happiness (C&H) is a webcomic created by Rob DenBleyker, Kris Wilson, Dave McElfatrick and Matt Melvin. The comic has been running since 2005 and is published on the website explosm.net along with animated shorts in the same style. Matt Melvin left C&H in 2014, and several other people have contributed to the comic and to the animated shorts.\n\nDisclaimer: **Comics might contain sensitive / mature content, which might not be advised for persons under 18 of age.**\n\nWebsite: https://explosm.net/\nComic generator: https://explosm.net/rcg\nFacebook: https://www.facebook.com/explosm\nTwitter: https://twitter.com/Explosm\nYoutube: https://www.youtube.com/user/ExplosmEntertainment\nInstagram: https://instagram.com/explosmofficial",
         "Position": 6,
-        "First_date": "2012, 6, 13",
+        "First_date": "2012-6-13",
         "Color": "FFFFFF",
         "Image": "https://explosm.net/img/logo.png",
         "Helptxt": "The classic comic of dark humor from the team of Explosm is assured not to leave you cold!"
@@ -98,7 +98,7 @@
         "Working_type": "date",
         "Description": "Frazz by Jef Mallett follows the adventures of an unexpected role model: an elementary-school janitor who's also a Renaissance man. While he's sweeping the hall, he's whistling Beethoven. Frazz appears in 200 newspapers worldwide, including the Los Angeles Times, Seattle Times, Chicago Tribune and Detroit News.\n\nFacebook: https://facebook.com/frazzcomic/\nMore info: https://www.gocomics.com/frazz/about",
         "Position": 7,
-        "First_date": "2001, 4, 2",
+        "First_date": "2001-4-2",
         "Color": "36535A",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/fz/large_rec-201701251556.jpg",
         "Helptxt": "Join the adventures of Frazz the songwriter-janitor who is every kid's buddy!"
@@ -111,7 +111,7 @@
         "Working_type": "rss",
         "Description": "Garfield Minus Garfield is dedicated to removing Garfield from the Garfield comic strips in order to reveal the existential angst of a certain young Mr. Jon Arbuckle. It is a journey deep into the mind of an isolated young everyman as he fights a losing battle against loneliness and depression in a quiet American suburb.\n\nWhat does Jim Davis think of Garfield minus Garfield: https://garfieldminusgarfield.net/private/61669516/fSymsOGXOgrmmihjqTZaCBY2\nMore info: https://garfieldminusgarfield.net/post/61669282/the-garfield-minus-garfield-faq\n\nSee also:\nGarfield,\nGarfield Classics,\nJon",
         "Position": 8,
-        "First_date": "2008, 2, 13",
+        "First_date": "2008-2-13",
         "Color": "FFA202",
         "Image": "https://64.media.tumblr.com/avatar_02c53466ae58_64.gif",
         "Helptxt": "Revisit Garfield without the iconic orange and black cat, to see how can loneliness reveal existential angst in a daily life."
@@ -124,7 +124,7 @@
         "Working_type": "date",
         "Description": "Frank & Ernest chronicles the adventures of two 'every man' characters who are anything but ordinary! They are able to appear in different settings, time periods - even manifested as things and creatures other than people. The variety in the strip extends to their observations about a wide variety of subjects.\n\nWebsite: https://frankandernest.com/\nAnimations: https://frankandernest.com/comics/animation.html\nPuzzle: https://frankandernest.com/fun/puzzle.html\nFAQ: https://frankandernest.com/faq.html",
         "Position": 9,
-        "First_date": "1990, 3, 10",
+        "First_date": "1990-3-10",
         "Color": "F6F495",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/fk/large_rec-201701251556.jpg",
         "Helptxt": "Enjoy the iconic comic from Bob Thaves!"
@@ -137,7 +137,7 @@
         "Working_type": "date",
         "Description": "Living in an enchanted forest with surrealistic landscapes, the engaging characters of Broom Hilda happily have no connection with reality. Other comic characters are extensions or distortions of reality, but Broom Hilda deals in pure fantasy, making the strip bewitchingly unique. Here in the forest, the inhabitants maintain a standard of madness where total irrelevance is the only relevancy. The strip is simply a loony-bin where what\u2019s said and done often makes no sense whatsoever, much to the joy of its millions of fans.",
         "Position": 10,
-        "First_date": "2008, 4, 8",
+        "First_date": "2008-4-8",
         "Color": "C0BC37",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/tmbro/mid_rec-201701251555.jpg",
         "Helptxt": "The adventures of a man-crazy, cigar-smoking, beer-guzzling, 1,500-year-old witch and her motley crew of friends!"
@@ -150,7 +150,7 @@
         "Working_type": "date",
         "Description": "'Cheer Up, Emo Kid started in 2008 as an amateur comic about relationships and events in my life, and has since graduated into a professional amateur comic about relationships and events in my life. It loosely follows the non-adventures of Zeke & Frank, two friends constantly at odds with each other in their attitudes towards relationships; and their friends Steve & Sue, an extraordinarily ordinary couple just going through the motions of monogamy.[...]' - Enzo.\nFacebook: https://facebook.com/cheerupemokid\nTwitter: https://twitter.com/enzocomics\nInstagram: https://instagram.com/enzocomics\nTumblr: https://enzocomics.tumblr.com/\nWebsite: https://cheerupemokid.com/",
         "Position": 11,
-        "First_date": "2017, 3, 20",
+        "First_date": "2017-3-20",
         "Color": "8B8C8C",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/cuek/large_cuek_rec_201704041613.jpg",
         "Helptxt": "A comic about friendship and love made by Enzo Comics."
@@ -163,7 +163,7 @@
         "Working_type": "date",
         "Description": "With his random but always funny comics, Dan Thompson knows how to twist a situation with a whole new perspective.\nFacebook: https://facebook.com/brevitycomic\nTwitter: https://twitter.com/BrevityComic",
         "Position": 12,
-        "First_date": "2005, 1, 3",
+        "First_date": "2005-1-3",
         "Color": "99552F",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/bvp/large_rec-201701251556.jpg",
         "Helptxt": "Enjoy the humor of Dan Thompson as he twist seemingly normal situations into a whole new perspective."
@@ -176,7 +176,7 @@
         "Working_type": "date",
         "Description": "Everyone is welcome at Cat\u2019s Caf\u00e9! There is always a seat and someone to talk to. Follow Cat, Penguin, and Rabbit along with a variety of other special animals, form a wonderful place where everyone can feel warm, fuzzy, and accepted.\n\nFacebook: https://facebook.com/catscafecomics\nTwitter: https://twitter.com/CatsCafeComics\nInstagram: https://instagram.com/catscafecomics/\nTumblr: https://catscafecomics.tumblr.com/\nWebsite: https://www.catscafecomics.com/\nMore info: https://www.gocomics.com/cats-cafe/characters\nSee also:\nGarfield",
         "Position": 13,
-        "First_date": "2019, 5, 20",
+        "First_date": "2019-5-20",
         "Color": "F5D16F",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/ccf/large_ccf_rec_201905140834.jpg",
         "Helptxt": "Join Cat's cafe where wholesomeness and good vibes are always on the menu!"
@@ -358,7 +358,7 @@
         "Working_type": "date",
         "Description": "Aspiring cartoonist Nate Wright is the star of Big Nate, the daily and Sunday comic strip distributed by NEA since 1991. Nate is 11 years old, four-and-a-half feet tall, and the all-time record holder for detentions in school history. He's a self-described genius and sixth grade Renaissance Man. Nate, who lives with his dad and older sister, enjoys pestering his family and teachers with his sarcasm.\nFacebook: https://www.facebook.com/bignatebooks/\nMore info: https://www.gocomics.com/bignate/about",
         "Position": 27,
-        "First_date": "1991, 01, 07",
+        "First_date": "1991-1-7",
         "Color": "179AC2",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/bn/large_rec-201701251556.jpg",
         "Helptxt": "Class clown. Self-described genius. Mischief maker. Big Nate knows trouble."
@@ -371,7 +371,7 @@
         "Working_type": "date",
         "Description": "House-cats are known to be aloof, but \"cat-titude\" reaches new heights in Get Fuzzy, the bitingly hilarious comic strip from cartoonist Darby Conley. Available daily and Sunday and appearing in 650 newspapers nationwide, Get Fuzzy is a wry portrait of single life, with pets. At the center of this warm and fuzzy romp is Rob Wilco, a single, mild-mannered ad executive and guardian of anthropomorphic scamps Bucky and Satchel.\nMore info: https://www.gocomics.com/getfuzzy/about",
         "Position": 28,
-        "First_date": "1999, 09, 06",
+        "First_date": "1999-9-6",
         "Color": "BC9B6E",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/gz/large_rec-201701251556.jpg",
         "Helptxt": "Get Fuzzy is a wry portrait of single life, with pets."
@@ -397,7 +397,7 @@
         "Working_type": "date",
         "Description": "Meet Aaron McGruder\u2019s The Boondocks: Huey and Riley Freeman, Jazmine DuBois, and Huey\u2019s best friend, Caesar. This comic strip reflects the racial diversity and complexity of our world. Combining Huey\u2019s childish antics with contemporary political and social satire, the strip explores the terrain where dashikis and Brand Nubian CDs meet The Gap and Hanson.\nMore info: https://www.gocomics.com/boondocks/about",
         "Position": 30,
-        "First_date": "1999, 04, 19",
+        "First_date": "1999-4-19",
         "Color": "A16F4F",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/bo/large_rec-201701251555.jpg",
         "Helptxt": "A popular and controversial strip, The Boondocks satirizes African American culture and American politics as seen through the eyes of young, black radical Huey Freeman."
@@ -410,7 +410,7 @@
         "Working_type": "date",
         "Description": "Pickles, syndicated by The Washington Post Writers Group for more than 26 years, tells the story of Earl and Opal Pickles as they enjoy their golden years surrounded by friends and family. A perennial favorite with readers of all ages, Pickles has topped comics polls across the nation again and again, and was named the best comic strip of 2001 by the National Cartoonists\u2019 Society.\nFacebook: https://www.facebook.com/picklescomic/\nMore info: https://www.gocomics.com/pickles/about",
         "Position": 31,
-        "First_date": "2003, 01, 01",
+        "First_date": "2003-1-1",
         "Color": "0F844B",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/wppic/large_rec-201701251555.jpg",
         "Helptxt": "Pickles is a daily and Sunday comic strip by Brian Crane focusing on a retired couple in their seventies, Earl and Opal Pickles."
@@ -423,7 +423,7 @@
         "Working_type": "date",
         "Description": "At its heart, Pearls Before Swine is the comic strip tale of two friends: an arrogant Rat who thinks he knows it all and a slow-witted Pig who doesn't know any better. Together, this pair offers caustic commentary on humanity's quest for the unattainable.\nWebsite: https://stephanpastis.wordpress.com/\nMore info: https://www.gocomics.com/pearlsbeforeswine/meet-the-cast",
         "Position": 32,
-        "First_date": "2002, 01, 07",
+        "First_date": "2002-1-7",
         "Color": "6EBED6",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/pb/large_pb_rec_201804050954.jpg",
         "Helptxt": "Join the chronicles of the daily lives of an ensemble cast of suburban anthropomorphic animals: Pig, Rat, Zebra, Goat, and a fraternity of crocodiles."
@@ -487,7 +487,7 @@
         "Working_type": "date",
         "Description": "Poorly Drawn Lines is a humorous comic strip updating three times weekly. Subjects are varied and include space travel, friendship, animals, people pretending to be animals, shapes, conversation, and the future. Read the full archive of over 200 strips at poorlydrawnlines.com. \nWebsite: https://poorlydrawnlines.com/\nFacebook: https://facebook.com/poorlydrawnlines\nInstagram: https://instagram.com/poorlydrawnlines\nTwitter: https://twitter.com/PDLComics\nMore info: https://www.gocomics.com/poorly-drawn-lines/about",
         "Position": 37,
-        "First_date": "2013, 09, 18",
+        "First_date": "2013-9-18",
         "Color": "F0F7F4",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/pdl/large_rec-201701251557.jpg",
         "Helptxt": "Poorly Drawn Lines, by Reza Farazmand, is a classic comic strip about friendship, animals and humor."
@@ -500,7 +500,7 @@
         "Working_type": "date",
         "Description": "Called the \"Cat of the Century\" by a major cat magazine, Heathcliff has been an incredible success. The cat is loved and recognized by millions in all corners of the globe. In addition to being published in hundreds of papers, the comic has been animated in more than 80 television shows, published in over 50 books with over a million copies in print and featured in a full-length motion picture. Heathcliff cartoons have even hung on the walls of the Louvre in Paris.\n\nAbout: https://www.gocomics.com/heathcliff/about",
         "Position": 38,
-        "First_date": "2002, 1, 1",
+        "First_date": "2002-1-1",
         "Color": "F04C1C",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/crhea/large_rec-201701251555.jpg",
         "Helptxt": "Follow Heathcliff, the first internet orange cat!"
@@ -513,7 +513,7 @@
         "Working_type": "date",
         "Description": "Andy and his wife, Flo, live out the epitome of functional dysfunction. From the pub to the bedroom, Andy\u2019s misadventures paint an indelible portrait of an extremely British battle of the sexes. Join Andy and Flo as they bicker their way through life. Their banter can be hostile, caring, sarcastic and adorable: the perfect ingredients for a lasting marriage.\nWebsite: https://www.creators.com/read/andy-capp\nFacebook: https://www.facebook.com/WorldofAndyCapp/\nTwitter: https://twitter.com/WorldofAndyCapp\nTumblr: https://starmirrorcartoons.tumblr.com/\nAbout: https://www.gocomics.com/andycapp/about",
         "Position": 39,
-        "First_date": "2002, 1, 1",
+        "First_date": "2002-1-1",
         "Color": "249E44",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/crcap/large_rec-201701251555.jpg",
         "Helptxt": "Join Andy and Flo Capp through their adventures!"
@@ -526,7 +526,7 @@
         "Working_type": "date",
         "Description": " Poor Ziggy. He\u2019s perpetually one step behind, one nickel short, one lane away from the fast lane. But we love him for it, because everyone feels like Ziggy now and then.\nWebsite: https://www.gocomics.com/ziggy\nAbout: https://www.gocomics.com/ziggy/about",
         "Position": 40,
-        "First_date": "1971, 6, 27",
+        "First_date": "1971-6-27",
         "Color": "B45B50",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/zi/mid_rec-201701251555.jpg",
         "Helptxt": "Join Ziggy's adventures through life with humor!"
@@ -539,7 +539,7 @@
         "Working_type": "date",
         "Description": "Junk Drawer is a single panel comic that celebrates failed endeavors. There are no consistent characters or settings, instead there is an ongoing theme of finding humor in situations gone wrong. Much like a junk drawer you might find in someone\u2019s home, this comic is a collection of charms that may not have a use but are valuable anyway. Looking at each one of these comics, it\u2019s clear that there is not going to be a good outcome. But at least it\u2019s funny.\nWebsite: https://ellis-rosen.format.com/\nFacebook: https://www.instagram.com/ellisjrosen/\nTwitter: https://twitter.com/EllisRosen\nAbout: https://www.gocomics.com/junk-drawer/about",
         "Position": 41,
-        "First_date": "2019, 9, 23",
+        "First_date": "2019-9-23",
         "Color": "B199B5",
         "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/jun/mid_jun_u_201909131421.png",
         "Helptxt": "A comic full of little stories to find humor in situations gone wrong."
@@ -552,7 +552,7 @@
         "Working_type": "date",
         "Description": "  Working Daze follows the employees trapped at MacroMicroMedia. MMM is a wanna-be software giant, and it's staffed by geeks and clueless management types. VP Rita will try anything that might make a little money (though her ideas usually don't.) Underpaid Dana carries he place and keeps it running, while overpaid Ed sleeps all day. Roy and Kathy are made for each other, and everyman Jay never knows when to keep his opinions to himself. Writer/creator John Zakour is a humor/sci-fi writer, whose work includes the Zach Johnson detective novels. Artist Scott Roberts was a longtime contributor to Nickelodeon Magazine, and is the author of the fantasy novel The Troubling Stone. John and Scott met when they both worked on the Rugrats newspaper strip.\nWebsite: https://workingdaze.blogspot.com/\nFacebook: https://www.facebook.com/WorkingDazeComic/\nTwitter: https://twitter.com/WorkingDaze_Roy\nAbout: https://www.gocomics.com/working-daze/about",
         "Position": 42,
-        "First_date": "2002, 2, 11",
+        "First_date": "2002-2-11",
         "Color": "749D4D",
         "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/wd/mid_u-201701251614.png",
         "Helptxt": "Follow the adventures at MacroMicroMedia where geeks and bad management thrives!"
@@ -565,7 +565,7 @@
         "Working_type": "date",
         "Description": "  If you\u2019ve ever struggled to turn your cell phone off, thought cookies were just a delicious snack, and tried in vain to talk to a human customer service rep, Charles Boyce has created a strip for you. Compu-toon reminds us that technological innovations haven\u2019t necessarily made our lives any easier -- maybe just more funny.\nFacebook: https://www.facebook.com/people/Compu-Toon/100067759376774/\nAbout: https://www.gocomics.com/compu-toon/about",
         "Position": 43,
-        "First_date": "2001, 4, 23",
+        "First_date": "2001-4-23",
         "Color": "664638",
         "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/tmcom/mid_u-201701251611.png",
         "Helptxt": "If you ever felt that tech is'nt always easy, Compu-Toon is the comic for you!"
@@ -591,7 +591,7 @@
         "Working_type": "date",
         "Description": "Sarah doesn't like waking up in the morning, being productive, or dealing with social situations. \u201cSarah's Scribbles\u201d is a comic strip that follows her life, finding humor in that which is weird, awkward, and embarrassing. This comic is for barely-functioning people, created by a barely-functioning person.\nWebsite: https://sarahcandersen.com/\nFacebook: https://www.facebook.com/DoodleTimeSarah\nTwitter: https://twitter.com/SarahCAndersen\nPatreon: https://www.patreon.com/SarahsScribbles\nAbout: https://sarahcandersen.com/about",
         "Position": 45,
-        "First_date": "2014, 1, 2",
+        "First_date": "2014-1-2",
         "Color": "E8545A",
         "Image": "https://avatar.amuniversal.com/feature_avatars/recommendation_images/features/sasc/mid_rec-201701251558.jpg",
         "Helptxt": "Follow the funny life of Sarah Anderson where everyone can relate! "
@@ -604,7 +604,7 @@
         "Working_type": "date",
         "Description": "Dave Coverly admits there is no overriding theme, no tidy little philosophy that precisely describes what Speed Bump is about. \"Basically,\" he says, \"if life were a movie, these would be the outtakes.\"\nWebsite: https://www.speedbump.com/\nTwitter: http://twitter.com/speedbumpcomic\nAbout: https://www.gocomics.com/speedbump/about",
         "Position": 46,
-        "First_date": "2002, 1, 1",
+        "First_date": "2002-1-1",
         "Color": "DBCEAF",
         "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/crspe/mid_u-201701251612.png",
         "Helptxt": "Cartoons for idea people!"
@@ -617,7 +617,7 @@
         "Working_type": "date",
         "Description": "Welcome to Snug Harbor! Will Henry's \u201cWallace the Brave\u201d is a whimsical comic strip that centers around a bold and curious little boy named Wallace, his best friend Spud and the new girl in town, Amelia. Wallace lives in the quaint and funky town of Snug Harbor with his fisherman father, plant loving mother and feral little brother, Sterling.\nFacebook: http://facebook.com/WallacetheBrave/\nTwitter: http://twitter.com/MrWillHenry\nAbout: https://www.gocomics.com/wallace-the-brave/about",
         "Position": 47,
-        "First_date": "2015, 6, 29",
+        "First_date": "2015-6-29",
         "Color": "DCC7B5",
         "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/wtb/mid_wtb_u_202204181313.png",
         "Helptxt": "Follow the adventures of Wallace and his friends Spud and Amelia! "
@@ -630,7 +630,7 @@
         "Working_type": "date",
         "Description": "Ripley's Believe It or Not! has been presenting the incredible and the unusual in illustrated form since Robert Ripley's first \"Champs and Chumps\" comic was published in the New York Globe on December 19, 1918. From there, Ripley set off to search the world for more incredibly hard to believe, but undeniably true stories to drawtraveling to 201 countries in 35 years.Today, artist Kieran Casta\u00f1o is the eighth cartoonist to take up the pen of this legacy panel. Kieran resides in Central Florida with his bird Rosie and pup Trini  who can often be spotted in his work.\n\nSupporting Kieran is Ripley\u2019s Research Team, committed to finding the strangest stories, fact-checking sources, and filtering through the hundreds of weekly submissions that help bring this all-true cartoon to life. To submit your own Believe It or Not! fact, click here! \n\nDid you know the Ripley\u2019s cartoon has changed history in more ways than one? In a 1929 panel, Robert Ripley pointed out that America had no national anthem, which led to legislation making the Star Spangled Banner the county\u2019s official anthem!\n\nWebsite: https://www.ripleys.com/\nFacebook: http://facebook.com/RipleysBelieveItorNot\nTwitter: http://twitter.com/Ripleys\nAbout: https://www.ripleys.com/ripleys-attractions/",
         "Position": 48,
-        "First_date": "1996, 1, 1",
+        "First_date": "1996-1-1",
         "Color": "E91C2C",
         "Image": "https://avatar.amuniversal.com/feature_avatars/ubadge_images/features/rp/mid_rp_u_202212280802.png",
         "Helptxt": "The incredible and unusuals, all at the same place every day!"

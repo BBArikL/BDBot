@@ -1,0 +1,64 @@
+{
+  "general": {
+    "title": "BDBot!",
+    "fields": [
+      {
+        "name": "Hourly comics commands.",
+        "value": "Use /help schedule to see available commands for daily comics. Post daily at 6:00 AM UTC."
+      },
+      {
+        "name": "Request",
+        "value": "Have a request for the bot? Post your request at https://github.com/BBArikL/BDBot/issues/new?assignees=&labels=enhancement&template=comic-request.md&title=New+Comic+request for maximum visibility or use `/request` to leave a message to the developer!"
+      },
+      {
+        "name": "Status",
+        "value": "Gives back the status of the bot.\nCommand:\n`/status`"
+      },
+      {
+        "name": "Ping",
+        "value": "Pong! Gives back the bot latency.\nCommand:\n`/ping`"
+      },
+      {
+        "name": "Uptime",
+        "value": "Gives back the uptime.\nCommand:\n`/up`"
+      },
+      {
+        "name": "FAQ",
+        "value": "Have any question on the bot? This FAQ (`/faq`) might have the response you need!"
+      },
+      {
+        "name": "New commands",
+        "value": "See the the newly added commands by using `/new`"
+      },
+      {
+        "name": "Git",
+        "value": "Gives the link of the git page.\nCommand:\n`/git`"
+      },
+      {
+        "name": "Invite",
+        "value": "Gives a link to add the bot to your servers!\nCommand:\n`/invite`"
+      },
+      {
+        "name": "Vote",
+        "value": "Vote for the bot on Top.gg!\nCommand:\n`/vote`"
+      }
+    ]
+  },
+  "schedule": {
+    "title": "Daily commands!",
+    "description": "Date and hour are optional arguments that can specify when the the bot should send the comic. \nThere are 2 ways to set up scheduled comics:\nLatest: Get only the latest comics when they are posted, no need to set up an exact day of the week or an hour of the day.\nRegular: Get the comic at a regular day and hour of the week. A date should be one of the seven days of the week and the hour a number representing the time in a 24h clock in UTC time (0h to 23h). If not specified, defaults to the current time in UTC.",
+    "fields": [
+      {"name":"Post", "value": "The bot did not post the comics or you want to be sure that all comics are correctly set up? Use `/post <date> <hour>` to force the post of comics set at the specified time."},
+      {"name":"Add", "value": "Use `/<name_of_comic> add <date> <hour>` to add the comic to the daily list of the channel."},
+      {"name":"Add all", "value": "Use `/add_all <date> <hour>` to add all the comics to a specific day of the week and hour."},
+      {"name":"Remove", "value": "Use `/<name_of_comic> remove <date> <hour>` to remove the comic from the daily list."},
+      {"name":"Remove channel", "value": "Use `/remove_channel` to unsubscribe your channel from all the comics"},
+      {"name":"Remove all", "value": "Use `/remove_all` to unsubscribe your server from all the comics in all the channels."},
+      {"name":"Subscriptions","value":"Use `/sub` to view all subscribed comics for this server."},
+      {"name":"Set role mention", "value":"Use `/set_role @<role>` to add a role to mention for comics posts. To remove, use `/remove_role`."},
+      {"name":"Mange role mention", "value": "Use `/set_mention daily/all` to change the mention policy for the bot in the server. This does not affect daily comics posted at 6h AM UTC. If the mention policy is set to 'all', the bot will mention the role at each comic post, otherwise it will only mention the role at 6h AM UTC daily."},
+      {"name":"Enable/Disable mention","value":"Use `/post_mention` to enable/disable server-wide the mention right before the automatic comic posts."},
+      {"name":"Get mention policy","value":"Use `/get_mention` to get the server's mention policy."}
+    ]
+  }
+}

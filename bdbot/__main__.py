@@ -7,7 +7,8 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from bdbot import discord_utils, utils
+from bdbot import utils
+from bdbot.discord import discord_utils
 from bdbot.utils import LOGS_DIRECTORY_PATH
 from bdbot.Web_requests_manager import create_link_cache
 
@@ -69,7 +70,7 @@ async def run(bot: commands.Bot, logger: logging.Logger):
         )
         logger.info("Private server set!")
     except TypeError:
-        logger.info(
+        logger.warning(
             "Could not set private server object, please be wary that owner commands are usable everywhere"
         )
         discord_utils.SERVER = None
@@ -89,10 +90,10 @@ async def run(bot: commands.Bot, logger: logging.Logger):
     utils.link_cache = utils.fill_cache(utils.strip_details, utils.link_cache)
     logger.info("Loaded comic links!")
 
-    for filename in os.listdir("cogs"):
+    for filename in os.listdir("discord/cogs"):
         if filename.endswith("py") and filename != "__init__.py":
             file_name, _ = os.path.splitext(filename)
-            await bot.load_extension(f"bdbot.cogs.{file_name}")
+            await bot.load_extension(f"bdbot.discord.cogs.{file_name}")
 
     logger.info("Cogs successfully loaded!")
 

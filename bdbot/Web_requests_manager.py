@@ -2,19 +2,14 @@ import json
 import logging
 import random
 from datetime import date, datetime, timedelta
-from typing import List, Optional, Union
+from typing import Optional, Union
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
-from pydantic import Field
 from requests import get
-from rss_parser import Parser
-from rss_parser.models import XMLBaseModel
-from rss_parser.models.channel import Channel
-from rss_parser.models.item import Item
+from rss_parser import RSSParser
 from rss_parser.models.rss import RSS
-from rss_parser.models.types import Tag
 
 from bdbot.utils import (
     COMIC_LATEST_LINKS_PATH,
@@ -24,7 +19,6 @@ from bdbot.utils import (
     ExtendedAction,
     check_if_latest_link,
     get_link,
-    get_random_link,
     link_cache,
     load_json,
     save_json,
@@ -68,9 +62,9 @@ def create_link_cache(logger_: logging.Logger) -> None:
             comic_url = None
         link_cache.update(
             {
-                comics[comic]["Name"]: comic_url["img_url"]
-                if comic_url is not None
-                else ""
+                comics[comic]["Name"]: (
+                    comic_url["img_url"] if comic_url is not None else ""
+                )
             }
         )
 
@@ -154,9 +148,10 @@ def get_comic_info_date(
                 # Gets today /  url
                 details["url"] = get_link(strip_details, comic_date)
 
-            else:
-                # Random comic
-                details["url"], random_date = get_random_link(strip_details)
+            # TODO: Fix here
+            # else:
+            # Random comic
+            #    details["url"], random_date = get_random_link(strip_details)
 
             # Get the html of the comic site
             try:
@@ -359,23 +354,6 @@ def get_comic_info_number(
     return details
 
 
-class GarfieldMinusGarfieldItem(Item):
-    category: Optional[Tag[List[str]]] = None
-
-
-class GarfieldMinusGarfieldChannel(Channel):
-    items: Optional[List[Tag[GarfieldMinusGarfieldItem]]] = Field(
-        alias="item", default=[]
-    )
-
-    category: Optional[Tag[List[str]]] = None  # Newspapers
-    "Specify one or more categories that the channel belongs to. Follows the same rules as the <item.py>-level " "category element."  # noqa
-
-
-class GarfieldMinusGarfieldRSS(RSS, XMLBaseModel):
-    channel: Tag[GarfieldMinusGarfieldChannel]
-
-
 def get_comic_info_rss(
     strip_details,
     action: Union[Action, ExtendedAction] = None,
@@ -437,12 +415,7 @@ def get_comic_info_rss(
         site_content = get(rss_site).text
 
         if site_content is not None and site_content != "":
-            rss: RSS = Parser.parse(
-                data=site_content,
-                schema=RSS
-                if strip_details["Main_website"] == "https://www.webtoons.com/en/"
-                else GarfieldMinusGarfieldRSS,
-            )
+            rss: RSS = RSSParser.parse(site_content)
             feed = rss.channel.content.items[comic_nb].content
             # Get information
             tz: str
