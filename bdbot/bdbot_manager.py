@@ -11,7 +11,7 @@ from typing import Optional, Union
 from InquirerPy import inquirer
 from InquirerPy.prompts import ListPrompt, SecretPrompt
 
-from bdbot.utils import (
+from bdbot.files import (
     BACKUP_FILE_PATH,
     BASE_DATA_PATH,
     DATABASE_FILE_PATH,
@@ -418,10 +418,12 @@ def process_inputs(
             "Working_type": working_type,
             "Description": description,
             "Position": position,
-            "First_date": first_date
-            if type(first_date) is str
-            else f"{first_date['Year']}, {first_date['Month']}, "
-            f"{first_date['Day']}",
+            "First_date": (
+                first_date
+                if type(first_date) is str
+                else f"{first_date['Year']}, {first_date['Month']}, "
+                f"{first_date['Day']}"
+            ),
             "Color": color,
             "Image": image,
             "Helptxt": helptxt,
@@ -513,9 +515,9 @@ def remove_comic_from_database(comic_number: int):
                     date_data = channel_data["date"][date]
                     for hour in date_data:
                         hour_data: list = date_data[hour]
-                        data[gid]["channels"][channel]["date"][date][
-                            hour
-                        ] = remove_from_array(hour_data, comic_number_remove)
+                        data[gid]["channels"][channel]["date"][date][hour] = (
+                            remove_from_array(hour_data, comic_number_remove)
+                        )
 
     save_json(data)
     logger.info("Database update done!")

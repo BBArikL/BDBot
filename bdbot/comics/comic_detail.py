@@ -1,9 +1,8 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 
 from bdbot.comics.base import BaseComic
-from bdbot.Embed import Embed
-from bdbot.utils import Action
+from bdbot.embed import Embed
 
 
 @dataclass()
@@ -20,8 +19,19 @@ class ComicDetail:
     is_latest: bool
 
     @classmethod
-    def from_comic(cls, comic: BaseComic, action: Action) -> "ComicDetail":
-        return cls(**comic)
+    def from_comic(cls, comic: BaseComic) -> "ComicDetail":
+        return cls(
+            title=comic.name,
+            name=comic.name,
+            author=comic.author,
+            url=comic.website_url,
+            date=datetime.now(tz=timezone.utc),
+            image_url=comic.image,
+            sub_image_url=None,
+            alt="",
+            color=comic.color,
+            is_latest=False,
+        )
 
     def to_embed(self) -> Embed:
-        return Embed(title=self.title, description=None, fields=[])
+        return Embed(title=self.title)

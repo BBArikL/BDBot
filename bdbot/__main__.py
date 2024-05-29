@@ -9,7 +9,17 @@ from dotenv import load_dotenv
 
 from bdbot import utils
 from bdbot.discord import discord_utils
-from bdbot.utils import LOGS_DIRECTORY_PATH
+from bdbot.files import (
+    COMIC_LATEST_LINKS_PATH,
+    DETAILS_PATH,
+    ENV_FILE,
+    LOGS_DIRECTORY_PATH,
+    PID_FILE,
+    get_footers,
+    load_json,
+    write_pid,
+)
+from bdbot.utils import fill_cache
 from bdbot.Web_requests_manager import create_link_cache
 
 
@@ -18,7 +28,7 @@ def main():
     Main entry point for the bot
     """
     os.chdir(os.path.dirname(__file__))  # Force the current working directory
-    load_dotenv(utils.ENV_FILE)
+    load_dotenv(ENV_FILE)
 
     intents = discord.Intents.default()
     bot: discord.ext.commands.Bot = commands.Bot(
@@ -36,7 +46,7 @@ def main():
         mode="w",
     )
     log_format = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s")
-    discord.utils.setup_logging(
+    discord.setup_logging(
         handler=handler,
         formatter=log_format,
         level=logging.DEBUG if os.getenv("DEBUG") == "True" else logging.INFO,
@@ -45,12 +55,11 @@ def main():
     logger = logging.getLogger("discord")
 
     logger.info("Writing pid file...")
-    pid_file = utils.PID_FILE
     try:
-        utils.write_pid(pid_file)
-        logger.info(f"Wrote pid to file {pid_file}")
+        write_pid(PID_FILE)
+        logger.info(f"Wrote pid to file {PID_FILE}")
     except OSError:
-        logger.info(f"Could not write to pid file {pid_file}")
+        logger.info(f"Could not write to pid file {PID_FILE}")
 
     logger.info("Starting Bot...")
 
@@ -76,18 +85,18 @@ async def run(bot: commands.Bot, logger: logging.Logger):
         discord_utils.SERVER = None
 
     logger.info("Loading comic details...")
-    utils.strip_details = utils.load_json(utils.DETAILS_PATH)
+    utils.strip_details = load_json(DETAILS_PATH)
     logger.info("Loaded comic details!")
 
     logger.info("Loading random footers...")
-    utils.random_footers = utils.get_footers()
+    utils.random_footers = get_footers()
     logger.info("Loaded random footers!")
 
     logger.info("Loading latest comic links...")
-    if not os.path.exists(utils.COMIC_LATEST_LINKS_PATH):
+    if not os.path.exists(COMIC_LATEST_LINKS_PATH):
         create_link_cache(logger)
-    utils.link_cache = utils.load_json(utils.COMIC_LATEST_LINKS_PATH)
-    utils.link_cache = utils.fill_cache(utils.strip_details, utils.link_cache)
+    utils.link_cache = load_json(COMIC_LATEST_LINKS_PATH)
+    utils.link_cache = fill_cache(utils.strip_details, utils.link_cache)
     logger.info("Loaded comic links!")
 
     for filename in os.listdir("discord/cogs"):

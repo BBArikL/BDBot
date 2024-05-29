@@ -8,26 +8,23 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Optional, Union
 
 import discord
-from discord import ClientException, HTTPException, NotFound, app_commands, ui
+from discord import app_commands
 from discord.app_commands import AppCommandError
 from discord.ext import commands
 
-from bdbot.comics.base import BaseComic, BaseDateComic, BaseRSSComic, WorkingType
-from bdbot.utils import (
+from bdbot.actions import Action, ExtendedAction
+from bdbot.comics.base import BaseComic, BaseDateComic, BaseRSSComic
+from bdbot.discord.multi_page_view import MultiPageView
+from bdbot.discord.response_sender import ResponseSender
+from bdbot.files import (
     DATABASE_FILE_PATH,
     DETAILS_PATH,
-    Action,
-    Date,
-    ExtendedAction,
-    Month,
-    clean_url,
-    date_to_db,
-    get_random_footer,
     load_json,
-    parse_all,
     save_backup,
     save_json,
 )
+from bdbot.time import Date, Month, date_to_db
+from bdbot.utils import clean_url, get_random_footer, parse_all
 from bdbot.Web_requests_manager import get_new_comic_details
 
 SERVER: Optional[discord.Object] = None
@@ -48,44 +45,7 @@ def create_embed(comic_details: Optional[dict] = None):
     :return:
     """
     embed: discord.Embed
-    if comic_details is not None:
-        # Embeds the comic
-        comic_name = comic_details["Name"]
-        comic_title = comic_details["title"]
-        author = comic_details["author"]
-        day = comic_details["day"]
-        month = comic_details["month"]
-        year = comic_details["year"]
-        url = comic_details["url"]
-        color = comic_details["color"]
-
-        if comic_details["alt"] is not None:
-            alt = comic_details["alt"]
-        else:
-            alt = ""
-
-        if comic_details["sub_img_url"] != "":
-            thumbnail = comic_details["sub_img_url"]
-        else:
-            thumbnail = ""
-
-        img_url = clean_url(comic_details["img_url"])
-
-        # Creates the embed
-        embed = discord.Embed(title=comic_title, url=url, description=alt, colour=color)
-
-        if thumbnail != "":  # Thumbnail for Webtoons
-            embed.set_thumbnail(url=thumbnail)
-
-        if day is not None and day != "":
-            embed.add_field(
-                name=f"{comic_name} by {author}", value=f"Date: {day}/{month}/{year}"
-            )
-
-        embed.set_image(url=img_url)
-
-        embed.set_footer(text=get_random_footer())
-    else:
+    if comic_details is None:
         # Error message
         embed = discord.Embed(title="No comic found!")
 
@@ -93,6 +53,44 @@ def create_embed(comic_details: Optional[dict] = None):
             name="We could not find a comic at this date / number :thinking:....",
             value="Try another date / number!",
         )
+        return embed
+
+    # Embeds the comic
+    comic_name = comic_details["Name"]
+    comic_title = comic_details["title"]
+    author = comic_details["author"]
+    day = comic_details["day"]
+    month = comic_details["month"]
+    year = comic_details["year"]
+    url = comic_details["url"]
+    color = comic_details["color"]
+
+    if comic_details["alt"] is not None:
+        alt = comic_details["alt"]
+    else:
+        alt = ""
+
+    if comic_details["sub_img_url"] != "":
+        thumbnail = comic_details["sub_img_url"]
+    else:
+        thumbnail = ""
+
+    img_url = clean_url(comic_details["img_url"])
+
+    # Creates the embed
+    embed = discord.Embed(title=comic_title, url=url, description=alt, colour=color)
+
+    if thumbnail != "":  # Thumbnail for Webtoons
+        embed.set_thumbnail(url=thumbnail)
+
+    if day is not None and day != "":
+        embed.add_field(
+            name=f"{comic_name} by {author}", value=f"Date: {day}/{month}/{year}"
+        )
+
+    embed.set_image(url=img_url)
+
+    embed.set_footer(text=get_random_footer())
 
     return embed
 
@@ -102,33 +100,7 @@ async def send_comic_info(
     comic: BaseComic,
     next_send: NextSend = NextSend.Normal,
 ):
-    """Sends comics info in an embed
-
-    :param inter:
-    :param comic:
-    :param next_send:
-    :return:
-    """
-    embed: discord.Embed = discord.Embed(
-        title=f"{comic.name} by {comic.author}",
-        url=comic.website_url,
-        description=comic.description,
-        color=comic.color,
-    )
-    embed.set_thumbnail(url=comic.image)
-    embed.add_field(name="Working type", value=comic.working_type, inline=True)
-
-    if comic.working_type == WorkingType.Date:
-        embed.add_field(
-            name="First apparition", value=comic.first_comic_date, inline=True
-        )
-
-    sub_stat = "Yes" if get_sub_status(inter, comic.position) else "No"
-
-    embed.add_field(name="Subscribed", value=sub_stat, inline=True)
-    embed.set_footer(text="Random footer")
-    embed.set_footer(text=get_random_footer())
-
+    embed = comic.get_comic_info(get_sub_status(inter, comic.position))
     await send_embed(inter, [embed], next_send=next_send)
 
 
@@ -936,63 +908,6 @@ async def send_request_error(inter: discord.Interaction):
     )
 
 
-def website_specific_embed(
-    website_name: str, website: str, nb_per_embed=5
-) -> list[discord.Embed]:
-    """Create embeds with all the specific comics from a website
-
-    :param nb_per_embed:
-    :param website_name:
-    :param website:
-    :return: The list of embeds
-    """
-
-
-class ResponseSender:
-    """Class to account for some response types"""
-
-    def __init__(
-        self,
-        resp: Union[
-            discord.InteractionResponse,
-            discord.InteractionMessage,
-            discord.Webhook,
-            None,
-        ],
-    ):
-        self.resp = resp
-
-    @classmethod
-    async def from_next_send(
-        cls, inter: discord.Interaction, next_send: NextSend
-    ) -> ResponseSender:
-        if next_send == NextSend.Normal:
-            return cls(inter.response)
-        elif next_send == NextSend.Deferred:
-            return cls(await inter.original_response())
-        else:
-            return cls(inter.followup)
-
-    async def send_message(self, *args, **kwargs):
-        if isinstance(self.resp, discord.InteractionMessage):
-            await self.resp.edit(*args, **kwargs)
-        elif isinstance(self.resp, discord.InteractionResponse):
-            await self.resp.send_message(*args, **kwargs)
-        elif isinstance(self.resp, discord.Webhook):
-            await self.resp.send(*args, **kwargs)
-        # If none, discard message
-
-    @classmethod
-    async def from_interaction(cls, inter: discord.Interaction):
-        try:
-            await inter.original_response()
-            return cls(inter.followup)
-        except (HTTPException, NotFound):
-            return cls(inter.response)
-        except ClientException:
-            return cls(None)
-
-
 async def send_embed(
     inter: discord.Interaction,
     embeds: list[discord.Embed],
@@ -1011,11 +926,9 @@ async def send_embed(
 
     if len(embeds) == 1:
         await resp.send_message(embed=embeds[0])
-    else:
-        # For more than one embed
-        multi_page_view = MultiPageView(inter.user.id, embeds)
-
-        await resp.send_message(embed=embeds[0], view=multi_page_view)
+        return
+    # For more than one embed
+    await resp.send_message(embed=embeds[0], view=MultiPageView(inter.user.id, embeds))
 
 
 async def send_chan_embed(channel: discord.TextChannel, embed: discord.Embed):
@@ -1081,66 +994,6 @@ async def run_blocking(
     """
     func = functools.partial(blocking_func, *args, **kwargs)
     return await bot.loop.run_in_executor(None, func)
-
-
-class MultiPageView(ui.View):
-    def __init__(self, author: int, embeds: list[discord.Embed], timeout: float = 60):
-        super().__init__(timeout=timeout)
-        self.author_id = author
-        self.embeds = embeds
-        self.current_embed = 0
-
-    async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
-        return interaction.user.id == self.author_id
-
-    async def on_error(
-        self,
-        interaction: discord.Interaction,
-        error: Exception,
-        item: discord.ui.Item[Any],
-        /,
-    ) -> None:
-        await interaction.followup.send(content=error)
-
-    @discord.ui.button(label="Last")
-    async def last_embed(
-        self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
-    ):
-        if self.current_embed > 0:
-            self.current_embed -= 1
-
-        await interaction.response.edit_message(
-            embed=self.embeds[self.current_embed], view=self
-        )
-
-    @discord.ui.button(label="Next")
-    async def next_embed(
-        self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
-    ):
-        if self.current_embed < len(self.embeds) - 1:
-            self.current_embed += 1
-
-        await interaction.response.edit_message(
-            embed=self.embeds[self.current_embed], view=self
-        )
-
-    @discord.ui.button(label="Exit", style=discord.ButtonStyle.danger)
-    async def exit_embed(
-        self, interaction: discord.Interaction, button: discord.ui.Button
-    ):
-        self.next_embed.disabled = True
-        self.last_embed.disabled = True
-        button.disabled = True
-
-        await interaction.response.edit_message(
-            embed=self.embeds[self.current_embed], view=self
-        )
-
-    async def on_timeout(self) -> None:
-        self.clear_items()
-        self.embeds = None
-        self.author_id = 0
-        self.current_embed = 0
 
 
 async def send_message(
