@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from bdbot.actions import Action, ExtendedAction
 from bdbot.comics.base import BaseDateComic, Website
 
 
@@ -15,3 +16,6 @@ class Gocomics(BaseDateComic):
     @property
     def random_link(self) -> str:
         return f"{self.main_website}random/{self.web_name}"
+
+    def get_comic(self, action: Action | ExtendedAction):
+        pass

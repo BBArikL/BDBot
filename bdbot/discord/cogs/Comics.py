@@ -6,8 +6,14 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from bdbot.discord_utils import NextSend, get_possible_hours, parameters_interpreter
-from bdbot.utils import Action, Date, Month, get_all_strips, get_strip_details
+from bdbot.actions import Action
+from bdbot.discord.discord_utils import (
+    NextSend,
+    get_possible_hours,
+    parameters_interpreter,
+)
+from bdbot.time import Date, Month
+from bdbot.utils import get_all_strips, get_strip_details
 
 
 def define_comic_callback(comic_strip_details: dict[str, Union[str, int]]):

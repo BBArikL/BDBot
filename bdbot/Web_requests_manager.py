@@ -1,28 +1,15 @@
 import json
 import logging
-import random
 from datetime import date, datetime, timedelta
 from typing import Optional, Union
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
-from requests import get
-from rss_parser import RSSParser
-from rss_parser.models.rss import RSS
 
-from bdbot.utils import (
-    COMIC_LATEST_LINKS_PATH,
-    DETAILS_PATH,
-    Action,
-    Date,
-    ExtendedAction,
-    check_if_latest_link,
-    get_link,
-    link_cache,
-    load_json,
-    save_json,
-)
+from bdbot.actions import Action, ExtendedAction
+from bdbot.files import COMIC_LATEST_LINKS_PATH, DETAILS_PATH, load_json, save_json
+from bdbot.utils import Date, check_if_latest_link, get_link, link_cache
 
 logger = logging.getLogger("discord")
 
@@ -96,12 +83,7 @@ def get_new_comic_details(
             latest_check=latest_check,
         )
     elif working_type == "rss":  # Works by rss
-        comic_details = get_comic_info_rss(
-            strip_details,
-            action=action,
-            comic_date=comic_date,
-            latest_check=latest_check,
-        )
+        comic_details = get_comic_info_rss()
     else:  # Works by number
         comic_details = get_comic_info_number(
             strip_details, action=action, latest_check=latest_check
@@ -354,113 +336,14 @@ def get_comic_info_number(
     return details
 
 
-def get_comic_info_rss(
-    strip_details,
-    action: Union[Action, ExtendedAction] = None,
-    comic_date=None,
-    latest_check=False,
-) -> Optional[dict[str, str]]:
+def get_comic_info_rss() -> Optional[dict[str, str]]:
     """For comics which can only be found by rss
 
-    :param strip_details:
-    :param action:
-    :param comic_date:
-    :param latest_check:
     :return:
     """
     # Details of the comic
-    fall_back_img: str
-    rss_site: str
-    max_entries = 19  # Max entries for rss files : 20
-    details = ORIGINAL_DETAILS.copy()
-    comic_nb = 0
 
-    details["Name"] = strip_details["Name"]
-    details["author"] = strip_details["Author"]
-    main_website = strip_details["Main_website"]
-
-    if main_website == "https://garfieldminusgarfield.net/":
-        fall_back_img = "https://64.media.tumblr.com/avatar_02c53466ae58_64.gif"
-        rss_site = "https://garfieldminusgarfield.net/rss"
-    else:
-        main_website += strip_details["Web_name"]
-        fall_back_img = strip_details["Image"]
-        rss_site = main_website.replace("list", "rss")
-
-    # Gets today date
-    if action == Action.Today:
-        # First comic in the rss feed
-        comic_nb = 0
-    elif action == Action.Random:
-        comic_nb = random.randint(0, max_entries)
-
-    details["title"] = strip_details["Name"]
-
-    if action == Action.Specific_date:
-        details["img_url"] = fall_back_img
-
-        if main_website == "https://garfieldminusgarfield.net/":
-            # Garfield minus Garfield
-            date_formatted = comic_date.strftime("%Y/%m/%d")
-
-            main_website += "day/" + date_formatted
-            details["url"] = main_website
-            details["day"] = comic_date.strftime("%d")
-            details["month"] = comic_date.strftime("%m")
-            details["year"] = comic_date.strftime("%Y")
-        else:
-            # Webtoon
-            details["url"] = main_website + f"&episode_no={comic_date}"
-    else:
-        site_content = get(rss_site).text
-
-        if site_content is not None and site_content != "":
-            rss: RSS = RSSParser.parse(site_content)
-            feed = rss.channel.content.items[comic_nb].content
-            # Get information
-            tz: str
-            weekday: str
-            if strip_details["Main_website"] == "https://www.webtoons.com/en/":
-                if feed.title.content != "":
-                    details["title"] = feed.title.content
-                weekday = "A"
-                tz = "Z"
-            else:
-                weekday = "a"
-                tz = "z"
-
-            new_date = datetime.strptime(
-                feed.pub_date.content, f"%{weekday}, %d %b %Y %H:%M:%S %{tz}"
-            )
-            details["day"] = new_date.strftime("%d")
-            details["month"] = new_date.strftime("%m")
-            details["year"] = new_date.strftime("%Y")
-
-            details["url"] = feed.link.content
-
-            img_index = 0
-            description_soup = BeautifulSoup(feed.description.content, "html.parser")
-            description_images = [
-                {"alt": image.get("alt", ""), "source": image.get("src")}
-                for image in description_soup.findAll("img")
-            ]
-
-            if len(description_images) > 0:
-                if (
-                    len(description_images) > 1
-                ):  # general check for a second image to embed
-                    details["sub_img_url"] = description_images[img_index]["source"]
-                    img_index += 1
-                details["img_url"] = description_images[img_index]["source"]
-            else:
-                details["img_url"] = fall_back_img
-        else:
-            details = None
-
-    if details is not None:
-        finalize_comic(strip_details, details, latest_check)
-
-    return details
+    return ORIGINAL_DETAILS.copy()
 
 
 def finalize_comic(strip_details: dict, details: dict, latest_link: bool) -> None:

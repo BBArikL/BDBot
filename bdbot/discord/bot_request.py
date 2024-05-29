@@ -1,8 +1,8 @@
 import discord
 from discord import ui
 
-from bdbot import utils
-from bdbot.discord_utils import send_message
+from bdbot.discord.discord_utils import send_message
+from bdbot.files import save_request
 
 
 class BotRequest(ui.Modal, title="Request"):
@@ -11,7 +11,7 @@ class BotRequest(ui.Modal, title="Request"):
     request = ui.TextInput(label="Request")
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
-        utils.save_request(
+        save_request(
             self.request.value, interaction.user.name, interaction.user.discriminator
         )
         await send_message(

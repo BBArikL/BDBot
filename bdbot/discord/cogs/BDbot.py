@@ -10,7 +10,8 @@ from discord import app_commands
 from discord.app_commands import AppCommand
 from discord.ext import commands
 
-from bdbot import utils
+from bdbot import time, utils
+from bdbot.actions import ExtendedAction
 from bdbot.discord import discord_utils
 from bdbot.discord.bot_request import BotRequest
 from bdbot.discord.cogs.AutomaticPoster import PosterHandler
@@ -22,7 +23,8 @@ from bdbot.discord.discord_utils import (
     on_error,
     send_message,
 )
-from bdbot.utils import Date
+from bdbot.files import DATABASE_FILE_PATH, DETAILS_PATH, REQUEST_FILE_PATH, load_json
+from bdbot.utils import Date, MentionChoice, MentionPolicy, strip_details
 
 
 class BDBot(commands.Cog):
@@ -32,7 +34,7 @@ class BDBot(commands.Cog):
         """Constructor of the cog
 
         Initialize all the properties of the cog"""
-        self.strip_details: dict = utils.load_json(utils.DETAILS_PATH)
+        self.strip_details: dict = load_json(DETAILS_PATH)
         self.bot: commands.Bot = bot
         self.topggpy = None
         self.start_time: datetime = datetime.now(timezone.utc)
@@ -78,13 +80,13 @@ class BDBot(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
         """When the bot is removed from a server"""
-        discord_utils.remove_guild(guild, use=utils.ExtendedAction.Auto_remove_guild)
+        discord_utils.remove_guild(guild, use=ExtendedAction.Auto_remove_guild)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, deleted_channel: discord.abc.GuildChannel):
         """When a guild channel is deleted"""
         discord_utils.remove_channel(
-            deleted_channel, use=utils.ExtendedAction.Auto_remove_channel
+            deleted_channel, use=ExtendedAction.Auto_remove_channel
         )
 
     @commands.Cog.listener()
@@ -93,7 +95,7 @@ class BDBot(commands.Cog):
     ):
         """When a private channel is deleted"""
         discord_utils.remove_channel(
-            deleted_channel, use=utils.ExtendedAction.Auto_remove_channel
+            deleted_channel, use=ExtendedAction.Auto_remove_channel
         )
 
     @commands.Cog.listener()
@@ -196,11 +198,9 @@ class BDBot(commands.Cog):
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
-    async def set_mention(
-        self, inter: discord.Interaction, choice: utils.MentionPolicy
-    ):
+    async def set_mention(self, inter: discord.Interaction, choice: MentionPolicy):
         """Set the role mention policy. Mods only"""
-        status = discord_utils.set_mention(inter, choice == utils.MentionPolicy.Daily)
+        status = discord_utils.set_mention(inter, choice == MentionPolicy.Daily)
         await send_message(inter, status)
 
     @app_commands.command()
@@ -212,13 +212,9 @@ class BDBot(commands.Cog):
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
-    async def post_mention(
-        self, inter: discord.Interaction, choice: utils.MentionChoice
-    ):
+    async def post_mention(self, inter: discord.Interaction, choice: MentionChoice):
         """Change the mention policy for the server. Mods only"""
-        status = discord_utils.set_post_mention(
-            inter, choice == utils.MentionChoice.Enable
-        )
+        status = discord_utils.set_post_mention(inter, choice == MentionChoice.Enable)
         await send_message(inter, status)
 
     @app_commands.command()
@@ -270,7 +266,7 @@ class BDBot(commands.Cog):
         output = []
         count = 0
 
-        with open(utils.REQUEST_FILE_PATH, "rt") as rq:
+        with open(REQUEST_FILE_PATH, "rt") as rq:
             # Removes all lines matching with the username and discriminator
             lines = rq.readlines()
 
@@ -282,7 +278,7 @@ class BDBot(commands.Cog):
                 count += 1
 
         if count > 0:
-            with open(utils.REQUEST_FILE_PATH, "wt") as rq:
+            with open(REQUEST_FILE_PATH, "wt") as rq:
                 rq.writelines("".join(output))  # Rewrites all lines
             await send_message(inter, f"Deleted {count} request(s)!")
         else:
@@ -298,7 +294,7 @@ class BDBot(commands.Cog):
         hr = "Hour"
         if guild_data is not None:
             comic_list = []
-            comic_values: list[dict] = list(utils.strip_details.values())
+            comic_values: list[dict] = list(strip_details.values())
 
             for channel in guild_data["channels"]:
 
@@ -326,7 +322,6 @@ class BDBot(commands.Cog):
 
             if len(comic_list) > 0:
                 nb_fields = 0
-                matching_date = utils.match_date
                 embeds = [discord.Embed(title="This server is subscribed to:")]
                 for comic in comic_list:
                     if nb_fields > max_fields:
@@ -335,7 +330,7 @@ class BDBot(commands.Cog):
                             discord.Embed(title="This server is subscribed to:")
                         )
 
-                    match_date = matching_date[comic["Date"]]
+                    match_date = time.match_date[comic["Date"]]
                     embeds[-1].add_field(
                         name=comic["Name"],
                         value=f"{'Each ' if match_date not in [Date.Latest, Date.Daily] else ''}{match_date.name}"
@@ -418,7 +413,7 @@ class BDBot(commands.Cog):
         await send_message(
             inter,
             "There is "
-            + str(len(utils.load_json(utils.DATABASE_FILE_PATH)))
+            + str(len(load_json(DATABASE_FILE_PATH)))
             + "servers using the hourly "
             "poster service.",
         )
@@ -443,11 +438,8 @@ class BDBot(commands.Cog):
         """
         await send_message(inter, "Reloading comics....")
         await self.bot.remove_cog("Comic")
-        utils.strip_details = utils.load_json(utils.DETAILS_PATH)
+        utils.strip_details = load_json(DETAILS_PATH)
         await self.bot.add_cog(Comic(self.bot))
-        utils.GOCOMICS_EMBED = None
-        utils.KINGDOM_EMBED = None
-        utils.WEBTOONS_EMBED = None
         await send_message(inter, "Reloaded comics!", next_send=NextSend.Followup)
 
     # ---- End of commands ----#

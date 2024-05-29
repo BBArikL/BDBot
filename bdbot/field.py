@@ -5,3 +5,4 @@ from dataclasses import dataclass
 class Field:
     name: str
     value: str
+    inline: bool = False
