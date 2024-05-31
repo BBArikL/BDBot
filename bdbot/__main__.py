@@ -1,13 +1,13 @@
 import asyncio
 import logging
 import os
-from datetime import datetime
 
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from bdbot import utils
+from bdbot import cache, utils
+from bdbot.cache import create_link_cache, fill_cache
 from bdbot.discord import discord_utils
 from bdbot.files import (
     COMIC_LATEST_LINKS_PATH,
@@ -19,8 +19,7 @@ from bdbot.files import (
     load_json,
     write_pid,
 )
-from bdbot.utils import fill_cache
-from bdbot.Web_requests_manager import create_link_cache
+from bdbot.time import get_now
 
 
 def main():
@@ -40,7 +39,7 @@ def main():
     handler = logging.FileHandler(
         filename=os.path.join(
             LOGS_DIRECTORY_PATH,
-            f"discord_{datetime.now().strftime('%Y_%m_%d_%H_%M')}.log",
+            f"discord_{get_now().strftime('%Y_%m_%d_%H_%M')}.log",
         ),
         encoding="utf-8",
         mode="w",
@@ -96,7 +95,7 @@ async def run(bot: commands.Bot, logger: logging.Logger):
     if not os.path.exists(COMIC_LATEST_LINKS_PATH):
         create_link_cache(logger)
     utils.link_cache = load_json(COMIC_LATEST_LINKS_PATH)
-    utils.link_cache = fill_cache(utils.strip_details, utils.link_cache)
+    cache.link_cache = fill_cache(utils.strip_details, cache.link_cache)
     logger.info("Loaded comic links!")
 
     for filename in os.listdir("discord/cogs"):

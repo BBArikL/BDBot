@@ -1,26 +1,28 @@
 import random
 import re
-from typing import Any, Callable, Union
+from typing import Any, Callable
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
 from bdbot.actions import Action
+from bdbot.comics.base import BaseComic, WorkingType
+from bdbot.comics.custom import GarfieldMinusGarfield
 from bdbot.discord.discord_utils import (
     NextSend,
     get_possible_hours,
     parameters_interpreter,
 )
-from bdbot.time import Date, Month
+from bdbot.time import Month, Weekday
 from bdbot.utils import get_all_strips, get_strip_details
 
 
-def define_comic_callback(comic_strip_details: dict[str, Union[str, int]]):
+def define_comic_callback(comic: BaseComic):
     async def date_comic_callback(
         inter: discord.Interaction,
         action: Action,
-        date: Date = None,
+        date: Weekday = None,
         hour: int = None,
         day: int = None,
         month: Month = None,
@@ -29,7 +31,7 @@ def define_comic_callback(comic_strip_details: dict[str, Union[str, int]]):
         # Interprets the parameters given by the user
         func, params = parameters_interpreter(
             inter,
-            comic_strip_details,
+            comic,
             action=action,
             date=date,
             hour=hour,
@@ -42,14 +44,14 @@ def define_comic_callback(comic_strip_details: dict[str, Union[str, int]]):
     async def number_comic_callback(
         inter: discord.Interaction,
         action: Action,
-        date: Date = None,
+        date: Weekday = None,
         hour: int = None,
         comic_number: int = None,
     ):
         # Interprets the parameters given by the user
         func, params = parameters_interpreter(
             inter,
-            comic_strip_details,
+            comic,
             action=action,
             date=date,
             hour=hour,
@@ -58,17 +60,12 @@ def define_comic_callback(comic_strip_details: dict[str, Union[str, int]]):
 
         await func(**params)
 
-    comic_callback_func: Callable
-
-    if (
-        comic_strip_details["Working_type"] == "date"
-        or comic_strip_details["Main_website"] == "https://garfieldminusgarfield.net/"
+    if comic.WORKING_TYPE == WorkingType.Date or isinstance(
+        comic, GarfieldMinusGarfield
     ):
-        comic_callback_func = date_comic_callback
-    else:
-        comic_callback_func = number_comic_callback
+        return date_comic_callback
 
-    return comic_callback_func
+    return number_comic_callback
 
 
 class Comic(commands.Cog):
@@ -115,7 +112,7 @@ class Comic(commands.Cog):
         self,
         inter: discord.Interaction,
         action: Action,
-        date: Date = None,
+        date: Weekday = None,
         hour: int = None,
         day: int = None,
         month: Month = None,
@@ -143,7 +140,7 @@ class Comic(commands.Cog):
         self,
         inter: discord.Interaction,
         action: Action,
-        date: Date = None,
+        date: Weekday = None,
         hour: int = None,
         day: int = None,
         month: Month = None,

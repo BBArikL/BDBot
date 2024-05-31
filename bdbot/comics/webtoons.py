@@ -1,6 +1,6 @@
 from typing import Any
 
-from bdbot.actions import Action, ExtendedAction
+from bdbot.actions import Action
 from bdbot.comics.base import BaseRSSComic, Website, WorkingType
 
 
@@ -29,5 +29,5 @@ class Webtoons(BaseRSSComic):
     def get_specific_url(self, date: Any):
         pass
 
-    def get_comic(self, action: Action | ExtendedAction):
+    def get_comic(self, action: Action, verify_latest=False):
         pass

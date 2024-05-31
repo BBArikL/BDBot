@@ -8,14 +8,17 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Optional, Union
 
 import discord
+from discord import Embed as DiscordEmbed
 from discord import app_commands
-from discord.app_commands import AppCommandError
 from discord.ext import commands
 
 from bdbot.actions import Action, ExtendedAction
-from bdbot.comics.base import BaseComic, BaseDateComic, BaseRSSComic
+from bdbot.comics.base import BaseComic, WorkingType
+from bdbot.comics.comic_detail import ComicDetail
+from bdbot.comics.custom import GarfieldMinusGarfield
 from bdbot.discord.multi_page_view import MultiPageView
 from bdbot.discord.response_sender import ResponseSender
+from bdbot.embed import Embed
 from bdbot.files import (
     DATABASE_FILE_PATH,
     DETAILS_PATH,
@@ -23,9 +26,9 @@ from bdbot.files import (
     save_backup,
     save_json,
 )
-from bdbot.time import Date, Month, date_to_db
-from bdbot.utils import clean_url, get_random_footer, parse_all
-from bdbot.Web_requests_manager import get_new_comic_details
+from bdbot.mention import MentionPolicy
+from bdbot.time import Month, Weekday, date_to_db, get_now
+from bdbot.utils import parse_all
 
 SERVER: Optional[discord.Object] = None
 OWNER: Optional[int] = None
@@ -38,61 +41,22 @@ class NextSend(enum.Enum):
     Followup = 2
 
 
-def create_embed(comic_details: Optional[dict] = None):
-    """Create a comic embed with the given details
-
-    :param comic_details:
-    :return:
-    """
-    embed: discord.Embed
-    if comic_details is None:
-        # Error message
-        embed = discord.Embed(title="No comic found!")
-
-        embed.add_field(
-            name="We could not find a comic at this date / number :thinking:....",
-            value="Try another date / number!",
-        )
-        return embed
-
-    # Embeds the comic
-    comic_name = comic_details["Name"]
-    comic_title = comic_details["title"]
-    author = comic_details["author"]
-    day = comic_details["day"]
-    month = comic_details["month"]
-    year = comic_details["year"]
-    url = comic_details["url"]
-    color = comic_details["color"]
-
-    if comic_details["alt"] is not None:
-        alt = comic_details["alt"]
-    else:
-        alt = ""
-
-    if comic_details["sub_img_url"] != "":
-        thumbnail = comic_details["sub_img_url"]
-    else:
-        thumbnail = ""
-
-    img_url = clean_url(comic_details["img_url"])
-
-    # Creates the embed
-    embed = discord.Embed(title=comic_title, url=url, description=alt, colour=color)
-
-    if thumbnail != "":  # Thumbnail for Webtoons
-        embed.set_thumbnail(url=thumbnail)
-
-    if day is not None and day != "":
-        embed.add_field(
-            name=f"{comic_name} by {author}", value=f"Date: {day}/{month}/{year}"
-        )
-
-    embed.set_image(url=img_url)
-
-    embed.set_footer(text=get_random_footer())
-
-    return embed
+def convert_embed(embed: Embed) -> DiscordEmbed:
+    d_embed = DiscordEmbed(
+        title=embed.title,
+        description=embed.description,
+        color=embed.color,
+        url=embed.url,
+        timestamp=embed.timestamp,
+    )
+    for field in embed.fields:
+        d_embed.add_field(name=field.name, value=field.value, inline=field.inline)
+    if embed.thumbnail:
+        d_embed.set_thumbnail(url=embed.thumbnail)
+    if embed.image:
+        d_embed.set_image(url=embed.image)
+    d_embed.set_footer(text=embed.footer)
+    return d_embed
 
 
 async def send_comic_info(
@@ -100,13 +64,16 @@ async def send_comic_info(
     comic: BaseComic,
     next_send: NextSend = NextSend.Normal,
 ):
-    embed = comic.get_comic_info(get_sub_status(inter, comic.position))
-    await send_embed(inter, [embed], next_send=next_send)
+    await send_embed(
+        inter,
+        [comic.get_comic_info(get_sub_status(inter, comic.position))],
+        next_send=next_send,
+    )
 
 
 async def comic_send(
     inter: discord.Interaction,
-    comic: dict,
+    comic: BaseComic,
     action: Union[Action, ExtendedAction],
     comic_date: Optional[Union[datetime, int]] = None,
     next_send: NextSend = NextSend.Normal,
@@ -121,25 +88,25 @@ async def comic_send(
     :return:
     """
     if next_send == NextSend.Normal:
-        await inter.response.defer()  # Defers the return, so Discord can wait longer
+        # Defers the return, so Discord can wait longer
+        await inter.response.defer()
 
-    comic_details = await run_blocking(
-        get_new_comic_details, inter.client, comic, action, comic_date=comic_date
-    )
+    # Use comic_date!!!
+    details: ComicDetail = await comic.get_comic(action)
 
     # Sends the comic
-    await send_comic_embed(
+    await send_embed(
         inter,
-        comic_details,
-        next_send=NextSend.Deferred if next_send == NextSend.Normal else next_send,
+        [details.to_embed()],
+        NextSend.Deferred if next_send == NextSend.Normal else next_send,
     )
 
 
 def parameters_interpreter(
     inter: discord.Interaction,
-    comic_details: dict[str, Union[str, int]],
+    comic: BaseComic,
     action: Action = None,
-    date: Date = None,
+    date: Weekday = None,
     hour: int = None,
     day: int = None,
     month: Month = None,
@@ -162,7 +129,7 @@ def parameters_interpreter(
         Remove -> remove the comic to the daily posting list
 
     :param inter: The interaction
-    :param comic_details: The specific comic details
+    :param comic: The comic
     :param action: The action the bot need to take
     :param date: The day of the week to add / remove the comic
     :param hour: The hour to set up a comic
@@ -171,46 +138,45 @@ def parameters_interpreter(
     :param year: Year (1950 to now)
     :param comic_number: The comic number
     """
-    if action is None or action == Action.Info:
-        # If the user didn't send any parameters, return the information the comic requested
-        # await send_comic_info(inter, comic_details)
-        return send_comic_info, {"inter": inter, "comic": comic_details}
-    elif action == Action.Today or action == Action.Random:
-        # Sends the website of today's comic
-        # or random comic
-        # await comic_send(inter, comic_details, action)
-        return comic_send, {"inter": inter, "comic": comic_details, "action": action}
-    elif action in [Action.Add, Action.Remove]:
-        # Add or remove a comic to the daily list for a guild
-        status = new_change(inter, comic_details, action, date=date, hour=hour)
-        # await send_message(inter, status)
-        return send_message, {"inter": inter, "message": status}
-    elif action == Action.Specific_date:
-        # Tries to parse date / number of comic
-        working_type = comic_details["Working_type"]
-        if (
-            working_type == "date"
-            or comic_details["Main_website"] == "https://garfieldminusgarfield.net/"
-        ):
-            # Works by date
-            # await extract_date_comic(inter, comic_details, day, month, year)
-            return extract_date_comic(inter, comic_details, day, month, year)
-        else:
+    match action:
+        case None | Action.Info:
+            # If the user didn't send any parameters, return the information the comic requested
+            # await send_comic_info(inter, comic)
+            return send_comic_info, {"inter": inter, "comic": comic}
+        case Action.Today | Action.Random:
+            # Sends the website of today's comic
+            # or random comic
+            # await comic_send(inter, comic, action)
+            return comic_send, {"inter": inter, "comic": comic, "action": action}
+        case Action.Add | Action.Remove:
+            # Add or remove a comic to the daily list for a guild
+            status = new_change(inter, comic, action, date=date, hour=hour)
+            # await send_message(inter, status)
+            return send_message, {"inter": inter, "message": status}
+        case Action.Specific_date:
+            # Tries to parse date / number of comic
+            if comic.WORKING_TYPE == WorkingType.Date or isinstance(
+                comic, GarfieldMinusGarfield
+            ):
+                # Works by date
+                # await extract_date_comic(inter, comic, day, month, year)
+                return extract_date_comic(inter, comic, day, month, year)
+
             # Works by number of comic
             # await extract_number_comic(
             return extract_number_comic(
-                inter, comic_details, action, working_type, comic_number
+                inter, comic, action, comic.WORKING_TYPE, comic_number
             )
-    else:
-        # await send_message(inter, "Command not understood!")
-        return send_message, {"inter": inter, "message": "Command not understood!"}
+        case _:
+            # await send_message(inter, "Command not understood!")
+            return send_message, {"inter": inter, "message": "Command not understood!"}
 
 
 def extract_number_comic(
     inter: discord.Interaction,
-    comic: BaseRSSComic,
+    comic: BaseComic,
     action: Action,
-    working_type: str,
+    working_type: WorkingType,
     comic_number: int,
 ) -> (Callable, dict[str, Any]):
     """Extract and send a comic based on the number
@@ -242,7 +208,7 @@ def extract_number_comic(
 
 def extract_date_comic(
     inter: discord.Interaction,
-    comic: BaseDateComic,
+    comic: BaseComic,
     day: int,
     month: Month,
     year: int,
@@ -265,7 +231,7 @@ def extract_date_comic(
             "message": "This is not a valid date format! Please input a day, a month and a year!",
         }
 
-    if first_date <= comic_date <= datetime.now(timezone.utc):
+    if first_date <= comic_date <= get_now():
         return comic_send, {
             "inter": inter,
             "comic": comic,
@@ -284,7 +250,9 @@ def extract_date_comic(
 
 
 def add_all(
-    inter: discord.Interaction, date: Optional[Date] = None, hour: Optional[int] = None
+    inter: discord.Interaction,
+    date: Optional[Weekday] = None,
+    hour: Optional[int] = None,
 ):
     """Add all comics to a channel
 
@@ -302,9 +270,9 @@ def add_all(
 
 def new_change(
     inter: discord.Interaction,
-    comic,
+    comic: BaseComic,
     param: Action,
-    date: Date = None,
+    date: Weekday = None,
     hour: int = None,
 ):
     """Make a change in the database
@@ -321,7 +289,7 @@ def new_change(
 
     final_date, final_hour = parse_all(date, hour)
 
-    comic_number = int(comic["Position"])
+    comic_number = int(comic.position)
 
     return modify_database(
         inter,
@@ -329,7 +297,7 @@ def new_change(
         day=final_date,
         hour=final_hour,
         comic_number=comic_number,
-        comic_name=comic["Name"],
+        comic_name=comic.name,
     )
 
 
@@ -362,7 +330,7 @@ def remove_channel(
 def modify_database(
     inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild],
     action: Union[Action, ExtendedAction],
-    day: Date = Date.Daily,
+    day: Weekday = Weekday.Daily,
     hour: int = 6,
     comic_number: int = None,
     comic_name: str = None,
@@ -468,7 +436,7 @@ def add_comic_in_guild(
     action: Union[Action, ExtendedAction],
     comic_number: int,
     data: dict,
-    day: Date,
+    day: Weekday,
     hour: str,
     comic_name: str,
 ) -> str:
@@ -506,7 +474,7 @@ def add_comic_in_guild(
                 {channel_id: {"channel_id": int(channel_id), "date": {}}}
             )
 
-        if day != Date.Latest:
+        if day != Weekday.Latest:
             # Checks if the day, the hour and the comic was already set for the channel
             day = date_to_db(day)
 
@@ -568,7 +536,7 @@ def add_guild_in_db(channel_id, com_list, d, day, guild_id, hour):
     # If there was no comic data stored for this guild
     # Add a comic to the list of comics
     d[guild_id]["server_id"] = int(guild_id)
-    if day != Date.Latest:
+    if day != Weekday.Latest:
         d[guild_id]["channels"].update(
             {
                 channel_id: {
@@ -588,7 +556,7 @@ def remove_comic_in_guild(
     inter: discord.Interaction,
     comic_number: int,
     data: dict,
-    day: Date,
+    day: Weekday,
     hour: str,
     comic_name: str,
 ) -> str:
@@ -606,7 +574,7 @@ def remove_comic_in_guild(
     channel_id = str(inter.channel.id)
     # Remove comic
     if guild_id in data and channel_id in data[guild_id]["channels"]:
-        if day != Date.Latest:
+        if day != Weekday.Latest:
             # Verifies that the day and time was set
             day = date_to_db(day)
             if (
@@ -676,11 +644,11 @@ def set_role(inter: discord.Interaction, role: discord.Role) -> str:
         return "This server is not subscribed to any comic! Please subscribe to a comic before entering a role to add."
 
 
-def set_mention(inter: discord.Interaction, choice: bool) -> str:
+def set_mention(inter: discord.Interaction, mention_policy: MentionPolicy) -> str:
     """
 
     :param inter:
-    :param choice:
+    :param mention_policy:
     :return:
     """
     gid = str(inter.guild.id)
@@ -696,7 +664,7 @@ def set_mention(inter: discord.Interaction, choice: bool) -> str:
             )
 
         if only_daily in data[gid]:
-            data[gid][only_daily] = choice
+            data[gid][only_daily] = mention_policy == MentionPolicy.Daily
 
             save_json(data)
 
@@ -880,23 +848,6 @@ def add_comic_to_list(
     return comic_list
 
 
-async def send_comic_embed(
-    inter: discord.Interaction,
-    comic_details: dict[str, Union[str, int]],
-    next_send: NextSend = NextSend.Deferred,
-):
-    """Send a comic embed
-
-    :param inter:
-    :param comic_details:
-    :param next_send:
-    :return:
-    """
-    embed = create_embed(comic_details=comic_details)  # Creates the embed
-
-    await send_embed(inter, [embed], next_send)  # Send the comic
-
-
 async def send_request_error(inter: discord.Interaction):
     """If the request is not understood
 
@@ -910,7 +861,7 @@ async def send_request_error(inter: discord.Interaction):
 
 async def send_embed(
     inter: discord.Interaction,
-    embeds: list[discord.Embed],
+    embeds: list[Embed],
     next_send: NextSend = NextSend.Normal,
 ):
     """Send embeds, can be of multiple pages
@@ -919,16 +870,17 @@ async def send_embed(
     :param embeds: The list of embeds to send
     :param next_send: How to handle the next send
     """
-    for embed in embeds:
-        embed.set_footer(text=get_random_footer())
+    d_embeds: list[DiscordEmbed] = list(map(convert_embed, embeds))
 
     resp = await ResponseSender.from_next_send(inter, next_send)
 
-    if len(embeds) == 1:
-        await resp.send_message(embed=embeds[0])
+    if len(d_embeds) == 1:
+        await resp.send_message(embed=d_embeds[0])
         return
     # For more than one embed
-    await resp.send_message(embed=embeds[0], view=MultiPageView(inter.user.id, embeds))
+    await resp.send_message(
+        embed=d_embeds[0], view=MultiPageView(inter.user.id, d_embeds)
+    )
 
 
 async def send_chan_embed(channel: discord.TextChannel, embed: discord.Embed):
@@ -937,7 +889,6 @@ async def send_chan_embed(channel: discord.TextChannel, embed: discord.Embed):
     :param channel: The channel object
     :param embed: The embed to send
     """
-    embed.set_footer(text=get_random_footer())
 
     await channel.send(embed=embed)
 
@@ -1081,45 +1032,6 @@ def clean_database(
 
     logger_.info(f"Cleaned the database from {nb_removed} servers")
     return nb_removed
-
-
-async def on_error(inter: discord.Interaction, error: AppCommandError):
-    """
-
-    :param inter:
-    :param error:
-    :return:
-    """
-    # Handles errors
-    logger.error(f"Handling exception in commands:\n{error.__class__.__name__}:{error}")
-    responder = await ResponseSender.from_interaction(inter)
-
-    if isinstance(error, app_commands.CommandNotFound):  # Command not found
-        return await responder.send_message(
-            "Invalid command. Try /help general to search for usable commands.",
-            ephemeral=True,
-        )
-    if isinstance(error, app_commands.MissingPermissions):
-        return await responder.send_message(
-            "You do not have the permission to do that!", ephemeral=True
-        )
-    if isinstance(error, app_commands.CheckFailure):
-        return await responder.send_message(
-            "One or more checks did not pass... Maybe you need more permissions to run this command!",
-            ephemeral=True,
-        )
-    if isinstance(error, AppCommandError):
-        return await responder.send_message(
-            "The command failed. Please report this issue on Github here: "
-            f"https://github.com/BBArikL/BDBot . The error is: {error.__class__.__name__}: {error.__str__()[:500]}",
-            ephemeral=True,
-        )
-    # Not supported errors
-    await responder.send_message(
-        f"Error not supported. Visit https://github.com/BBArikL/BDBot to report "
-        f"the issue. The error is: {error.__class__.__name__}: {error.__str__()[:500]}",
-        ephemeral=True,
-    )
 
 
 async def is_owner(inter: discord.Interaction):
