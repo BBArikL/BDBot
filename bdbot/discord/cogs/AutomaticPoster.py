@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from typing import Iterable, Optional
 
 import discord
@@ -6,11 +6,13 @@ from discord import app_commands
 from discord.ext import commands, tasks
 
 from bdbot.actions import Action
+from bdbot.cache import link_cache
+from bdbot.comics.base import BaseComic
+from bdbot.comics.comic_detail import ComicDetail
 from bdbot.discord.discord_utils import (
     SERVER,
     NextSend,
     clean_database,
-    create_embed,
     is_owner,
     logger,
     run_blocking,
@@ -18,6 +20,7 @@ from bdbot.discord.discord_utils import (
     send_mention,
     send_message,
 )
+from bdbot.embed import Embed
 from bdbot.files import (
     COMIC_LATEST_LINKS_PATH,
     DATABASE_FILE_PATH,
@@ -26,9 +29,14 @@ from bdbot.files import (
     save_backup,
     save_json,
 )
-from bdbot.time import date_to_db, get_hour, get_last_corresponding_date, get_today
-from bdbot.utils import Date, link_cache, parse_all, strip_details
-from bdbot.Web_requests_manager import get_new_comic_details
+from bdbot.time import (
+    date_to_db,
+    get_hour,
+    get_last_corresponding_date,
+    get_now,
+    get_weekday,
+)
+from bdbot.utils import Weekday, parse_all, strip_details
 
 
 class PosterHandler(commands.Cog):
@@ -57,9 +65,9 @@ class PosterHandler(commands.Cog):
 
     async def wait_for_next_hour(self):
         """Wait for the time to restart the hourly loop"""
-        sleep_date = datetime.now(timezone.utc).replace(
-            minute=0, second=0, microsecond=0
-        ) + timedelta(hours=1)
+        sleep_date = get_now().replace(minute=0, second=0, microsecond=0) + timedelta(
+            hours=1
+        )
         await discord.utils.sleep_until(sleep_date)
         await PosterHandler.post_hourly.start(self)
 
@@ -93,7 +101,7 @@ class PosterHandler(commands.Cog):
         comic_data: dict = load_json(DATABASE_FILE_PATH)
         comic_list: dict = {}
         comic_keys: list[str] = list(strip_details.keys())
-        post_days = [Date.Daily, get_today()]
+        post_days = [Weekday.Daily, get_weekday()]
 
         if not hour:
             hour = get_hour()
@@ -126,7 +134,11 @@ class PosterHandler(commands.Cog):
         logger.info("Finished automatic poster.")
 
     def get_comic_info_for_guild(
-        self, guild_data: dict, comic_list: dict, post_days: Iterable[Date], hour: str
+        self,
+        guild_data: dict,
+        comic_list: dict,
+        post_days: Iterable[Weekday],
+        hour: str,
     ):
         """Get the comic info for each server. This method mutate 'comic_list' for each comic.
 
@@ -224,26 +236,28 @@ class PosterHandler(commands.Cog):
     async def check_comics_and_post(
         self,
         comic_list: dict,
-        comic_details: dict,
+        details: dict,
         comic_keys: list[str],
         called_channel: Optional[discord.TextChannel] = None,
-        post_time: datetime = datetime.now(timezone.utc),
+        post_time: datetime = None,
     ):
         """Load comics and check if they are the latest ones.
         Finally, post the comic to the channels.
 
         :param comic_list: The information about where to post each comic and how
-        :param comic_details: The details of the comic strip
+        :param details: The details of the comic strip
         :param comic_keys: The name of all the comics
         :param called_channel: The channel of where the command was sent from (Should be None for the hourly poster
         and filled when called manually)
         :param post_time: The post time
         """
+        if post_time is None:
+            post_time = get_now()
         available_channels = {}
         not_available_channels = {}
         nb_of_comics_posted = 0
         # Check if any guild want the comic
-        for i in range(len(comic_details)):
+        for i in range(len(details)):
             count = 0
             for chan in comic_list:
                 if (
@@ -255,32 +269,22 @@ class PosterHandler(commands.Cog):
 
             if count > 0:
                 # Get the details of the comic
-                comic_details: Optional[dict]
+                embed: Embed | None
+                is_latest: bool
                 try:
-                    comic_details = await run_blocking(
-                        get_new_comic_details,
-                        self.bot,
-                        strip_details[comic_keys[i]],
-                        Action.Today,
-                        latest_check=True,
-                    )
+                    comic: BaseComic = strip_details[comic_keys[i]]
+                    details = await comic.get_comic(Action.Today, verify_latest=True)
+                    embed = details.to_embed()
+                    is_latest = details.is_latest
+                    if called_channel is None:
+                        # Only updates the link cache if it is done during the hourly loop
+                        link_cache[details.name] = details.image_url
                 except Exception as e:
                     # Anything can happen (connection problem, etc... and the bot will crash if any error
                     # is raised in the poster loop)
                     logger.error(f"An error occurred while getting a comic: {e}")
-                    comic_details = None
-
-                embed = create_embed(comic_details)  # Creates the embed
-
-                is_latest: bool
-                if comic_details is not None:
-                    is_latest = comic_details["is_latest"]
-                else:
+                    embed = ComicDetail.comic_not_found()
                     is_latest = False
-
-                if is_latest and called_channel is None:
-                    # Only updates the link cache if it is done during the hourly loop
-                    link_cache[comic_details["Name"]] = comic_details["img_url"]
 
                 for channel in comic_list:
                     # Finally, sends the comic
@@ -299,7 +303,7 @@ class PosterHandler(commands.Cog):
             # Only logs the hourly loop at the end
             logger.info(
                 f"The hourly loop sent {nb_of_comics_posted} comic(s) the "
-                f"{datetime.now().strftime('%dth of %B %Y at %Hh')}"
+                f"{get_now().strftime('%dth of %B %Y at %Hh')}"
             )
         if called_channel is not None and nb_of_comics_posted == 0:
             # If it was called manually ('post' command), and there is no comics to post anywhere in the guild,
@@ -316,7 +320,7 @@ class PosterHandler(commands.Cog):
         available_channels: dict,
         not_available_channels: dict,
         called_channel: Optional[discord.TextChannel] = None,
-        post_time: datetime = datetime.now(timezone.utc),
+        post_time: datetime = None,
     ) -> int:
         """Sends the loaded comic to the specified channel
 
@@ -333,6 +337,8 @@ class PosterHandler(commands.Cog):
 
         :returns: 1 if it posted a comic, 0 if it could/did not
         """
+        if post_time is None:
+            post_time = get_now()
         latest_comics = comic_list[channel]["latest_comics"]
         this_hour_comics = comic_list[channel]["comics"]
 
@@ -406,7 +412,7 @@ class PosterHandler(commands.Cog):
     @app_commands.checks.has_permissions(manage_guild=True)
     @app_commands.guild_only()
     async def post(
-        self, inter: discord.Interaction, date: Date = None, hour: int = None
+        self, inter: discord.Interaction, date: Weekday = None, hour: int = None
     ):
         """Force the comic post for a single server.
 
@@ -424,7 +430,7 @@ class PosterHandler(commands.Cog):
             final_date, final_hour = parse_all(
                 date,
                 hour,
-                default_date=get_today(),
+                default_date=get_weekday(),
                 default_hour=get_hour(),
             )
             await send_message(
@@ -432,7 +438,7 @@ class PosterHandler(commands.Cog):
                 f"Looking for comics to post for date: {final_date.value} at "
                 f"{final_hour}h UTC",
             )
-            post_days = (Date.Daily, final_date)
+            post_days = (Weekday.Daily, final_date)
             final_hour = str(final_hour)
             post_time = get_last_corresponding_date(final_date, final_hour)
 

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 
-class Date(enum.Enum):
+class Weekday(enum.Enum):
     Daily = "Daily"
     Latest = "Latest"
     Monday = "Monday"
@@ -16,24 +16,24 @@ class Date(enum.Enum):
 
 
 match_date = {
-    "Mo": Date.Monday,
-    "Tu": Date.Tuesday,
-    "We": Date.Wednesday,
-    "Th": Date.Thursday,
-    "Fr": Date.Friday,
-    "Sa": Date.Saturday,
-    "Su": Date.Sunday,
-    "D": Date.Daily,
-    "La": Date.Latest,
+    "Mo": Weekday.Monday,
+    "Tu": Weekday.Tuesday,
+    "We": Weekday.Wednesday,
+    "Th": Weekday.Thursday,
+    "Fr": Weekday.Friday,
+    "Sa": Weekday.Saturday,
+    "Su": Weekday.Sunday,
+    "D": Weekday.Daily,
+    "La": Weekday.Latest,
 }
 weekday_lst = {
-    1: Date.Monday,
-    2: Date.Thursday,
-    3: Date.Wednesday,
-    4: Date.Tuesday,
-    5: Date.Friday,
-    6: Date.Saturday,
-    7: Date.Sunday,
+    1: Weekday.Monday,
+    2: Weekday.Thursday,
+    3: Weekday.Wednesday,
+    4: Weekday.Tuesday,
+    5: Weekday.Friday,
+    6: Weekday.Saturday,
+    7: Weekday.Sunday,
 }
 
 
@@ -52,12 +52,15 @@ class Month(enum.Enum):
     December = 12
 
 
+date_tries = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su", "La"]
+
+
 def get_hour() -> int:
     """Get the current UTC hour
 
     :return: Current UTC hour
     """
-    return datetime.now(timezone.utc).hour
+    return get_now().hour
 
 
 def get_date_formatted(day: Optional[datetime] = None, form: str = "/") -> str:
@@ -69,40 +72,34 @@ def get_date_formatted(day: Optional[datetime] = None, form: str = "/") -> str:
     """
     if day is not None:
         return day.strftime(f"%Y{form}%m{form}%d")
-    else:
-        return ""
+    return ""
 
 
-def date_to_db(date: Date) -> str:
-    return date.value[:2:] if date != Date.Daily else date.value[:1:]
+def date_to_db(date: Weekday) -> str:
+    return date.value[:2:] if date != Weekday.Daily else date.value[:1:]
 
 
-def get_date(date: str):
-    """Reformat the date from 'YYYY, mm, dd' -> '<Weekday> dd, YYYY'
-
-    :param date:
-    :return:
-    """
-    return datetime.strptime(date, "%Y, %m, %d").strftime("%A %d, %Y")
+def get_now() -> datetime:
+    return datetime.now(tz=timezone.utc)
 
 
-def get_today() -> Date:
+def get_weekday() -> Weekday:
     """Get the day
 
     :return: The first two letters of the weekday
     """
-    return Date(datetime.now(timezone.utc).today().strftime("%A"))
+    return Weekday(get_now().today().strftime("%A"))
 
 
-def get_last_corresponding_date(final_date: Date, final_hour: str):
-    """Modifies the 'current' date to correspond to the user choice
+def get_last_corresponding_date(final_date: Weekday, final_hour: str):
+    """Modifies the 'current' date to correspond to the user mention_policy
 
     :param final_date: The selected date of the week
     :param final_hour: The selected hour of the week
     :return: A post time to mimic a post date
     """
-    now = datetime.now(timezone.utc)
-    if final_date != Date.Daily and final_date != Date.Latest:
+    now = get_now()
+    if final_date != Weekday.Daily and final_date != Weekday.Latest:
         # Don't change the date if daily or latest
         while final_date != weekday_lst[now.isoweekday()]:
             now -= timedelta(days=1)

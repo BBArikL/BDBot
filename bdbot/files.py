@@ -6,6 +6,9 @@ from datetime import datetime, timedelta, timezone
 from os import path
 from typing import Optional
 
+from bdbot.time import get_now
+
+MAX_BACKUP_TRIES = 25
 PROD_DATA_PATH = (
     os.path.join(os.getenv("LOCALAPPDATA"), "bdbot")
     if os.name == "nt"
@@ -17,6 +20,7 @@ MISC_PATH = os.path.join(BASE_DATA_PATH, "misc")
 DATA_PATH = os.path.join(BASE_DATA_PATH, "data")
 DETAILS_PATH = os.path.join(MISC_PATH, "comics_details.json")
 FOOTERS_FILE_PATH = os.path.join(MISC_PATH, "random-footers.txt")
+HELP_EMBED_PATH = os.path.join(MISC_PATH, "help_embeds.json")
 DATABASE_FILE_PATH = os.path.join(DATA_PATH, "data.json")
 BACKUP_FILE_PATH = os.path.join(DATA_PATH, "backups", "BACKUP_DATABASE_")
 LOGS_DIRECTORY_PATH = os.path.join(DATA_PATH, "logs/")
@@ -63,9 +67,7 @@ def save_backup(data, logger: logging.Logger):
     """
     logger.info("Running backup...")
     # Creates a new backup and saves it
-    backup_file_path = (
-        BACKUP_FILE_PATH + datetime.now(timezone.utc).strftime("%Y_%m_%d_%H") + ".json"
-    )
+    backup_file_path = BACKUP_FILE_PATH + get_now().strftime("%Y_%m_%d_%H") + ".json"
 
     with open(backup_file_path, "w") as f:
         json.dump(data, f)
@@ -75,17 +77,16 @@ def save_backup(data, logger: logging.Logger):
 
 def restore_backup():
     """Restore a last used backup"""
-
-    utc_date = datetime.now(timezone.utc)
+    utc_date = get_now()
     file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
     tries = 0
 
-    while not path.exists(file_path) and tries < 25:
+    while not path.exists(file_path) and tries < MAX_BACKUP_TRIES:
         tries += 1
         utc_date = utc_date - timedelta(hours=1)
         file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
 
-    if tries < 25:
+    if tries < MAX_BACKUP_TRIES:
         with open(file_path, "r") as f:
             database = json.load(f)
 

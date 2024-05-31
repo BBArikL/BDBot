@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from bdbot.actions import Action, ExtendedAction
 from bdbot.comics.base import BaseDateComic, Website
 
 
@@ -17,5 +16,9 @@ class Gocomics(BaseDateComic):
     def random_link(self) -> str:
         return f"{self.main_website}random/{self.web_name}"
 
-    def get_comic(self, action: Action | ExtendedAction):
-        pass
+    @property
+    def url_date_format(self) -> str:
+        return "%Y/%m/%d"
+
+    def get_link_from_date(self, date: datetime):
+        return self.website_url + "/" + date.strftime(self.url_date_format)

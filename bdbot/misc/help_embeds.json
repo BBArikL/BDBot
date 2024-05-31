@@ -60,5 +60,31 @@
       {"name":"Enable/Disable mention","value":"Use `/post_mention` to enable/disable server-wide the mention right before the automatic comic posts."},
       {"name":"Get mention policy","value":"Use `/get_mention` to get the server's mention policy."}
     ]
+  },
+  "new": {
+    "title":"New features",
+    "description":"Find out what new features have been implemented since the last update!",
+    "fields": [
+      {"name":"New comics", "value":"The new comics are: "},
+      {"name":"Changes in /random add <schedule>", "value":"Now, adding a random to a schedule will not add a fixed comic to be set to the schedule but the comic will be different each time on that schedule!"},
+      {"name":"Optimizations", "value":"Under the hood, optimizations have been made to the bot to make it more responsive and support the growth! I am also looking into porting the bot to other platforms like Matrix and Revolt."
+      }
+    ]
+  },
+  "faq": {
+    "title":"FAQ",
+    "description":"Have a question on the bot? This is the place you are looking for!",
+    "fields": [
+      {"name":"What is this bot?", "value":"This bot is a helper to keep up with your favorite comics! It search each hour more than 40+ pages to fetch the most up to date comics for your eyes only!"},
+      {"name":"Why can I only go up to 7 comics in the past for ComicKingdom's comics?","value":"ComicKingdom use a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser."},
+      {"name":"How can I support the project?", "value":"You can vote for the bot on top.gg (`/vote`) or star the project on GitHub (`/git`). If you want to support one of the comics that are presented through this bot, go on  their page to see how to support them directly!"},
+      {"name":"How can I request comics?", "value":"You can use `/request` to request comics or features directly to the developer."},
+      {"name":"How can I receive scheduled comics?","value":"You can use `/help schedule` to get help on how to schedule comics."},
+      {
+        "name":"What information is collected by using this bot?",
+        "value":"No personal information is used by this bot if you only use it to read comics. The information collected by the bot when a comic is scheduled is: the ID of the server, the ID of the channel, the ID of the role to mention, the server's mention policy and the information about the scheduled comic itself. This information is deleted when the bot loses access to the server or when all comics of the server have been unscheduled. When you use `/request`, your username, your discriminator, the time of the message and the message itself is logged to prevent abuse and relevance of the request. To delete this personal information (and get rid of the requests sent), use `/delete_request`.",
+        "inline":false
+      }
+    ]
   }
 }

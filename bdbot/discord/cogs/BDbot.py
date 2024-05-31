@@ -1,7 +1,7 @@
 import asyncio
 import os
 import re
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional, Union
 
 import discord
@@ -16,15 +16,12 @@ from bdbot.discord import discord_utils
 from bdbot.discord.bot_request import BotRequest
 from bdbot.discord.cogs.AutomaticPoster import PosterHandler
 from bdbot.discord.cogs.Comics import Comic
-from bdbot.discord.discord_utils import (
-    SERVER,
-    NextSend,
-    is_owner,
-    on_error,
-    send_message,
-)
+from bdbot.discord.discord_utils import SERVER, NextSend, is_owner, send_message
+from bdbot.discord.exceptions import on_error
 from bdbot.files import DATABASE_FILE_PATH, DETAILS_PATH, REQUEST_FILE_PATH, load_json
-from bdbot.utils import Date, MentionChoice, MentionPolicy, strip_details
+from bdbot.mention import MentionChoice, MentionPolicy
+from bdbot.time import Weekday, get_now
+from bdbot.utils import strip_details
 
 
 class BDBot(commands.Cog):
@@ -37,7 +34,7 @@ class BDBot(commands.Cog):
         self.strip_details: dict = load_json(DETAILS_PATH)
         self.bot: commands.Bot = bot
         self.topggpy = None
-        self.start_time: datetime = datetime.now(timezone.utc)
+        self.start_time: datetime = get_now()
         self.bot.tree.error(on_error)
 
     @commands.Cog.listener()
@@ -154,7 +151,7 @@ class BDBot(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
     async def add_all(
-        self, inter: discord.Interaction, date: Date = None, hour: int = None
+        self, inter: discord.Interaction, date: Weekday = None, hour: int = None
     ):
         """Add all comics to a specific channel. Preferred way to add all comics. Mods only"""
         status = discord_utils.add_all(inter, date, hour)
@@ -183,10 +180,8 @@ class BDBot(commands.Cog):
         """Add a role to be notified. Mods only"""
         if discord.Guild.get_role(inter.guild, role.id) is not None:
             status = discord_utils.set_role(inter, role)
-
-            await send_message(inter, status)
-        else:
-            await send_message(inter, "The role is invalid or not provided!")
+            return await send_message(inter, status)
+        await send_message(inter, "The role is invalid or not provided!")
 
     # Only mods can delete the role
     @app_commands.command()
@@ -198,9 +193,9 @@ class BDBot(commands.Cog):
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
-    async def set_mention(self, inter: discord.Interaction, choice: MentionPolicy):
+    async def set_mention(self, inter: discord.Interaction, policy: MentionPolicy):
         """Set the role mention policy. Mods only"""
-        status = discord_utils.set_mention(inter, choice == MentionPolicy.Daily)
+        status = discord_utils.set_mention(inter, policy)
         await send_message(inter, status)
 
     @app_commands.command()
@@ -333,8 +328,8 @@ class BDBot(commands.Cog):
                     match_date = time.match_date[comic["Date"]]
                     embeds[-1].add_field(
                         name=comic["Name"],
-                        value=f"{'Each ' if match_date not in [Date.Latest, Date.Daily] else ''}{match_date.name}"
-                        f"{f' at {comic[hr]} h UTC' if match_date not in [Date.Latest] else ''} in "
+                        value=f"{'Each ' if match_date not in [Weekday.Latest, Weekday.Daily] else ''}{match_date.name}"
+                        f"{f' at {comic[hr]} h UTC' if match_date not in [Weekday.Latest] else ''} in "
                         f"channel {comic['Channel']}",
                     )
                     nb_fields += 1
@@ -361,6 +356,7 @@ class BDBot(commands.Cog):
     @app_commands.command()
     async def uptime(self, inter: discord.Interaction):
         """Get the bot uptime"""
+        # FIXME: Find the get_uptime method
         uptime_message = self.get_uptime(self.start_time)
         await send_message(inter, uptime_message)
 

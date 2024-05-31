@@ -1,3 +1,4 @@
+import asyncio
 import getpass
 import json
 import logging
@@ -11,6 +12,7 @@ from typing import Optional, Union
 from InquirerPy import inquirer
 from InquirerPy.prompts import ListPrompt, SecretPrompt
 
+from bdbot.cache import create_link_cache
 from bdbot.files import (
     BACKUP_FILE_PATH,
     BASE_DATA_PATH,
@@ -24,7 +26,6 @@ from bdbot.files import (
     save_backup,
     save_json,
 )
-from bdbot.Web_requests_manager import create_link_cache
 
 TEMP_FILE_PATH = "misc/comics_not_ready.json"
 RETIRED_COMICS_PATH = "misc/retired_comics.json"
@@ -89,7 +90,7 @@ def link_cache_generate():
     """Regenerate the link cache"""
     logger.info("Running link cache, please wait up to 1-2 minutes...")
     os.makedirs("data", exist_ok=True)
-    create_link_cache(logger)
+    asyncio.run(create_link_cache(logger))
     logger.info("Link cache created!")
 
 
@@ -192,7 +193,7 @@ def setup_bot():
         shutil.copy("misc/random-footers.txt", FOOTERS_FILE_PATH)
 
     logger.info("Creating link cache, this might take some time...")
-    create_link_cache(logger)
+    asyncio.run(create_link_cache(logger))
 
     if platform.system() == "Linux":
         # Tries to install service file and command to run the bot only on Linux
@@ -479,15 +480,15 @@ def delete(comics: dict, comic: str):
 def open_json_if_exist(absolute_path: str) -> dict:
     """Load a json from a file if it exists, create it otherwise.
 
-    :param absolute_path: The path to the
-    :return: The dictionary of data in the json file
+    :param absolute_path: The path to the dictionary
+    :return: Data in the json file
     """
     temp_comic_data = {}
     if os.path.exists(absolute_path):
         return load_json(absolute_path)
-    else:
-        open(absolute_path, "x").close()
-        return temp_comic_data
+
+    open(absolute_path, "x").close()
+    return temp_comic_data
 
 
 def remove_comic_from_database(comic_number: int):
