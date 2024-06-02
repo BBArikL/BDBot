@@ -25,7 +25,6 @@ Manual steps (without cloning the repo, to do on the web UI):
         "First_date": "YEAR, MONTH, DAY",
         "Color": "<Hexadecimal code of the main color of the comic. If unsure, use this website: http://colormind.io/ to extract a color palette from a characteristic image of the comic.>",
         "Image": "<A url to the image which represents the comic>",
-        "Aliases": "<The other ways of that the comic can be called>",
         "Helptxt": "<A very short description of the comic>"
     }
     ```

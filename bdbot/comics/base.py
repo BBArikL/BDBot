@@ -1,9 +1,9 @@
 import enum
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from random import randint
-from typing import Any
+from typing import Any, Type
 
 import aiohttp
 from bs4 import BeautifulSoup
@@ -34,7 +34,6 @@ class WorkingType(enum.Enum):
     Date = "Date"
     RSS = "RSS"
     Number = "Number"
-    Custom = "Custom"
 
 
 @dataclass
@@ -137,6 +136,9 @@ class BaseComic(ABC):
         )
         return embed
 
+    def to_dict(self):
+        return asdict(self)
+
     @staticmethod
     def extract_meta_content(soup: BeautifulSoup, content_name: str) -> str | None:
         """Extract the content from the source
@@ -162,6 +164,24 @@ class BaseComic(ABC):
             async with session.get(url) as response:
                 content = await response.text()
         return content
+
+    @classmethod
+    def get_type(
+        cls, main_website: Website | str, working_type: WorkingType
+    ) -> Type["BaseComic"]:
+        match working_type:
+            case WorkingType.Date:
+                return BaseDateComic.from_main_website(main_website)
+            case WorkingType.Number:
+                return BaseNumberComic.from_main_website(main_website)
+            case WorkingType.RSS:
+                return BaseRSSComic.from_main_website(main_website)
+            case _:
+                raise Exception("Could not find type of comic!")
+
+    @classmethod
+    def from_main_website(cls, main_website: Website):
+        pass
 
 
 class BaseDateComic(BaseComic):
@@ -250,6 +270,10 @@ class BaseDateComic(BaseComic):
             url.removeprefix(self.website_url), self.url_date_format
         )
 
+    @classmethod
+    def from_main_website(cls, main_website: Website) -> Type["BaseDateComic"]:
+        pass
+
 
 class BaseRSSComic(BaseComic, ABC):
     WORKING_TYPE = WorkingType.RSS
@@ -336,6 +360,10 @@ class BaseRSSComic(BaseComic, ABC):
             detail.is_latest = check_if_latest_link(detail.name, detail.image_url)
         return detail
 
+    @classmethod
+    def from_main_website(cls, main_website: Website) -> Type["BaseRSSComic"]:
+        pass
+
 
 class BaseNumberComic(BaseComic):
     WORKING_TYPE = WorkingType.Number
@@ -370,3 +398,7 @@ class BaseNumberComic(BaseComic):
         if verify_latest:
             detail.is_latest = check_if_latest_link(detail.name, detail.image_url)
         return detail
+
+    @classmethod
+    def from_main_website(cls, main_website: Website) -> Type["BaseDateComic"]:
+        pass
