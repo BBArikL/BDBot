@@ -1813,13 +1813,13 @@ requests = ">=2.0.1,<3.0.0"
 
 [[package]]
 name = "rss-parser"
-version = "2.0.0"
+version = "2.1.0"
 description = "Typed pythonic RSS/Atom parser"
 optional = false
-python-versions = ">=3.9,<4.0"
+python-versions = "<4.0,>=3.9"
 files = [
-    {file = "rss_parser-2.0.0-py3-none-any.whl", hash = "sha256:52466d846d5b933a154d7240e7120b86009c8884141ec467086fdb5405d19d7d"},
-    {file = "rss_parser-2.0.0.tar.gz", hash = "sha256:4fb845443aa1c47364a15ed0dab20687c791ab5570a169a93a6c0de8cfcbd624"},
+    {file = "rss_parser-2.1.0-py3-none-any.whl", hash = "sha256:193b76f3292657faf85dd11dfe823b9007551fb7722d4363316870e32aff5ced"},
+    {file = "rss_parser-2.1.0.tar.gz", hash = "sha256:4a1eb0f69442b9b8f3b8343c053c3a772c8e9a5c8a6a969edadc03800f30b47e"},
 ]
 
 [package.dependencies]
@@ -2189,4 +2189,4 @@ test = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-it
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "fe767d753ff68565ba476f88e474858f354ae157ed9ab5c580a2e033b62af881"
+content-hash = "d02ec265c53852c8cc6d5444c2ad7180f7195434d863e96f363c7ae6978238ca"
