@@ -15,7 +15,7 @@ python-dotenv = "^1.0.1"
 randomtimestamp = "^2.2"
 topggpy = "^1.4.0"
 inquirerpy = "^0.3.4"
-poetry = "^1.8.3"
+poetry = "^1.8.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.3"
