@@ -7,7 +7,7 @@ license = "GPL 3.0"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-"discord.py" = "^2.5.0"
+"discord.py" = "^2.5.1"
 requests = "^2.32.3"
 rss-parser = "^2.1.0"
 beautifulsoup4 = "^4.13.3"
