@@ -1,4 +1,5 @@
 import enum
+import xml
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
@@ -12,7 +13,6 @@ from rss_parser import RSSParser
 from rss_parser.models.rss import RSS
 
 from bdbot.actions import Action
-from bdbot.cache import check_if_latest_link
 from bdbot.comics.comic_detail import ComicDetail
 from bdbot.embed import DEFAULT_FIELDS_PER_EMBED, Embed
 from bdbot.exceptions import ComicNotFound
@@ -23,36 +23,30 @@ from bdbot.utils import get_all_strips
 FIRST_DATE_FORMAT = "%Y-%m-%d"
 
 
-class Website(enum.Enum):
-    Gocomics = "https://www.gocomics.com/"
-    ComicsKingdom = "https://comicskingdom.com/"
-    Webtoons = "https://www.webtoons.com/en/"
-    Custom = ""
-
-
 class WorkingType(enum.Enum):
-    Date = "Date"
-    RSS = "RSS"
-    Number = "Number"
+    Date = "date"
+    RSS = "rss"
+    Number = "number"
 
 
 @dataclass
 class BaseComic(ABC):
     WEBSITE_NAME: str
+    WEBSITE_URL: str
     WEBSITE_HELP: str
-    WEBSITE_TYPE: Website
     WORKING_TYPE: WorkingType
 
     name: str
     author: str
     web_name: str
     main_website: str
+    working_type: str
     description: str
     position: int
     first_date: datetime
     color: int
     image: str
-    help_text: str
+    help: str
 
     _BASE_PARSER: str = "html.parser"
 
@@ -63,14 +57,14 @@ class BaseComic(ABC):
 
     @property
     def website_url(self) -> str:
-        return self.WEBSITE_TYPE.value + self.web_name
+        return self.WEBSITE_URL + self.web_name
 
     @property
     def fallback_image(self) -> str:
         return self.image
 
-    @abstractmethod
     @property
+    @abstractmethod
     def first_comic_date(self) -> any:
         pass
 
@@ -95,15 +89,15 @@ class BaseComic(ABC):
         count = 0
         embeds: list[Embed] = []
 
-        title = f"{cls.WEBSITE_NAME}!"
+        title = cls.WEBSITE_NAME + "!"
         embed = Embed(title)
         embeds.append(embed)
         for strip in strips:
-            if strips[strip]["Main_website"] == cls.WEBSITE_NAME:
+            if strips[strip]["main_website"] == cls.WEBSITE_NAME:
                 count += 1
 
                 embed.fields.append(
-                    Field(name=strips[strip]["Name"], value=strips[strip]["Helptxt"])
+                    Field(name=strips[strip]["name"], value=strips[strip]["help"])
                 )
                 if count == fields_per_embed:
                     count = 0
@@ -167,7 +161,7 @@ class BaseComic(ABC):
 
     @classmethod
     def get_type(
-        cls, main_website: Website | str, working_type: WorkingType
+        cls, main_website: str, working_type: WorkingType
     ) -> Type["BaseComic"]:
         match working_type:
             case WorkingType.Date:
@@ -180,7 +174,7 @@ class BaseComic(ABC):
                 raise Exception("Could not find type of comic!")
 
     @classmethod
-    def from_main_website(cls, main_website: Website):
+    def from_main_website(cls, main_website: str):
         pass
 
 
@@ -188,8 +182,8 @@ class BaseDateComic(BaseComic):
     WORKING_TYPE = WorkingType.Date
     _MAX_TRIES = 15
 
-    @abstractmethod
     @property
+    @abstractmethod
     def first_comic_date(self) -> datetime:
         pass
 
@@ -199,13 +193,13 @@ class BaseDateComic(BaseComic):
             end=datetime.today().replace(hour=0, minute=0, second=0, microsecond=0),
         )
 
-    @abstractmethod
     @property
+    @abstractmethod
     def random_link(self) -> str:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def url_date_format(self):
         pass
 
@@ -219,6 +213,8 @@ class BaseDateComic(BaseComic):
         pass
 
     async def get_comic(self, action: Action, verify_latest=False) -> ComicDetail:
+        from bdbot.cache import check_if_latest_link
+
         detail = await super().get_comic(action)
         i = 0
 
@@ -271,26 +267,36 @@ class BaseDateComic(BaseComic):
         )
 
     @classmethod
-    def from_main_website(cls, main_website: Website) -> Type["BaseDateComic"]:
-        pass
+    def from_main_website(cls, main_website: str) -> Type["BaseDateComic"]:
+        from bdbot.comics import ComicsKingdom, Dilbert, Gocomics
+
+        match main_website:
+            case Gocomics.WEBSITE_URL:
+                return Gocomics
+            case ComicsKingdom.WEBSITE_URL:
+                return ComicsKingdom
+            case Dilbert.WEBSITE_URL:
+                return Dilbert
+            case _:
+                raise ComicNotFound("Could not find comic type!")
 
 
 class BaseRSSComic(BaseComic, ABC):
     WORKING_TYPE = WorkingType.RSS
     MAX_ENTRIES = 19
 
-    @abstractmethod
     @property
+    @abstractmethod
     def rss_url(self) -> str:
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def weekday_token(self):
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def timezone_token(self):
         pass
 
@@ -308,7 +314,10 @@ class BaseRSSComic(BaseComic, ABC):
     def extract_content(
         self, content: str, date: int, detail: ComicDetail
     ) -> ComicDetail:
-        rss: RSS = RSSParser.parse(content)
+        try:
+            rss: RSS = RSSParser.parse(content)
+        except xml.parsers.expat.ExpatError:
+            raise ComicNotFound(f"The rss feed for comic '{self.name}' was invalid!")
         feed = rss.channel.content.items[date].content
 
         # To add in the "Finalize comic"? for webtoons
@@ -340,6 +349,8 @@ class BaseRSSComic(BaseComic, ABC):
         return detail
 
     async def get_comic(self, action: Action, verify_latest=False) -> ComicDetail:
+        from bdbot.cache import check_if_latest_link
+
         detail = await super().get_comic(action)
 
         if action == Action.Specific_date:
@@ -361,8 +372,16 @@ class BaseRSSComic(BaseComic, ABC):
         return detail
 
     @classmethod
-    def from_main_website(cls, main_website: Website) -> Type["BaseRSSComic"]:
-        pass
+    def from_main_website(cls, main_website: str) -> Type["BaseRSSComic"]:
+        from bdbot.comics import GarfieldMinusGarfield, Webtoons
+
+        match main_website:
+            case Webtoons.WEBSITE_URL:
+                return Webtoons
+            case GarfieldMinusGarfield.WEBSITE_URL:
+                return GarfieldMinusGarfield
+            case _:
+                raise ComicNotFound("Could not find comic type!")
 
 
 class BaseNumberComic(BaseComic):
@@ -391,6 +410,8 @@ class BaseNumberComic(BaseComic):
         return detail
 
     async def get_comic(self, action: Action, verify_latest=False) -> ComicDetail:
+        from bdbot.cache import check_if_latest_link
+
         detail = await super().get_comic(action)
         detail.url = await self.get_comic_url(action)
         html = await self.read_url_content(detail.url)
@@ -400,5 +421,13 @@ class BaseNumberComic(BaseComic):
         return detail
 
     @classmethod
-    def from_main_website(cls, main_website: Website) -> Type["BaseDateComic"]:
-        pass
+    def from_main_website(cls, main_website: str) -> Type["BaseNumberComic"]:
+        from bdbot.comics import XKCD, CyanideAndHappiness
+
+        match main_website:
+            case CyanideAndHappiness.WEBSITE_URL:
+                return CyanideAndHappiness
+            case XKCD.WEBSITE_URL:
+                return XKCD
+            case _:
+                raise ComicNotFound("Could not find comic type!")

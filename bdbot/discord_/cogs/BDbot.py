@@ -1,7 +1,7 @@
 import asyncio
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Union
 
 import discord
@@ -12,15 +12,16 @@ from discord.ext import commands
 
 from bdbot import time, utils
 from bdbot.actions import ExtendedAction
-from bdbot.discord import discord_utils
-from bdbot.discord.bot_request import BotRequest
-from bdbot.discord.cogs.AutomaticPoster import PosterHandler
-from bdbot.discord.cogs.Comics import Comic
-from bdbot.discord.discord_utils import SERVER, NextSend, is_owner, send_message
-from bdbot.discord.exceptions import on_error
+from bdbot.comics import initialize_comics
+from bdbot.discord_ import discord_utils
+from bdbot.discord_.bot_request import BotRequest
+from bdbot.discord_.cogs.AutomaticPoster import PosterHandler
+from bdbot.discord_.cogs.Comics import Comic
+from bdbot.discord_.discord_utils import SERVER, NextSend, is_owner, send_message
+from bdbot.discord_.exceptions import on_error
 from bdbot.files import DATABASE_FILE_PATH, DETAILS_PATH, REQUEST_FILE_PATH, load_json
 from bdbot.mention import MentionChoice, MentionPolicy
-from bdbot.time import Weekday, get_now
+from bdbot.time import Weekday, get_now, get_time_between
 from bdbot.utils import strip_details
 
 
@@ -31,7 +32,7 @@ class BDBot(commands.Cog):
         """Constructor of the cog
 
         Initialize all the properties of the cog"""
-        self.strip_details: dict = load_json(DETAILS_PATH)
+        self.strip_details: dict = initialize_comics(load_json(DETAILS_PATH))
         self.bot: commands.Bot = bot
         self.topggpy = None
         self.start_time: datetime = get_now()
@@ -327,7 +328,7 @@ class BDBot(commands.Cog):
 
                     match_date = time.match_date[comic["Date"]]
                     embeds[-1].add_field(
-                        name=comic["Name"],
+                        name=comic["name"],
                         value=f"{'Each ' if match_date not in [Weekday.Latest, Weekday.Daily] else ''}{match_date.name}"
                         f"{f' at {comic[hr]} h UTC' if match_date not in [Weekday.Latest] else ''} in "
                         f"channel {comic['Channel']}",
@@ -356,9 +357,12 @@ class BDBot(commands.Cog):
     @app_commands.command()
     async def uptime(self, inter: discord.Interaction):
         """Get the bot uptime"""
-        # FIXME: Find the get_uptime method
-        uptime_message = self.get_uptime(self.start_time)
-        await send_message(inter, uptime_message)
+        delta = get_time_between(self.start_time, datetime.now(timezone.utc))
+        await send_message(
+            inter,
+            f"The bot has been up for {delta.days} days, {delta.hours} hours, {delta.minutes} minutes"
+            f" and {delta.seconds} seconds.",
+        )
 
     @app_commands.command()
     @app_commands.guilds(SERVER.id)
@@ -434,7 +438,7 @@ class BDBot(commands.Cog):
         """
         await send_message(inter, "Reloading comics....")
         await self.bot.remove_cog("Comic")
-        utils.strip_details = load_json(DETAILS_PATH)
+        utils.strip_details = initialize_comics(load_json(DETAILS_PATH))
         await self.bot.add_cog(Comic(self.bot))
         await send_message(inter, "Reloaded comics!", next_send=NextSend.Followup)
 

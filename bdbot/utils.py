@@ -1,10 +1,13 @@
 # Collection of static methods
 import random
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from bdbot.comics import BaseComic
 from bdbot.files import get_footers
 from bdbot.time import Weekday
 
-strip_details: dict = {}
+strip_details: dict[str, "BaseComic"] = {}
 random_footers: list[str] = []
 
 
@@ -24,7 +27,7 @@ random_footers: list[str] = []
 #     return url.replace(" ", "%20")
 
 
-def get_strip_details(comic_name: str):
+def get_strip_details(comic_name: str) -> "BaseComic":
     """Get the details of a specific comic
 
     :param comic_name:
@@ -33,14 +36,14 @@ def get_strip_details(comic_name: str):
     return strip_details[comic_name]
 
 
-def get_all_strips():
+def get_all_strips() -> dict[str, "BaseComic"]:
     return strip_details
 
 
 def get_random_footer() -> str:
     """Get a random footer
 
-    :return:
+    :return: A random footer text
     """
     rnd_footer = random.choice(get_footers())
 

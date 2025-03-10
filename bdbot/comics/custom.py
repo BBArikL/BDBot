@@ -5,12 +5,15 @@ from typing import Any
 from bs4 import BeautifulSoup
 
 from bdbot.actions import Action
-from bdbot.comics.base import BaseDateComic, BaseNumberComic, BaseRSSComic, Website
+from bdbot.comics.base import BaseDateComic, BaseNumberComic, BaseRSSComic, WorkingType
 from bdbot.comics.comic_detail import ComicDetail
 
 
 class GarfieldMinusGarfield(BaseRSSComic):
-    WEBSITE_TYPE = Website.Custom
+    WEBSITE_NAME = "Garfield Minus Garfield"
+    WEBSITE_URL = "https://garfieldminusgarfield.net/"
+    WORKING_TYPE = WorkingType.RSS
+    WEBSITE_HELP = ""
 
     @property
     def website_url(self):
@@ -18,7 +21,7 @@ class GarfieldMinusGarfield(BaseRSSComic):
 
     @property
     def fallback_image(self):
-        return "https://64.media.tumblr.com/avatar_02c53466ae58_64.gif"
+        return self.image
 
     @property
     def rss_url(self) -> str:
@@ -37,9 +40,10 @@ class GarfieldMinusGarfield(BaseRSSComic):
 
 
 class CyanideAndHappiness(BaseNumberComic):
-    WEBSITE_TYPE = Website.Custom
-
-    _COMICS_URL = "https://explosm.net/comics/"
+    WEBSITE_NAME = "Cyanide and Happiness"
+    WEBSITE_URL = "https://explosm.net/comics/"
+    WORKING_TYPE = WorkingType.Number
+    WEBSITE_HELP = ""
 
     async def get_comic_url(self, action: Action) -> str | None:
         suffix: str = ""
@@ -77,7 +81,7 @@ class CyanideAndHappiness(BaseNumberComic):
         comdata = middle_data["comic"]
         comic_det = comdata["comicDetails"]
         author_det = comic_det["author"]["authorDetails"]
-        detail.url = self._COMICS_URL + comdata["slug"]
+        detail.url = self.WEBSITE_URL + comdata["slug"]
         detail.title = comdata["title"]
         if "comicmgurl" in comic_det:
             # Legacy comics
@@ -92,8 +96,10 @@ class CyanideAndHappiness(BaseNumberComic):
 
 
 class XKCD(BaseNumberComic):
-    WEBSITE_TYPE = Website.Custom
-
+    WEBSITE_NAME = "XKCD"
+    WEBSITE_URL = "https://xkcd.com/"
+    WORKING_TYPE = WorkingType.Number
+    WEBSITE_HELP = ""
     _RANDOM_COMICS = "https://c.xkcd.com/random/comic/"
     _JSON_API_SUFFIX = "info.0.json"
 
@@ -128,7 +134,10 @@ class XKCD(BaseNumberComic):
 
 
 class Dilbert(BaseDateComic):
-    WEBSITE_TYPE = Website.Custom
+    WEBSITE_NAME = "Dilbert"
+    WEBSITE_URL = "https://dilbert.com/"
+    WORKING_TYPE = WorkingType.Number
+    WEBSITE_HELP = ""
 
     @property
     def first_comic_date(self) -> datetime:

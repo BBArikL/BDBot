@@ -1,12 +1,14 @@
 from datetime import datetime, timedelta
 
-from bdbot.comics.base import BaseDateComic, Website
+from bdbot.comics import WorkingType
+from bdbot.comics.base import BaseDateComic
 
 
 class ComicsKingdom(BaseDateComic):
     WEBSITE_NAME = "Comics Kingdom"
+    WEBSITE_URL = "https://comicskingdom.com/"
     WEBSITE_HELP = "Use /help comicskingdom to get all comics that are supported on the Comics Kingdom website."
-    website_type = Website.ComicsKingdom
+    WORKING_TYPE = WorkingType.Date
 
     @property
     def first_comic_date(self) -> datetime:
@@ -14,7 +16,7 @@ class ComicsKingdom(BaseDateComic):
 
     @property
     def random_link(self) -> str:
-        return f'{self.main_website}{self.web_name}/{self.get_random_comic_date().strftime("%Y-%m-%d")}'
+        return f'{self.WEBSITE_URL}{self.web_name}/{self.get_random_comic_date().strftime("%Y-%m-%d")}'
 
     @property
     def url_date_format(self) -> str:

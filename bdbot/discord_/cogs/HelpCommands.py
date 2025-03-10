@@ -5,7 +5,7 @@ from discord.ext import commands
 from bdbot.comics.comicskingdom import ComicsKingdom
 from bdbot.comics.gocomics import Gocomics
 from bdbot.comics.webtoons import Webtoons
-from bdbot.discord.discord_utils import send_embed
+from bdbot.discord_.discord_utils import send_embed
 from bdbot.embed import Embed
 from bdbot.files import HELP_EMBED_PATH, load_json
 from bdbot.help import (

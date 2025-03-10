@@ -6,8 +6,8 @@ from discord.app_commands import (
     MissingPermissions,
 )
 
-from bdbot.discord.discord_utils import logger
-from bdbot.discord.response_sender import ResponseSender
+from bdbot.discord_.discord_utils import logger
+from bdbot.discord_.response_sender import ResponseSender
 
 
 async def on_error(inter: Interaction, error: AppCommandError):

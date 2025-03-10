@@ -4,7 +4,10 @@ import os
 import re
 from datetime import datetime, timedelta, timezone
 from os import path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from bdbot.comics import BaseComic
 
 from bdbot.time import get_now
 
@@ -27,7 +30,7 @@ LOGS_DIRECTORY_PATH = os.path.join(DATA_PATH, "logs/")
 REQUEST_FILE_PATH = os.path.join(DATA_PATH, "requests.txt")
 COMIC_LATEST_LINKS_PATH = os.path.join(BASE_DATA_PATH, "latest_comics.json")
 PID_FILE = os.path.join(BASE_DATA_PATH, "bdbot.pid")
-ENV_FILE = os.path.join(BASE_DATA_PATH, ".env")
+ENV_FILE = os.path.abspath(os.path.join(BASE_DATA_PATH, "..", ".env"))
 
 
 def get_footers() -> list[str]:
@@ -40,7 +43,7 @@ def get_footers() -> list[str]:
     return lines
 
 
-def load_json(json_path: str) -> dict:
+def load_json(json_path: str) -> dict[str, "BaseComic"]:
     """
     Load a json.
     DETAILS_PATH -> The comic details.
@@ -69,7 +72,7 @@ def save_backup(data, logger: logging.Logger):
     # Creates a new backup and saves it
     backup_file_path = BACKUP_FILE_PATH + get_now().strftime("%Y_%m_%d_%H") + ".json"
 
-    with open(backup_file_path, "w") as f:
+    with open(backup_file_path, "wt") as f:
         json.dump(data, f)
 
     logger.info("Backup successfully done")

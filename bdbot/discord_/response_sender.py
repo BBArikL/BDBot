@@ -1,3 +1,4 @@
+import enum
 from http.client import HTTPException
 from typing import Union
 
@@ -10,7 +11,11 @@ from discord import (
     Webhook,
 )
 
-from bdbot.discord.discord_utils import NextSend
+
+class NextSend(enum.Enum):
+    Normal = 0
+    Deferred = 1
+    Followup = 2
 
 
 class ResponseSender:

@@ -1,7 +1,7 @@
 import discord
 from discord import ui
 
-from bdbot.discord.discord_utils import send_message
+from bdbot.discord_.discord_utils import send_message
 from bdbot.files import save_request
 
 

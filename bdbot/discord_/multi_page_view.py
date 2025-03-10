@@ -23,9 +23,7 @@ class MultiPageView(ui.View):
         await interaction.followup.send(content=error)
 
     @ui.button(label="Last")
-    async def last_embed(
-        self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
-    ):
+    async def last_embed(self, interaction: Interaction, button: ui.Button):  # noqa
         if self.current_embed > 0:
             self.current_embed -= 1
 
@@ -34,9 +32,7 @@ class MultiPageView(ui.View):
         )
 
     @ui.button(label="Next")
-    async def next_embed(
-        self, interaction: discord.Interaction, button: discord.ui.Button  # noqa
-    ):
+    async def next_embed(self, interaction: Interaction, button: ui.Button):  # noqa
         if self.current_embed < len(self.embeds) - 1:
             self.current_embed += 1
 

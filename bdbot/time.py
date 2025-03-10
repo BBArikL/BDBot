@@ -1,4 +1,6 @@
+import dataclasses
 import enum
+import math
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -107,3 +109,19 @@ def get_last_corresponding_date(final_date: Weekday, final_hour: str):
         year=now.year, month=now.month, day=now.day, hour=int(final_hour)
     )
     return post_time
+
+
+@dataclasses.dataclass
+class TimeDelta:
+    days: int
+    hours: int
+    minutes: int
+    seconds: int
+
+
+def get_time_between(start: datetime, end: datetime) -> TimeDelta:
+    delta = end - start
+    hours = math.floor(delta.seconds / 3600)
+    minutes = math.floor((delta.seconds - hours * 3600) / 60)
+    seconds = math.floor(delta.seconds - ((minutes * 60) + (hours * 3600)))
+    return TimeDelta(delta.days, hours, minutes, seconds)

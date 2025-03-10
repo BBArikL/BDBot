@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 
 from bdbot import cache, utils
 from bdbot.cache import create_link_cache, fill_cache
-from bdbot.discord import discord_utils
+from bdbot.comics import initialize_comics
+from bdbot.discord_ import discord_utils
 from bdbot.files import (
     COMIC_LATEST_LINKS_PATH,
     DETAILS_PATH,
@@ -45,7 +46,7 @@ def main():
         mode="w",
     )
     log_format = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s")
-    discord.setup_logging(
+    discord.utils.setup_logging(
         handler=handler,
         formatter=log_format,
         level=logging.DEBUG if os.getenv("DEBUG") == "True" else logging.INFO,
@@ -84,7 +85,7 @@ async def run(bot: commands.Bot, logger: logging.Logger):
         discord_utils.SERVER = None
 
     logger.info("Loading comic details...")
-    utils.strip_details = load_json(DETAILS_PATH)
+    utils.strip_details = initialize_comics(load_json(DETAILS_PATH))
     logger.info("Loaded comic details!")
 
     logger.info("Loading random footers...")
@@ -93,15 +94,15 @@ async def run(bot: commands.Bot, logger: logging.Logger):
 
     logger.info("Loading latest comic links...")
     if not os.path.exists(COMIC_LATEST_LINKS_PATH):
-        create_link_cache(logger)
+        await create_link_cache(logger)
     utils.link_cache = load_json(COMIC_LATEST_LINKS_PATH)
     cache.link_cache = fill_cache(utils.strip_details, cache.link_cache)
     logger.info("Loaded comic links!")
 
-    for filename in os.listdir("discord/cogs"):
+    for filename in os.listdir("discord_/cogs"):
         if filename.endswith("py") and filename != "__init__.py":
             file_name, _ = os.path.splitext(filename)
-            await bot.load_extension(f"bdbot.discord.cogs.{file_name}")
+            await bot.load_extension(f"bdbot.discord_.cogs.{file_name}")
 
     logger.info("Cogs successfully loaded!")
 

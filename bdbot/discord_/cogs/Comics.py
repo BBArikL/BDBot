@@ -9,7 +9,7 @@ from discord.ext import commands
 from bdbot.actions import Action
 from bdbot.comics.base import BaseComic, WorkingType
 from bdbot.comics.custom import GarfieldMinusGarfield
-from bdbot.discord.discord_utils import (
+from bdbot.discord_.discord_utils import (
     NextSend,
     get_possible_hours,
     parameters_interpreter,
@@ -78,10 +78,10 @@ class Comic(commands.Cog):
         """
         self.bot = bot
 
-        comics_details = get_all_strips()
+        comics_details: dict[str, BaseComic] = get_all_strips()
 
         for comic in comics_details:
-            comic_name: str = comics_details[comic]["Name"]
+            comic_name: str = comics_details[comic].name
             normalized_name = comic_name.lower().replace(" ", "_")
             normalized_name = re.sub("[^\\w\\-_]", "", normalized_name)
             comic_command = app_commands.Command(
@@ -100,7 +100,7 @@ class Comic(commands.Cog):
         comics_details = get_all_strips()
 
         for comic in comics_details:
-            comic_name: str = comics_details[comic]["Name"]
+            comic_name: str = comics_details[comic]["name"]
             normalized_name = comic_name.lower().replace(" ", "_")
             normalized_name = re.sub("[^\\w\\-_]", "", normalized_name)
             self.bot.tree.remove_command(normalized_name)

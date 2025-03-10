@@ -1,1 +1,0 @@
-bdbot/misc/ADD_COMIC.md

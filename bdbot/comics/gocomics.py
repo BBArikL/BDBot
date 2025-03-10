@@ -1,12 +1,13 @@
 from datetime import datetime
 
-from bdbot.comics.base import BaseDateComic, Website
+from bdbot.comics.base import BaseDateComic, WorkingType
 
 
 class Gocomics(BaseDateComic):
     WEBSITE_NAME = "Gocomics"
+    WEBSITE_URL = "https://www.gocomics.com/"
     WEBSITE_HELP = "Use /help gocomics to get all comics that are supported on the Gocomics website."
-    WEBSITE_TYPE = Website.Gocomics
+    WORKING_TYPE = WorkingType.Date
 
     @property
     def first_comic_date(self) -> datetime:
@@ -14,7 +15,7 @@ class Gocomics(BaseDateComic):
 
     @property
     def random_link(self) -> str:
-        return f"{self.main_website}random/{self.web_name}"
+        return f"{self.WEBSITE_URL}random/{self.web_name}"
 
     @property
     def url_date_format(self) -> str:

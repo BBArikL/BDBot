@@ -13,7 +13,8 @@ from InquirerPy import inquirer
 from InquirerPy.prompts import ListPrompt, SecretPrompt
 
 from bdbot.cache import create_link_cache
-from bdbot.comics.base import BaseComic, Website, WorkingType
+from bdbot.comics import ComicsKingdom, Gocomics, Webtoons, initialize_comics
+from bdbot.comics.base import BaseComic, WorkingType
 from bdbot.files import (
     BACKUP_FILE_PATH,
     BASE_DATA_PATH,
@@ -225,7 +226,7 @@ def install_linux_service():
 def manage_comics():
     """Manage comics configuration"""
     logger.info("Loading comics....")
-    comics = load_json(DETAILS_PATH)
+    comics = initialize_comics(load_json(DETAILS_PATH))
     logger.info("Comics loaded!")
     action = None
     while action != "Return":
@@ -251,7 +252,7 @@ def choose_comic(action: str, comics: dict):
     """
     comic = inquirer.fuzzy(
         message=f"What comic do you want to {action.lower()}?",
-        choices=[f"{comics[x]['Position']}. {comics[x]['Name']}" for x in comics]
+        choices=[f"{comic.position}. {comic.name}" for comic in comics.values()]
         + ["Return"],
         mandatory=False,
     ).execute()
@@ -282,25 +283,32 @@ def add_comic(comics: dict):
         "page: ",
         mandatory=False,
     ).execute()
-    main_website = Website(
-        inquirer.text(
-            message="What is the main website of the comic?",
-            completer={website.name: None for website in Website},
-            mandatory=False,
-        ).execute()
-    )
-    if main_website not in Website:
-        working_type = inquirer.select(
-            message="What is the working type of the comic? (For example,are comics "
-            "accessible by specifying a date, a number or is there a rss "
-            "available?)\nIf you do not know, please choose other. ",
-            choices=[working_type.name for working_type in WorkingType],
-            mandatory=False,
-        ).execute()
-    elif main_website in [Website.Gocomics, Website.ComicsKingdom]:
-        working_type = WorkingType.Date
-    else:
-        working_type = WorkingType.RSS
+    main_website = inquirer.text(
+        message="What is the main website of the comic?",
+        completer={
+            website.name: None
+            for website in [
+                Gocomics.WEBSITE_NAME,
+                ComicsKingdom.WEBSITE_NAME,
+                Webtoons.WEBSITE_NAME,
+            ]
+        },
+        mandatory=False,
+    ).execute()
+    working_type = ""
+    match main_website:
+        case Gocomics.WEBSITE_NAME, ComicsKingdom.WEBSITE_NAME:
+            working_type = WorkingType.Date
+        case Webtoons.WEBSITE_NAME:
+            working_type = WorkingType.RSS
+        case _:
+            working_type = inquirer.select(
+                message="What is the working type of the comic? (For example,are comics "
+                "accessible by specifying a date, a number or is there a rss "
+                "available?)\nIf you do not know, please choose other. ",
+                choices=[working_type.name for working_type in WorkingType],
+                mandatory=False,
+            ).execute()
 
     description = inquirer.text(
         message="Enter a long description of the comic: ", mandatory=False
@@ -378,7 +386,7 @@ def process_inputs(
     name: str,
     author: str,
     web_name: str,
-    main_website: Website | str,
+    main_website: str,
     working_type: WorkingType,
     description: str,
     position: int,
@@ -402,12 +410,7 @@ def process_inputs(
     :param helptxt: Comic help text
     :return: The comic dict
     """
-    # websites = {
-    #     "Gocomics": "https://www.gocomics.com/",
-    #     "ComicsKingdom": "https://comicskingdom.com/",
-    #     "Webtoon": "https://www.webtoons.com/en/",
-    # }
-    comic_type: Type[BaseComic] = BaseComic.get_type(working_type, main_website)
+    comic_type: Type[BaseComic] = BaseComic.get_type(main_website, working_type)
     return comic_type.__init__(
         name=name,
         author=author,
@@ -448,8 +451,8 @@ def delete(comics: dict, comic: str):
 
     logger.info("Changing positions of the next comics...")
     for cmc in comics:
-        pos = comics[cmc]["Position"]
-        comics[cmc]["Position"] = pos - 1 if pos > comic_number else pos
+        pos = comics[cmc]["position"]
+        comics[cmc]["position"] = pos - 1 if pos > comic_number else pos
 
     save_json(comics, DETAILS_PATH)
 

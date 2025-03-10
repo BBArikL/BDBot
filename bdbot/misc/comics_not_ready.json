@@ -1,15 +1,15 @@
 {
     "Jon": {
-        "Name": "Jon",
-        "Web_name": "Jon",
-        "Main_website": "None",
-        "Working_type": "image",
-        "Description": "The original comic! Visit James Davis' original strip that later became the comic we all know and love.\nSee also:\nGarfield,\nGarfield Classics,\nGarfield minus Garfield",
-        "Position": 11,
-        "First_date": "None",
-        "Color": "FFA202",
-        "Image": "https://static.wikia.nocookie.net/garfield/images/f/fe/Missing.JPG/revision/latest?cb=20201124041539",
+        "name": "Jon",
+        "web_name": "Jon",
+        "main_website": "None",
+        "working_type": "image",
+        "description": "The original comic! Visit James Davis' original strip that later became the comic we all know and love.\nSee also:\nGarfield,\nGarfield Classics,\nGarfield minus Garfield",
+        "position": 11,
+        "first_date": "None",
+        "color": "FFA202",
+        "image": "https://static.wikia.nocookie.net/garfield/images/f/fe/Missing.JPG/revision/latest?cb=20201124041539",
         "Aliases": "'Jon', 'jon'",
-        "Helptxt": "Revisit the comic before Garfield, with the original art style and humor of Jim Davis."
+        "help": "Revisit the comic before Garfield, with the original art style and humor of Jim Davis."
     }
 }

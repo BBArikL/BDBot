@@ -9,7 +9,7 @@ from bdbot.actions import Action
 from bdbot.cache import link_cache
 from bdbot.comics.base import BaseComic
 from bdbot.comics.comic_detail import ComicDetail
-from bdbot.discord.discord_utils import (
+from bdbot.discord_.discord_utils import (
     SERVER,
     NextSend,
     clean_database,
@@ -127,7 +127,9 @@ class PosterHandler(commands.Cog):
             )
 
         logger.info("Sending comics....")
-        await self.check_comics_and_post(comic_list, strip_details, comic_keys)
+        await self.check_comics_and_post(
+            comic_list, strip_details, comic_keys, post_time=None
+        )
 
         save_json(link_cache, COMIC_LATEST_LINKS_PATH)  # Saves the link cache
 

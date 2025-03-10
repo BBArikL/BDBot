@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import TYPE_CHECKING
 
-from bdbot.comics.base import BaseComic
+if TYPE_CHECKING:
+    from bdbot.comics import BaseComic
+
 from bdbot.embed import Embed
 from bdbot.field import Field
 from bdbot.time import get_now
@@ -22,7 +25,7 @@ class ComicDetail:
     is_latest: bool
 
     @classmethod
-    def from_comic(cls, comic: BaseComic) -> "ComicDetail":
+    def from_comic(cls, comic: "BaseComic") -> "ComicDetail":
         return cls(
             title=comic.name,
             name=comic.name,

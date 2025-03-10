@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import enum
 import functools
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any, Callable, Optional, Union
 
 import discord
@@ -16,8 +15,8 @@ from bdbot.actions import Action, ExtendedAction
 from bdbot.comics.base import BaseComic, WorkingType
 from bdbot.comics.comic_detail import ComicDetail
 from bdbot.comics.custom import GarfieldMinusGarfield
-from bdbot.discord.multi_page_view import MultiPageView
-from bdbot.discord.response_sender import ResponseSender
+from bdbot.discord_.multi_page_view import MultiPageView
+from bdbot.discord_.response_sender import NextSend, ResponseSender
 from bdbot.embed import Embed
 from bdbot.files import (
     DATABASE_FILE_PATH,
@@ -33,12 +32,6 @@ from bdbot.utils import parse_all
 SERVER: Optional[discord.Object] = None
 OWNER: Optional[int] = None
 logger = logging.getLogger("discord")
-
-
-class NextSend(enum.Enum):
-    Normal = 0
-    Deferred = 1
-    Followup = 2
 
 
 def convert_embed(embed: Embed) -> DiscordEmbed:
@@ -189,7 +182,7 @@ def extract_number_comic(
     :return:
     """
     if comic_number is not None and comic_number >= comic.first_comic_date:
-        if working_type == "number":
+        if working_type == WorkingType.Number:
             comic.main_website = comic.main_website + str(comic_number) + "/"
 
         return comic_send, {
@@ -240,7 +233,7 @@ def extract_date_comic(
         }
 
     first_date_formatted = datetime.strftime(first_date, "%d/%m/%Y")
-    date_now_formatted = datetime.strftime(datetime.now(timezone.utc), "%d/%m/%Y")
+    date_now_formatted = datetime.strftime(get_now(), "%d/%m/%Y")
 
     return send_message, {
         "inter": inter,
@@ -834,7 +827,7 @@ def add_comic_to_list(
     hour: str = "",
     day: str = "La",
 ) -> list[dict]:
-    comic_name = comic_values[comic]["Name"]
+    comic_name = comic_values[comic]["name"]
 
     # Check if channel exist
     chan = bot.get_channel(int(channel))
@@ -843,7 +836,7 @@ def add_comic_to_list(
     else:
         chan = channel
 
-    comic_list.append({"Name": comic_name, "Hour": hour, "Date": day, "Channel": chan})
+    comic_list.append({"name": comic_name, "Hour": hour, "Date": day, "Channel": chan})
 
     return comic_list
 
@@ -944,7 +937,7 @@ async def run_blocking(
     :return:
     """
     func = functools.partial(blocking_func, *args, **kwargs)
-    return await bot.loop.run_in_executor(None, func)
+    return await bot.loop.run_in_executor(None, func, ())
 
 
 async def send_message(

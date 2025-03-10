@@ -1,34 +1,37 @@
-[tool.poetry]
+[project]
 name = "bdbot"
 version = "4.8.1"
 description = "A discord bot that post comics strip."
-authors = ["Arik <BBArik@protonmail.com>"]
-license = "GPL 3.0"
+readme = "README.md"
+authors = [{name = "Arik", email = "BBArik@protonmail.com"}]
+license = {text = "GPL 3.0"}
+requires-python = ">=3.10"
+dependencies = [
+    "discord.py>=2.5.1",
+    "requests>=2.32.3",
+    "rss-parser>=2.1.0",
+    "beautifulsoup4>=4.13.3",
+    "python-dotenv>=1.0.1",
+    "randomtimestamp>=2.2",
+    "topggpy>=1.4.0",
+    "inquirerpy>=0.3.4",
+    "dotenv"
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-"discord.py" = "^2.5.0"
-requests = "^2.32.3"
-rss-parser = "^2.1.0"
-beautifulsoup4 = "^4.13.3"
-python-dotenv = "^1.0.1"
-randomtimestamp = "^2.2"
-topggpy = "^1.4.0"
-inquirerpy = "^0.3.4"
-poetry = "^2.1.1"
-
-[tool.poetry.dev-dependencies]
-pytest = "^8.3.4"
-flake8 = "^7.1.2"
-isort = "^6.0.1"
-black = "^25.1.0"
-pre-commit = "^4.1.0"
+[project.optional-dependencies]
+dev = ["pytest>=8.3.4", "flake8>=7.1.2", "isort>=6.0.1", "black>=25.1.0", "pre-commit>=4.1.0", "Flake8-pyproject>=1.2.3"]
 
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
 
-[tool.poetry.scripts]
+[project.scripts]
 bdbot = "bdbot.__main__:main"
 bdbot_manager = 'bdbot.bdbot_manager:main'
+
+[tool.setuptools]
+packages = ["bdbot"]
+
+[tool.flake8]
+max-line-length = 120
