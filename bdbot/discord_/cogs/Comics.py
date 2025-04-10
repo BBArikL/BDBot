@@ -100,7 +100,7 @@ class Comic(commands.Cog):
         comics_details = get_all_strips()
 
         for comic in comics_details:
-            comic_name: str = comics_details[comic]["name"]
+            comic_name: str = comics_details[comic].name
             normalized_name = comic_name.lower().replace(" ", "_")
             normalized_name = re.sub("[^\\w\\-_]", "", normalized_name)
             self.bot.tree.remove_command(normalized_name)

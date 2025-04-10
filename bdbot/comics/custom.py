@@ -5,7 +5,7 @@ from typing import Any
 from bs4 import BeautifulSoup
 
 from bdbot.actions import Action
-from bdbot.comics.base import BaseDateComic, BaseNumberComic, BaseRSSComic, WorkingType
+from bdbot.comics.base import BaseNumberComic, BaseRSSComic, WorkingType
 from bdbot.comics.comic_detail import ComicDetail
 
 
@@ -131,25 +131,3 @@ class XKCD(BaseNumberComic):
             day=int(json_details["day"]),
         )
         return detail
-
-
-class Dilbert(BaseDateComic):
-    WEBSITE_NAME = "Dilbert"
-    WEBSITE_URL = "https://dilbert.com/"
-    WORKING_TYPE = WorkingType.Number
-    WEBSITE_HELP = ""
-
-    @property
-    def first_comic_date(self) -> datetime:
-        return self.first_date
-
-    @property
-    def random_link(self) -> str:
-        return ""
-
-    @property
-    def url_date_format(self) -> str:
-        return "%Y-%m-%d"
-
-    def get_link_from_date(self, date: datetime) -> str:
-        return self.main_website + "strip" + "/" + date.strftime(self.url_date_format)

@@ -15,7 +15,7 @@ MAX_BACKUP_TRIES = 25
 PROD_DATA_PATH = (
     os.path.join(os.getenv("LOCALAPPDATA"), "bdbot")
     if os.name == "nt"
-    else os.path.join("/home", os.getenv("USER"), ".local", "bdbot")
+    else os.path.join("/home", os.getenv("USER", ""), ".local", "bdbot")
 )
 DEV_DATA_PATH = os.path.dirname(__file__)
 BASE_DATA_PATH = PROD_DATA_PATH if not os.getenv("DEBUG") else DEV_DATA_PATH

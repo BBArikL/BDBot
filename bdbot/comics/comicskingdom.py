@@ -20,7 +20,7 @@ class ComicsKingdom(BaseDateComic):
 
     @property
     def url_date_format(self) -> str:
-        return "%Y-%m-%d"
+        return "/%Y-%m-%d"
 
     def get_link_from_date(self, date: datetime):
         return self.website_url + "/" + date.strftime(self.url_date_format)

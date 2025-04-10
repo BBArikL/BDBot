@@ -19,7 +19,7 @@ async def create_link_cache(logger_: logging.Logger) -> None:
     from bdbot.comics.base import BaseComic
 
     logger_.debug("Running link cache...")
-    comics: dict[str, "BaseComic"] = initialize_comics(load_json(DETAILS_PATH))
+    comics: dict[str, BaseComic] = initialize_comics(load_json(DETAILS_PATH))
     for comic in comics.values():
         logger_.debug(f"Getting image link for comic {comic.name} ...")
         comic_url: str

@@ -331,7 +331,7 @@ def modify_database(
     """
     Saves the new information in the database
 
-    Adds or delete the guild_id, the channel id and the comic_strip data
+    Adds or delete the server_id, the channel id and the comic_strip data
 
     :param inter:
     :param action:

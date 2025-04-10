@@ -12,7 +12,7 @@ dependencies = [
     "rss-parser>=2.1.0",
     "beautifulsoup4>=4.13.3",
     "python-dotenv>=1.0.1",
-    "randomtimestamp>=2.2",
+    "randomtimestamp @ git+https://github.com/ByteBaker/randomtimestamp.git",
     "topggpy>=1.4.0",
     "inquirerpy>=0.3.4",
     "dotenv"

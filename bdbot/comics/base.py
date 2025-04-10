@@ -20,8 +20,6 @@ from bdbot.field import Field
 from bdbot.time import get_now
 from bdbot.utils import get_all_strips
 
-FIRST_DATE_FORMAT = "%Y-%m-%d"
-
 
 class WorkingType(enum.Enum):
     Date = "date"
@@ -52,7 +50,6 @@ class BaseComic(ABC):
 
     def __post_init__(self):
         # Reformat the color to hexadecimal encoding
-        self.color: str
         self.color: int = int(self.color, 16)
 
     @property
@@ -93,23 +90,26 @@ class BaseComic(ABC):
         embed = Embed(title)
         embeds.append(embed)
         for strip in strips:
-            if strips[strip]["main_website"] == cls.WEBSITE_NAME:
-                count += 1
-
-                embed.fields.append(
-                    Field(name=strips[strip]["name"], value=strips[strip]["help"])
-                )
+            if strips[strip].__class__ == cls:
                 if count == fields_per_embed:
                     count = 0
                     # Reset the embed to create a new one
-                    embeds.append(Embed(title))
+                    embed = Embed(title)
+                    embeds.append(embed)
+
+                count += 1
+
+                embed.fields.append(
+                    Field(name=strips[strip].name, value=strips[strip].help)
+                )
+
         return embeds
 
     def get_comic_info(self, is_subbed: bool) -> Embed:
         """Sends comics info in an embed
 
-        :param is_subbed:
-        :return:
+        :param is_subbed: If the server is subbed
+        :return: The comic info
         """
         embed: Embed = Embed(
             title=f"{self.name} by {self.author}",
@@ -118,7 +118,7 @@ class BaseComic(ABC):
             color=self.color,
             thumbnail=self.image,
             fields=[
-                Field(name="Working type", value=self.WEBSITE_TYPE.value, inline=True)
+                Field(name="Working type", value=self.WORKING_TYPE.value, inline=True)
             ],
         )
         if self.WORKING_TYPE == WorkingType.Date:
@@ -133,8 +133,9 @@ class BaseComic(ABC):
     def to_dict(self):
         return asdict(self)
 
-    @staticmethod
-    def extract_meta_content(soup: BeautifulSoup, content_name: str) -> str | None:
+    def extract_meta_content(
+        self, soup: BeautifulSoup, content_name: str
+    ) -> str | None:
         """Extract the content from the source
 
         Copied from CalvinBot : https://github.com/wdr1/CalvinBot/blob/master/CalvinBot.py
@@ -218,7 +219,6 @@ class BaseDateComic(BaseComic):
         detail = await super().get_comic(action)
         i = 0
 
-        # if comic_date is None:
         # Gets today date
         comic_date = get_now()
 
@@ -226,9 +226,6 @@ class BaseDateComic(BaseComic):
             i += 1
             detail.date = comic_date
             if action == Action.Random:
-                # TODO: Fix here
-                # Random comic
-                # , random_date
                 detail.url = self.random_link
             else:
                 detail.url = self.get_link_from_date(comic_date)
@@ -249,8 +246,10 @@ class BaseDateComic(BaseComic):
 
             # Extracts the title of the comic
             detail.title = self.extract_meta_content(soup, "title")
-            # Finds the final url
-            detail.url = self.extract_meta_content(soup, "url")
+            # Finds the final url (if necessary)
+            url = self.extract_meta_content(soup, "url")
+            if url:
+                detail.url = url
             detail.image_url = image_url
             detail.date = comic_date
 
@@ -268,15 +267,13 @@ class BaseDateComic(BaseComic):
 
     @classmethod
     def from_main_website(cls, main_website: str) -> Type["BaseDateComic"]:
-        from bdbot.comics import ComicsKingdom, Dilbert, Gocomics
+        from bdbot.comics import ComicsKingdom, Gocomics
 
         match main_website:
             case Gocomics.WEBSITE_URL:
                 return Gocomics
             case ComicsKingdom.WEBSITE_URL:
                 return ComicsKingdom
-            case Dilbert.WEBSITE_URL:
-                return Dilbert
             case _:
                 raise ComicNotFound("Could not find comic type!")
 
@@ -320,17 +317,13 @@ class BaseRSSComic(BaseComic, ABC):
             raise ComicNotFound(f"The rss feed for comic '{self.name}' was invalid!")
         feed = rss.channel.content.items[date].content
 
-        # To add in the "Finalize comic"? for webtoons
-        #   if feed.title.content != "":
-        # @     details.title = feed.title.content
-
         new_date = datetime.strptime(
             feed.pub_date.content,
             f"%{self.weekday_token}, %d %b %Y %H:%M:%S %{self.timezone_token}",
         )
         detail.date = new_date
 
-        detail.url = feed.link.content
+        detail.url = feed.links[0].content
 
         description_soup = BeautifulSoup(feed.description.content, "html.parser")
         description_images = [

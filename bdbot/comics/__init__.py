@@ -1,4 +1,8 @@
 from bdbot.comics.base import BaseComic, WorkingType
+from bdbot.comics.comicskingdom import ComicsKingdom
+from bdbot.comics.custom import XKCD, CyanideAndHappiness, GarfieldMinusGarfield
+from bdbot.comics.gocomics import Gocomics
+from bdbot.comics.webtoons import Webtoons
 
 
 def initialize_comics(comics: dict) -> dict[str, BaseComic]:
@@ -19,3 +23,13 @@ def initialize_comics(comics: dict) -> dict[str, BaseComic]:
             }
         )
     return c
+
+
+__all__ = [
+    Gocomics,
+    Webtoons,
+    ComicsKingdom,
+    GarfieldMinusGarfield,
+    XKCD,
+    CyanideAndHappiness,
+]

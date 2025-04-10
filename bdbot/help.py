@@ -1,7 +1,5 @@
 from bdbot import utils
-from bdbot.comics.comicskingdom import ComicsKingdom
-from bdbot.comics.gocomics import Gocomics
-from bdbot.comics.webtoons import Webtoons
+from bdbot.comics import ComicsKingdom, Gocomics, Webtoons
 from bdbot.embed import Embed
 from bdbot.field import Field
 
@@ -13,6 +11,11 @@ HELP_FIELDS_NAME = "fields"
 
 
 def get_general_help(general_help: dict[str, str | dict[str, str]]) -> Embed:
+    """Get a general help embed
+
+    :param general_help: General help information
+    :return: The embed filled with the general help information
+    """
     strips = utils.strip_details
     help_embed: Embed = Embed.from_dict(general_help)
     help_embed.fields.clear()

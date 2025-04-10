@@ -23,7 +23,7 @@ class Embed:
         self.fields.append(f)
 
     @classmethod
-    def from_dict(cls, obj: dict[str, str | int]) -> "Embed":
+    def from_dict(cls, obj: dict[str, str | dict[str, str]]) -> "Embed":
         embed = cls(**obj)
         for f in obj["field"]:
             embed.add_field(Field(**f))
