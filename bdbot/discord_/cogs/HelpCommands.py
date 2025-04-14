@@ -21,7 +21,7 @@ class HelpCommands(commands.Cog):
     """Class responsible for sending help embeds"""
 
     help_group = app_commands.Group(name="help", description="Help commands")
-    help_dict: dict[str, dict[str, str | int]]
+    help_dict: dict[str, dict[str, dict[str, str]]]
 
     def __init__(self, bot: commands.Bot):
         """Constructor of the cog

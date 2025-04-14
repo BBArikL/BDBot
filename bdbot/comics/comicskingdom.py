@@ -15,6 +15,10 @@ class ComicsKingdom(BaseDateComic):
         return datetime.today() - timedelta(days=7)
 
     @property
+    def first_date_format(self) -> str:
+        return ""
+
+    @property
     def random_link(self) -> str:
         return f'{self.WEBSITE_URL}{self.web_name}/{self.get_random_comic_date().strftime("%Y-%m-%d")}'
 
@@ -23,4 +27,4 @@ class ComicsKingdom(BaseDateComic):
         return "/%Y-%m-%d"
 
     def get_link_from_date(self, date: datetime):
-        return self.website_url + "/" + date.strftime(self.url_date_format)
+        return self.website_url + date.strftime(self.url_date_format)

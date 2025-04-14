@@ -127,10 +127,11 @@ There are 2 ways to set up scheduled comics:
  
 - Anything else to know?
   - Why can't I go farther than 7 comics on Comics Kingdom? Comics Kingdom use a special premium subscription plan to view all comics. There is no known way to get around it and getting the subscription and after distributing the comic for free could cause some undesirable consequences in the future.
+  - Why can't I go farther than 14 comics on Gocomics? As of April 1st 2025, Gocomics implemented a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser. Self-host the bot and define `BYPASS_GOCOMICS_SUBSCRIPTION=1` in your environment to view older comics. Distributing the comics for free could cause some undesirable consequences in the future.
   - Why is there only 2 images for Webtoons? Webtoons only gives out two images link to the comic in their rss feed. Finding each image link is way more complicated than this and is not in place now.
   - You want to do a pull request to add your favourite comic? 
     - Preferably, Gocomics and Comics Kingdom comics are the easiest to implement, so try to stick with that if your comic is hosted there. 
-      - Please see [this README](CONTRIBUTING.md) for complete instructions
+      - Please see [this README](bdbot/misc/ADD_COMIC.md) for complete instructions
   - If the comic is NOT hosted on GoComics/Comics Kingdom, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
   - Any pull requests that was not approved from another site will be automatically rejected, and you will be asked to follow the procedure cited.
   - 'Beta' and 'main'?

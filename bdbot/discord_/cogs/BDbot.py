@@ -10,19 +10,21 @@ from discord import app_commands
 from discord.app_commands import AppCommand
 from discord.ext import commands
 
-from bdbot import time, utils
+from bdbot import utils
 from bdbot.actions import ExtendedAction
 from bdbot.comics import initialize_comics
+from bdbot.db import DiscordSubscription, ServerSubscription
 from bdbot.discord_ import discord_utils
 from bdbot.discord_.bot_request import BotRequest
 from bdbot.discord_.cogs.AutomaticPoster import PosterHandler
 from bdbot.discord_.cogs.Comics import Comic
 from bdbot.discord_.discord_utils import SERVER, NextSend, is_owner, send_message
-from bdbot.discord_.exceptions import on_error
-from bdbot.files import DATABASE_FILE_PATH, DETAILS_PATH, REQUEST_FILE_PATH, load_json
-from bdbot.mention import MentionChoice, MentionPolicy
+from bdbot.embed import Embed
+from bdbot.field import Field
+from bdbot.files import DETAILS_PATH, REQUEST_FILE_PATH, load_json
+from bdbot.mention import MentionPolicy
 from bdbot.time import Weekday, get_now, get_time_between
-from bdbot.utils import strip_details
+from bdbot.utils import all_comics
 
 
 class BDBot(commands.Cog):
@@ -32,11 +34,10 @@ class BDBot(commands.Cog):
         """Constructor of the cog
 
         Initialize all the properties of the cog"""
-        self.strip_details: dict = initialize_comics(load_json(DETAILS_PATH))
         self.bot: commands.Bot = bot
         self.topggpy = None
         self.start_time: datetime = get_now()
-        self.bot.tree.error(on_error)
+        # self.bot.tree.error(on_error)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -78,13 +79,13 @@ class BDBot(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
         """When the bot is removed from a server"""
-        discord_utils.remove_guild(guild, use=ExtendedAction.Auto_remove_guild)
+        await discord_utils.modify_database(guild, ExtendedAction.Auto_remove_guild)
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, deleted_channel: discord.abc.GuildChannel):
         """When a guild channel is deleted"""
-        discord_utils.remove_channel(
-            deleted_channel, use=ExtendedAction.Auto_remove_channel
+        await discord_utils.modify_database(
+            deleted_channel, ExtendedAction.Auto_remove_channel
         )
 
     @commands.Cog.listener()
@@ -92,8 +93,8 @@ class BDBot(commands.Cog):
         self, deleted_channel: discord.abc.GuildChannel
     ):
         """When a private channel is deleted"""
-        discord_utils.remove_channel(
-            deleted_channel, use=ExtendedAction.Auto_remove_channel
+        await discord_utils.modify_database(
+            deleted_channel, ExtendedAction.Auto_remove_channel
         )
 
     @commands.Cog.listener()
@@ -155,7 +156,7 @@ class BDBot(commands.Cog):
         self, inter: discord.Interaction, date: Weekday = None, hour: int = None
     ):
         """Add all comics to a specific channel. Preferred way to add all comics. Mods only"""
-        status = discord_utils.add_all(inter, date, hour)
+        status = await discord_utils.add_all(inter, date, hour)
         await send_message(inter, status)
 
     # Only mods can delete the server from the database
@@ -163,7 +164,7 @@ class BDBot(commands.Cog):
     @app_commands.checks.has_permissions(manage_guild=True)
     async def remove_all(self, inter: discord.Interaction):
         """Remove the guild from the database. Preferred way to remove all comics.Mods only"""
-        status = discord_utils.remove_guild(inter)
+        status = await discord_utils.modify_database(inter, ExtendedAction.Remove_guild)
         await send_message(inter, status)
 
     # Only mods can delete the channel from the database
@@ -171,7 +172,9 @@ class BDBot(commands.Cog):
     @app_commands.checks.has_permissions(manage_guild=True)
     async def remove_channel(self, inter: discord.Interaction):
         """Remove the channel from the database.Mods only"""
-        status = discord_utils.remove_channel(inter)
+        status = await discord_utils.modify_database(
+            inter, ExtendedAction.Remove_channel
+        )
         await send_message(inter, status)
 
     # Only mods can add a role
@@ -180,7 +183,7 @@ class BDBot(commands.Cog):
     async def set_role(self, inter: discord.Interaction, role: discord.Role):
         """Add a role to be notified. Mods only"""
         if discord.Guild.get_role(inter.guild, role.id) is not None:
-            status = discord_utils.set_role(inter, role)
+            status = await discord_utils.set_role(inter, role)
             return await send_message(inter, status)
         await send_message(inter, "The role is invalid or not provided!")
 
@@ -189,28 +192,21 @@ class BDBot(commands.Cog):
     @app_commands.checks.has_permissions(manage_guild=True)
     async def remove_role(self, inter: discord.Interaction):
         """Deletes the role mention. Mods only"""
-        status = discord_utils.remove_role(inter)
+        status = await discord_utils.remove_role(inter)
         await send_message(inter, status)
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
     async def set_mention(self, inter: discord.Interaction, policy: MentionPolicy):
         """Set the role mention policy. Mods only"""
-        status = discord_utils.set_mention(inter, policy)
+        status = await discord_utils.set_mention(inter, policy)
         await send_message(inter, status)
 
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
     async def get_mention(self, inter: discord.Interaction):
         """Get the server's mention policy. Mods only"""
-        status, mention_policy = discord_utils.get_mention(inter, self.bot)
-        await send_message(inter, status)
-
-    @app_commands.command()
-    @app_commands.checks.has_permissions(manage_guild=True)
-    async def post_mention(self, inter: discord.Interaction, choice: MentionChoice):
-        """Change the mention policy for the server. Mods only"""
-        status = discord_utils.set_post_mention(inter, choice == MentionChoice.Enable)
+        status = await discord_utils.get_mention(inter, self.bot)
         await send_message(inter, status)
 
     @app_commands.command()
@@ -285,69 +281,61 @@ class BDBot(commands.Cog):
     async def sub(self, inter: discord.Interaction):
         """Checks if the server is subbed to any comic"""
         await inter.response.defer()
-        guild_data = discord_utils.get_specific_guild_data(inter)
+        server = (
+            await ServerSubscription.filter(id=inter.guild.id)
+            .prefetch_related("channels")
+            .get_or_none()
+        )
         max_fields = 5
-        hr = "Hour"
-        if guild_data is not None:
-            comic_list = []
-            comic_values: list[dict] = list(strip_details.values())
-
-            for channel in guild_data["channels"]:
-
-                if "latest" in guild_data["channels"][channel]:
-                    for comic in guild_data["channels"][channel]["latest"]:
-                        comic_list = discord_utils.add_comic_to_list(
-                            comic_values, comic, self.bot, channel, comic_list
-                        )
-
-                if "date" in guild_data["channels"][channel]:
-                    for day in guild_data["channels"][channel]["date"]:
-                        for hour in guild_data["channels"][channel]["date"][day]:
-                            for comic in guild_data["channels"][channel]["date"][day][
-                                hour
-                            ]:
-                                comic_list = discord_utils.add_comic_to_list(
-                                    comic_values,
-                                    comic,
-                                    self.bot,
-                                    channel,
-                                    comic_list,
-                                    hour,
-                                    day,
-                                )
-
-            if len(comic_list) > 0:
-                nb_fields = 0
-                embeds = [discord.Embed(title="This server is subscribed to:")]
-                for comic in comic_list:
-                    if nb_fields > max_fields:
-                        nb_fields = 0
-                        embeds.append(
-                            discord.Embed(title="This server is subscribed to:")
-                        )
-
-                    match_date = time.match_date[comic["Date"]]
-                    embeds[-1].add_field(
-                        name=comic["name"],
-                        value=f"{'Each ' if match_date not in [Weekday.Latest, Weekday.Daily] else ''}{match_date.name}"
-                        f"{f' at {comic[hr]} h UTC' if match_date not in [Weekday.Latest] else ''} in "
-                        f"channel {comic['Channel']}",
-                    )
-                    nb_fields += 1
-
-                await discord_utils.send_embed(inter, embeds, NextSend.Deferred)
-            else:
-                await send_message(
-                    inter,
-                    "This server is not subscribed to any comic!",
-                    next_send=NextSend.Deferred,
-                )
-        else:
+        if server is None:
             await send_message(
                 inter,
                 "This server is not subscribed to any comic!",
                 next_send=NextSend.Deferred,
             )
+
+        subscriptions: list[DiscordSubscription] = []
+        for channel in server.channels:
+            subscriptions.extend(await DiscordSubscription(channel=channel).all())
+
+        if len(subscriptions) == 0:
+            await send_message(
+                inter,
+                "This server is not subscribed to any comic!",
+                next_send=NextSend.Deferred,
+            )
+        nb_fields = 0
+        embeds = [Embed(title="This server is subscribed to:")]
+        for sub in subscriptions:
+            matching_comic = list(
+                filter(lambda c: c.id == sub.comic_id, all_comics().values())
+            )
+            if len(matching_comic) == 0:
+                # Could not find matching comic, continuing
+                continue
+            comic = matching_comic[0]
+
+            if nb_fields > max_fields:
+                nb_fields = 0
+                embeds.append(Embed(title="This server is subscribed to:"))
+
+            channel = await sub.channel
+            channel = self.bot.get_channel(channel.id)
+            if channel is None:
+                channel = sub.channel.id
+            else:
+                channel = channel.mention
+            embeds[-1].add_field(
+                Field(
+                    name=comic.name,
+                    value=f"{'Each ' if sub.weekday not in [Weekday.Latest, Weekday.Daily] else ''}{sub.weekday.name}"
+                    f"{f' at {sub.hour} h UTC' if sub.weekday not in [Weekday.Latest] else ''} in "
+                    f"channel {channel}",
+                    inline=True,
+                )
+            )
+            nb_fields += 1
+        await discord_utils.send_embed(inter, embeds, NextSend.Deferred)
 
     @app_commands.command()
     async def ping(self, inter: discord.Interaction):
@@ -410,12 +398,10 @@ class BDBot(commands.Cog):
     @app_commands.checks.check(is_owner)
     async def nb_active(self, inter: discord.Interaction):
         """Returns the number of servers using the hourly poster service"""
+        active = await ServerSubscription.all().count()
         await send_message(
             inter,
-            "There is "
-            + str(len(load_json(DATABASE_FILE_PATH)))
-            + "servers using the hourly "
-            "poster service.",
+            f"There is {active} server(s) using the hourly poster service.",
         )
 
     @app_commands.command()
@@ -438,7 +424,7 @@ class BDBot(commands.Cog):
         """
         await send_message(inter, "Reloading comics....")
         await self.bot.remove_cog("Comic")
-        utils.strip_details = initialize_comics(load_json(DETAILS_PATH))
+        utils.comic_details = initialize_comics(load_json(DETAILS_PATH))
         await self.bot.add_cog(Comic(self.bot))
         await send_message(inter, "Reloaded comics!", next_send=NextSend.Followup)
 

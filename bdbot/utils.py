@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 from bdbot.files import get_footers
 from bdbot.time import Weekday
 
-strip_details: dict[str, "BaseComic"] = {}
+comic_details: dict[str, "BaseComic"] = {}
 random_footers: list[str] = []
 
 
@@ -27,26 +27,15 @@ random_footers: list[str] = []
 #     return url.replace(" ", "%20")
 
 
-def get_strip_details(comic_name: str) -> "BaseComic":
-    """Get the details of a specific comic
-
-    :param comic_name:
-    :return:
-    """
-    return strip_details[comic_name]
-
-
-def get_all_strips() -> dict[str, "BaseComic"]:
-    return strip_details
+def all_comics() -> dict[str, "BaseComic"]:
+    return comic_details
 
 
 def get_random_footer() -> str:
     """Get a random footer
-
     :return: A random footer text
     """
     rnd_footer = random.choice(get_footers())
-
     return rnd_footer.replace("\n", "")
 
 
@@ -66,5 +55,4 @@ def parse_all(
     """
     final_date = default_date if date is None else date
     final_hour = default_hour if hour is None else hour
-
     return final_date, final_hour

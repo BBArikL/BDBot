@@ -6,7 +6,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from bdbot.actions import Action
+from bdbot.actions import Action, ExtendedAction
 from bdbot.comics.base import BaseComic, WorkingType
 from bdbot.comics.custom import GarfieldMinusGarfield
 from bdbot.discord_.discord_utils import (
@@ -15,7 +15,7 @@ from bdbot.discord_.discord_utils import (
     parameters_interpreter,
 )
 from bdbot.time import Month, Weekday
-from bdbot.utils import get_all_strips, get_strip_details
+from bdbot.utils import all_comics
 
 
 def define_comic_callback(comic: BaseComic):
@@ -29,7 +29,7 @@ def define_comic_callback(comic: BaseComic):
         year: int = None,
     ):
         # Interprets the parameters given by the user
-        func, params = parameters_interpreter(
+        func, params = await parameters_interpreter(
             inter,
             comic,
             action=action,
@@ -49,7 +49,7 @@ def define_comic_callback(comic: BaseComic):
         comic_number: int = None,
     ):
         # Interprets the parameters given by the user
-        func, params = parameters_interpreter(
+        func, params = await parameters_interpreter(
             inter,
             comic,
             action=action,
@@ -77,17 +77,13 @@ class Comic(commands.Cog):
         :param bot: The discord Bot
         """
         self.bot = bot
-
-        comics_details: dict[str, BaseComic] = get_all_strips()
-
-        for comic in comics_details:
-            comic_name: str = comics_details[comic].name
-            normalized_name = comic_name.lower().replace(" ", "_")
+        for comic in all_comics().values():
+            normalized_name = comic.name.lower().replace(" ", "_")
             normalized_name = re.sub("[^\\w\\-_]", "", normalized_name)
             comic_command = app_commands.Command(
                 name=normalized_name,
-                description=comic_name,
-                callback=define_comic_callback(comics_details[comic]),
+                description=comic.name,
+                callback=define_comic_callback(comic),
             )
             # No built-in functions for adding autocomplete choices when creating callbacks in a factory way
             comic_command._params.get("hour").choices = (  # noqa: See above
@@ -97,10 +93,8 @@ class Comic(commands.Cog):
             self.bot.tree.add_command(comic_command)
 
     async def cog_unload(self) -> None:
-        comics_details = get_all_strips()
-
-        for comic in comics_details:
-            comic_name: str = comics_details[comic].name
+        for comic in all_comics().values():
+            comic_name: str = comic.name
             normalized_name = comic_name.lower().replace(" ", "_")
             normalized_name = re.sub("[^\\w\\-_]", "", normalized_name)
             self.bot.tree.remove_command(normalized_name)
@@ -120,9 +114,14 @@ class Comic(commands.Cog):
         comic_number: int = None,
     ):
         """Random comic"""
-        func, params = parameters_interpreter(
+        comic = random.choice(list(all_comics().values()))
+        if action == Action.Add:
+            action = ExtendedAction.Add_random
+        elif action == Action.Remove:
+            action = ExtendedAction.Remove_random
+        func, params = await parameters_interpreter(
             inter,
-            get_strip_details(random.choice(list(get_all_strips().keys()))),
+            comic,
             action=action,
             date=date,
             hour=hour,
@@ -149,13 +148,13 @@ class Comic(commands.Cog):
     ):
         """All comics. Mods only"""
         first = True
-        for com in get_all_strips():
+        for comic in all_comics().values():
             # Interprets the parameters given by the user
             func: Callable
             params: dict[str, Any]
-            func, params = parameters_interpreter(
+            func, params = await parameters_interpreter(
                 inter,
-                get_strip_details(com),
+                comic,
                 action=action,
                 date=date,
                 hour=hour,

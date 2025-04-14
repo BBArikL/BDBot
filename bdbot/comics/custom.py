@@ -45,7 +45,7 @@ class CyanideAndHappiness(BaseNumberComic):
     WORKING_TYPE = WorkingType.Number
     WEBSITE_HELP = ""
 
-    async def get_comic_url(self, action: Action) -> str | None:
+    async def get_comic_url(self, action: Action, comic_date=None) -> str | None:
         suffix: str = ""
         match action:
             case Action.Random:
@@ -103,7 +103,7 @@ class XKCD(BaseNumberComic):
     _RANDOM_COMICS = "https://c.xkcd.com/random/comic/"
     _JSON_API_SUFFIX = "info.0.json"
 
-    async def get_comic_url(self, action: Action) -> str | None:
+    async def get_comic_url(self, action: Action, comic_date=None) -> str | None:
         url: str = self.main_website
         if action == Action.Random:
             url = self.extract_meta_content(
@@ -112,6 +112,8 @@ class XKCD(BaseNumberComic):
                 ),
                 "url",
             )
+        elif action == Action.Specific_date:
+            url += f"{comic_date}/"
         return url + self._JSON_API_SUFFIX
 
     def extract_content(

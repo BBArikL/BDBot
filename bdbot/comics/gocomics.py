@@ -15,7 +15,7 @@ class Gocomics(BaseDateComic):
     WEBSITE_HELP = "Use /help gocomics to get all comics that are supported on the Gocomics website."
     WORKING_TYPE = WorkingType.Date
     IMAGE_CLASS_REGEX = re.compile(
-        "Comic_comic__image__[a-zA-Z0-9]+_[a-zA-Z0-9]+ Comic_comic__image_strip__[a-zA-Z0-9]+"
+        "Comic_comic__image__[a-zA-Z0-9]+_[a-zA-Z0-9]+( Comic_comic__image_strip__[a-zA-Z0-9]+)?"
     )
 
     def __post_init__(self):
@@ -30,7 +30,7 @@ class Gocomics(BaseDateComic):
     def first_comic_date(self) -> datetime:
         if os.getenv("BYPASS_GOCOMICS_SUBSCRIPTION"):
             return self.first_date
-        return self.first_date + timedelta(days=14)
+        return datetime.today() - timedelta(days=14)
 
     @property
     def random_link(self) -> str:
@@ -41,7 +41,7 @@ class Gocomics(BaseDateComic):
         return "/%Y/%m/%d"
 
     def get_link_from_date(self, date: datetime):
-        return self.website_url + "/" + date.strftime(self.url_date_format)
+        return self.website_url + date.strftime(self.url_date_format)
 
     def extract_meta_content(
         self, soup: BeautifulSoup, content_name: str

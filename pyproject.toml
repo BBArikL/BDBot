@@ -15,7 +15,8 @@ dependencies = [
     "randomtimestamp @ git+https://github.com/ByteBaker/randomtimestamp.git",
     "topggpy>=1.4.0",
     "inquirerpy>=0.3.4",
-    "dotenv"
+    "dotenv",
+    "tortoise-orm"
 ]
 
 [project.optional-dependencies]

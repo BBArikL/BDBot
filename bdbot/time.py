@@ -17,17 +17,6 @@ class Weekday(enum.Enum):
     Sunday = "Sunday"
 
 
-match_date = {
-    "Mo": Weekday.Monday,
-    "Tu": Weekday.Tuesday,
-    "We": Weekday.Wednesday,
-    "Th": Weekday.Thursday,
-    "Fr": Weekday.Friday,
-    "Sa": Weekday.Saturday,
-    "Su": Weekday.Sunday,
-    "D": Weekday.Daily,
-    "La": Weekday.Latest,
-}
 weekday_lst = {
     1: Weekday.Monday,
     2: Weekday.Thursday,
@@ -93,7 +82,7 @@ def get_weekday() -> Weekday:
     return Weekday(get_now().today().strftime("%A"))
 
 
-def get_last_corresponding_date(final_date: Weekday, final_hour: str):
+def get_last_corresponding_date(final_date: Weekday, final_hour: int):
     """Modifies the 'current' date to correspond to the user mention_policy
 
     :param final_date: The selected date of the week
@@ -105,9 +94,7 @@ def get_last_corresponding_date(final_date: Weekday, final_hour: str):
         # Don't change the date if daily or latest
         while final_date != weekday_lst[now.isoweekday()]:
             now -= timedelta(days=1)
-    post_time = datetime(
-        year=now.year, month=now.month, day=now.day, hour=int(final_hour)
-    )
+    post_time = datetime(year=now.year, month=now.month, day=now.day, hour=final_hour)
     return post_time
 
 

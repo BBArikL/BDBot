@@ -11,10 +11,6 @@
         "value": "Have a request for the bot? Post your request at https://github.com/BBArikL/BDBot/issues/new?assignees=&labels=enhancement&template=comic-request.md&title=New+Comic+request for maximum visibility or use `/request` to leave a message to the developer!"
       },
       {
-        "name": "Status",
-        "value": "Gives back the status of the bot.\nCommand:\n`/status`"
-      },
-      {
         "name": "Ping",
         "value": "Pong! Gives back the bot latency.\nCommand:\n`/ping`"
       },
@@ -57,7 +53,6 @@
       {"name":"Subscriptions","value":"Use `/sub` to view all subscribed comics for this server."},
       {"name":"Set role mention", "value":"Use `/set_role @<role>` to add a role to mention for comics posts. To remove, use `/remove_role`."},
       {"name":"Mange role mention", "value": "Use `/set_mention daily/all` to change the mention policy for the bot in the server. This does not affect daily comics posted at 6h AM UTC. If the mention policy is set to 'all', the bot will mention the role at each comic post, otherwise it will only mention the role at 6h AM UTC daily."},
-      {"name":"Enable/Disable mention","value":"Use `/post_mention` to enable/disable server-wide the mention right before the automatic comic posts."},
       {"name":"Get mention policy","value":"Use `/get_mention` to get the server's mention policy."}
     ]
   },
@@ -65,7 +60,7 @@
     "title":"New features",
     "description":"Find out what new features have been implemented since the last update!",
     "fields": [
-      {"name":"New comics", "value":"The new comics are: "},
+      {"name":"Comics", "value":"Garfield classics has been removed, Garfield minus Garfield and Webtoons now work."},
       {"name":"Changes in /random add <schedule>", "value":"Now, adding a random to a schedule will not add a fixed comic to be set to the schedule but the comic will be different each time on that schedule!"},
       {"name":"Optimizations", "value":"Under the hood, optimizations have been made to the bot to make it more responsive and support the growth! I am also looking into porting the bot to other platforms like Matrix and Revolt."
       }
@@ -77,6 +72,7 @@
     "fields": [
       {"name":"What is this bot?", "value":"This bot is a helper to keep up with your favorite comics! It search each hour more than 40+ pages to fetch the most up to date comics for your eyes only!"},
       {"name":"Why can I only go up to 7 comics in the past for ComicKingdom's comics?","value":"ComicKingdom use a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser."},
+      {"name":"Why can I only go up to 14 comics in the past for Gocomics comics?","value":"As of April 1st 2025, Gocomics implemented a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser."},
       {"name":"How can I support the project?", "value":"You can vote for the bot on top.gg (`/vote`) or star the project on GitHub (`/git`). If you want to support one of the comics that are presented through this bot, go on  their page to see how to support them directly!"},
       {"name":"How can I request comics?", "value":"You can use `/request` to request comics or features directly to the developer."},
       {"name":"How can I receive scheduled comics?","value":"You can use `/help schedule` to get help on how to schedule comics."},

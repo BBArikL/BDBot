@@ -15,6 +15,8 @@ from InquirerPy.prompts import ListPrompt, SecretPrompt
 from bdbot.cache import create_link_cache
 from bdbot.comics import ComicsKingdom, Gocomics, Webtoons, initialize_comics
 from bdbot.comics.base import BaseComic, WorkingType
+from bdbot.db import DiscordSubscription, dbinit, save_backup
+from bdbot.discord_.discord_utils import clean_database
 from bdbot.files import (
     BACKUP_FILE_PATH,
     BASE_DATA_PATH,
@@ -25,7 +27,6 @@ from bdbot.files import (
     LOGS_DIRECTORY_PATH,
     REQUEST_FILE_PATH,
     load_json,
-    save_backup,
     save_json,
 )
 
@@ -171,8 +172,11 @@ def setup_bot():
     os.makedirs(os.path.dirname(DETAILS_PATH), exist_ok=True)
 
     if not os.path.exists(DATABASE_FILE_PATH):
-        with open(DATABASE_FILE_PATH, "xt") as f:
-            f.write("{}")
+        loop = asyncio.new_event_loop()
+        try:
+            loop.run_until_complete(dbinit())
+        finally:
+            loop.close()
 
     if not os.path.exists(REQUEST_FILE_PATH):
         open(REQUEST_FILE_PATH, "xt").close()
@@ -250,19 +254,21 @@ def choose_comic(action: str, comics: dict):
     :param action: The action to do with the comic
     :param comics: The list of comics
     """
+    comic_map = {
+        f"{comic.id}. {comic.name}": comic_name for comic_name, comic in comics.items()
+    }
     comic = inquirer.fuzzy(
         message=f"What comic do you want to {action.lower()}?",
-        choices=[f"{comic.position}. {comic.name}" for comic in comics.values()]
-        + ["Return"],
+        choices=[comic for comic in comic_map.keys()] + ["Return"],
         mandatory=False,
     ).execute()
 
     if comic is None or comic == "Return":
         return
     elif action == "Delete":
-        delete(comics, comic)
+        delete(comics, comic_map[comic])
     else:
-        modify(comics, comic)
+        modify(comics, comic_map[comic])
 
 
 def add_comic(comics: dict):
@@ -295,7 +301,7 @@ def add_comic(comics: dict):
         },
         mandatory=False,
     ).execute()
-    working_type = ""
+    working_type: str
     match main_website:
         case Gocomics.WEBSITE_NAME, ComicsKingdom.WEBSITE_NAME:
             working_type = WorkingType.Date
@@ -389,7 +395,7 @@ def process_inputs(
     main_website: str,
     working_type: WorkingType,
     description: str,
-    position: int,
+    id: int,
     first_date: Union[str, dict],
     color: str,
     image: str,
@@ -403,7 +409,7 @@ def process_inputs(
     :param main_website: Comic's main website
     :param working_type: Comic's working type
     :param description: Comic description
-    :param position: Comic position
+    :param id: Comic id
     :param first_date: Comic first date
     :param color: Comic color
     :param image: Comic image
@@ -418,7 +424,7 @@ def process_inputs(
         main_website=main_website,
         working_type=working_type,
         description=description,
-        position=position,
+        id=id,
         first_date=first_date,
         color=color,
         image=image,
@@ -426,15 +432,13 @@ def process_inputs(
     ).to_dict()
 
 
-def delete(comics: dict, comic: str):
-    """
-    Removes a comic from the main configuration file and move it to a retired configuration file.
+def delete(comics: dict[str, BaseComic], comic_name: str):
+    """Removes a comic from the main configuration file and move it to a retired configuration file.
 
     :param comics: Main configuration dictionary.
-    :param comic: The comic to remove.
+    :param comic_name: The comic name to remove.
     """
-    comic_number, comic_name = comic.split(". ")
-    comic_number = int(comic_number)
+    comic = comics[comic_name]
     confirm = inquirer.confirm(
         message=f"Are you sure you want to delete {comic_name}?"
     ).execute()
@@ -446,18 +450,13 @@ def delete(comics: dict, comic: str):
     abs_path = os.path.join(os.getcwd(), RETIRED_COMICS_PATH)
     logger.info(f"Moving comic to {abs_path} ...")
     # Retires the comic from the main config file
-    comic_name = list(comics.keys())[comic_number]
-    retired_comic: dict = comics.pop(comic_name)
+    retired_comic: BaseComic = comics.pop(comic_name)
 
-    logger.info("Changing positions of the next comics...")
-    for cmc in comics:
-        pos = comics[cmc]["position"]
-        comics[cmc]["position"] = pos - 1 if pos > comic_number else pos
-
-    save_json(comics, DETAILS_PATH)
+    cmcs = {cmc: comic.to_dict() for cmc, comic in comics.items()}
+    save_json(cmcs, DETAILS_PATH)
 
     retired_comics = open_json_if_exist(abs_path)  # Moves the comic
-    retired_comics.update({comic_name: retired_comic})
+    retired_comics.update({comic_name: retired_comic.to_dict()})
     save_json(retired_comics, abs_path)
     logger.info("Deletion successful in the details file!")
 
@@ -467,7 +466,8 @@ def delete(comics: dict, comic: str):
     ).execute()
     if not update_database:
         logger.info("The database has not been modified.")
-    remove_comic_from_database(comic_number)
+        return
+    remove_comic_from_database(comic.id)
 
 
 def open_json_if_exist(absolute_path: str) -> dict:
@@ -490,51 +490,20 @@ def remove_comic_from_database(comic_number: int):
     :param comic_number: The comic number to remove
     """
     logger.info("Updating database....")
-    data = open_json_if_exist(DATABASE_FILE_PATH)
-    comic_number_remove = comic_number  # the comic number to remove
-    save_backup(data, logger)
-    # Removes a comic permanently
-    for gid in data:
-        guild = data[gid]
-        for channel in guild["channels"]:
-            channel_data = guild["channels"][channel]
+    save_backup(logger)
 
-            if "latest" in channel_data:
-                data[gid]["channels"][channel]["latest"] = remove_from_array(
-                    channel_data["latest"], comic_number_remove
-                )
+    async def update_db():
+        await dbinit()
+        subs = await DiscordSubscription.filter(comic_id=comic_number).delete()
+        print(f"{subs} subscription(s) deleted.")
+        await clean_database()
 
-            if "date" in channel_data:
-                for date in channel_data["date"]:
-                    date_data = channel_data["date"][date]
-                    for hour in date_data:
-                        hour_data: list = date_data[hour]
-                        data[gid]["channels"][channel]["date"][date][hour] = (
-                            remove_from_array(hour_data, comic_number_remove)
-                        )
-
-    save_json(data)
+    loop = asyncio.new_event_loop()
+    try:
+        loop.run_until_complete(update_db())
+    finally:
+        loop.close()
     logger.info("Database update done!")
-
-
-def remove_from_array(array, comic_number_remove) -> list[str]:
-    """Remove the comic number from the array and shift all other numbers
-
-    :param array:
-    :param comic_number_remove:
-    :return:
-    """
-    new_arr = []
-    if comic_number_remove in array:
-        array.remove(comic_number_remove)
-
-    for cmc_nb in array:
-        if cmc_nb > comic_number_remove:
-            new_arr.append(cmc_nb - 1)
-        else:
-            new_arr.append(cmc_nb)
-
-    return new_arr
 
 
 def modify(comics: dict, comic: str):

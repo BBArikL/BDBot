@@ -3,31 +3,30 @@ from __future__ import annotations
 import functools
 import logging
 import os
+import random
 from datetime import datetime
 from typing import Any, Callable, Optional, Union
 
 import discord
+from discord import Client
 from discord import Embed as DiscordEmbed
 from discord import app_commands
 from discord.ext import commands
 
 from bdbot.actions import Action, ExtendedAction
+from bdbot.cache import link_cache
 from bdbot.comics.base import BaseComic, WorkingType
 from bdbot.comics.comic_detail import ComicDetail
 from bdbot.comics.custom import GarfieldMinusGarfield
+from bdbot.db import ChannelSubscription, DiscordSubscription, ServerSubscription
 from bdbot.discord_.multi_page_view import MultiPageView
 from bdbot.discord_.response_sender import NextSend, ResponseSender
 from bdbot.embed import Embed
-from bdbot.files import (
-    DATABASE_FILE_PATH,
-    DETAILS_PATH,
-    load_json,
-    save_backup,
-    save_json,
-)
+from bdbot.exceptions import ComicNotFound
 from bdbot.mention import MentionPolicy
-from bdbot.time import Month, Weekday, date_to_db, get_now
-from bdbot.utils import parse_all
+from bdbot.subscription_type import SubscriptionType
+from bdbot.time import Month, Weekday, get_now
+from bdbot.utils import all_comics, parse_all
 
 SERVER: Optional[discord.Object] = None
 OWNER: Optional[int] = None
@@ -59,7 +58,7 @@ async def send_comic_info(
 ):
     await send_embed(
         inter,
-        [comic.get_comic_info(get_sub_status(inter, comic.position))],
+        [comic.get_comic_info(await get_sub_status(inter, comic.id))],
         next_send=next_send,
     )
 
@@ -68,7 +67,7 @@ async def comic_send(
     inter: discord.Interaction,
     comic: BaseComic,
     action: Union[Action, ExtendedAction],
-    comic_date: Optional[Union[datetime, int]] = None,
+    comic_date: datetime | int | None = None,
     next_send: NextSend = NextSend.Normal,
 ):
     """Post the strip (with the given parameters)
@@ -85,7 +84,7 @@ async def comic_send(
         await inter.response.defer()
 
     # Use comic_date!!!
-    details: ComicDetail = await comic.get_comic(action)
+    details: ComicDetail = await comic.get_comic(action, comic_date=comic_date)
 
     # Sends the comic
     await send_embed(
@@ -95,7 +94,7 @@ async def comic_send(
     )
 
 
-def parameters_interpreter(
+async def parameters_interpreter(
     inter: discord.Interaction,
     comic: BaseComic,
     action: Action = None,
@@ -143,7 +142,7 @@ def parameters_interpreter(
             return comic_send, {"inter": inter, "comic": comic, "action": action}
         case Action.Add | Action.Remove:
             # Add or remove a comic to the daily list for a guild
-            status = new_change(inter, comic, action, date=date, hour=hour)
+            status = await new_change(inter, comic, action, date=date, hour=hour)
             # await send_message(inter, status)
             return send_message, {"inter": inter, "message": status}
         case Action.Specific_date:
@@ -224,7 +223,7 @@ def extract_date_comic(
             "message": "This is not a valid date format! Please input a day, a month and a year!",
         }
 
-    if first_date <= comic_date <= get_now():
+    if first_date <= comic_date <= datetime.today():
         return comic_send, {
             "inter": inter,
             "comic": comic,
@@ -242,7 +241,7 @@ def extract_date_comic(
     }
 
 
-def add_all(
+async def add_all(
     inter: discord.Interaction,
     date: Optional[Weekday] = None,
     hour: Optional[int] = None,
@@ -256,12 +255,12 @@ def add_all(
     """
     final_date, final_hour = parse_all(date, hour)
 
-    return modify_database(
+    return await modify_database(
         inter, ExtendedAction.Add_all, day=final_date, hour=final_hour
     )
 
 
-def new_change(
+async def new_change(
     inter: discord.Interaction,
     comic: BaseComic,
     param: Action,
@@ -279,48 +278,18 @@ def new_change(
     """
     if not inter.user.guild_permissions.manage_guild:
         return "You need `manage_guild` permission to do that!"
-
     final_date, final_hour = parse_all(date, hour)
-
-    comic_number = int(comic.position)
-
-    return modify_database(
+    return await modify_database(
         inter,
         param,
         day=final_date,
         hour=final_hour,
-        comic_number=comic_number,
+        comic_number=comic.id,
         comic_name=comic.name,
     )
 
 
-def remove_guild(
-    inter: Union[discord.Interaction, discord.Guild],
-    use: Union[Action, ExtendedAction] = ExtendedAction.Remove_guild,
-):
-    """Removes a guild from the database
-
-    :param inter:
-    :param use:
-    :return:
-    """
-    return modify_database(inter, use)
-
-
-def remove_channel(
-    inter: Union[discord.Interaction, discord.abc.GuildChannel],
-    use: Union[Action, ExtendedAction] = ExtendedAction.Remove_channel,
-):
-    """Removes a channel from the database
-
-    :param inter:
-    :param use:
-    :return:
-    """
-    return modify_database(inter, use)
-
-
-def modify_database(
+async def modify_database(
     inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild],
     action: Union[Action, ExtendedAction],
     day: Weekday = Weekday.Daily,
@@ -331,8 +300,6 @@ def modify_database(
     """
     Saves the new information in the database
 
-    Adds or delete the server_id, the channel id and the comic_strip data
-
     :param inter:
     :param action:
     :param day:
@@ -341,94 +308,95 @@ def modify_database(
     :param comic_name:
     :return:
     """
-    data = load_json(DATABASE_FILE_PATH)
     hour = str(hour)
-
-    if action == Action.Add or action == ExtendedAction.Add_all:
-        return add_comic_in_guild(
-            inter, action, comic_number, data, day, hour, comic_name
+    if action in [Action.Add, ExtendedAction.Add_all, ExtendedAction.Add_random]:
+        return await add_comic_in_guild(
+            inter, action, comic_number, day, hour, comic_name
         )
-    if action == Action.Remove:
-        return remove_comic_in_guild(inter, comic_number, data, day, hour, comic_name)
-    if (
-        action == ExtendedAction.Remove_guild
-        or action == ExtendedAction.Auto_remove_guild
-    ):
-        return remove_guild_in_db(inter, action, data)
-    if (
-        action == ExtendedAction.Remove_channel
-        or action == ExtendedAction.Auto_remove_channel
-    ):
-        return remove_channel_in_db(inter, action, data)
-
+    if action in [Action.Remove, ExtendedAction.Remove_random]:
+        return await remove_comic_in_guild(inter, action, comic_number, day, hour)
+    if action in [ExtendedAction.Remove_guild, ExtendedAction.Auto_remove_guild]:
+        return await remove_guild_in_db(inter, action)
+    if action in [ExtendedAction.Remove_channel, ExtendedAction.Auto_remove_channel]:
+        return await remove_channel_in_db(inter, action)
     return "Database action not understood!"
 
 
-def remove_channel_in_db(
-    inter: discord.Interaction, action: Union[Action, ExtendedAction], data: dict
+async def remove_channel_in_db(
+    inter: discord.Interaction, action: Union[Action, ExtendedAction]
 ) -> str:
     """
 
     :param inter:
     :param action:
-    :param data:
     :return:
     """
     guild_id = str(inter.guild.id)
-    channel_id = ""
+    channel = None
     if action == ExtendedAction.Remove_channel:
-        channel_id = str(inter.channel.id)
+        channel = inter.channel
     elif action == ExtendedAction.Auto_remove_channel:
-        channel_id = str(inter.id)  # it is a channel
+        channel = inter  # it is a channel
     # Remove a guild from the list
-    if guild_id in data:
-        if channel_id in data[guild_id]["channels"]:
-            data[guild_id]["channels"].pop(channel_id)
-        else:
-            return "This channel is not registered for any scheduled comics!"
-    else:
-        return "This server is not registered for any scheduled comics!"
-    # Save the database
-    save_json(data)
+    channel_id = channel.id
+
+    channel_sub = await ChannelSubscription.filter(id=channel_id).get_or_none()
+    if not channel_sub:
+        return "This channel is not registered for any scheduled comics!"
+
+    await DiscordSubscription.filter(channel=channel_sub).delete()
+    await ChannelSubscription.filter(id=channel_id).delete()
+    server = (
+        await ServerSubscription.filter(id=guild_id)
+        .prefetch_related("channels")
+        .get_or_none()
+    )
+
+    if server and len(server.channels) == 0:
+        await server.delete()
+
     return (
         f"All daily comics removed successfully from channel"
-        f" {inter.message.channel.mention if action == ExtendedAction.Remove_channel else ''}!"
+        f" {channel.mention if action == ExtendedAction.Remove_channel else ''}!"
     )
 
 
-def remove_guild_in_db(
-    inter: discord.Interaction, action: Union[Action, ExtendedAction], data: dict
+async def remove_guild_in_db(
+    inter: discord.Interaction, action: Union[Action, ExtendedAction]
 ) -> str:
     """
 
     :param inter:
     :param action:
-    :param data:
     :return:
     """
-    guild_id = ""
+    guild_id = 0
     if action == ExtendedAction.Remove_guild:
-        guild_id = str(inter.guild.id)
+        guild_id = inter.guild.id
     elif action == ExtendedAction.Auto_remove_guild:
-        guild_id = str(inter.id)  # it is a guild
-    # Remove a guild from the list
-    if guild_id in data:
-        data.pop(guild_id)
-    else:
+        guild_id = inter.id  # it is a guild
+
+    server = await ServerSubscription.filter(id=guild_id).get_or_none()
+
+    if not server:
         return "This server is not registered for any scheduled comics!"
-    # Save the database
-    save_json(data)
+
+    for channel in await server.channels:
+        for sub in await channel.subscriptions:
+            await sub.delete()
+        await channel.delete()
+    await server.delete()
+
     return (
         f"All daily comics removed successfully from guild "
         f"{inter.guild.name if action == ExtendedAction.Remove_guild else ''}!"
     )
 
 
-def add_comic_in_guild(
+async def add_comic_in_guild(
     inter: discord.Interaction,
     action: Union[Action, ExtendedAction],
-    comic_number: int,
-    data: dict,
+    comic: int,
     day: Weekday,
     hour: str,
     comic_name: str,
@@ -437,408 +405,247 @@ def add_comic_in_guild(
 
     :param inter:
     :param action:
-    :param comic_number:
-    :param data:
+    :param comic:
     :param day:
     :param hour:
     :param comic_name:
     :return:
     """
-    guild_id = str(inter.guild.id)
-    channel_id = str(inter.channel.id)
-    d = {guild_id: {"server_id": 0, "channels": {}, "mention": True}}
+    guild_id = inter.guild.id
+    channel_id = inter.channel.id
+    subscription_type = SubscriptionType.Normal
 
-    com_list: list[int]
-    if action == ExtendedAction.Add_all:
-        strips = load_json(DETAILS_PATH)
-        com_list = [i for i in range(len(strips))]
-    else:
-        com_list = [comic_number]
+    if action == ExtendedAction.Add_random:
+        subscription_type = SubscriptionType.Random
+        comic = -1
 
-    if guild_id in data:
-        # If this server was already in the database, fill out information
-        d[guild_id] = data[guild_id]
+    comics: dict[str, BaseComic] = all_comics()
+    comics: list[int] = (
+        [comic.id for comic in comics.values()]
+        if action == ExtendedAction.Add_all
+        else [comic]
+    )
+    server = (
+        await ServerSubscription.filter(id=guild_id)
+        .prefetch_related("channels")
+        .get_or_none()
+    )
 
-        # Checks if the channel was already set
-        if channel_id in data[guild_id]["channels"]:
-            d[guild_id]["channels"][channel_id] = data[guild_id]["channels"][channel_id]
-        else:
-            d[guild_id]["channels"].update(
-                {channel_id: {"channel_id": int(channel_id), "date": {}}}
-            )
+    if not server:
+        server = ServerSubscription(
+            id=guild_id,
+            mention_policy=MentionPolicy.All,
+            role_id=None,
+        )
+        await server.save()
 
-        if day != Weekday.Latest:
-            # Checks if the day, the hour and the comic was already set for the channel
-            day = date_to_db(day)
+    channel = (
+        await ChannelSubscription.filter(id=channel_id)
+        .prefetch_related("subscriptions")
+        .get_or_none()
+    )
 
-            if "date" not in d[guild_id]["channels"][channel_id]:
-                d[guild_id]["channels"][channel_id].update({"date": {}})
+    if not channel:
+        channel = ChannelSubscription(
+            id=channel_id,
+            server_id=guild_id,
+        )
+        await channel.save()
 
-            if day not in d[guild_id]["channels"][channel_id]["date"]:
-                d[guild_id]["channels"][channel_id]["date"].update(
-                    {day: {hour: com_list}}
-                )
-
-            elif hour not in d[guild_id]["channels"][channel_id]["date"][day]:
-                d[guild_id]["channels"][channel_id]["date"][day].update(
-                    {hour: com_list}
-                )
-
-            elif (
-                comic_number
-                not in d[guild_id]["channels"][channel_id]["date"][day][hour]
-                and len(com_list) == 1
-            ):
-                d[guild_id]["channels"][channel_id]["date"][day][hour].extend(com_list)
-
-            elif len(com_list) > 1:  # Add all comics command
-                d[guild_id]["channels"][channel_id]["date"][day][hour] = com_list
-
-            else:
-                return "This comic is already set at this time!"
-        else:
-            # Add a comic to be only latest
-            if "latest" not in d[guild_id]["channels"][channel_id]:
-                d[guild_id]["channels"][channel_id].update({"latest": com_list})
-            elif (
-                comic_number not in d[guild_id]["channels"][channel_id]["latest"]
-                and len(com_list) == 1
-            ):
-                d[guild_id]["channels"][channel_id]["latest"].extend(com_list)
-            elif len(com_list) > 1:
-                d[guild_id]["channels"][channel_id]["latest"] = com_list
-            else:
-                return "This comic is already set at this time!"
-
-    else:
-        d = add_guild_in_db(channel_id, com_list, d, day, guild_id, hour)
-
-    # Update the main database
-    data.update(d)
-
-    # Save the database
-    save_json(data)
+    for comic in comics:
+        if await DiscordSubscription.filter(
+            comic_id=comic,
+            channel=channel,
+            subscription_type=SubscriptionType.Normal,
+            weekday=day,
+            hour=hour,
+        ).exists():
+            continue
+        subscription = DiscordSubscription(
+            comic_id=comic,
+            subscription_type=subscription_type,
+            weekday=day,
+            hour=hour,
+            channel_id=channel.id,
+        )
+        await subscription.save()
 
     if action == ExtendedAction.Add_all:
         return "All comics added successfully!"
-    else:
-        return f"{comic_name} added successfully as a daily comic!"
+    if action == ExtendedAction.Add_random:
+        return "Random comic added successfully!"
+    return f"{comic_name} added successfully!"
 
 
-def add_guild_in_db(channel_id, com_list, d, day, guild_id, hour):
-    # If there was no comic data stored for this guild
-    # Add a comic to the list of comics
-    d[guild_id]["server_id"] = int(guild_id)
-    if day != Weekday.Latest:
-        d[guild_id]["channels"].update(
-            {
-                channel_id: {
-                    "channel_id": int(channel_id),
-                    "date": {date_to_db(day): {hour: com_list}},
-                }
-            }
-        )
-    else:
-        d[guild_id]["channels"].update(
-            {channel_id: {"channel_id": int(channel_id), "latest": com_list}}
-        )
-    return d
-
-
-def remove_comic_in_guild(
+async def remove_comic_in_guild(
     inter: discord.Interaction,
-    comic_number: int,
-    data: dict,
+    action: Union[Action, ExtendedAction],
+    comic: int,
     day: Weekday,
     hour: str,
-    comic_name: str,
 ) -> str:
     """
 
     :param inter:
-    :param comic_number:
-    :param data:
+    :param action:
+    :param comic:
     :param day:
     :param hour:
-    :param comic_name:
     :return:
     """
-    guild_id = str(inter.guild.id)
-    channel_id = str(inter.channel.id)
-    # Remove comic
-    if guild_id in data and channel_id in data[guild_id]["channels"]:
-        if day != Weekday.Latest:
-            # Verifies that the day and time was set
-            day = date_to_db(day)
-            if (
-                day in data[guild_id]["channels"][channel_id]["date"]
-                and hour in data[guild_id]["channels"][channel_id]["date"][day]
-            ):
-                # fmt: off
-                comic_list: list[int] = data[guild_id]["channels"][channel_id]["date"][day][hour]
-                # fmt: on
+    guild_id = inter.guild.id
+    channel_id = inter.channel.id
 
-                # Verifies if the comic is in the list
-                if comic_number in comic_list:
-                    comic_list.remove(comic_number)
-                    # fmt: off
-                    data[guild_id]["channels"][channel_id]["date"][day][hour] = comic_list
-                    # fmt: on
+    subscription_type = SubscriptionType.Normal
+    if action == ExtendedAction.Remove_random:
+        subscription_type = SubscriptionType.Random
+        comic = -1
 
-                else:
-                    return "This comic is not registered for scheduled posts!"
-            else:
-                return "This comic is not registered for scheduled posts!"
-        else:
-            comic_list: list[int] = data[guild_id]["channels"][channel_id]["latest"]
-            if comic_number in comic_list:
-                comic_list.remove(comic_number)
-                data[guild_id]["channels"][channel_id]["latest"] = comic_list
-            else:
-                return "This comic is not registered for scheduled posts!"
-    else:
-        return "This server or channel is not registered for scheduled comics!"
+    server = (
+        await ServerSubscription.filter(id=guild_id)
+        .prefetch_related("channels")
+        .get_or_none()
+    )
 
-    # Save the database
-    save_json(data)
-    return f"{comic_name} removed successfully from the daily list!"
+    if not server:
+        return "This server is not registered for any scheduled comics!"
+
+    channel = (
+        await ChannelSubscription.filter(id=channel_id)
+        .prefetch_related("subscriptions")
+        .get_or_none()
+    )
+
+    if not channel:
+        return "This channel is not registered for any scheduled comics!"
+
+    query = DiscordSubscription.filter(
+        comic_id=comic,
+        channel=channel,
+        subscription_type=subscription_type,
+        weekday=day,
+        hour=hour,
+    )
+    if not await query.exists():
+        return "This comic is not registered for a scheduled comic at that time!"
+
+    await query.delete()
+
+    if await channel.subscriptions.all().count() == 0:
+        await channel.delete()
+
+    if await server.channels.all().count() == 0:
+        await server.delete()
+
+    return "The comic was removed successfully!"
 
 
-def set_role(inter: discord.Interaction, role: discord.Role) -> str:
+async def set_role(inter: discord.Interaction, role: discord.Role) -> str:
     """Set a role in a guild
 
     :param inter:
     :param role:
     :return:
     """
-    gid = str(inter.guild.id)
-    role_str = "role"
-    mention = "mention"
-    data = load_json(DATABASE_FILE_PATH)
-
-    if gid in data:
-        if not data[gid][mention]:
-            return "Please re-enable the mention before daily post by using `bd!post_mention enable`!"
-
-        if role not in data[gid]:
-            data[gid].update({role_str: role.id, "only_daily": False})
-        else:
-            data[gid][role_str] = role.id
-
-        save_json(data)
-
-        return (
-            "Role successfully added to be notified! "
-            "This role will get mentioned at each comic post. "
-            "If you wish to be notified only for daily comics happening at 6 AM "
-            "UTC, use `/set_mention daily`."
-        )
-    else:
-        return "This server is not subscribed to any comic! Please subscribe to a comic before entering a role to add."
+    server = (
+        await ServerSubscription.filter(id=inter.guild.id)
+        .prefetch_related("channels")
+        .get_or_none()
+    )
+    if not server:
+        return "This server is not registered for any scheduled comic!"
+    if server.role_id is None:
+        server.mention_policy = MentionPolicy.All
+    server.role_id = role.id
+    await server.save()
+    return (
+        "Role successfully added to be notified! "
+        "This role will get mentioned at each comic post. "
+        "If you wish to be notified only for daily comics happening at 6 AM "
+        "UTC, use `/set_mention daily`."
+    )
 
 
-def set_mention(inter: discord.Interaction, mention_policy: MentionPolicy) -> str:
+async def set_mention(inter: discord.Interaction, mention_policy: MentionPolicy) -> str:
     """
 
     :param inter:
     :param mention_policy:
     :return:
     """
-    gid = str(inter.guild.id)
-    only_daily = "only_daily"
-    mention = "mention"
-    data = load_json(DATABASE_FILE_PATH)
-
-    if gid in data:
-        if not data[gid][mention]:
-            return (
-                "The base mention is disabled in this server! "
-                "Re-enable the mention before daily post by using `bd!post_mention enable`."
-            )
-
-        if only_daily in data[gid]:
-            data[gid][only_daily] = mention_policy == MentionPolicy.Daily
-
-            save_json(data)
-
-            return "Successfully changed the mention policy for this server!"
-        else:
-            return (
-                "This server has no role set up! Please use `bd!set_up <role>` to add a role before deciding if "
-                "you want to be notified of all comic or only the daily ones."
-            )
-    else:
-        return (
-            "This server is not subscribed to any comic! Please subscribe to a comic before deciding"
-            " when you want to be mentioned!"
-        )
+    server = (
+        await ServerSubscription.filter(id=inter.guild.id)
+        .prefetch_related("channels")
+        .get_or_none()
+    )
+    if not server:
+        return "This server is not registered for any scheduled comic!"
+    server.mention_policy = mention_policy
+    await server.save()
+    return "Mention set successfully!"
 
 
-def get_mention(inter: discord.Interaction, bot: commands.Bot) -> (str, str):
+async def get_mention(inter: discord.Interaction, bot: commands.Bot) -> str:
     """
 
     :param inter:
     :param bot:
     :return:
     """
-    gid = str(inter.guild.id)
-    only_daily = "only_daily"
-    mention = "mention"
-    data = load_json(DATABASE_FILE_PATH)
-
-    if gid in data:
-        if not data[gid][mention]:
-            return (
-                "The base mention is disabled in this server! "
-                "Re-enable the mention before hourly post by using `bd!post_mention enable`.",
-                "",
-            )
-        role: discord.Role = discord.Guild.get_role(
-            bot.get_guild(data[gid]["server_id"]), int(data[gid].get("Role", 0))
-        )
-        role_mention: str
-        if role is not None:
-            role_mention = role.name
-        else:
-            role_mention = data[gid].get("Role", 0)
-
-        if only_daily in data[gid]:
-            men = f"{role_mention} only for daily comics posts"
-            if not data[gid][only_daily]:
-                men = f"{role_mention} for all comic posts"
-
-            return f"The bot will mention the role {men}!"
-        else:
-            return (
-                "This server has no role set up! Please use `bd!set_role @<role>` to add a role "
-                "before deciding if you want to be notified of all comic or only the daily ones.",
-                "",
-            )
-    else:
-        return (
-            "This server is not subscribed to any comic! Please subscribe to a comic before "
-            "deciding when you want to be mentioned!",
-            "",
-        )
+    server = (
+        await ServerSubscription.filter(id=inter.guild.id)
+        .prefetch_related("channels")
+        .get_or_none()
+    )
+    if not server:
+        return "This server is not registered for any scheduled comic!"
+    mention = ""
+    match server.mention_policy:
+        case MentionPolicy.All:
+            mention = "each comic post"
+        case MentionPolicy.Daily:
+            mention = "daily"
+        case MentionPolicy.Deactivated:
+            return "Mentions are deactivated!"
+    if server.role_id is not None:
+        role = bot.get_guild(inter.guild.id).get_role(server.role_id)
+        return f"The bot will mention the role {role.mention} {mention}!"
+    return f"The server will mention for comics {mention}!"
 
 
-def remove_role(inter):
+async def remove_role(inter):
     """
 
     :param inter:
     :return:
     """
-    gid = str(inter.guild.id)
-    role = "role"
-    only_daily = "only_daily"
-    data = load_json(DATABASE_FILE_PATH)
-
-    if gid in data:
-        if role in data[gid]:
-            data[gid].pop(role)
-            data[gid].pop(only_daily)
-
-            save_json(data)
-
-            return "Role mention successfully removed!"
-        else:
-            return "This server is not set to mention any role!"
-    else:
-        return (
-            "This server is not subscribed to any comic! Please subscribe to a comic before managing the role "
-            "mentions!"
-        )
+    server = (
+        await ServerSubscription.filter(id=inter.guild.id)
+        .prefetch_related("channels")
+        .get_or_none()
+    )
+    if not server:
+        return "This server is not registered for any scheduled comic!"
+    server.role_id = None
+    await server.save()
+    return "Role mention successfully removed!"
 
 
-def set_post_mention(inter: discord.Interaction, choice: bool):
-    """Change if the bot says a phrase before posting daily comics
-
-    :param inter:
-    :param choice:
-    :return:
-    """
-    gid = str(inter.guild.id)
-    mention = "mention"
-    role = "role"
-    data = load_json(DATABASE_FILE_PATH)
-
-    if gid in data:
-        if role not in data[gid]:
-            data[gid][mention] = choice
-        else:
-            return (
-                "A role is already set up to be mentioned daily! Remove the role before changing the post mention"
-                " by using `bd!remove_role`."
-            )
-
-        save_json(data)
-
-        return "Successfully changed the mention policy for this server! "
-    else:
-        return "This server is not registered for any comics!"
-
-
-def get_specific_guild_data(inter: discord.Interaction) -> Optional[dict]:
-    """Returns a specific guild's data"""
-    database = load_json(DATABASE_FILE_PATH)
-    guild_id = str(inter.guild.id)
-
-    if guild_id in database:
-        return database[guild_id]
-    else:
-        return None
-
-
-def get_sub_status(inter, position: int, database: Optional[dict] = None):
+async def get_sub_status(inter, comic_id: int):
     """Check if the comic is subscribed to this guild
 
     :param inter:
-    :param position:
-    :param database:
+    :param comic_id:
     :return:
     """
-    if database is None:  # Gets database if needed
-        database = load_json(DATABASE_FILE_PATH)
-
-    guild_id = str(inter.guild.id)
-
-    if guild_id in database:
-        guild_data = database[guild_id]
-        for channel in guild_data["channels"]:
-            if "latest" in guild_data["channels"][channel]:
-                if position in guild_data["channels"][channel]["latest"]:
-                    return True
-
-            for day in guild_data["channels"][channel]["date"]:
-                for hour in guild_data["channels"][channel]["date"][day]:
-                    if position in guild_data["channels"][channel]["date"][day][hour]:
-                        return True
+    query = ServerSubscription.filter(id=inter.guild.id)
+    if not await query.exists():
         return False
-    else:
-        return False
-
-
-def add_comic_to_list(
-    comic_values: list[dict],
-    comic: int,
-    bot: commands.Bot,
-    channel: str,
-    comic_list: list[dict],
-    hour: str = "",
-    day: str = "La",
-) -> list[dict]:
-    comic_name = comic_values[comic]["name"]
-
-    # Check if channel exist
-    chan = bot.get_channel(int(channel))
-    if chan is not None:
-        chan = chan.mention
-    else:
-        chan = channel
-
-    comic_list.append({"name": comic_name, "Hour": hour, "Date": day, "Channel": chan})
-
-    return comic_list
+    server: ServerSubscription = await query.get()
+    for channel in await server.channels:
+        if await DiscordSubscription(comic_id=comic_id, channel=channel).exists():
+            return True
+    return False
 
 
 async def send_request_error(inter: discord.Interaction):
@@ -876,14 +683,200 @@ async def send_embed(
     )
 
 
-async def send_chan_embed(channel: discord.TextChannel, embed: discord.Embed):
+async def check_comics_and_post(
+    bot: discord.Client,
+    subscriptions: list[DiscordSubscription],
+    called_channel: Optional[discord.TextChannel] = None,
+    post_time: datetime = None,
+):
+    """Load comics and check if they are the latest ones.
+    Finally, post the comic to the channels.
+
+    :param bot:
+    :param subscriptions: The subscriptions
+    :param called_channel: The channel of where the command was sent from (Should be None for the hourly poster
+    and filled when called manually)
+    :param post_time: The post time
+    """
+    if post_time is None:
+        post_time = get_now()
+    available_channels = {}
+    not_available_channels = []
+    mentioned_channels = []
+    nb_of_comics_posted = 0
+    # Check if any guild want the comic
+    for comic_name, comic in all_comics().items():
+        subs = list(filter(lambda s: s.comic_id == comic.id, subscriptions))
+        if len(subs) == 0:
+            continue
+        # Get the details of the comic
+        embed: Embed | None
+        is_latest: bool
+        try:
+            details = await comic.get_comic(Action.Today, verify_latest=True)
+            embed = details.to_embed()
+            is_latest = details.is_latest
+            if called_channel is None:
+                # Only updates the link cache if it is done during the hourly loop
+                link_cache[comic_name] = details.image_url
+        except (Exception, ComicNotFound) as e:
+            # Anything can happen (connection problem, etc... and the bot will crash if any error
+            # is raised in the poster loop)
+            logger.error(f"An error occurred while getting a comic: {e}")
+            embed = ComicDetail.comic_not_found()
+            is_latest = False
+
+        for sub in subs:
+            # Finally, sends the comic
+            nb_of_comics_posted += await load_channel_and_send(
+                bot,
+                sub,
+                embed,
+                is_latest,
+                available_channels,
+                not_available_channels,
+                mentioned_channels,
+                called_channel,
+                post_time,
+            )
+    random_subs = list(
+        filter(lambda s: s.subscription_type == SubscriptionType.Random, subscriptions)
+    )
+    for sub in random_subs:
+        # Get the details of the comic
+        embed: Embed | None
+        is_latest: bool
+        try:
+            embed = (
+                await random.choice(list(all_comics().values()))
+                .get_comic(Action.Today)
+                .to_embed()
+            )
+        except Exception as e:
+            # Anything can happen (connection problem, etc... and the bot will crash if any error
+            # is raised in the poster loop)
+            logger.error(f"An error occurred while getting a comic: {e}")
+            embed = ComicDetail.comic_not_found()
+        nb_of_comics_posted += await load_channel_and_send(
+            bot,
+            sub,
+            embed,
+            False,
+            available_channels,
+            not_available_channels,
+            mentioned_channels,
+            called_channel,
+            post_time,
+        )
+
+    if called_channel is None:
+        # Only logs the hourly loop at the end
+        logger.info(
+            f"The hourly loop sent {nb_of_comics_posted} comic(s) the "
+            f"{get_now().strftime('%dth of %B %Y at %Hh')}"
+        )
+    if called_channel is not None and nb_of_comics_posted == 0:
+        # If it was called manually ('post' command), and there is no comics to post anywhere in the guild,
+        # it will warn in the channel that no comics needed to be sent, and it will conclude
+        await called_channel.send("No comics to send!")
+
+
+async def load_channel_and_send(
+    bot: discord.Client,
+    subscription: DiscordSubscription,
+    embed: Embed,
+    is_latest: bool,
+    available_channels: dict,
+    not_available_channels: list[int],
+    mentionned_channels: list[int],
+    called_channel: Optional[discord.TextChannel] = None,
+    post_time: datetime = None,
+) -> int:
+    """Sends the loaded comic to the specified channel
+
+
+    :param bot:
+    :param subscription:
+    :param embed: The embed with the comic
+    :param is_latest: If the comic is the latest one
+    :param available_channels: The dictionary of available channels
+    :param not_available_channels: The dictionary of not-available channels
+    :param mentionned_channels:
+    :param called_channel: The channel of the where the command was called (None in the hourly loop,
+    filled when called through /post).
+    :param post_time: The post time
+
+    :returns: 1 if it posted a comic, 0 if it could/did not
+    """
+    # Check if the comic is the latest and if it even cares about the latest comic
+    if subscription.weekday == Weekday.Latest and not is_latest:
+        return 0
+
+    # Then, gets the channel object by its ID
+    channel = await subscription.channel
+    channel_id = channel.id
+
+    if channel_id in available_channels:
+        # Use the cached channel object
+        channel = available_channels.get(channel_id)
+    else:
+        # Retrieves the channel object by the discord client
+        channel = bot.get_channel(channel_id)
+        # And save it for future use (so it can be looked up later)
+        available_channels.update({channel_id: channel})
+
+    if (
+        channel is None
+        or channel_id in not_available_channels
+        or not channel.permissions_for(
+            channel.guild.get_member(bot.user.id)
+        ).send_messages
+    ):
+        # Remembers that the channel is not available
+        not_available_channels.append(channel_id)
+        if called_channel is None:
+            # Logs that a channel is not available but still signed up for a comic
+            logger.warning(
+                f"A comic could not be posted to a channel. Channel id: {channel_id}"
+            )
+            return 0
+        # If it can, send a message to the channel if an error occurred
+        if channel is None:
+            channel = await subscription.channel
+            channel = channel.id
+        else:
+            channel = channel.mention
+        await called_channel.send(f"Could not send message to channel {channel}")
+        return 0
+    # Makes sure that the channel is available (e.g. channel object is not None and the bot
+    # can send messages)
+    try:
+        if channel.id not in mentionned_channels:
+            await send_mention(bot, channel, subscription, post_time)
+            mentionned_channels.append(channel.id)
+        # Sends the comic embed (most important)
+        await channel.send(embed=convert_embed(embed))
+        return 1
+    except Exception as e:
+        # There is too many things that can go wrong here, just catch everything
+        error_msg = (
+            f"An error occurred in the hourly poster: {e.__class__.__name__}: {e}"
+        )
+        logger.error(error_msg)
+
+        if called_channel is not None:
+            # Send the error message to the channel too
+            await called_channel.send(error_msg)
+    # If it encountered an issue or there is no comic to send, return 0
+    return 0
+
+
+async def send_chan_embed(channel: discord.TextChannel, embed: Embed):
     """Send an embed in a channel
 
     :param channel: The channel object
     :param embed: The embed to send
     """
-
-    await channel.send(embed=embed)
 
 
 def get_possible_hours():
@@ -951,79 +944,44 @@ async def send_message(
     await resp.send_message(content=message, embed=embed, **kwargs)
 
 
-def clean_database(
+async def clean_database(
     bot: discord.Client = None,
-    data: dict = None,
-    do_backup: bool = True,
     strict: bool = False,
     logger_: logging.Logger = None,
 ) -> int:
     """Clean the database from inactive servers
 
     :param bot:
-    :param data:
-    :param do_backup:
     :param strict: Strict clean (Bypass role requirement)
     :param logger_:
     :return:
     """
-    logger_.info("Running database clean...")
-    # Cleans the database from inactive servers
-    if data is None:
-        data = load_json(DATABASE_FILE_PATH)
+    if logger_:
+        logger_.info("Running database clean...")
 
-    if do_backup:
-        save_backup(data, logger_)
-
-    guilds_to_clean = []
     nb_removed = 0
 
-    for guild in data:
+    servers = await ServerSubscription.all()
+
+    for guild in servers:
         # To take in account or not if a server still has a role tied to their info
         to_remove = False
 
-        if bot is not None and bot.get_guild(guild) is None:
+        if bot is not None and bot.get_guild(guild.id) is None:
             # If it cannot find the server, bypass all others checks
             to_remove = True
 
-        if ("role" not in data[guild] or strict) and not to_remove:
+        if (guild.role_id is None or strict) and not to_remove:
             # The server is available so lets check for other info that might indicate that the server is inactive
-            to_remove = True
-            channels = data[guild]["channels"]
-            for chan in channels:
-                # Check if the channel has any latest comics scheduled
-                if "latest" in channels[chan]:
-                    if len(channels[chan]["latest"]) != 0:
-                        to_remove = False
-                        break
+            for chan in await guild.channels:
+                if await chan.subscriptions.all().count() <= 0:
+                    await chan.delete()
 
-                # Check if the channel has any comics scheduled at a fixed hour
-                if "date" in channels[chan]:
-                    dates = channels[chan]["date"]
-                    for date in dates:
-                        hours = dates[date]
-                        for hour in hours:
-                            if len(hours[hour]) > 0:
-                                to_remove = False
-                                break
-                        if not to_remove:
-                            break
-                    if not to_remove:
-                        break
-
-        if to_remove:
-            guilds_to_clean.append(guild)
+        if await guild.channels.all().count() <= 0:
+            await guild.delete()
             nb_removed += 1
-
-    # Removes the servers that need to be removed
-    for guild in guilds_to_clean:
-        if guild in data:
-            data.pop(guild)
-
-    if nb_removed > 0:
-        save_json(data)
-
-    logger_.info(f"Cleaned the database from {nb_removed} servers")
+    if logger_:
+        logger_.info(f"Cleaned the database from {nb_removed} servers")
     return nb_removed
 
 
@@ -1032,34 +990,29 @@ async def is_owner(inter: discord.Interaction):
 
 
 async def send_mention(
-    chan: discord.TextChannel,
-    channel: str,
-    comic_list: dict[str, Any],
+    bot: Client,
+    channel: discord.TextChannel,
+    subscription: DiscordSubscription,
     post_time: datetime,
 ):
-    """
+    """Send the first mention to the channel ('Comics for <date>, <hour> UTC @<role>')
 
-    :param chan:
+    :param bot:
     :param channel:
-    :param comic_list:
+    :param subscription:
     :param post_time:
     :return:
     """
-    if (
-        not comic_list[channel]["hasBeenMentioned"]
-        and comic_list[channel]["wantMention"]
+    channel_sub = await subscription.channel
+    server: ServerSubscription = await channel_sub.server
+    if server.mention_policy == MentionPolicy.Deactivated or (
+        server.mention_policy == MentionPolicy.Daily and post_time.hour != 6
     ):
-        # Checks if the channel want the original mention ('Comics for <date>, <hour> UTC @<role>')
-        if comic_list[channel]["role"] is not None:
-            # Checks if there is a role to mention
-            role_mention = comic_list[channel]["role"].mention
-        else:
-            role_mention = ""
-
-        await chan.send(
-            f"Comics for "
-            f"{post_time.strftime('%A %B %dth %Y, %H h UTC')}"
-            f" {role_mention}"
-        )
-        # Sets the channel as already mentioned
-        comic_list[channel]["hasBeenMentioned"] = True
+        return
+    guild = bot.get_guild(server.id)
+    role_mention = guild.get_role(server.role_id) if server.role_id is not None else ""
+    await channel.send(
+        f"Comics for "
+        f"{post_time.strftime('%A %B %dth %Y, %H h UTC')}"
+        f" {role_mention}"
+    )

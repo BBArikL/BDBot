@@ -1,15 +1,12 @@
 import json
-import logging
 import os
 import re
-from datetime import datetime, timedelta, timezone
-from os import path
-from typing import TYPE_CHECKING, Optional
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING, Any, Optional
 
 if TYPE_CHECKING:
-    from bdbot.comics import BaseComic
+    pass
 
-from bdbot.time import get_now
 
 MAX_BACKUP_TRIES = 25
 PROD_DATA_PATH = (
@@ -24,8 +21,9 @@ DATA_PATH = os.path.join(BASE_DATA_PATH, "data")
 DETAILS_PATH = os.path.join(MISC_PATH, "comics_details.json")
 FOOTERS_FILE_PATH = os.path.join(MISC_PATH, "random-footers.txt")
 HELP_EMBED_PATH = os.path.join(MISC_PATH, "help_embeds.json")
-DATABASE_FILE_PATH = os.path.join(DATA_PATH, "data.json")
-BACKUP_FILE_PATH = os.path.join(DATA_PATH, "backups", "BACKUP_DATABASE_")
+DATABASE_FILE_PATH = os.path.join(DATA_PATH, "data.sqlite3")
+BACKUPS_PATH = os.path.join(DATA_PATH, "backups")
+BACKUP_FILE_PATH = os.path.join(BACKUPS_PATH, "BACKUP_DATABASE_")
 LOGS_DIRECTORY_PATH = os.path.join(DATA_PATH, "logs/")
 REQUEST_FILE_PATH = os.path.join(DATA_PATH, "requests.txt")
 COMIC_LATEST_LINKS_PATH = os.path.join(BASE_DATA_PATH, "latest_comics.json")
@@ -43,7 +41,7 @@ def get_footers() -> list[str]:
     return lines
 
 
-def load_json(json_path: str) -> dict[str, "BaseComic"]:
+def load_json(json_path: str) -> dict[str, Any]:
     """
     Load a json.
     DETAILS_PATH -> The comic details.
@@ -59,44 +57,6 @@ def load_json(json_path: str) -> dict[str, "BaseComic"]:
         json_file = json.load(f)
 
     return json_file
-
-
-def save_backup(data, logger: logging.Logger):
-    """
-
-    :param logger:
-    :param data:
-    :return:
-    """
-    logger.info("Running backup...")
-    # Creates a new backup and saves it
-    backup_file_path = BACKUP_FILE_PATH + get_now().strftime("%Y_%m_%d_%H") + ".json"
-
-    with open(backup_file_path, "wt") as f:
-        json.dump(data, f)
-
-    logger.info("Backup successfully done")
-
-
-def restore_backup():
-    """Restore a last used backup"""
-    utc_date = get_now()
-    file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
-    tries = 0
-
-    while not path.exists(file_path) and tries < MAX_BACKUP_TRIES:
-        tries += 1
-        utc_date = utc_date - timedelta(hours=1)
-        file_path = BACKUP_FILE_PATH + utc_date.strftime("%Y_%m_%d_%H") + ".json"
-
-    if tries < MAX_BACKUP_TRIES:
-        with open(file_path, "r") as f:
-            database = json.load(f)
-
-        if database != "":
-            save_json(database)
-    else:
-        raise Exception("No backup was found in the last 24 hours!!")
 
 
 def save_json(json_file: dict, file_path: str = DATABASE_FILE_PATH):

@@ -23,8 +23,12 @@ class Embed:
         self.fields.append(f)
 
     @classmethod
-    def from_dict(cls, obj: dict[str, str | dict[str, str]]) -> "Embed":
+    def from_dict(cls, obj: dict[str, dict[str, str]]) -> "Embed":
         embed = cls(**obj)
-        for f in obj["field"]:
-            embed.add_field(Field(**f))
+        # Need to put in a different list because it will try to loop
+        # over itself infinitely because of shared references
+        fields = []
+        for f in obj["fields"]:
+            fields.append(Field(**f))
+        embed.fields = fields
         return embed

@@ -16,7 +16,7 @@ def get_general_help(general_help: dict[str, str | dict[str, str]]) -> Embed:
     :param general_help: General help information
     :return: The embed filled with the general help information
     """
-    strips = utils.strip_details
+    strips = utils.comic_details
     help_embed: Embed = Embed.from_dict(general_help)
     help_embed.fields.clear()
     for website in [Gocomics, ComicsKingdom, Webtoons]:

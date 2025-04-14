@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class SubscriptionType(Enum):
-    Normal = 1
-    Random = 2
+    Normal = "Normal"
+    Random = "Random"

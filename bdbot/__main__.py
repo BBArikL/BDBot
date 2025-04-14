@@ -5,10 +5,12 @@ import os
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+from tortoise.connection import connections
 
 from bdbot import cache, utils
 from bdbot.cache import create_link_cache, fill_cache
 from bdbot.comics import initialize_comics
+from bdbot.db import dbinit
 from bdbot.discord_ import discord_utils
 from bdbot.files import (
     COMIC_LATEST_LINKS_PATH,
@@ -85,7 +87,7 @@ async def run(bot: commands.Bot, logger: logging.Logger):
         discord_utils.SERVER = None
 
     logger.info("Loading comic details...")
-    utils.strip_details = initialize_comics(load_json(DETAILS_PATH))
+    utils.comic_details = initialize_comics(load_json(DETAILS_PATH))
     logger.info("Loaded comic details!")
 
     logger.info("Loading random footers...")
@@ -96,8 +98,12 @@ async def run(bot: commands.Bot, logger: logging.Logger):
     if not os.path.exists(COMIC_LATEST_LINKS_PATH):
         await create_link_cache(logger)
     utils.link_cache = load_json(COMIC_LATEST_LINKS_PATH)
-    cache.link_cache = fill_cache(utils.strip_details, cache.link_cache)
+    cache.link_cache = fill_cache(utils.comic_details, cache.link_cache)
     logger.info("Loaded comic links!")
+
+    logger.info("Initializing database...")
+    await dbinit()
+    logger.info("Database initialized!")
 
     for filename in os.listdir("discord_/cogs"):
         if filename.endswith("py") and filename != "__init__.py":
@@ -106,8 +112,11 @@ async def run(bot: commands.Bot, logger: logging.Logger):
 
     logger.info("Cogs successfully loaded!")
 
-    async with bot:
-        await bot.start(os.getenv("TOKEN"))
+    try:
+        async with bot:
+            await bot.start(os.getenv("TOKEN"))
+    finally:
+        await connections.close_all()
 
 
 if __name__ == "__main__":
