@@ -83,13 +83,15 @@ async def comic_send(
         # Defers the return, so Discord can wait longer
         await inter.response.defer()
 
-    # Use comic_date!!!
-    details: ComicDetail = await comic.get_comic(action, comic_date=comic_date)
+    try:
+        details = (await comic.get_comic(action, comic_date=comic_date)).to_embed()
+    except ComicNotFound:
+        details = ComicDetail.comic_not_found(comic.name)
 
     # Sends the comic
     await send_embed(
         inter,
-        [details.to_embed()],
+        [details],
         NextSend.Deferred if next_send == NextSend.Normal else next_send,
     )
 
@@ -723,7 +725,7 @@ async def check_comics_and_post(
             # Anything can happen (connection problem, etc... and the bot will crash if any error
             # is raised in the poster loop)
             logger.error(f"An error occurred while getting a comic: {e}")
-            embed = ComicDetail.comic_not_found()
+            embed = ComicDetail.comic_not_found(comic_name)
             is_latest = False
 
         for sub in subs:
@@ -746,17 +748,14 @@ async def check_comics_and_post(
         # Get the details of the comic
         embed: Embed | None
         is_latest: bool
+        comic = await random.choice(list(all_comics().values()))
         try:
-            embed = (
-                await random.choice(list(all_comics().values()))
-                .get_comic(Action.Today)
-                .to_embed()
-            )
+            embed = comic.get_comic(Action.Today).to_embed()
         except Exception as e:
             # Anything can happen (connection problem, etc... and the bot will crash if any error
             # is raised in the poster loop)
             logger.error(f"An error occurred while getting a comic: {e}")
-            embed = ComicDetail.comic_not_found()
+            embed = ComicDetail.comic_not_found(comic.name)
         nb_of_comics_posted += await load_channel_and_send(
             bot,
             sub,

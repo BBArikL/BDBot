@@ -61,13 +61,14 @@ class ComicDetail:
         return embed
 
     @classmethod
-    def comic_not_found(cls) -> Embed:
-        embed = Embed(title="No comic found!")
+    def comic_not_found(cls, comic_name: str | None = None) -> Embed:
+        title_comic_name = f"for '{comic_name}'" if comic_name else ""
+        embed = Embed(title=f"No comic found {title_comic_name}!")
 
         embed.add_field(
             Field(
-                name="We could not find a comic at this date / number :thinking:....",
-                value="Try another date / number!",
+                name="We could not find a comic at this time :thinking:....",
+                value="Try another time!",
             )
         )
         return embed

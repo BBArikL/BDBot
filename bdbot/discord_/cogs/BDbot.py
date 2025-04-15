@@ -19,6 +19,7 @@ from bdbot.discord_.bot_request import BotRequest
 from bdbot.discord_.cogs.AutomaticPoster import PosterHandler
 from bdbot.discord_.cogs.Comics import Comic
 from bdbot.discord_.discord_utils import SERVER, NextSend, is_owner, send_message
+from bdbot.discord_.exceptions import on_error
 from bdbot.embed import Embed
 from bdbot.field import Field
 from bdbot.files import DETAILS_PATH, REQUEST_FILE_PATH, load_json
@@ -37,7 +38,7 @@ class BDBot(commands.Cog):
         self.bot: commands.Bot = bot
         self.topggpy = None
         self.start_time: datetime = get_now()
-        # self.bot.tree.error(on_error)
+        self.bot.tree.error(on_error)
 
     @commands.Cog.listener()
     async def on_ready(self):

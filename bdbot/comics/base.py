@@ -1,3 +1,4 @@
+import asyncio
 import enum
 import xml
 from abc import ABC, abstractmethod
@@ -141,6 +142,8 @@ class BaseComic(ABC):
         d.pop("WEBSITE_HELP")
         d.pop("WORKING_TYPE")
         d.pop("_BASE_PARSER")
+        d.pop("IMAGE_CLASS_REGEX", None)
+        d.pop("SECTION_IMAGE_CLASS", None)
         d["first_date"] = self.first_date_format
         d["color"] = hex(self.color).upper()[2:]
         return d
@@ -167,7 +170,17 @@ class BaseComic(ABC):
     @staticmethod
     async def read_url_content(url: str) -> str:
         content: str
-        async with aiohttp.ClientSession() as session:
+        headers = {
+            # If I feel bad, I would maybe change that to "bdbot"
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)"
+            " Chrome/135.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate",
+            "Cache-Control": "no-cache",
+        }
+        await asyncio.sleep(0.5)
+        async with aiohttp.ClientSession(headers=headers) as session:
             async with session.get(url) as response:
                 content = await response.text()
         return content
@@ -261,7 +274,10 @@ class BaseDateComic(BaseComic):
                 comic_date = comic_date - timedelta(days=1)
                 if i >= self._MAX_TRIES:
                     # If it hasn't found anything
-                    raise ComicNotFound("Could not find comic!")
+                    raise ComicNotFound(
+                        f"Could not find any comic for '{self.name}' around the requested date!",
+                        self.name,
+                    )
                 continue
 
             # Extracts the title of the comic
@@ -338,7 +354,9 @@ class BaseRSSComic(BaseComic, ABC):
         try:
             rss: RSS = RSSParser.parse(content)
         except xml.parsers.expat.ExpatError:
-            raise ComicNotFound(f"The rss feed for comic '{self.name}' was invalid!")
+            raise ComicNotFound(
+                f"The rss feed for comic '{self.name}' was invalid!", self.name
+            )
         feed = rss.channel.content.items[date].content
 
         new_date = datetime.strptime(

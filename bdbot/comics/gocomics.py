@@ -14,8 +14,9 @@ class Gocomics(BaseDateComic):
     WEBSITE_URL = "https://www.gocomics.com/"
     WEBSITE_HELP = "Use /help gocomics to get all comics that are supported on the Gocomics website."
     WORKING_TYPE = WorkingType.Date
+    SECTION_IMAGE_CLASS = re.compile("ShowComicViewer_showComicViewer__[a-zA-Z0-9]+")
     IMAGE_CLASS_REGEX = re.compile(
-        "Comic_comic__image__[a-zA-Z0-9]+_[a-zA-Z0-9]+( Comic_comic__image_strip__[a-zA-Z0-9]+)?"
+        "Comic_comic__image__[a-zA-Z0-9]+_[a-zA-Z0-9]+.*"  # ( Comic_comic__image_strip__[a-zA-Z0-9]+)?"
     )
 
     def __post_init__(self):
@@ -58,7 +59,8 @@ class Gocomics(BaseDateComic):
         :param soup: The HTML source parsed
         :return: The extracted content or None if it did not find it
         """
-        images = soup.find_all("img", attrs={"class": self.IMAGE_CLASS_REGEX})
-        if len(images) == 0:
+        section = soup.find("section", attrs={"class": self.SECTION_IMAGE_CLASS})
+        image = section.find("img", attrs={"class": self.IMAGE_CLASS_REGEX})
+        if image is None:
             return None
-        return images[0]["src"]
+        return image["src"]

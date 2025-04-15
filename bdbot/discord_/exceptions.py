@@ -8,6 +8,7 @@ from discord.app_commands import (
 
 from bdbot.discord_.discord_utils import logger
 from bdbot.discord_.response_sender import ResponseSender
+from bdbot.exceptions import ComicNotFound
 
 
 async def on_error(inter: Interaction, error: AppCommandError):
@@ -21,6 +22,11 @@ async def on_error(inter: Interaction, error: AppCommandError):
     logger.error(f"Handling exception in commands:\n{error.__class__.__name__}:{error}")
     responder = await ResponseSender.from_interaction(inter)
 
+    if isinstance(error, ComicNotFound):
+        return await responder.send_message(
+            error.message,
+            ephemeral=True,
+        )
     if isinstance(error, CommandNotFound):  # Command not found
         return await responder.send_message(
             "Invalid command. Try /help general to search for usable commands.",
