@@ -21,27 +21,19 @@ Discord bot that post bd strips. Simple as that!
 - Cyanide and Happiness https://explosm.net/
 - Frazz https://www.gocomics.com/frazz
 - Garfield minus Garfield https://garfieldminusgarfield.net/
-- Jon (not ready)
 - Frank and Ernest https://www.gocomics.com/frank-and-ernest
 - Broom Hilda https://www.gocomics.com/broomhilda
-- Inspector Dangers Crime Quiz https://www.gocomics.com/inspector-dangers-crime-quiz
-- Cheer up emo kid https://www.gocomics.com/cheer-up-emo-kid
-- Catana Comics https://www.gocomics.com/ (not ready)
 - Brevity https://www.gocomics.com/brevity
 - Cats cafe https://www.gocomics.com/cats-cafe
 - Popeyes https://comicskingdom.com/popeye
 - Artic Circle https://comicskingdom.com/arctic-circle
-- Lockhorns https://comicskingdom.com/lockhorns
+- Lockhorns https://gocomics.com/lockhorns
 - Marvin https://comicskingdom.com/marvin
 - Zits https://comicskingdom.com/zits
 - Hi and Lois https://comicskingdom.com/hi-and-lois
-- Safely endangered https://www.webtoons.com/en/comedy/safely-endangered/list?title_no=352
 - Carl https://www.webtoons.com/en/slice-of-life/carl/list?title_no=1216
 - BlueChair https://www.webtoons.com/en/slice-of-life/bluechair/list?title_no=199
-- Live with yourself https://www.webtoons.com/en/comedy/live-with-yourself/list?title_no=919
 - Adventures of god https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853
-- System32Comics https://www.webtoons.com/en/challenge/system32comics/list?title_no=235074
-- The Gamer https://www.webtoons.com/en/action/the-gamer/list?title_no=88
 - Big Nate https://www.gocomics.com/bignate
 - Get Fuzzy https://www.gocomics.com/getfuzzy
 - Beetle Bailey https://comicskingdom.com/beetle-bailey-1
@@ -51,8 +43,6 @@ Discord bot that post bd strips. Simple as that!
 - Chibird https://www.webtoons.com/en/challenge/chibird/list?title_no=97265
 - War and Peas https://www.webtoons.com/en/challenge/war-and-peas/list?title_no=63305
 - Humans are stupid https://www.webtoons.com/en/challenge/humans-are-stupid/list?title_no=54265
-- Maximumble https://www.webtoons.com/en/challenge/maximumble/list?title_no=10005
-- Poorly Drawn Lines https://www.gocomics.com/en/poorly-drawn-lines
 - Heathcliff https://www.gocomics.com/heathcliff
 - Andy Capp https://www.gocomics.com/andycapp
 - Ziggy https://www.gocomics.com/ziggy 
@@ -63,15 +53,7 @@ Discord bot that post bd strips. Simple as that!
 - Sarah's Scribbles https://www.gocomics.com/sarahs-scribbles
 - Speed Bump https://www.gocomics.com/speedbump
 - Wallace the Brave https://www.gocomics.com/wallace-the-brave/characters
-- Ripley's believe it or Not https://www.gocomics.com/ripleysbelieveitornot 
-
-
-### Removed comics
-Dilbert: See https://www.bbc.com/news/world-us-canada-64775250 . Functionality is still there but this is a public bot and I cannot take the risk of keeping it.
-
-~~- Dilbert https://dilbert.com/~~
-
-~~- Dilbert classics https://www.gocomics.com/dilbert-classics~~
+- Ripley's believe it or Not https://www.gocomics.com/ripleysbelieveitornot
 
 ## Related GitHub pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
