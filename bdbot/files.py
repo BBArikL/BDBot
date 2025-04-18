@@ -26,7 +26,7 @@ BACKUPS_PATH = os.path.join(DATA_PATH, "backups")
 BACKUP_FILE_PATH = os.path.join(BACKUPS_PATH, "BACKUP_DATABASE_")
 LOGS_DIRECTORY_PATH = os.path.join(DATA_PATH, "logs/")
 REQUEST_FILE_PATH = os.path.join(DATA_PATH, "requests.txt")
-COMIC_LATEST_LINKS_PATH = os.path.join(BASE_DATA_PATH, "latest_comics.json")
+COMIC_LATEST_LINKS_PATH = os.path.join(DATA_PATH, "latest_comics.json")
 PID_FILE = os.path.join(BASE_DATA_PATH, "bdbot.pid")
 ENV_FILE = os.path.abspath(os.path.join(BASE_DATA_PATH, "..", ".env"))
 
