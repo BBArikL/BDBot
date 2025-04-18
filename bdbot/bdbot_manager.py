@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import platform
+import pty
 import re
 import shutil
 import sys
@@ -11,24 +12,35 @@ from typing import Optional, Type, Union
 
 from InquirerPy import inquirer
 from InquirerPy.prompts import ListPrompt, SecretPrompt
+from tortoise import connections
 
 from bdbot.cache import create_link_cache
 from bdbot.comics import ComicsKingdom, Gocomics, Webtoons, initialize_comics
 from bdbot.comics.base import BaseComic, WorkingType
-from bdbot.db import DiscordSubscription, dbinit, save_backup
+from bdbot.db import (
+    ChannelSubscription,
+    DiscordSubscription,
+    ServerSubscription,
+    dbinit,
+    save_backup,
+)
 from bdbot.discord_.discord_utils import clean_database
 from bdbot.files import (
     BACKUP_FILE_PATH,
     BASE_DATA_PATH,
+    DATA_PATH,
     DATABASE_FILE_PATH,
     DETAILS_PATH,
     ENV_FILE,
     FOOTERS_FILE_PATH,
     LOGS_DIRECTORY_PATH,
+    PROD_DATA_PATH,
     REQUEST_FILE_PATH,
     load_json,
     save_json,
 )
+from bdbot.subscription_type import SubscriptionType
+from bdbot.time import Weekday
 
 TEMP_FILE_PATH = "misc/comics_not_ready.json"
 RETIRED_COMICS_PATH = "misc/retired_comics.json"
@@ -109,10 +121,11 @@ def manage_bot():
     action = ""
     while action != RETURN_CHOICE:
         choices = {
-            "Database tools - Not implemented": todo,
-            "Verify requests - Not implemented": todo,
+            "Database tools": spawn_tortoise_shell,
+            "Verify requests": view_requests,
             "Create image link cache": link_cache_generate,
             "Refresh configuration files (to do after every update)": refresh_conf_files,
+            "Migrate from v4 to v5": migrate_v4_v5,
             "Setup Bot": setup_bot,
             "Uninstall Bot": uninstall_bot,
             RETURN_CHOICE: todo,
@@ -127,11 +140,33 @@ def manage_bot():
         choices[action]()
 
 
+def spawn_tortoise_shell():
+    print(
+        "Import the subscription object with:\n"
+        "from bdbot.db.discord_subscription import *\n\n"
+        "After, you can fetch data from with 'await' statements "
+        "and standard tortoise functions.\n"
+        "Documentation can be found here: https://github.com/tortoise/tortoise-cli"
+    )
+    pty.spawn(["tortoise-cli", "-c", "bdbot.db.TORTOISE_ORM", "shell"])
+
+
+def view_requests():
+    print("Here are the current requests:")
+    if not os.path.exists(REQUEST_FILE_PATH):
+        print("There are no requests yet")
+        return
+    with open(REQUEST_FILE_PATH, "r") as file:
+        for line in file:
+            print(f"> {line}")
+
+
 def uninstall_bot():
     """Uninstall bot files"""
     if inquirer.confirm("Are you sure you want to uninstall the bot?").execute():
         return os.rmdir(BASE_DATA_PATH)
     logger.info("Canceled bot uninstallation")
+    return None
 
 
 def link_cache_generate():
@@ -140,6 +175,102 @@ def link_cache_generate():
     os.makedirs("data", exist_ok=True)
     asyncio.run(create_link_cache(logger))
     logger.info("Link cache created!")
+
+
+async def migrate_db():
+    # 1. initialize db
+    print("Initializing database...")
+    await dbinit()
+
+    try:
+        # 2. Load old database
+        print("Loading old database...")
+        old_db_path = os.path.join(DATA_PATH, "data.json")
+        db = load_json(old_db_path)
+
+        # 3. Migrate data
+        print("Creating the sqlite database...")
+        for server_id, server in db.items():
+            if "channels" not in server:
+                continue
+            role_id = None
+            if "role" in server:
+                role_id = server["role"]
+
+            server_ = ServerSubscription(
+                id=int(server_id),
+                role_id=role_id,
+            )
+            await server_.save()
+
+            match_date = {
+                "Mo": Weekday.Monday,
+                "Tu": Weekday.Tuesday,
+                "We": Weekday.Wednesday,
+                "Th": Weekday.Thursday,
+                "Fr": Weekday.Friday,
+                "Sa": Weekday.Saturday,
+                "Su": Weekday.Sunday,
+                "D": Weekday.Daily,
+                "La": Weekday.Latest,
+            }
+            for channel_id, channel in server["channels"].items():
+                channel_ = ChannelSubscription(
+                    id=int(channel_id), server_id=int(server_id)
+                )
+                await channel_.save()
+                if "date" in channel:
+                    for date_str, date in channel["date"].items():
+                        for hour_str, hour in date.items():
+                            for comic in hour:
+                                if comic in [1, 20, 36, 26, 25, 24, 11]:
+                                    continue
+                                sub = DiscordSubscription(
+                                    comic_id=comic,
+                                    subscription_type=SubscriptionType.Normal,
+                                    weekday=Weekday(match_date[date_str]),
+                                    hour=int(hour_str),
+                                    channel_id=int(channel_id),
+                                )
+                                await sub.save()
+                if "latest" in channel:
+                    for comic in channel["latest"]:
+                        if comic in [1, 20, 36, 26, 25, 24, 11]:
+                            continue
+                        sub = await DiscordSubscription(
+                            comic_id=comic,
+                            subscription_type=SubscriptionType.Normal,
+                            weekday=Weekday.Latest,
+                            hour=-1,
+                            channel_id=int(channel_id),
+                        )
+                        await sub.save()
+
+    finally:
+        await connections.close_all()
+
+
+def migrate_v4_v5():
+    # 1. Move from $HOME/.local/bdbot to $HOME/.local/share/bdbot
+    if platform.system() == "Linux":
+        old_path = os.path.join("/home", os.getenv("USER", ""), ".local", "bdbot")
+        if os.path.exists(old_path):
+            print(f"Migrating conf files from {old_path} to {PROD_DATA_PATH}...")
+            shutil.move(old_path, PROD_DATA_PATH)
+
+    # 2. Update config files
+    print("Updating the configuration files...")
+    refresh_conf_files()
+
+    # 3. Migrate the database
+    print("Migrating the database...")
+    asyncio.run(migrate_db())
+
+    print("Creating the link cache...")
+    asyncio.run(create_link_cache(logger))
+    print("Link cache created!")
+
+    print("The 'data.json' file can now be deleted.")
 
 
 def setup_bot():
@@ -271,7 +402,7 @@ def choose_comic(action: str, comics: dict):
         modify(comics, comic_map[comic])
 
 
-def add_comic(comics: dict):
+def add_comic(comics: dict[str, BaseComic]):
     """Add a comic to the list of comics.
 
     :param comics: The dictionary of comics
@@ -304,9 +435,9 @@ def add_comic(comics: dict):
     working_type: str
     match main_website:
         case Gocomics.WEBSITE_NAME, ComicsKingdom.WEBSITE_NAME:
-            working_type = WorkingType.Date
+            working_type = WorkingType.Date.value
         case Webtoons.WEBSITE_NAME:
-            working_type = WorkingType.RSS
+            working_type = WorkingType.RSS.value
         case _:
             working_type = inquirer.select(
                 message="What is the working type of the comic? (For example,are comics "
@@ -355,6 +486,7 @@ def add_comic(comics: dict):
         invalid_message="This short description must be equal or less than 100 characters!",
         mandatory=False,
     ).execute()
+    last_comic_id = list(comics.values())[-1].id
     final_comic_dict = process_inputs(
         name,
         author,
@@ -362,7 +494,7 @@ def add_comic(comics: dict):
         main_website,
         working_type,
         description,
-        len(comics),
+        last_comic_id,
         first_date,
         color,
         image,
@@ -393,7 +525,7 @@ def process_inputs(
     author: str,
     web_name: str,
     main_website: str,
-    working_type: WorkingType,
+    working_type: str | WorkingType,
     description: str,
     id: int,
     first_date: Union[str, dict],

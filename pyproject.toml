@@ -16,7 +16,8 @@ dependencies = [
     "topggpy>=1.4.0",
     "inquirerpy>=0.3.4",
     "dotenv",
-    "tortoise-orm"
+    "tortoise-orm",
+    "tortoise-cli"
 ]
 
 [project.optional-dependencies]

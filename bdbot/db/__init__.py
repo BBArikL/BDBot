@@ -15,11 +15,18 @@ from bdbot.db.subscription import Subscription
 from bdbot.files import BACKUP_FILE_PATH, BACKUPS_PATH, DATABASE_FILE_PATH
 from bdbot.time import get_now
 
+TORTOISE_ORM = {
+    "connections": {
+        "default": f"sqlite://{DATABASE_FILE_PATH}",
+    },
+    "apps": {
+        "bdbot": {"models": ["bdbot.db"], "default_connection": "default"},
+    },
+}
+
 
 async def dbinit():
-    await Tortoise.init(
-        db_url=f"sqlite://{DATABASE_FILE_PATH}", modules={"bdbot": ["bdbot.db"]}
-    )
+    await Tortoise.init(config=TORTOISE_ORM)
     # Generate the schema
     await Tortoise.generate_schemas()
 
