@@ -23,7 +23,6 @@ from bdbot.discord_.multi_page_view import MultiPageView
 from bdbot.discord_.response_sender import NextSend, ResponseSender
 from bdbot.embed import Embed
 from bdbot.exceptions import ComicNotFound
-from bdbot.mention import MentionPolicy
 from bdbot.subscription_type import SubscriptionType
 from bdbot.time import Month, Weekday, get_now
 from bdbot.utils import all_comics, parse_all
@@ -436,7 +435,6 @@ async def add_comic_in_guild(
     if not server:
         server = ServerSubscription(
             id=guild_id,
-            mention_policy=MentionPolicy.All,
             role_id=None,
         )
         await server.save()
@@ -556,35 +554,9 @@ async def set_role(inter: discord.Interaction, role: discord.Role) -> str:
     )
     if not server:
         return "This server is not registered for any scheduled comic!"
-    if server.role_id is None:
-        server.mention_policy = MentionPolicy.All
     server.role_id = role.id
     await server.save()
-    return (
-        "Role successfully added to be notified! "
-        "This role will get mentioned at each comic post. "
-        "If you wish to be notified only for daily comics happening at 6 AM "
-        "UTC, use `/set_mention daily`."
-    )
-
-
-async def set_mention(inter: discord.Interaction, mention_policy: MentionPolicy) -> str:
-    """
-
-    :param inter:
-    :param mention_policy:
-    :return:
-    """
-    server = (
-        await ServerSubscription.filter(id=inter.guild.id)
-        .prefetch_related("channels")
-        .get_or_none()
-    )
-    if not server:
-        return "This server is not registered for any scheduled comic!"
-    server.mention_policy = mention_policy
-    await server.save()
-    return "Mention set successfully!"
+    return f"Role {role.mention} successfully added to be notified! "
 
 
 async def get_mention(inter: discord.Interaction, bot: commands.Bot) -> str:
@@ -601,18 +573,10 @@ async def get_mention(inter: discord.Interaction, bot: commands.Bot) -> str:
     )
     if not server:
         return "This server is not registered for any scheduled comic!"
-    mention = ""
-    match server.mention_policy:
-        case MentionPolicy.All:
-            mention = "each comic post"
-        case MentionPolicy.Daily:
-            mention = "daily"
-        case MentionPolicy.Deactivated:
-            return "Mentions are deactivated!"
-    if server.role_id is not None:
-        role = bot.get_guild(inter.guild.id).get_role(server.role_id)
-        return f"The bot will mention the role {role.mention} {mention}!"
-    return f"The server will mention for comics {mention}!"
+    if server.role_id is None:
+        return "No role is set to mention!"
+    role = bot.get_guild(inter.guild.id).get_role(server.role_id)
+    return f"The bot will mention the role {role.mention}!"
 
 
 async def remove_role(inter):
@@ -787,7 +751,7 @@ async def load_channel_and_send(
     is_latest: bool,
     available_channels: dict,
     not_available_channels: list[int],
-    mentionned_channels: list[int],
+    mentioned_channels: list[int],
     called_channel: Optional[discord.TextChannel] = None,
     post_time: datetime = None,
 ) -> int:
@@ -800,7 +764,7 @@ async def load_channel_and_send(
     :param is_latest: If the comic is the latest one
     :param available_channels: The dictionary of available channels
     :param not_available_channels: The dictionary of not-available channels
-    :param mentionned_channels:
+    :param mentioned_channels:
     :param called_channel: The channel of the where the command was called (None in the hourly loop,
     filled when called through /post).
     :param post_time: The post time
@@ -850,9 +814,9 @@ async def load_channel_and_send(
     # Makes sure that the channel is available (e.g. channel object is not None and the bot
     # can send messages)
     try:
-        if channel.id not in mentionned_channels:
+        if channel.id not in mentioned_channels:
             await send_mention(bot, channel, subscription, post_time)
-            mentionned_channels.append(channel.id)
+            mentioned_channels.append(channel.id)
         # Sends the comic embed (most important)
         await channel.send(embed=convert_embed(embed))
         return 1
@@ -1004,10 +968,6 @@ async def send_mention(
     """
     channel_sub = await subscription.channel
     server: ServerSubscription = await channel_sub.server
-    if server.mention_policy == MentionPolicy.Deactivated or (
-        server.mention_policy == MentionPolicy.Daily and post_time.hour != 6
-    ):
-        return
     guild = bot.get_guild(server.id)
     role_mention = guild.get_role(server.role_id) if server.role_id is not None else ""
     await channel.send(

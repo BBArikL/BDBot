@@ -23,7 +23,6 @@ from bdbot.discord_.exceptions import on_error
 from bdbot.embed import Embed
 from bdbot.field import Field
 from bdbot.files import DETAILS_PATH, REQUEST_FILE_PATH, load_json
-from bdbot.mention import MentionPolicy
 from bdbot.time import Weekday, get_now, get_time_between
 from bdbot.utils import all_comics
 
@@ -194,13 +193,6 @@ class BDBot(commands.Cog):
     async def remove_role(self, inter: discord.Interaction):
         """Deletes the role mention. Mods only"""
         status = await discord_utils.remove_role(inter)
-        await send_message(inter, status)
-
-    @app_commands.command()
-    @app_commands.checks.has_permissions(manage_guild=True)
-    async def set_mention(self, inter: discord.Interaction, policy: MentionPolicy):
-        """Set the role mention policy. Mods only"""
-        status = await discord_utils.set_mention(inter, policy)
         await send_message(inter, status)
 
     @app_commands.command()

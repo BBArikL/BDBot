@@ -52,7 +52,6 @@
       {"name":"Remove all", "value": "Use `/remove_all` to unsubscribe your server from all the comics in all the channels."},
       {"name":"Subscriptions","value":"Use `/sub` to view all subscribed comics for this server."},
       {"name":"Set role mention", "value":"Use `/set_role @<role>` to add a role to mention for comics posts. To remove, use `/remove_role`."},
-      {"name":"Mange role mention", "value": "Use `/set_mention daily/all` to change the mention policy for the bot in the server. This does not affect daily comics posted at 6h AM UTC. If the mention policy is set to 'all', the bot will mention the role at each comic post, otherwise it will only mention the role at 6h AM UTC daily."},
       {"name":"Get mention policy","value":"Use `/get_mention` to get the server's mention policy."}
     ]
   },

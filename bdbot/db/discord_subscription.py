@@ -1,7 +1,6 @@
 from tortoise import Model, fields
 
 from bdbot.db.subscription import Subscription
-from bdbot.mention import MentionPolicy
 
 
 class DiscordSubscription(Subscription, Model):
@@ -20,8 +19,5 @@ class ChannelSubscription(Model):
 
 class ServerSubscription(Model):
     id: int = fields.IntField(primary_key=True)
-    mention_policy: MentionPolicy = fields.CharEnumField(
-        MentionPolicy, default=MentionPolicy.Deactivated
-    )
     role_id: int | None = fields.IntField(null=True, default=None)
     channels: fields.ReverseRelation[ChannelSubscription]
