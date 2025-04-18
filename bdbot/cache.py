@@ -25,7 +25,7 @@ async def create_link_cache(logger_: logging.Logger) -> None:
         comic_url: str
         try:
             comic_details = await comic.get_comic(action=Action.Today)
-            comic_url = comic_details.url
+            comic_url = comic_details.image_url
         except (ValueError, AttributeError, ComicNotFound) as e:
             logger_.error(f"An error occurred for comic {comic.name}: {e}")
             comic_url = ""

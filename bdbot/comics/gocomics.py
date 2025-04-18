@@ -60,6 +60,8 @@ class Gocomics(BaseDateComic):
         :return: The extracted content or None if it did not find it
         """
         section = soup.find("section", attrs={"class": self.SECTION_IMAGE_CLASS})
+        if section is None:
+            return None
         image = section.find("img", attrs={"class": self.IMAGE_CLASS_REGEX})
         if image is None:
             return None

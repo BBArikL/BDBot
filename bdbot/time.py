@@ -2,7 +2,6 @@ import dataclasses
 import enum
 import math
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
 
 class Weekday(enum.Enum):
@@ -52,22 +51,6 @@ def get_hour() -> int:
     :return: Current UTC hour
     """
     return get_now().hour
-
-
-def get_date_formatted(day: Optional[datetime] = None, form: str = "/") -> str:
-    """Get the date formatted separated by a string format
-
-    :param day:
-    :param form:
-    :return:
-    """
-    if day is not None:
-        return day.strftime(f"%Y{form}%m{form}%d")
-    return ""
-
-
-def date_to_db(date: Weekday) -> str:
-    return date.value[:2:] if date != Weekday.Daily else date.value[:1:]
 
 
 def get_now() -> datetime:
