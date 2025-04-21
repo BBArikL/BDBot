@@ -54,6 +54,15 @@ Discord bot that post bd strips. Simple as that!
 - Speed Bump https://www.gocomics.com/speedbump
 - Wallace the Brave https://www.gocomics.com/wallace-the-brave/characters
 - Ripley's believe it or Not https://www.gocomics.com/ripleysbelieveitornot
+- Baby Blues
+- Outland
+- Bloom County
+- The Phantom
+- Erma
+- Cat Bird Dog
+- Nyazsche
+- Saturday Morning Breakfast Cereal
+- The Far Side
 
 ## Related GitHub pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
