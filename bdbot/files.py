@@ -45,9 +45,6 @@ def load_json(json_path: str) -> dict[str, Any]:
     """
     Load a json.
     DETAILS_PATH -> The comic details.
-    DATABASE_FILE_PATH -> The database.
-    JSON_SCHEMA_PATH -> The schema of the database.
-    BACKUP_FILE_PATH -> The default backup.
     COMIC_LATEST_LINKS_PATH -> The latest links to the images of the comics.
 
     :param json_path: The path to the json file.

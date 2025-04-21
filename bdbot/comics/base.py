@@ -313,15 +313,20 @@ class BaseDateComic(BaseComic):
         )
 
     @classmethod
-    def from_main_website(cls, main_website: str) -> Type["BaseDateComic"]:
+    def from_main_website(
+        cls, main_website: str, base_on_error: bool = False
+    ) -> Type["BaseDateComic"]:
         from bdbot.comics import ComicsKingdom, Gocomics
 
         match main_website:
-            case Gocomics.WEBSITE_URL:
+            case Gocomics.WEBSITE_URL | Gocomics.WEBSITE_NAME:
                 return Gocomics
-            case ComicsKingdom.WEBSITE_URL:
+            case ComicsKingdom.WEBSITE_URL | ComicsKingdom.WEBSITE_NAME:
                 return ComicsKingdom
             case _:
+                if base_on_error:
+                    # Return another class because it won't matter if it is for exporting
+                    return Gocomics
                 raise ComicNotFound("Could not find comic type!")
 
 
@@ -420,15 +425,20 @@ class BaseRSSComic(BaseComic, ABC):
         return detail
 
     @classmethod
-    def from_main_website(cls, main_website: str) -> Type["BaseRSSComic"]:
+    def from_main_website(
+        cls, main_website: str, base_on_error: bool = False
+    ) -> Type["BaseRSSComic"]:
         from bdbot.comics import GarfieldMinusGarfield, Webtoons
 
         match main_website:
-            case Webtoons.WEBSITE_URL:
+            case Webtoons.WEBSITE_URL | Webtoons.WEBSITE_NAME:
                 return Webtoons
-            case GarfieldMinusGarfield.WEBSITE_URL:
+            case GarfieldMinusGarfield.WEBSITE_URL | GarfieldMinusGarfield.WEBSITE_NAME:
                 return GarfieldMinusGarfield
             case _:
+                if base_on_error:
+                    # Return another class because it won't matter if it is for exporting
+                    return Webtoons
                 raise ComicNotFound("Could not find comic type!")
 
 
@@ -477,13 +487,18 @@ class BaseNumberComic(BaseComic):
         return detail
 
     @classmethod
-    def from_main_website(cls, main_website: str) -> Type["BaseNumberComic"]:
+    def from_main_website(
+        cls, main_website: str, base_on_error: bool = False
+    ) -> Type["BaseNumberComic"]:
         from bdbot.comics import XKCD, CyanideAndHappiness
 
         match main_website:
-            case CyanideAndHappiness.WEBSITE_URL:
+            case CyanideAndHappiness.WEBSITE_URL | CyanideAndHappiness.WEBSITE_NAME:
                 return CyanideAndHappiness
-            case XKCD.WEBSITE_URL:
+            case XKCD.WEBSITE_URL | XKCD.WEBSITE_NAME:
                 return XKCD
             case _:
+                if base_on_error:
+                    # Return another class because it won't matter if it is for exporting
+                    return CyanideAndHappiness
                 raise ComicNotFound("Could not find comic type!")

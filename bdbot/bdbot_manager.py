@@ -361,10 +361,10 @@ def install_linux_service():
 def manage_comics():
     """Manage comics configuration"""
     logger.info("Loading comics....")
-    comics = initialize_comics(load_json(DETAILS_PATH))
     logger.info("Comics loaded!")
     action = None
     while action != "Return":
+        comics = initialize_comics(load_json(DETAILS_PATH), base_on_error=True)
         action = inquirer.select(
             message="What do you want to do with the comics?",
             choices=["Add", "Delete", "Modify", "Return"],
@@ -423,7 +423,7 @@ def add_comic(comics: dict[str, BaseComic]):
     main_website = inquirer.text(
         message="What is the main website of the comic?",
         completer={
-            website.name: None
+            website: None
             for website in [
                 Gocomics.WEBSITE_NAME,
                 ComicsKingdom.WEBSITE_NAME,
@@ -432,9 +432,10 @@ def add_comic(comics: dict[str, BaseComic]):
         },
         mandatory=False,
     ).execute()
+
     working_type: str
     match main_website:
-        case Gocomics.WEBSITE_NAME, ComicsKingdom.WEBSITE_NAME:
+        case Gocomics.WEBSITE_NAME | ComicsKingdom.WEBSITE_NAME:
             working_type = WorkingType.Date.value
         case Webtoons.WEBSITE_NAME:
             working_type = WorkingType.RSS.value
@@ -446,6 +447,7 @@ def add_comic(comics: dict[str, BaseComic]):
                 choices=[working_type.name for working_type in WorkingType],
                 mandatory=False,
             ).execute()
+    working_type: WorkingType = WorkingType(working_type.lower())
 
     description = inquirer.text(
         message="Enter a long description of the comic: ", mandatory=False
@@ -466,6 +468,7 @@ def add_comic(comics: dict[str, BaseComic]):
                 f"Please enter the {date}: ",
                 mandatory=False,
             ).execute()
+        first_date = f"{first_date['Year']}-{first_date['Month']}-{first_date['Day']}"
     elif working_type in [WorkingType.Number, WorkingType.RSS]:
         first_date = "1"
     else:
@@ -486,7 +489,7 @@ def add_comic(comics: dict[str, BaseComic]):
         invalid_message="This short description must be equal or less than 100 characters!",
         mandatory=False,
     ).execute()
-    last_comic_id = list(comics.values())[-1].id
+    last_comic_id = list(comics.values())[-1].id + 1
     final_comic_dict = process_inputs(
         name,
         author,
@@ -502,10 +505,15 @@ def add_comic(comics: dict[str, BaseComic]):
     )
     logger.info("Final comic data:")
     logger.info(json.dumps(final_comic_dict, indent=4))
+    name = name.replace(" ", " ")
     confirm = inquirer.confirm("Is the data good?").execute()
     if confirm:  # Adds the details to the file
         logger.info("Updating the details file....")
-        comics.update(final_comic_dict)
+        comics.update({name: final_comic_dict})
+        comics = {
+            cmc: comic.to_dict() if isinstance(comic, BaseComic) else comic
+            for cmc, comic in comics.items()
+        }
         save_json(comics, file_path=DETAILS_PATH)
         logger.info("Update done!")
         return
@@ -513,7 +521,7 @@ def add_comic(comics: dict[str, BaseComic]):
     absolute_path = os.path.join(os.getcwd(), TEMP_FILE_PATH)
     logger.info(f"Writing dictionary to a temporary location.... ({absolute_path})")
     temp_comic_data = open_json_if_exist(absolute_path)
-    temp_comic_data.update(final_comic_dict)
+    temp_comic_data.update({name: final_comic_dict})
     save_json(temp_comic_data, absolute_path)
     logger.info(
         "Wrote the details to the temporary file! You can edit this file manually or with this tool!"
@@ -525,7 +533,7 @@ def process_inputs(
     author: str,
     web_name: str,
     main_website: str,
-    working_type: str | WorkingType,
+    working_type: WorkingType,
     description: str,
     id: int,
     first_date: Union[str, dict],
@@ -533,7 +541,7 @@ def process_inputs(
     image: str,
     helptxt: str,
 ) -> dict:
-    """Create the comic json
+    """Create the comic object
 
     :param name: Comic name
     :param author: Comic author
@@ -548,19 +556,25 @@ def process_inputs(
     :param helptxt: Comic help text
     :return: The comic dict
     """
-    comic_type: Type[BaseComic] = BaseComic.get_type(main_website, working_type)
-    return comic_type.__init__(
+    comic_type: Type[BaseComic] = BaseComic.get_type(
+        main_website, working_type, base_on_error=True
+    )
+    return comic_type(
+        WEBSITE_NAME=comic_type.WEBSITE_NAME,
+        WEBSITE_URL=comic_type.WEBSITE_URL,
+        WEBSITE_HELP=comic_type.WEBSITE_HELP,
+        WORKING_TYPE=comic_type.WORKING_TYPE,
         name=name,
         author=author,
         web_name=web_name,
         main_website=main_website,
-        working_type=working_type,
+        working_type=working_type.value,
         description=description,
         id=id,
         first_date=first_date,
         color=color,
         image=image,
-        help_text=helptxt,
+        help=helptxt,
     ).to_dict()
 
 
@@ -603,21 +617,19 @@ def delete(comics: dict[str, BaseComic], comic_name: str):
 
 
 def open_json_if_exist(absolute_path: str) -> dict:
-    """Load a json from a file if it exists, create it otherwise.
-
+    """Load a JSON from a file if it exists, create it otherwise.
     :param absolute_path: The path to the dictionary
-    :return: Data in the json file
+    :return: Data in the JSON file
     """
     temp_comic_data = {}
     if os.path.exists(absolute_path):
         return load_json(absolute_path)
-
     open(absolute_path, "x").close()
     return temp_comic_data
 
 
 def remove_comic_from_database(comic_number: int):
-    """Remove comic from database, based on comic number
+    """Remove comic from the database, based on comic number
 
     :param comic_number: The comic number to remove
     """
@@ -638,44 +650,41 @@ def remove_comic_from_database(comic_number: int):
     logger.info("Database update done!")
 
 
-def modify(comics: dict, comic: str):
+def modify(comics: dict[str, BaseComic], comic_name: str):
     """Modify a comic
 
     :param comics: The list of comics
-    :param comic: The name of the comic to modify
+    :param comic_name: The name of the comic to modify
     """
-    comic_property: str = ""
-    comic_number, comic_name = comic.split(". ")
-    comic_number = int(comic_number)
-    comic_dict_key = list(comics.keys())[comic_number]
-    comic_dict = comics[comic_dict_key]
+    comic_property = ""
+    comic = comics[comic_name]
 
     while comic_property != RETURN_CHOICE:
         comic_property = inquirer.select(
             message=f"Which property of the comic {comic_name} do you want to edit?",
-            choices=[prop for prop in comic_dict] + [RETURN_CHOICE],
+            choices=[prop.capitalize() for prop in comic.to_dict().keys()]
+            + [RETURN_CHOICE],
             mandatory=False,
         ).execute()
 
         if comic_property != "" and comic_property != "Return":
-            comic_dict = modify_property(comic_dict, comic_property)
+            comic = modify_property(comic, comic_property.lower())
 
     # Saves the modifications
-    comics.update({comic_dict_key: comic_dict})
+    comics.update({comic_name: comic})
+    comics = {cmc: comic.to_dict() for cmc, comic in comics.items()}
     save_json(comics, file_path=DETAILS_PATH)
 
 
-def modify_property(comic_dict: dict, comic_property: str) -> dict:
+def modify_property(comic: BaseComic, comic_property: str) -> BaseComic:
     """Modify a comic's property
 
-    :param comic_dict: The information about the comic
+    :param comic: The information about the comic
     :param comic_property: The property to change
     :return: The modified comic
     """
-    property_value = comic_dict[comic_property]
-    logger.info(
-        f"Current {comic_property!r} value:\n`\n{comic_dict[comic_property]}\n`"
-    )
+    property_value = getattr(comic, comic_property)
+    logger.info(f"Current {comic_property!r} value:\n`\n{property_value}\n`")
 
     completer: Optional[dict] = None
     if type(property_value) is str:
@@ -689,21 +698,21 @@ def modify_property(comic_dict: dict, comic_property: str) -> dict:
 
     if new_value == "":
         logger.info(f"{comic_property!r} has not been changed.")
-        return comic_dict
+        return comic
 
     confirm = inquirer.confirm(
         message=f"Are you sure your want to set "
-        f"{comic_property!r} to \n`\n{new_value}\n` ?"
+        f"{comic_property!r} to \n`\n{new_value}\n`\n ?"
     ).execute()
 
     if not confirm:
         logger.info(f"{comic_property!r} has not been changed.")
-        return comic_dict
+        return comic
 
     logger.info(f"Updating property {comic_property!r}...")
-    comic_dict.update({comic_property: new_value})
+    setattr(comic, comic_property, new_value)
 
-    return comic_dict
+    return comic
 
 
 def refresh_conf_files():

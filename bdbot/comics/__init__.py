@@ -5,11 +5,13 @@ from bdbot.comics.gocomics import Gocomics
 from bdbot.comics.webtoons import Webtoons
 
 
-def initialize_comics(comics: dict) -> dict[str, BaseComic]:
+def initialize_comics(
+    comics: dict, base_on_error: bool = False
+) -> dict[str, BaseComic]:
     c: dict[str, BaseComic] = {}
     for comic_name, comic in comics.items():
         comic_type = BaseComic.get_type(
-            comic["main_website"], WorkingType(comic["working_type"])
+            comic["main_website"], WorkingType(comic["working_type"]), base_on_error
         )
         c.update(
             {
