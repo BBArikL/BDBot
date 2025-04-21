@@ -1,12 +1,10 @@
 import os
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
 
 from bdbot.comics.base import BaseDateComic, WorkingType
-
-FIRST_DATE_FORMAT = "%Y-%m-%d"
 
 
 class Gocomics(BaseDateComic):
@@ -15,22 +13,12 @@ class Gocomics(BaseDateComic):
     WEBSITE_HELP = "Use /help gocomics to get all comics that are supported on the Gocomics website."
     WORKING_TYPE = WorkingType.Date
     SECTION_IMAGE_CLASS = re.compile("ShowComicViewer_showComicViewer__[a-zA-Z0-9]+")
-    IMAGE_CLASS_REGEX = re.compile(
-        "Comic_comic__image__[a-zA-Z0-9]+_[a-zA-Z0-9]+.*"  # ( Comic_comic__image_strip__[a-zA-Z0-9]+)?"
-    )
-
-    def __post_init__(self):
-        super().__post_init__()
-        self.first_date: str
-        self.first_date: datetime = datetime.strptime(
-            self.first_date, FIRST_DATE_FORMAT
-        )
-        self.first_date.astimezone(timezone.utc)
+    IMAGE_CLASS_REGEX = re.compile("Comic_comic__image__[a-zA-Z0-9]+_[a-zA-Z0-9]+.*")
 
     @property
     def first_comic_date(self) -> datetime:
         if os.getenv("BYPASS_GOCOMICS_SUBSCRIPTION"):
-            return self.first_date
+            return super().first_comic_date
         return datetime.today() - timedelta(days=14)
 
     @property

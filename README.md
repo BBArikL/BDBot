@@ -108,16 +108,17 @@ There are 2 ways to set up scheduled comics:
   - None for the moment. Open an issue if you find any! :)
  
 - Anything else to know?
-  - Why can't I go farther than 7 comics on Comics Kingdom? Comics Kingdom use a special premium subscription plan to view all comics. There is no known way to get around it and getting the subscription and after distributing the comic for free could cause some undesirable consequences in the future.
   - Why can't I go farther than 14 comics on Gocomics? As of April 1st 2025, Gocomics implemented a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser. Self-host the bot and define `BYPASS_GOCOMICS_SUBSCRIPTION=1` in your environment to view older comics. Distributing the comics for free could cause some undesirable consequences in the future.
   - Why is there only 2 images for Webtoons? Webtoons only gives out two images link to the comic in their rss feed. Finding each image link is way more complicated than this and is not in place now.
+  - I requested a comic but it isn't there, why? I personally choose the requests to keep a balance of quality and diversity of comics. I still aim for the bot to be mostly "family-friendly". For some websites requested that could fit but are not here:
+    - ComicRocket: It doesn't work for me strangely. And it seems to be just a linker back to other sites.
   - You want to do a pull request to add your favourite comic? 
     - Preferably, Gocomics and Comics Kingdom comics are the easiest to implement, so try to stick with that if your comic is hosted there. 
       - Please see [this README](bdbot/misc/ADD_COMIC.md) for complete instructions
   - If the comic is NOT hosted on GoComics/Comics Kingdom, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
   - Any pull requests that was not approved from another site will be automatically rejected, and you will be asked to follow the procedure cited.
   - 'Beta' and 'main'?
-    - The main branch is the current bot that is running on Discord.
+    - The main branch is the current bot running on Discord.
     - Beta branch is for all experiments and additions waiting for approval to add to the current bot. This runs on a (for now) private bot upon completion of current goals.
     - More about branches: https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-branches
   - The bot is considered complete feature-wise (but not comic-wise).

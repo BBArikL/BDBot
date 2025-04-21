@@ -3,7 +3,7 @@ import enum
 import xml
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from random import randint
 from typing import Any, Type
 
@@ -20,6 +20,8 @@ from bdbot.exceptions import ComicNotFound
 from bdbot.field import Field
 from bdbot.time import get_now
 from bdbot.utils import comic_details
+
+FIRST_DATE_FORMAT = "%Y-%m-%d"
 
 
 class WorkingType(enum.Enum):
@@ -187,16 +189,18 @@ class BaseComic(ABC):
 
     @classmethod
     def get_type(
-        cls, main_website: str, working_type: WorkingType
+        cls, main_website: str, working_type: WorkingType, base_on_error: bool = False
     ) -> Type["BaseComic"]:
         match working_type:
             case WorkingType.Date:
-                return BaseDateComic.from_main_website(main_website)
+                return BaseDateComic.from_main_website(main_website, base_on_error)
             case WorkingType.Number:
-                return BaseNumberComic.from_main_website(main_website)
+                return BaseNumberComic.from_main_website(main_website, base_on_error)
             case WorkingType.RSS:
-                return BaseRSSComic.from_main_website(main_website)
+                return BaseRSSComic.from_main_website(main_website, base_on_error)
             case _:
+                if base_on_error:
+                    return BaseComic
                 raise Exception("Could not find type of comic!")
 
     @classmethod
@@ -208,10 +212,17 @@ class BaseDateComic(BaseComic):
     WORKING_TYPE = WorkingType.Date
     _MAX_TRIES = 15
 
+    def __post_init__(self):
+        super().__post_init__()
+        self.first_date: str
+        self.first_date: datetime = datetime.strptime(
+            self.first_date, FIRST_DATE_FORMAT
+        )
+        self.first_date.astimezone(timezone.utc)
+
     @property
-    @abstractmethod
     def first_comic_date(self) -> datetime:
-        pass
+        return self.first_comic_date
 
     @property
     def first_date_format(self) -> str:

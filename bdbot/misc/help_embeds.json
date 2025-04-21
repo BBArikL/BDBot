@@ -70,7 +70,6 @@
     "description":"Have a question on the bot? This is the place you are looking for!",
     "fields": [
       {"name":"What is this bot?", "value":"This bot is a helper to keep up with your favorite comics! It search each hour more than 40+ pages to fetch the most up to date comics for your eyes only!"},
-      {"name":"Why can I only go up to 7 comics in the past for ComicKingdom's comics?","value":"ComicKingdom use a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser."},
       {"name":"Why can I only go up to 14 comics in the past for Gocomics comics?","value":"As of April 1st 2025, Gocomics implemented a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser."},
       {"name":"How can I support the project?", "value":"You can vote for the bot on top.gg (`/vote`) or star the project on GitHub (`/git`). If you want to support one of the comics that are presented through this bot, go on  their page to see how to support them directly!"},
       {"name":"How can I request comics?", "value":"You can use `/request` to request comics or features directly to the developer."},

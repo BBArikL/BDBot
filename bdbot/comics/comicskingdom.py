@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from bdbot.comics import WorkingType
 from bdbot.comics.base import BaseDateComic
@@ -9,14 +9,6 @@ class ComicsKingdom(BaseDateComic):
     WEBSITE_URL = "https://comicskingdom.com/"
     WEBSITE_HELP = "Use /help comicskingdom to get all comics that are supported on the Comics Kingdom website."
     WORKING_TYPE = WorkingType.Date
-
-    @property
-    def first_comic_date(self) -> datetime:
-        return datetime.today() - timedelta(days=7)
-
-    @property
-    def first_date_format(self) -> str:
-        return ""
 
     @property
     def random_link(self) -> str:
