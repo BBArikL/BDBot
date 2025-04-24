@@ -8,7 +8,6 @@ if TYPE_CHECKING:
     pass
 
 
-MAX_BACKUP_TRIES = 25
 PROD_DATA_PATH = (
     os.path.join(os.getenv("LOCALAPPDATA"), "bdbot")
     if os.name == "nt"

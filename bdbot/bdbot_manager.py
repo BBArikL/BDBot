@@ -505,7 +505,7 @@ def add_comic(comics: dict[str, BaseComic]):
     )
     logger.info("Final comic data:")
     logger.info(json.dumps(final_comic_dict, indent=4))
-    name = name.replace(" ", " ")
+    name = name.replace(" ", "")
     confirm = inquirer.confirm("Is the data good?").execute()
     if confirm:  # Adds the details to the file
         logger.info("Updating the details file....")

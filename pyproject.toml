@@ -37,3 +37,4 @@ packages = ["bdbot"]
 
 [tool.flake8]
 max-line-length = 120
+exclude = [".git", "__pycache__", ".venv", "venv"]

@@ -79,7 +79,7 @@ class Comic(commands.Cog):
         self.bot = bot
         for comic in all_comics().values():
             normalized_name = comic.name.lower().replace(" ", "_")
-            normalized_name = re.sub("[^\\w\\-_]", "", normalized_name)
+            normalized_name = re.sub("[^\\w\\-_.]", "", normalized_name)
             comic_command = app_commands.Command(
                 name=normalized_name,
                 description=comic.name,
