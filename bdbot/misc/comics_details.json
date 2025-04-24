@@ -571,7 +571,7 @@
         "image": "https://gocomicscmsassets.gocomics.com/staging-assets/assets/Global_Feature_Badge_Outland_600_87e672aee7.png?optimizer=image&width=256&quality=75",
         "help": "Jump in Berkeley's world of Outland!"
     },
-    "Bloom County": {
+    "BloomCounty": {
         "name": "Bloom County",
         "author": "Berkeley Breathed",
         "web_name": "bloomcounty",
@@ -584,7 +584,7 @@
         "image": "https://gocomicscmsassets.gocomics.com/staging-assets/assets/Feature_Splash_Bloom_County_780_0762f09186.jpg?optimizer=image&width=2400&quality=100",
         "help": "Join the humourous world of Bloom County!"
     },
-    "The Phantom": {
+    "ThePhantom": {
         "name": "The Phantom",
         "author": "T. Depaul, M. Manley & J. Weigel",
         "web_name": "phantom",
@@ -610,7 +610,7 @@
         "image": "https://swebtoon-phinf.pstatic.net/20220810_235/1660069868355X1mTy_JPEG/b54ac35e-6291-4fff-92e0-d0e50ce3d3ae.jpg",
         "help": "Follow the ghostly adventures of Erma!"
     },
-    "Cat Bird Dog": {
+    "CatBirdDog": {
         "name": "Cat Bird Dog",
         "author": "EggBug Studio",
         "web_name": "canvas/cat-bird-dog/list?title_no=985914",
@@ -623,43 +623,30 @@
         "image": "https://swebtoon-phinf.pstatic.net/20240808_150/172306812714029rsM_PNG/46be0b5b-b2cb-4467-926e-99f08684d0c511423799792608764619.png",
         "help": "Join the adventures of Cat, Bird and dog!"
     },
-    "Nyazsche": {
-        "name": "Nyazsche",
-        "author": "Nyazsche",
-        "web_name": "nyazsche.bsky.social",
-        "main_website": "https://bsky.app/profile/",
+    "ShenComix": {
+        "name": "Shen Comix",
+        "author": "Shen",
+        "web_name": "canvas/shen-comix/list?title_no=129357",
+        "main_website": "Webtoons",
         "working_type": "rss",
-        "description": "Artist of \u201chigh quality\u201d.\nWebsite: https://bsky.app/profile/nyazsche.bsky.social",
-        "id": 55,
+        "description": "Very cool people comic :sunglasses:\nWebsite: https://shencomix.tumblr.com/\nFacebook: https://www.facebook.com/shencomix\nTwitter: https://x.com/shenanigansen\nPatreon: https://www.patreon.com/shencomix\nAbout: https://www.webtoons.com/p/community/en/u/u25ws",
+        "id": 58,
         "first_date": "",
-        "color": "FFFFFF",
-        "image": "https://cdn.bsky.app/img/avatar/plain/did:plc:t3y6b72bgnof5tf3uzdgw5ps/bafkreif6nmfzjrqgq75e3k4xre37sllcupi4hkfu74ttr3d6fnenxkranq@jpeg",
-        "help": "Nyazsche"
+        "color": "FEDB87",
+        "image": "https://swebtoon-phinf.pstatic.net/20250120_46/1737343623851FBupw_PNG/14246fbf-3275-4cba-a292-7ee2b34287818378411928945737601.png",
+        "help": "These comics are only visible to cool people."
     },
-    "Saturday Morning Breakfast Cereal": {
-        "name": "Saturday Morning Breakfast Cereal",
-        "author": "Zach Weinersmith",
-        "web_name": "smbc-comics",
-        "main_website": "https://www.smbc-comics.com",
+    "PublicU.ArtClub": {
+        "name": "Public U. Art Club ",
+        "author": "Shen",
+        "web_name": "canvas/public-u-art-club/list?title_no=874156",
+        "main_website": "Webtoons",
         "working_type": "rss",
-        "description": "Saturday Morning Breakfast Cereal is a webcomic by Zach Weinersmith. Recurring themes in SMBC include science, research, superheroes, religion, romance, dating, parenting and the meaning of life.\nWebsite: https://www.smbc-comics.com/index.php\nFacebook: https://www.facebook.com/smbccomics\nTwitter: https://x.com/ZachWeiner\nPatreon: https://www.patreon.com/ZachWeinersmith\nStore: https://smbc-store.myshopify.com/",
-        "id": 56,
+        "description": "Ana, Sofia, Lilith, and Beatrix hang out at a university art club with their sponsor, Mrs. G. And then some things happen.\nWebsite: https://shencomix.tumblr.com/ask\nFacebook: https://www.facebook.com/shencomix\nTwitter: https://twitter.com/shenanigansen\nPatreon: https://www.patreon.com/shencomix\nAbout: https://www.webtoons.com/p/community/en/u/u25ws",
+        "id": 59,
         "first_date": "",
-        "color": "ED6B24",
-        "image": "https://www.smbc-comics.com/images/moblogo.webp",
-        "help": "Daily funnies from Zach Weinersmith!"
-    },
-    "The Far Side": {
-        "name": "The Far Side",
-        "author": "Gary Larson",
-        "web_name": "thefarside",
-        "main_website": "https://www.thefarside.com",
-        "working_type": "date",
-        "description": "Welcome to TheFarSide.com, the first official online home of The Far Side! Created by Gary Larson, the single-panel cartoon ran daily in newspapers from 1980 to 1995. In those fifteen years, The Far Side went from garnering controversy to becoming one of the most beloved cartoons of its time.\nWebsite: https://www.thefarside.com\nAbout: https://www.thefarside.com/about",
-        "id": 57,
-        "first_date": "1980-12-31",
-        "color": "FFFFFF",
-        "image": "https://siteassets.thefarside.com/packs/media/images/brand/logo/tfs_logo_cow-9f701760d9d962d7151c22000644bc12.svg",
-        "help": "Read the legendary 'Far Side' comic!"
+        "color": "F5DF68",
+        "image": "https://swebtoon-phinf.pstatic.net/20230601_106/1685572433443KQJp7_PNG/774c8c8d-ba4e-46da-9f57-4256ecdc93072089474851994637334.png",
+        "help": "Follow the adventures of Ana, Sofia, Lilith and Beatrix at Art school!"
     }
 }

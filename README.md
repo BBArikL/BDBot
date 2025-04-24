@@ -60,6 +60,8 @@ Discord bot that post bd strips. Simple as that!
 - The Phantom
 - Erma
 - Cat Bird Dog
+
+### Planned
 - Nyazsche
 - Saturday Morning Breakfast Cereal
 - The Far Side
