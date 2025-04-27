@@ -558,19 +558,6 @@
         "image": "https://gocomicscmsassets.gocomics.com/staging-assets/assets/Feature_Splash_Baby_Blues_780_1_31ffc7fdd4.jpg?optimizer=image&width=2400&quality=100",
         "help": "Join Darryl and Wanda as they parent their 3 kids!"
     },
-    "Outland": {
-        "name": "Outland",
-        "author": "Berkeley Breathed",
-        "web_name": "outland",
-        "main_website": "Gocomics",
-        "working_type": "date",
-        "description": "\"Outland\" is a comic strip written and illustrated by Berkeley Breathed from 1989 until 1995. It was a Sunday-only spin-off of Breathed's strip \"Bloom County,\" featuring many of the same characters.\nAbout: https://www.gocomics.com/outland/about",
-        "id": 50,
-        "first_date": "1989-09-03",
-        "color": "0",
-        "image": "https://gocomicscmsassets.gocomics.com/staging-assets/assets/Global_Feature_Badge_Outland_600_87e672aee7.png?optimizer=image&width=256&quality=75",
-        "help": "Jump in Berkeley's world of Outland!"
-    },
     "BloomCounty": {
         "name": "Bloom County",
         "author": "Berkeley Breathed",

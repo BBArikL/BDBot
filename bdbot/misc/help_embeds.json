@@ -59,7 +59,7 @@
     "title":"New features",
     "description":"Find out what new features have been implemented since the last update!",
     "fields": [
-      {"name":"Comics", "value":"8 new comics have been added! Some comics have has been removed because they are finished or are not posting anymore, Garfield minus Garfield and Webtoons now work."},
+      {"name":"Comics", "value":"7 new comics have been added! Some comics have has been removed because they are finished or are not posting anymore, Garfield minus Garfield and Webtoons now work."},
       {"name":"Updoming comics", "value":"These comics are coming very soon: Nyazsche, Saturday Morning Breakfast Cereal and The Far Side"},
       {"name":"Changes in /random add <schedule>", "value":"Now, adding a random to a schedule will not add a fixed comic to be set to the schedule but the comic will be different each time on that schedule!"},
       {"name":"Optimizations", "value":"Under the hood, optimizations have been made to the bot to make it more responsive and support the growth! I am also looking into porting the bot to other platforms like Matrix and Revolt."
