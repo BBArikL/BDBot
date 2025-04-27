@@ -458,7 +458,7 @@ class BaseNumberComic(BaseComic):
     ) -> str | None:
         return self.extract_meta_content(
             BeautifulSoup(
-                await self.read_url_content(self.main_website), self._BASE_PARSER
+                await self.read_url_content(self.WEBSITE_URL), self._BASE_PARSER
             ),
             "url",
         )

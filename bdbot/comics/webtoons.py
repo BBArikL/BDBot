@@ -15,7 +15,11 @@ class Webtoons(BaseRSSComic):
 
     @property
     def rss_url(self) -> str:
-        return (self.main_website + self.web_name).replace("list", "rss")
+        return (
+            (self.website_url + self.web_name)
+            .replace("list", "rss")
+            .replace("canvas", "challenge")
+        )
 
     @property
     def weekday_token(self):
@@ -26,4 +30,4 @@ class Webtoons(BaseRSSComic):
         return "Z"
 
     def get_specific_url(self, date: Any):
-        return self.main_website + self.web_name + f"&episode_no={date}"
+        return self.website_url + self.web_name + f"&episode_no={date}"

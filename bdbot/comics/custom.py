@@ -17,7 +17,7 @@ class GarfieldMinusGarfield(BaseRSSComic):
 
     @property
     def website_url(self):
-        return self.main_website
+        return self.WEBSITE_URL
 
     @property
     def fallback_image(self):
@@ -25,7 +25,7 @@ class GarfieldMinusGarfield(BaseRSSComic):
 
     @property
     def rss_url(self) -> str:
-        return self.main_website + "rss"
+        return self.website_url + "rss"
 
     @property
     def weekday_token(self):
@@ -36,7 +36,7 @@ class GarfieldMinusGarfield(BaseRSSComic):
         return "z"
 
     def get_specific_url(self, date: Any):
-        return self.main_website + "day/" + date.strftime("%Y/%m/%d")
+        return self.website_url + "day/" + date.strftime("%Y/%m/%d")
 
 
 class CyanideAndHappiness(BaseNumberComic):
@@ -52,7 +52,7 @@ class CyanideAndHappiness(BaseNumberComic):
                 suffix = "random"
             case Action.Today:
                 suffix = "latest"
-        return self.main_website + suffix
+        return self.WEBSITE_URL + suffix
 
     def extract_content(
         self, content: str, action: Action, detail: ComicDetail
@@ -104,7 +104,7 @@ class XKCD(BaseNumberComic):
     _JSON_API_SUFFIX = "info.0.json"
 
     async def get_comic_url(self, action: Action, comic_date=None) -> str | None:
-        url: str = self.main_website
+        url: str = self.WEBSITE_URL
         if action == Action.Random:
             url = self.extract_meta_content(
                 BeautifulSoup(
@@ -124,7 +124,7 @@ class XKCD(BaseNumberComic):
         json_details = json.loads(content)
 
         detail.title = json_details["title"]
-        detail.url = detail.url.removesuffix(self._JSON_API_SUFFIX)
+        detail.url = self.WEBSITE_URL + str(json_details["num"])
         detail.image_url = json_details["img"]
         detail.alt = json_details["alt"]
         detail.date = datetime(
