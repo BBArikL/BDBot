@@ -62,8 +62,8 @@ class ComicDetail:
 
     @classmethod
     def comic_not_found(cls, comic_name: str | None = None) -> Embed:
-        title_comic_name = f"for '{comic_name}'" if comic_name else ""
-        embed = Embed(title=f"No comic found {title_comic_name}!")
+        title_comic_name = f" for '{comic_name}'" if comic_name else ""
+        embed = Embed(title=f"No comic found{title_comic_name}!")
 
         embed.add_field(
             Field(
@@ -71,4 +71,17 @@ class ComicDetail:
                 value="Try another time!",
             )
         )
+        return embed
+
+    @classmethod
+    def comic_extraction_failed(cls, name: str, message: str):
+        embed = Embed(title=f"Comic '{name}' failed to extract")
+
+        embed.add_field(
+            Field(
+                name="An error occurred while extracting comic",
+                value=message,
+            )
+        )
+        embed.footer = "Report the problem at https://github.com/BBArikL/BDBot/"
         return embed

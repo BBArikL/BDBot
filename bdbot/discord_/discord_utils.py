@@ -22,7 +22,7 @@ from bdbot.db import ChannelSubscription, DiscordSubscription, ServerSubscriptio
 from bdbot.discord_.multi_page_view import MultiPageView
 from bdbot.discord_.response_sender import NextSend, ResponseSender
 from bdbot.embed import Embed
-from bdbot.exceptions import ComicNotFound
+from bdbot.exceptions import ComicExtractionFailed, ComicNotFound
 from bdbot.subscription_type import SubscriptionType
 from bdbot.time import Month, Weekday, get_now
 from bdbot.utils import all_comics, parse_all
@@ -86,6 +86,8 @@ async def comic_send(
         details = (await comic.get_comic(action, comic_date=comic_date)).to_embed()
     except ComicNotFound:
         details = ComicDetail.comic_not_found(comic.name)
+    except ComicExtractionFailed as e:
+        details = ComicDetail.comic_extraction_failed(comic.name, e.message)
 
     # Sends the comic
     await send_embed(

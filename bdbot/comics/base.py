@@ -16,7 +16,7 @@ from rss_parser.models.rss import RSS
 from bdbot.actions import Action
 from bdbot.comics.comic_detail import ComicDetail
 from bdbot.embed import DEFAULT_FIELDS_PER_EMBED, Embed
-from bdbot.exceptions import ComicNotFound
+from bdbot.exceptions import ComicExtractionFailed, ComicNotFound
 from bdbot.field import Field
 from bdbot.time import get_now
 from bdbot.utils import comic_details
@@ -370,7 +370,7 @@ class BaseRSSComic(BaseComic, ABC):
         try:
             rss: RSS = RSSParser.parse(content)
         except xml.parsers.expat.ExpatError:
-            raise ComicNotFound(
+            raise ComicExtractionFailed(
                 f"The rss feed for comic '{self.name}' was invalid!", self.name
             )
         feed = rss.channel.content.items[date].content

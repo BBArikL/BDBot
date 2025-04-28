@@ -3,9 +3,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from bdbot.comics import BaseComic
+
 from bdbot.actions import Action
 from bdbot.comics import initialize_comics
-from bdbot.exceptions import ComicNotFound
+from bdbot.exceptions import ComicExtractionFailed, ComicNotFound
 from bdbot.files import COMIC_LATEST_LINKS_PATH, DETAILS_PATH, load_json, save_json
 
 link_cache: dict = {}
@@ -26,7 +27,7 @@ async def create_link_cache(logger_: logging.Logger) -> None:
         try:
             comic_details = await comic.get_comic(action=Action.Today)
             comic_url = comic_details.image_url
-        except (ValueError, AttributeError, ComicNotFound) as e:
+        except (ValueError, AttributeError, ComicNotFound, ComicExtractionFailed) as e:
             logger_.error(f"An error occurred for comic {comic.name}: {e}")
             comic_url = ""
         link_cache.update({comic.name: comic_url})

@@ -6,9 +6,10 @@ from discord.app_commands import (
     MissingPermissions,
 )
 
+from bdbot.comics.comic_detail import ComicDetail
 from bdbot.discord_.discord_utils import logger
 from bdbot.discord_.response_sender import ResponseSender
-from bdbot.exceptions import ComicNotFound
+from bdbot.exceptions import ComicExtractionFailed, ComicNotFound
 
 
 async def on_error(inter: Interaction, error: AppCommandError):
@@ -26,6 +27,10 @@ async def on_error(inter: Interaction, error: AppCommandError):
         return await responder.send_message(
             error.message,
             ephemeral=True,
+        )
+    if isinstance(error, ComicExtractionFailed):
+        return await responder.send_message(
+            embed=ComicDetail.comic_extraction_failed(error.comic_name, error.message)
         )
     if isinstance(error, CommandNotFound):  # Command not found
         return await responder.send_message(
