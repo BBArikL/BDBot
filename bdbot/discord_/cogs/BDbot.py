@@ -143,12 +143,6 @@ class BDBot(commands.Cog):
             inter, "Want to help the bot? Go here: https://github.com/BBArikL/BDBot"
         )
 
-    @app_commands.command()
-    async def invite(self, inter: discord.Interaction):
-        """Get a link to invite the bot"""
-        inv = discord_utils.get_url()
-        await send_message(inter, f"Share the bot! {inv}")
-
     # Only mods can add comics
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)

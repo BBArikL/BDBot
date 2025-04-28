@@ -49,7 +49,7 @@ def save_backup(logger: logging.Logger):
         with backup:
             source.backup(backup)
     except sqlite3.Error as e:
-        print(f"Backup failed: {e}")
+        logger.error(f"Backup failed: {e}")
     finally:
         if source:
             source.close()

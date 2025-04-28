@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import functools
 import logging
-import os
 import random
 from datetime import datetime
 from typing import Any, Callable, Optional, Union
@@ -69,15 +67,7 @@ async def comic_send(
     comic_date: datetime | int | None = None,
     next_send: NextSend = NextSend.Normal,
 ):
-    """Post the strip (with the given parameters)
-
-    :param inter:
-    :param comic:
-    :param action:
-    :param comic_date:
-    :param next_send:
-    :return:
-    """
+    """Post the strip (with the given parameters)"""
     if next_send == NextSend.Normal:
         # Defers the return, so Discord can wait longer
         await inter.response.defer()
@@ -100,7 +90,7 @@ async def comic_send(
 async def parameters_interpreter(
     inter: discord.Interaction,
     comic: BaseComic,
-    action: Action = None,
+    action: Action | ExtendedAction = None,
     date: Weekday = None,
     hour: int = None,
     day: int = None,
@@ -159,9 +149,7 @@ async def parameters_interpreter(
 
             # Works by number of comic
             # await extract_number_comic(
-            return extract_number_comic(
-                inter, comic, action, comic.WORKING_TYPE, comic_number
-            )
+            return extract_number_comic(inter, comic, action, comic_number)
         case _:
             # await send_message(inter, "Command not understood!")
             return send_message, {"inter": inter, "message": "Command not understood!"}
@@ -171,33 +159,20 @@ def extract_number_comic(
     inter: discord.Interaction,
     comic: BaseComic,
     action: Action,
-    working_type: WorkingType,
     comic_number: int,
 ) -> (Callable, dict[str, Any]):
-    """Extract and send a comic based on the number
-
-    :param inter:
-    :param comic:
-    :param action:
-    :param working_type:
-    :param comic_number:
-    :return:
-    """
-    if comic_number is not None and comic_number >= comic.first_comic_date:
-        if working_type == WorkingType.Number:
-            comic.main_website = comic.main_website + str(comic_number) + "/"
-
-        return comic_send, {
+    """Extract and send a comic based on the number"""
+    if comic_number is None or comic_number < comic.first_comic_date:
+        return send_message, {
             "inter": inter,
-            "comic": comic,
-            "action": action,
-            "comic_date": comic_number,
+            "message": "There is no comics with such values!"
+            " Please input a comic number instead of a date!",
         }
-
-    return send_message, {
+    return comic_send, {
         "inter": inter,
-        "message": "There is no comics with such values!"
-        " Please input a comic number instead of a date!",
+        "comic": comic,
+        "action": action,
+        "comic_date": comic_number,
     }
 
 
@@ -208,15 +183,7 @@ def extract_date_comic(
     month: Month,
     year: int,
 ) -> (Callable, dict[str, Any]):
-    """Extract and send a comic by date
-
-    :param inter:
-    :param comic:
-    :param day:
-    :param month:
-    :param year:
-    :return:
-    """
+    """Extract and send a comic by date"""
     try:
         comic_date = datetime(day=day, month=month.value, year=year)
         first_date = comic.first_comic_date
@@ -249,13 +216,7 @@ async def add_all(
     date: Optional[Weekday] = None,
     hour: Optional[int] = None,
 ):
-    """Add all comics to a channel
-
-    :param inter:
-    :param date:
-    :param hour:
-    :return:
-    """
+    """Add all comics to a channel"""
     final_date, final_hour = parse_all(date, hour)
 
     return await modify_database(
@@ -270,15 +231,7 @@ async def new_change(
     date: Weekday = None,
     hour: int = None,
 ):
-    """Make a change in the database
-
-    :param inter:
-    :param comic:
-    :param param:
-    :param date:
-    :param hour:
-    :return:
-    """
+    """Make a change in the database"""
     if not inter.user.guild_permissions.manage_guild:
         return "You need `manage_guild` permission to do that!"
     final_date, final_hour = parse_all(date, hour)
@@ -300,17 +253,7 @@ async def modify_database(
     comic_number: int = None,
     comic_name: str = None,
 ) -> str:
-    """
-    Saves the new information in the database
-
-    :param inter:
-    :param action:
-    :param day:
-    :param hour:
-    :param comic_number:
-    :param comic_name:
-    :return:
-    """
+    """Saves the new information in the database"""
     hour = str(hour)
     if action in [Action.Add, ExtendedAction.Add_all, ExtendedAction.Add_random]:
         return await add_comic_in_guild(
@@ -328,12 +271,7 @@ async def modify_database(
 async def remove_channel_in_db(
     inter: discord.Interaction, action: Union[Action, ExtendedAction]
 ) -> str:
-    """
-
-    :param inter:
-    :param action:
-    :return:
-    """
+    """Removes the channel from the database"""
     guild_id = str(inter.guild.id)
     channel = None
     if action == ExtendedAction.Remove_channel:
@@ -367,12 +305,7 @@ async def remove_channel_in_db(
 async def remove_guild_in_db(
     inter: discord.Interaction, action: Union[Action, ExtendedAction]
 ) -> str:
-    """
-
-    :param inter:
-    :param action:
-    :return:
-    """
+    """Removes a guild from the database"""
     guild_id = 0
     if action == ExtendedAction.Remove_guild:
         guild_id = inter.guild.id
@@ -404,16 +337,7 @@ async def add_comic_in_guild(
     hour: str,
     comic_name: str,
 ) -> str:
-    """
-
-    :param inter:
-    :param action:
-    :param comic:
-    :param day:
-    :param hour:
-    :param comic_name:
-    :return:
-    """
+    """Add a comic for a guild"""
     guild_id = inter.guild.id
     channel_id = inter.channel.id
     subscription_type = SubscriptionType.Normal
@@ -486,15 +410,7 @@ async def remove_comic_in_guild(
     day: Weekday,
     hour: str,
 ) -> str:
-    """
-
-    :param inter:
-    :param action:
-    :param comic:
-    :param day:
-    :param hour:
-    :return:
-    """
+    """Remove comic from a guild"""
     guild_id = inter.guild.id
     channel_id = inter.channel.id
 
@@ -543,12 +459,7 @@ async def remove_comic_in_guild(
 
 
 async def set_role(inter: discord.Interaction, role: discord.Role) -> str:
-    """Set a role in a guild
-
-    :param inter:
-    :param role:
-    :return:
-    """
+    """Set a role in a guild"""
     server = (
         await ServerSubscription.filter(id=inter.guild.id)
         .prefetch_related("channels")
@@ -562,12 +473,7 @@ async def set_role(inter: discord.Interaction, role: discord.Role) -> str:
 
 
 async def get_mention(inter: discord.Interaction, bot: commands.Bot) -> str:
-    """
-
-    :param inter:
-    :param bot:
-    :return:
-    """
+    """Get the mention for the guild"""
     server = (
         await ServerSubscription.filter(id=inter.guild.id)
         .prefetch_related("channels")
@@ -582,11 +488,7 @@ async def get_mention(inter: discord.Interaction, bot: commands.Bot) -> str:
 
 
 async def remove_role(inter):
-    """
-
-    :param inter:
-    :return:
-    """
+    """Remove role for the guild"""
     server = (
         await ServerSubscription.filter(id=inter.guild.id)
         .prefetch_related("channels")
@@ -600,12 +502,7 @@ async def remove_role(inter):
 
 
 async def get_sub_status(inter, comic_id: int):
-    """Check if the comic is subscribed to this guild
-
-    :param inter:
-    :param comic_id:
-    :return:
-    """
+    """Check if the comic is subscribed to this guild"""
     query = ServerSubscription.filter(id=inter.guild.id)
     if not await query.exists():
         return False
@@ -614,17 +511,6 @@ async def get_sub_status(inter, comic_id: int):
         if await DiscordSubscription(comic_id=comic_id, channel=channel).exists():
             return True
     return False
-
-
-async def send_request_error(inter: discord.Interaction):
-    """If the request is not understood
-
-    :param inter:
-    :return:
-    """
-    await send_message(
-        inter, "Request not understood. Try '/help general' for usable commands."
-    )
 
 
 async def send_embed(
@@ -687,7 +573,7 @@ async def check_comics_and_post(
             if called_channel is None:
                 # Only updates the link cache if it is done during the hourly loop
                 link_cache[comic_name] = details.image_url
-        except (Exception, ComicNotFound) as e:
+        except (Exception, ComicNotFound, ComicExtractionFailed) as e:
             # Anything can happen (connection problem, etc... and the bot will crash if any error
             # is raised in the poster loop)
             logger.error(f"An error occurred while getting a comic: {e}")
@@ -760,8 +646,8 @@ async def load_channel_and_send(
     """Sends the loaded comic to the specified channel
 
 
-    :param bot:
-    :param subscription:
+    :param bot: The bot
+    :param subscription: The subscription
     :param embed: The embed with the comic
     :param is_latest: If the comic is the latest one
     :param available_channels: The dictionary of available channels
@@ -836,38 +722,8 @@ async def load_channel_and_send(
     return 0
 
 
-async def send_chan_embed(channel: discord.TextChannel, embed: Embed):
-    """Send an embed in a channel
-
-    :param channel: The channel object
-    :param embed: The embed to send
-    """
-
-
 def get_possible_hours():
     return [app_commands.Choice(name=str(h), value=h) for h in range(0, 24)]
-
-
-def get_url() -> str:
-    perms = discord.Permissions()
-    perms.update(
-        read_messages=True,
-        read_messages_history=True,
-        send_messages=True,
-        send_messages_in_threads=True,
-        embed_links=True,
-        attach_files=True,
-        mention_everyone=True,
-        add_reactions=True,
-        use_application_commands=True,
-        manage_messages=True,
-    )
-
-    return discord.utils.oauth_url(
-        os.getenv("CLIENT_ID"),
-        permissions=perms,
-        scopes=("bot", "applications.commands"),
-    )
 
 
 async def update_presence(bot: discord.Client):
@@ -879,23 +735,6 @@ async def update_presence(bot: discord.Client):
             f" {len(bot.guilds)} servers!",
         ),
     )
-
-
-async def run_blocking(
-    blocking_func: Callable, bot: discord.Client, *args, **kwargs
-) -> Optional[dict[str, Union[str, int, bool]]]:
-    """Run a blocking function as a non-blocking one
-
-    From https://stackoverflow.com/q/65881761
-
-    :param blocking_func:
-    :param bot:
-    :param args:
-    :param kwargs:
-    :return:
-    """
-    func = functools.partial(blocking_func, *args, **kwargs)
-    return await bot.loop.run_in_executor(None, func, ())
 
 
 async def send_message(
@@ -916,10 +755,10 @@ async def clean_database(
 ) -> int:
     """Clean the database from inactive servers
 
-    :param bot:
+    :param bot: The bot client
     :param strict: Strict clean (Bypass role requirement)
-    :param logger_:
-    :return:
+    :param logger_: A logger instance
+    :return: The number of removed servers
     """
     if logger_:
         logger_.info("Running database clean...")
@@ -960,14 +799,7 @@ async def send_mention(
     subscription: DiscordSubscription,
     post_time: datetime,
 ):
-    """Send the first mention to the channel ('Comics for <date>, <hour> UTC @<role>')
-
-    :param bot:
-    :param channel:
-    :param subscription:
-    :param post_time:
-    :return:
-    """
+    """Send the first mention to the channel ('Comics for <date>, <hour> UTC @<role>')"""
     channel_sub = await subscription.channel
     server: ServerSubscription = await channel_sub.server
     guild = bot.get_guild(server.id)
