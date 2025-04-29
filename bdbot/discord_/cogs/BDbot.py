@@ -283,7 +283,7 @@ class BDBot(commands.Cog):
 
         subscriptions: list[DiscordSubscription] = []
         for channel in server.channels:
-            subscriptions.extend(await DiscordSubscription(channel=channel).all())
+            subscriptions.extend(await DiscordSubscription().filter(channel=channel.id))
 
         if len(subscriptions) == 0:
             await send_message(
