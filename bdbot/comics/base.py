@@ -18,7 +18,7 @@ from bdbot.embed import DEFAULT_FIELDS_PER_EMBED, Embed
 from bdbot.exceptions import ComicExtractionFailed, ComicNotFound
 from bdbot.field import Field
 from bdbot.time import get_now
-from bdbot.utils import comic_details, get_headers
+from bdbot.utils import clean_url, comic_details, get_headers
 
 FIRST_DATE_FORMAT = "%Y-%m-%d"
 
@@ -284,8 +284,8 @@ class BaseDateComic(BaseComic):
             # Finds the final url (if necessary)
             url = self.extract_meta_content(soup, "url")
             if url:
-                detail.url = url
-            detail.image_url = image_url
+                detail.url = clean_url(url)
+            detail.image_url = clean_url(image_url)
             detail.date = comic_date
 
         if action == Action.Random:
@@ -380,9 +380,11 @@ class BaseRSSComic(BaseComic, ABC):
             img_index = 0
             if len(description_images) > 1:
                 # general check for a second image to embed
-                detail.sub_image_url = description_images[img_index]["source"]
+                detail.sub_image_url = clean_url(
+                    description_images[img_index]["source"]
+                )
                 img_index += 1
-            detail.image_url = description_images[img_index]["source"]
+            detail.image_url = clean_url(description_images[img_index]["source"])
         else:
             detail.image_url = self.fallback_image
         return detail
@@ -427,7 +429,9 @@ class BaseRSSComic(BaseComic, ABC):
                 if base_on_error:
                     # Return another class because it won't matter if it is for exporting
                     return Webtoons
-                raise ComicNotFound("Could not find comic type!")
+                raise ComicNotFound(
+                    f"Could not find comic type from main website {main_website}!"
+                )
 
 
 class BaseNumberComic(BaseComic):
@@ -458,7 +462,7 @@ class BaseNumberComic(BaseComic):
         soup = BeautifulSoup(content, self._BASE_PARSER)
         detail.url = self.extract_meta_content(soup, "url")
         detail.title = self.extract_meta_content(soup, "title")
-        detail.image_url = self.extract_meta_content(soup, "image")
+        detail.image_url = clean_url(self.extract_meta_content(soup, "image"))
         return detail
 
     async def get_comic(

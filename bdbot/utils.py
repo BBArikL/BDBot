@@ -1,5 +1,6 @@
 # Collection of static methods
 import random
+import re
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -38,6 +39,15 @@ USER_AGENTS = [
     "Mozilla/5.0 (Linux; Android 13; SAMSUNG SM-S901W) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/23.0"
     " Chrome/115.0.0.0 Mobile Safari/537.36",
 ]
+
+
+def clean_url(url: str) -> str:
+    """Gives back a clean link for a file on the internet, without the arguments after a '?'"""
+    file_forms = ["png", "jpg", "jpeg", "gif", "jfif", "bmp", "tif", "tiff", "eps"]
+    for file_form in file_forms:
+        url = re.sub(f"\\.{file_form}\\?.*$", f".{file_form}", url)
+    url = re.sub("\\?.*$", "", url)
+    return url.replace(" ", "%20")
 
 
 def get_headers() -> dict:
