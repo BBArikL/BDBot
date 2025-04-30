@@ -1,4 +1,3 @@
-import asyncio
 import enum
 import xml
 from abc import ABC, abstractmethod
@@ -19,7 +18,7 @@ from bdbot.embed import DEFAULT_FIELDS_PER_EMBED, Embed
 from bdbot.exceptions import ComicExtractionFailed, ComicNotFound
 from bdbot.field import Field
 from bdbot.time import get_now
-from bdbot.utils import comic_details
+from bdbot.utils import comic_details, get_headers
 
 FIRST_DATE_FORMAT = "%Y-%m-%d"
 
@@ -169,20 +168,9 @@ class BaseComic(ABC):
             return content_meta["content"]
         return None
 
-    @staticmethod
-    async def read_url_content(url: str) -> str:
+    async def read_url_content(self, url: str) -> str:
         content: str
-        headers = {
-            # If I feel bad, I would maybe change that to "bdbot"
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)"
-            " Chrome/135.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*",
-            "Accept-Language": "en-US,en;q=0.5",
-            "Accept-Encoding": "gzip, deflate",
-            "Cache-Control": "no-cache",
-        }
-        await asyncio.sleep(0.5)
-        async with aiohttp.ClientSession(headers=headers) as session:
+        async with aiohttp.ClientSession(headers=get_headers()) as session:
             async with session.get(url) as response:
                 content = await response.text()
         return content

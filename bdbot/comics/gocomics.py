@@ -3,8 +3,10 @@ import re
 from datetime import datetime, timedelta
 
 from bs4 import BeautifulSoup
+from requests_html import AsyncHTMLSession
 
 from bdbot.comics.base import BaseDateComic, WorkingType
+from bdbot.utils import get_headers
 
 
 class Gocomics(BaseDateComic):
@@ -17,7 +19,7 @@ class Gocomics(BaseDateComic):
 
     @property
     def first_comic_date(self) -> datetime:
-        if os.getenv("BYPASS_GOCOMICS_SUBSCRIPTION"):
+        if os.getenv("BYPASS_GOCOMICS_SUBSCRIPTION") == "True":
             return super().first_comic_date
         return datetime.today() - timedelta(days=14)
 
@@ -54,3 +56,13 @@ class Gocomics(BaseDateComic):
         if image is None:
             return None
         return image["src"]
+
+    async def read_url_content(self, url: str) -> str:
+        if not os.getenv("BYPASS_GOCOMICS_JS") == "True":
+            return await super().read_url_content(url)
+        session = AsyncHTMLSession()
+        # Ignore async warning below, see https://pypi.org/project/requests-htmlc/
+        response = await session.get(url, headers=get_headers())
+        await response.html.arender()
+        await session.close()
+        return response.html.html

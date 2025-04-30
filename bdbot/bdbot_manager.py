@@ -10,6 +10,7 @@ import shutil
 import sys
 from typing import Optional, Type, Union
 
+from dotenv import load_dotenv
 from InquirerPy import inquirer
 from InquirerPy.prompts import ListPrompt, SecretPrompt
 from tortoise import connections
@@ -85,6 +86,20 @@ ENV_VARS: dict[str, dict[str, Union[str, Union[SecretPrompt, ListPrompt]]]] = {
             choices=["True", "False"],
         ),
     },
+    "BYPASS_GOCOMICS_JS": {
+        "value": "",
+        INQUIRY: inquirer.select(
+            message="Do you want to bypass Gocomic's JS? (Please note that you will need to install Playwright):",
+            choices=["True", "False"],
+        ),
+    },
+    "BYPASS_GOCOMICS_SUBSCRIPTION": {
+        "value": "",
+        INQUIRY: inquirer.select(
+            message="Do you want to bypass Gocomic's ~14 day block?:",
+            choices=["True", "False"],
+        ),
+    },
 }
 LOCAL_SERVICE_PATH = "misc/runbdbot.service"
 SERVICE_PATH = "/etc/systemd/system/"
@@ -97,7 +112,7 @@ logger = logging.Logger("manager_logger", logging.INFO)
 def main():
     """Add, delete or modify comics in the comic details file"""
     os.chdir(os.path.dirname(__file__))  # Force the current working directory
-
+    load_dotenv()
     # Set the logging handler
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)

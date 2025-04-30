@@ -102,8 +102,6 @@ There are 2 ways to set up scheduled comics:
 
 ![comic subscription](https://github.com/BBArikL/BDBot/blob/assets/comic-demo-4.png)
 
-
-
 ## Current state of the project
 - Functionalities
   - `/<comic_name>` Use comic <comic_name>
@@ -119,7 +117,16 @@ There are 2 ways to set up scheduled comics:
   - None for the moment. Open an issue if you find any! :)
  
 - Anything else to know?
-  - Why can't I go farther than 14 comics on Gocomics? As of April 1st 2025, Gocomics implemented a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser. Self-host the bot and define `BYPASS_GOCOMICS_SUBSCRIPTION=1` in your environment to view older comics. Distributing the comics for free could cause some undesirable consequences in the future.
+  - How can I host the bot? The requirements are: Playwright (use 'BYPASS_GOCOMICS_JS=False' to disable that requirement), and python 3.10+.
+    1. Install [Playwright](https://playwright.dev/)
+    2. Install [pipx](https://pipx.pypa.io/latest/installation/)
+    3. Install the bot: `pipx install git+https://github.com/BBArikL/BDBot/`
+    4. Create a new bot here https://discord.com/developers/applications and save the credentials.
+    5. Run `bdbot_manager` and select the options : 'Manage Bot' > 'Setup Bot'
+    6. Go through the prompts.
+    7. Run the bot with `bdbot`. If you are on Linux and have selected the service installation, make sure the bot is installed with : `systemctl status runbdbot`.
+  - Why can't I go farther than 14 comics on Gocomics? As of April 1st 2025, Gocomics implemented a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser. Self-host the bot and define `BYPASS_GOCOMICS_SUBSCRIPTION=True` in your environment to view older comics. Distributing the comics for free could cause some undesirable consequences in the future. 
+    - Gocomics also added some JS injection to prevent scraping and it seems to be put at random. This means that each gocomics page need to be fully rendered to reliably scrape it. This puts more stress on the host and more memory is used (I am sensing some memory leak with `requests-htmlc`). If you want to disable this, set `BYPASS_GOCOMICS_JS` to false in your .env file. 
   - Why is there only 2 images for Webtoons? Webtoons only gives out two images link to the comic in their rss feed. Finding each image link is way more complicated than this and is not in place now.
   - I requested a comic but it isn't there, why? I personally choose the requests to keep a balance of quality and diversity of comics. I still aim for the bot to be mostly "family-friendly". For some websites requested that could fit but are not here:
     - ComicRocket: It doesn't work for me strangely. And it seems to be just a linker back to other sites.
