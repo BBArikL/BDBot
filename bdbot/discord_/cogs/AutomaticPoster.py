@@ -21,7 +21,7 @@ from bdbot.discord_.discord_utils import (
     clean_database,
     is_owner,
     logger,
-    send_message,
+    send_message, update_presence,
 )
 from bdbot.files import (
     COMIC_LATEST_LINKS_PATH,
@@ -89,6 +89,7 @@ class PosterHandler(commands.Cog):
         """Loop to post hourly comics"""
         try:
             await self.hourly()
+            await update_presence(self.bot)
         except Exception as e:
             logger.error(str(e))
 

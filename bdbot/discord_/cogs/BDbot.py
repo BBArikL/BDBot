@@ -206,33 +206,6 @@ class BDBot(commands.Cog):
         )
 
     @app_commands.command()
-    @app_commands.guilds(SERVER.id)
-    @app_commands.checks.check(is_owner)
-    async def nb_guild(self, inter: discord.Interaction):
-        """Gets the number of guilds that the bot is in (for analytics)"""
-
-        await send_message(
-            inter,
-            f"The bot is in {len(self.bot.guilds)} servers. Trying to update status on Top.gg.....",
-        )
-
-        if self.topggpy is None:
-            self.topggpy = topgg.DBLClient(self.bot, str(os.getenv("TOP_GG_TOKEN")))
-
-        try:
-            await self.topggpy.post_guild_count()
-            await send_message(
-                inter, f"Posted server count ({self.topggpy.guild_count})"
-            )
-        except Exception as e:
-            await send_message(
-                inter, "Failed to post server count\n{}: {}".format(type(e).__name__, e)
-            )
-
-        await send_message(inter, "Updating status...")
-        await discord_utils.update_presence(self.bot)
-
-    @app_commands.command()
     async def request(self, inter: discord.Interaction):
         """Request something from the developer!"""
         # Adds a request to the database
