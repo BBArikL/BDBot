@@ -37,13 +37,8 @@ async def create_link_cache(logger_: logging.Logger) -> None:
 
 
 def check_if_latest_link(comic_name: str, current_link: str) -> bool:
-    """
-
-    :param comic_name:
-    :param current_link:
-    :return:
-    """
-    return current_link != link_cache.get(comic_name, "")
+    """Returns if the provided link is the latest one"""
+    return current_link != link_cache[comic_name]
 
 
 def fill_cache(

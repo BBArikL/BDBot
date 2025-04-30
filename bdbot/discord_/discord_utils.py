@@ -559,7 +559,7 @@ async def check_comics_and_post(
     mentioned_channels = []
     nb_of_comics_posted = 0
     # Check if any guild want the comic
-    for comic_name, comic in all_comics().items():
+    for comic in all_comics().values():
         subs = list(filter(lambda s: s.comic_id == comic.id, subscriptions))
         if len(subs) == 0:
             continue
@@ -572,12 +572,12 @@ async def check_comics_and_post(
             is_latest = details.is_latest
             if called_channel is None:
                 # Only updates the link cache if it is done during the hourly loop
-                link_cache[comic_name] = details.image_url
+                link_cache[comic.name] = details.image_url
         except (Exception, ComicNotFound, ComicExtractionFailed) as e:
             # Anything can happen (connection problem, etc... and the bot will crash if any error
             # is raised in the poster loop)
             logger.error(f"An error occurred while getting a comic: {e}")
-            embed = ComicDetail.comic_not_found(comic_name)
+            embed = ComicDetail.comic_not_found(comic.name)
             is_latest = False
 
         for sub in subs:

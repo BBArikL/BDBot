@@ -97,7 +97,7 @@ async def run(bot: commands.Bot, logger: logging.Logger):
     logger.info("Loading latest comic links...")
     if not os.path.exists(COMIC_LATEST_LINKS_PATH):
         await create_link_cache(logger)
-    utils.link_cache = load_json(COMIC_LATEST_LINKS_PATH)
+    cache.link_cache = load_json(COMIC_LATEST_LINKS_PATH)
     cache.link_cache = fill_cache(utils.comic_details, cache.link_cache)
     logger.info("Loaded comic links!")
 
