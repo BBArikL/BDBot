@@ -117,7 +117,7 @@ There are 2 ways to set up scheduled comics:
   - None for the moment. Open an issue if you find any! :)
  
 - Anything else to know?
-  - How can I host the bot? The requirements are: Playwright (use 'BYPASS_GOCOMICS_JS=False' to disable that requirement), and python 3.10+.
+  - How can I host the bot? The requirements are: Playwright (use 'BYPASS_GOCOMICS_JS=False' to disable that requirement), and python 3.11+.
     1. Install [Playwright](https://playwright.dev/)
     2. Install [pipx](https://pipx.pypa.io/latest/installation/)
     3. Install the bot: `pipx install git+https://github.com/BBArikL/BDBot/`
