@@ -11,7 +11,7 @@ dependencies = [
     "requests>=2.32.3",
     "requests-htmlc>=0.0.8",
     "rss-parser>=2.1.0",
-    "beautifulsoup4>=4.13.3",
+    "beautifulsoup4>=4.12.3",
     "python-dotenv>=1.0.1",
     "randomtimestamp @ git+https://github.com/ByteBaker/randomtimestamp.git",
     "topggpy>=1.4.0",
