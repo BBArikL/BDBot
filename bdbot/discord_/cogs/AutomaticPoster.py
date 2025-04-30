@@ -8,6 +8,7 @@ from tortoise.expressions import Q
 
 from bdbot.cache import link_cache
 from bdbot.db import (
+    ChannelSubscription,
     DiscordSubscription,
     ServerSubscription,
     restore_backup,
@@ -129,7 +130,8 @@ class PosterHandler(commands.Cog):
         :param date: The date to simulate
         :param hour: The hour to simulate
         """
-        if await ServerSubscription.filter(id=inter.guild.id).get_or_none() is None:
+        server = await ServerSubscription.filter(id=inter.guild.id).get_or_none()
+        if server is None:
             # Warns that no comic are available
             await send_message(inter, "This server is not subscribed to any comic!")
         # Gets date and hour of force post
@@ -146,14 +148,22 @@ class PosterHandler(commands.Cog):
         )
         post_time = get_last_corresponding_date(final_date, final_hour)
         # Gets the comic info for the guild
+        channels = await ChannelSubscription.filter(server=server.id)
+        queries = []
+        for channel in channels:
+            queries.append(Q(channel=channel.id))
         subscriptions = await DiscordSubscription.filter(
-            Q(weekday=get_weekday(), hour=hour)
-            | Q(weekday=Weekday.Daily, hour=hour)
-            | Q(weekday=Weekday.Latest)
-        ).all()
+            (
+                Q(weekday=final_date, hour=final_hour)
+                | Q(weekday=Weekday.Daily, hour=final_hour)
+                | Q(weekday=Weekday.Latest)
+            )
+            & Q(*(query for query in queries), join_type="OR")
+        )
         # If there is no comic to send
         if len(subscriptions) == 0:
             await send_message(inter, "No comics to send!", next_send=NextSend.Followup)
+            return
         await check_comics_and_post(
             self.bot, subscriptions, called_channel=inter.channel, post_time=post_time
         )
