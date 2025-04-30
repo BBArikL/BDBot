@@ -5,7 +5,6 @@ from datetime import datetime, timezone
 from typing import Optional, Union
 
 import discord
-import topgg
 from discord import app_commands
 from discord.app_commands import AppCommand
 from discord.ext import commands
@@ -264,6 +263,7 @@ class BDBot(commands.Cog):
                 "This server is not subscribed to any comic!",
                 next_send=NextSend.Deferred,
             )
+            return
         nb_fields = 0
         embeds = [Embed(title="This server is subscribed to:")]
         for sub in subscriptions:
