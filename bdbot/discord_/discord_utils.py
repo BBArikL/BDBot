@@ -575,7 +575,9 @@ async def check_comics_and_post(
         embed: Embed | None
         is_latest: bool
         try:
-            details = await comic.get_comic(Action.Today, verify_latest=True)
+            details = await comic.get_comic(
+                Action.Today, verify_latest=True, link_cache=bot.link_cache
+            )
             embed = details.to_embed()
             is_latest = details.is_latest
             if called_channel is None:
@@ -604,13 +606,14 @@ async def check_comics_and_post(
     random_subs = list(
         filter(lambda s: s.subscription_type == SubscriptionType.Random, subscriptions)
     )
+    # Random comics
     for sub in random_subs:
         # Get the details of the comic
         embed: Embed | None
         is_latest: bool
         comic = await random.choice(list(bot.comic_details.values()))
         try:
-            embed = comic.get_comic(Action.Today, link_cache=bot.link_cache).to_embed()
+            embed = comic.get_comic(Action.Today).to_embed()
         except Exception as e:
             # Anything can happen (connection problem, etc... and the bot will crash if any error
             # is raised in the poster loop)
