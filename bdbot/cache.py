@@ -9,8 +9,6 @@ from bdbot.comics import initialize_comics
 from bdbot.exceptions import ComicExtractionFailed, ComicNotFound
 from bdbot.files import COMIC_LATEST_LINKS_PATH, DETAILS_PATH, load_json, save_json
 
-link_cache: dict = {}
-
 
 async def create_link_cache(logger_: logging.Logger) -> None:
     """Create a cache of links containing the latest comics links
@@ -19,6 +17,7 @@ async def create_link_cache(logger_: logging.Logger) -> None:
     """
     from bdbot.comics.base import BaseComic
 
+    link_cache = {}
     logger_.debug("Running link cache...")
     comics: dict[str, BaseComic] = initialize_comics(load_json(DETAILS_PATH))
     for comic in comics.values():
@@ -36,8 +35,12 @@ async def create_link_cache(logger_: logging.Logger) -> None:
     save_json(link_cache, COMIC_LATEST_LINKS_PATH)
 
 
-def check_if_latest_link(comic_name: str, current_link: str) -> bool:
+def check_if_latest_link(
+    comic_name: str, current_link: str, link_cache: dict[str, str]
+) -> bool:
     """Returns if the provided link is the latest one"""
+    a = link_cache[comic_name]
+    print(f"Cached link is {a} while current link is {current_link}")
     return current_link != link_cache[comic_name]
 
 

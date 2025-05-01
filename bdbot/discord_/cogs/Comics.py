@@ -9,16 +9,16 @@ from discord.ext import commands
 from bdbot.actions import Action, ExtendedAction
 from bdbot.comics.base import BaseComic, WorkingType
 from bdbot.comics.custom import GarfieldMinusGarfield
+from bdbot.discord_.client import BDBotClient
 from bdbot.discord_.discord_utils import (
     NextSend,
     get_possible_hours,
     parameters_interpreter,
 )
 from bdbot.time import Month, Weekday
-from bdbot.utils import all_comics
 
 
-def define_comic_callback(comic: BaseComic):
+def define_comic_callback(bot: BDBotClient, comic: BaseComic):
     async def date_comic_callback(
         inter: discord.Interaction,
         action: Action,
@@ -30,6 +30,7 @@ def define_comic_callback(comic: BaseComic):
     ):
         # Interprets the parameters given by the user
         func, params = await parameters_interpreter(
+            bot,
             inter,
             comic,
             action=action,
@@ -50,6 +51,7 @@ def define_comic_callback(comic: BaseComic):
     ):
         # Interprets the parameters given by the user
         func, params = await parameters_interpreter(
+            bot,
             inter,
             comic,
             action=action,
@@ -71,19 +73,19 @@ def define_comic_callback(comic: BaseComic):
 class Comic(commands.Cog):
     """Class responsible for sending comics"""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: BDBotClient):
         """Constructor of the cog
 
         :param bot: The discord Bot
         """
         self.bot = bot
-        for comic in all_comics().values():
+        for comic in self.bot.comic_details.values():
             normalized_name = comic.name.lower().replace(" ", "_")
             normalized_name = re.sub("([^\\w\\-_]|\\.)", "", normalized_name)
             comic_command = app_commands.Command(
                 name=normalized_name,
                 description=comic.name,
-                callback=define_comic_callback(comic),
+                callback=define_comic_callback(self.bot, comic),
             )
             # No built-in functions for adding autocomplete choices when creating callbacks in a factory way
             comic_command._params.get("hour").choices = (  # noqa: See above
@@ -93,7 +95,7 @@ class Comic(commands.Cog):
             self.bot.tree.add_command(comic_command)
 
     async def cog_unload(self) -> None:
-        for comic in all_comics().values():
+        for comic in self.bot.comic_details.values():
             comic_name: str = comic.name
             normalized_name = comic_name.lower().replace(" ", "_")
             normalized_name = re.sub("[^\\w\\-_]", "", normalized_name)
@@ -114,12 +116,13 @@ class Comic(commands.Cog):
         comic_number: int = None,
     ):
         """Random comic"""
-        comic = random.choice(list(all_comics().values()))
+        comic = random.choice(list(self.bot.comic_details.values()))
         if action == Action.Add:
             action = ExtendedAction.Add_random
         elif action == Action.Remove:
             action = ExtendedAction.Remove_random
         func, params = await parameters_interpreter(
+            self.bot,
             inter,
             comic,
             action=action,
@@ -148,11 +151,12 @@ class Comic(commands.Cog):
     ):
         """All comics. Mods only"""
         first = True
-        for comic in all_comics().values():
+        for comic in self.bot.comic_details.values():
             # Interprets the parameters given by the user
             func: Callable
             params: dict[str, Any]
             func, params = await parameters_interpreter(
+                self.bot,
                 inter,
                 comic,
                 action=action,
@@ -178,7 +182,7 @@ class Comic(commands.Cog):
     # --- END of cog ----#
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: BDBotClient):
     """Initialize the cog
 
     :param bot: The discord bot

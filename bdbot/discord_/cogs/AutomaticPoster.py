@@ -6,7 +6,6 @@ from discord import app_commands
 from discord.ext import commands, tasks
 from tortoise.expressions import Q
 
-from bdbot.cache import link_cache
 from bdbot.db import (
     ChannelSubscription,
     DiscordSubscription,
@@ -14,6 +13,7 @@ from bdbot.db import (
     restore_backup,
     save_backup,
 )
+from bdbot.discord_.client import BDBotClient
 from bdbot.discord_.discord_utils import (
     SERVER,
     NextSend,
@@ -21,7 +21,8 @@ from bdbot.discord_.discord_utils import (
     clean_database,
     is_owner,
     logger,
-    send_message, update_presence,
+    send_message,
+    update_presence,
 )
 from bdbot.files import (
     COMIC_LATEST_LINKS_PATH,
@@ -41,13 +42,13 @@ class PosterHandler(commands.Cog):
     Manages automatic posting of hourly comic strips
     """
 
-    def __init__(self, bot: discord.Client):
+    def __init__(self, bot: BDBotClient):
         """
         Construct the cog.
 
         :param bot: The discord bot
         """
-        self.bot: discord.Client = bot
+        self.bot: BDBotClient = bot
         self.do_cleanup: bool = True
 
     # @app_commands.command(hidden=True, guilds=SERVER)
@@ -116,7 +117,7 @@ class PosterHandler(commands.Cog):
         )
         logger.info("Sending comics....")
         await check_comics_and_post(self.bot, subscriptions, post_time=None)
-        save_json(link_cache, COMIC_LATEST_LINKS_PATH)  # Saves the link cache
+        save_json(self.bot.link_cache, COMIC_LATEST_LINKS_PATH)  # Saves the link cache
         logger.info("Finished automatic poster.")
 
     @app_commands.command()
@@ -212,7 +213,7 @@ class PosterHandler(commands.Cog):
         await send_message(inter, "Backup done!")
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: BDBotClient):
     """Initialize the cog
 
     :param bot: The discord Bot

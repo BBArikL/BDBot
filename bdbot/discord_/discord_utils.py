@@ -14,18 +14,18 @@ from discord import app_commands
 from discord.ext import commands
 
 from bdbot.actions import Action, ExtendedAction
-from bdbot.cache import link_cache
 from bdbot.comics.base import BaseComic, WorkingType
 from bdbot.comics.comic_detail import ComicDetail
 from bdbot.comics.custom import GarfieldMinusGarfield
 from bdbot.db import ChannelSubscription, DiscordSubscription, ServerSubscription
+from bdbot.discord_.client import BDBotClient
 from bdbot.discord_.multi_page_view import MultiPageView
 from bdbot.discord_.response_sender import NextSend, ResponseSender
 from bdbot.embed import Embed
 from bdbot.exceptions import ComicExtractionFailed, ComicNotFound
 from bdbot.subscription_type import SubscriptionType
 from bdbot.time import Month, Weekday, get_now
-from bdbot.utils import all_comics, parse_all
+from bdbot.utils import parse_all
 
 SERVER: Optional[discord.Object] = None
 OWNER: Optional[int] = None
@@ -90,6 +90,7 @@ async def comic_send(
 
 
 async def parameters_interpreter(
+    bot: BDBotClient,
     inter: discord.Interaction,
     comic: BaseComic,
     action: Action | ExtendedAction = None,
@@ -115,6 +116,7 @@ async def parameters_interpreter(
 
         Remove -> remove the comic to the daily posting list
 
+    :param bot: The bot
     :param inter: The interaction
     :param comic: The comic
     :param action: The action the bot need to take
@@ -137,7 +139,7 @@ async def parameters_interpreter(
             return comic_send, {"inter": inter, "comic": comic, "action": action}
         case Action.Add | Action.Remove:
             # Add or remove a comic to the daily list for a guild
-            status = await new_change(inter, comic, action, date=date, hour=hour)
+            status = await new_change(bot, inter, comic, action, date=date, hour=hour)
             # await send_message(inter, status)
             return send_message, {"inter": inter, "message": status}
         case Action.Specific_date:
@@ -214,6 +216,7 @@ def extract_date_comic(
 
 
 async def add_all(
+    bot: BDBotClient,
     inter: discord.Interaction,
     date: Optional[Weekday] = None,
     hour: Optional[int] = None,
@@ -222,11 +225,12 @@ async def add_all(
     final_date, final_hour = parse_all(date, hour)
 
     return await modify_database(
-        inter, ExtendedAction.Add_all, day=final_date, hour=final_hour
+        bot, inter, ExtendedAction.Add_all, day=final_date, hour=final_hour
     )
 
 
 async def new_change(
+    bot: BDBotClient,
     inter: discord.Interaction,
     comic: BaseComic,
     param: Action,
@@ -238,6 +242,7 @@ async def new_change(
         return "You need `manage_guild` permission to do that!"
     final_date, final_hour = parse_all(date, hour)
     return await modify_database(
+        bot,
         inter,
         param,
         day=final_date,
@@ -248,6 +253,7 @@ async def new_change(
 
 
 async def modify_database(
+    bot: BDBotClient,
     inter: Union[discord.Interaction, discord.abc.GuildChannel, discord.Guild],
     action: Union[Action, ExtendedAction],
     day: Weekday = Weekday.Daily,
@@ -259,7 +265,7 @@ async def modify_database(
     hour = str(hour)
     if action in [Action.Add, ExtendedAction.Add_all, ExtendedAction.Add_random]:
         return await add_comic_in_guild(
-            inter, action, comic_number, day, hour, comic_name
+            bot, inter, action, comic_number, day, hour, comic_name
         )
     if action in [Action.Remove, ExtendedAction.Remove_random]:
         return await remove_comic_in_guild(inter, action, comic_number, day, hour)
@@ -332,6 +338,7 @@ async def remove_guild_in_db(
 
 
 async def add_comic_in_guild(
+    bot: BDBotClient,
     inter: discord.Interaction,
     action: Union[Action, ExtendedAction],
     comic: int,
@@ -348,9 +355,8 @@ async def add_comic_in_guild(
         subscription_type = SubscriptionType.Random
         comic = -1
 
-    comics: dict[str, BaseComic] = all_comics()
     comics: list[int] = (
-        [comic.id for comic in comics.values()]
+        [comic.id for comic in bot.comic_details.values()]
         if action == ExtendedAction.Add_all
         else [comic]
     )
@@ -540,7 +546,7 @@ async def send_embed(
 
 
 async def check_comics_and_post(
-    bot: discord.Client,
+    bot: BDBotClient,
     subscriptions: list[DiscordSubscription],
     called_channel: Optional[discord.TextChannel] = None,
     post_time: datetime = None,
@@ -561,7 +567,7 @@ async def check_comics_and_post(
     mentioned_channels = []
     nb_of_comics_posted = 0
     # Check if any guild want the comic
-    for comic in all_comics().values():
+    for comic in bot.comic_details.values():
         subs = list(filter(lambda s: s.comic_id == comic.id, subscriptions))
         if len(subs) == 0:
             continue
@@ -574,7 +580,7 @@ async def check_comics_and_post(
             is_latest = details.is_latest
             if called_channel is None:
                 # Only updates the link cache if it is done during the hourly loop
-                link_cache[comic.name] = details.image_url
+                bot.link_cache[comic.name] = details.image_url
         except (Exception, ComicNotFound, ComicExtractionFailed) as e:
             # Anything can happen (connection problem, etc... and the bot will crash if any error
             # is raised in the poster loop)
@@ -602,9 +608,9 @@ async def check_comics_and_post(
         # Get the details of the comic
         embed: Embed | None
         is_latest: bool
-        comic = await random.choice(list(all_comics().values()))
+        comic = await random.choice(list(bot.comic_details.values()))
         try:
-            embed = comic.get_comic(Action.Today).to_embed()
+            embed = comic.get_comic(Action.Today, link_cache=bot.link_cache).to_embed()
         except Exception as e:
             # Anything can happen (connection problem, etc... and the bot will crash if any error
             # is raised in the poster loop)

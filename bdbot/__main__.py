@@ -7,11 +7,11 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from tortoise.connection import connections
 
-from bdbot import cache, utils
 from bdbot.cache import create_link_cache, fill_cache
 from bdbot.comics import initialize_comics
 from bdbot.db import dbinit
 from bdbot.discord_ import discord_utils
+from bdbot.discord_.client import BDBotClient
 from bdbot.files import (
     COMIC_LATEST_LINKS_PATH,
     DETAILS_PATH,
@@ -33,11 +33,10 @@ def main():
     load_dotenv(ENV_FILE)
 
     intents = discord.Intents.default()
-    bot: discord.ext.commands.Bot = commands.Bot(
+    bot: discord.ext.commands.Bot = BDBotClient(
         intents=intents,
         command_prefix="bd!",
         help_command=None,
-        description="BDBot now supports slash commands! Re-invite the bot with /inv!",
     )
     handler = logging.FileHandler(
         filename=os.path.join(
@@ -87,18 +86,19 @@ async def run(bot: commands.Bot, logger: logging.Logger):
         discord_utils.SERVER = None
 
     logger.info("Loading comic details...")
-    utils.comic_details = initialize_comics(load_json(DETAILS_PATH))
+    bot.comic_details = initialize_comics(load_json(DETAILS_PATH))
     logger.info("Loaded comic details!")
 
     logger.info("Loading random footers...")
-    utils.random_footers = get_footers()
+    bot.random_footers = get_footers()
     logger.info("Loaded random footers!")
 
     logger.info("Loading latest comic links...")
     if not os.path.exists(COMIC_LATEST_LINKS_PATH):
         await create_link_cache(logger)
-    cache.link_cache = load_json(COMIC_LATEST_LINKS_PATH)
-    cache.link_cache = fill_cache(utils.comic_details, cache.link_cache)
+
+    bot.link_cache = load_json(COMIC_LATEST_LINKS_PATH)
+    bot.link_cache = fill_cache(bot.comic_details, bot.link_cache)
     logger.info("Loaded comic links!")
 
     logger.info("Initializing database...")

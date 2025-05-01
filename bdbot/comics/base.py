@@ -18,7 +18,7 @@ from bdbot.embed import DEFAULT_FIELDS_PER_EMBED, Embed
 from bdbot.exceptions import ComicExtractionFailed, ComicNotFound
 from bdbot.field import Field
 from bdbot.time import get_now
-from bdbot.utils import clean_url, comic_details, get_headers
+from bdbot.utils import clean_url, get_headers
 
 FIRST_DATE_FORMAT = "%Y-%m-%d"
 
@@ -79,13 +79,17 @@ class BaseComic(ABC):
         pass
 
     async def get_comic(
-        self, action: Action, verify_latest=False, comic_date: any = None
+        self,
+        action: Action,
+        verify_latest=False,
+        comic_date: any = None,
+        link_cache: dict[str, str] = None,
     ) -> ComicDetail:
         return ComicDetail.from_comic(self)
 
     @classmethod
     def get_website_help_embed(
-        cls, fields_per_embed: int = DEFAULT_FIELDS_PER_EMBED
+        cls, comic_details, fields_per_embed: int = DEFAULT_FIELDS_PER_EMBED
     ) -> list[Embed]:
         """Create embeds with all the specific comics from a website
 
@@ -210,7 +214,7 @@ class BaseDateComic(BaseComic):
 
     @property
     def first_comic_date(self) -> datetime:
-        return self.first_comic_date
+        return self.first_date
 
     @property
     def first_date_format(self) -> str:
@@ -242,7 +246,11 @@ class BaseDateComic(BaseComic):
         pass
 
     async def get_comic(
-        self, action: Action, verify_latest=False, comic_date: datetime | None = None
+        self,
+        action: Action,
+        verify_latest=False,
+        comic_date: datetime | None = None,
+        link_cache: dict[str, str] = None,
     ) -> ComicDetail:
         from bdbot.cache import check_if_latest_link
 
@@ -292,7 +300,9 @@ class BaseDateComic(BaseComic):
             detail.date = self.extract_date_from_url(detail.url)
 
         if verify_latest:
-            detail.is_latest = check_if_latest_link(detail.name, detail.image_url)
+            detail.is_latest = check_if_latest_link(
+                detail.name, detail.image_url, link_cache
+            )
         return detail
 
     def extract_date_from_url(self, url: str) -> datetime:
@@ -390,7 +400,11 @@ class BaseRSSComic(BaseComic, ABC):
         return detail
 
     async def get_comic(
-        self, action: Action, verify_latest=False, comic_date: int | None = None
+        self,
+        action: Action,
+        verify_latest=False,
+        comic_date: int | None = None,
+        link_cache: dict[str, str] = None,
     ) -> ComicDetail:
         from bdbot.cache import check_if_latest_link
 
@@ -411,7 +425,9 @@ class BaseRSSComic(BaseComic, ABC):
         detail = self.extract_content(content, comic_nb, detail)
 
         if verify_latest:
-            detail.is_latest = check_if_latest_link(detail.name, detail.image_url)
+            detail.is_latest = check_if_latest_link(
+                detail.name, detail.image_url, link_cache
+            )
         return detail
 
     @classmethod
@@ -436,6 +452,10 @@ class BaseRSSComic(BaseComic, ABC):
 
 class BaseNumberComic(BaseComic):
     WORKING_TYPE = WorkingType.Number
+
+    @property
+    def website_url(self):
+        return self.WEBSITE_URL
 
     @property
     def first_comic_date(self) -> int:
@@ -466,7 +486,11 @@ class BaseNumberComic(BaseComic):
         return detail
 
     async def get_comic(
-        self, action: Action, verify_latest=False, comic_date: int | None = None
+        self,
+        action: Action,
+        verify_latest=False,
+        comic_date: int | None = None,
+        link_cache: dict[str, str] = None,
     ) -> ComicDetail:
         from bdbot.cache import check_if_latest_link
 
@@ -475,7 +499,9 @@ class BaseNumberComic(BaseComic):
         html = await self.read_url_content(detail.url)
         detail = self.extract_content(html, 0, detail)
         if verify_latest:
-            detail.is_latest = check_if_latest_link(detail.name, detail.image_url)
+            detail.is_latest = check_if_latest_link(
+                detail.name, detail.image_url, link_cache
+            )
         return detail
 
     @classmethod

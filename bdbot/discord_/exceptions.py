@@ -53,7 +53,7 @@ async def on_error(inter: Interaction, error: AppCommandError):
             ephemeral=True,
         )
     # Not supported errors
-    await responder.send_message(
+    return await responder.send_message(
         f"Error not supported. Visit https://github.com/BBArikL/BDBot to report "
         f"the issue. The error is: {error.__class__.__name__}: {error.__str__()[:500]}",
         ephemeral=True,

@@ -31,10 +31,6 @@ ENV_FILE = os.path.abspath(os.path.join(BASE_DATA_PATH, "..", ".env"))
 
 
 def get_footers() -> list[str]:
-    """
-
-    :return:
-    """
     with open(FOOTERS_FILE_PATH, "rt") as f:
         lines = f.readlines()
     return lines

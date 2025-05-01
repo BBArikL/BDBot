@@ -15,6 +15,7 @@ from bdbot.comics import initialize_comics
 from bdbot.db import DiscordSubscription, ServerSubscription
 from bdbot.discord_ import discord_utils
 from bdbot.discord_.bot_request import BotRequest
+from bdbot.discord_.client import BDBotClient
 from bdbot.discord_.cogs.AutomaticPoster import PosterHandler
 from bdbot.discord_.cogs.Comics import Comic
 from bdbot.discord_.discord_utils import SERVER, NextSend, is_owner, send_message
@@ -23,17 +24,16 @@ from bdbot.embed import Embed
 from bdbot.field import Field
 from bdbot.files import DETAILS_PATH, REQUEST_FILE_PATH, load_json
 from bdbot.time import Weekday, get_now, get_time_between
-from bdbot.utils import all_comics
 
 
 class BDBot(commands.Cog):
     """Class responsible for main functions of the bot"""
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: BDBotClient):
         """Constructor of the cog
 
         Initialize all the properties of the cog"""
-        self.bot: commands.Bot = bot
+        self.bot: BDBotClient = bot
         self.topggpy = None
         self.start_time: datetime = get_now()
         self.bot.tree.error(on_error)
@@ -78,13 +78,15 @@ class BDBot(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
         """When the bot is removed from a server"""
-        await discord_utils.modify_database(guild, ExtendedAction.Auto_remove_guild)
+        await discord_utils.modify_database(
+            self.bot, guild, ExtendedAction.Auto_remove_guild
+        )
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, deleted_channel: discord.abc.GuildChannel):
         """When a guild channel is deleted"""
         await discord_utils.modify_database(
-            deleted_channel, ExtendedAction.Auto_remove_channel
+            self.bot, deleted_channel, ExtendedAction.Auto_remove_channel
         )
 
     @commands.Cog.listener()
@@ -93,7 +95,7 @@ class BDBot(commands.Cog):
     ):
         """When a private channel is deleted"""
         await discord_utils.modify_database(
-            deleted_channel, ExtendedAction.Auto_remove_channel
+            self.bot, deleted_channel, ExtendedAction.Auto_remove_channel
         )
 
     @commands.Cog.listener()
@@ -149,7 +151,7 @@ class BDBot(commands.Cog):
         self, inter: discord.Interaction, date: Weekday = None, hour: int = None
     ):
         """Add all comics to a specific channel. Preferred way to add all comics. Mods only"""
-        status = await discord_utils.add_all(inter, date, hour)
+        status = await discord_utils.add_all(self.bot, inter, date, hour)
         await send_message(inter, status)
 
     # Only mods can delete the server from the database
@@ -157,7 +159,9 @@ class BDBot(commands.Cog):
     @app_commands.checks.has_permissions(manage_guild=True)
     async def remove_all(self, inter: discord.Interaction):
         """Remove the guild from the database. Preferred way to remove all comics.Mods only"""
-        status = await discord_utils.modify_database(inter, ExtendedAction.Remove_guild)
+        status = await discord_utils.modify_database(
+            self.bot, inter, ExtendedAction.Remove_guild
+        )
         await send_message(inter, status)
 
     # Only mods can delete the channel from the database
@@ -166,19 +170,19 @@ class BDBot(commands.Cog):
     async def remove_channel(self, inter: discord.Interaction):
         """Remove the channel from the database.Mods only"""
         status = await discord_utils.modify_database(
-            inter, ExtendedAction.Remove_channel
+            self.bot, inter, ExtendedAction.Remove_channel
         )
         await send_message(inter, status)
 
     # Only mods can add a role
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
-    async def set_role(self, inter: discord.Interaction, role: discord.Role):
+    async def set_role(self, inter: discord.Interaction, role: discord.Role) -> None:
         """Add a role to be notified. Mods only"""
         if discord.Guild.get_role(inter.guild, role.id) is not None:
             status = await discord_utils.set_role(inter, role)
             return await send_message(inter, status)
-        await send_message(inter, "The role is invalid or not provided!")
+        return await send_message(inter, "The role is invalid or not provided!")
 
     # Only mods can delete the role
     @app_commands.command()
@@ -268,7 +272,7 @@ class BDBot(commands.Cog):
         embeds = [Embed(title="This server is subscribed to:")]
         for sub in subscriptions:
             matching_comic = list(
-                filter(lambda c: c.id == sub.comic_id, all_comics().values())
+                filter(lambda c: c.id == sub.comic_id, self.bot.comic_details.values())
             )
             if len(matching_comic) == 0:
                 # Could not find matching comic, continuing
@@ -392,5 +396,5 @@ class BDBot(commands.Cog):
     # ---- End of BDBot ----#
 
 
-async def setup(bot: discord.ext.commands.Bot):  # Initialize the cog
+async def setup(bot: BDBotClient):  # Initialize the cog
     await bot.add_cog(BDBot(bot))

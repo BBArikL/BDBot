@@ -1,15 +1,10 @@
 # Collection of static methods
 import random
 import re
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from bdbot.comics import BaseComic
 from bdbot.files import get_footers
 from bdbot.time import Weekday
 
-comic_details: dict[str, "BaseComic"] = {}
-random_footers: list[str] = []
 headers = {
     "User-Agent": "",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*",
@@ -53,10 +48,6 @@ def clean_url(url: str) -> str:
 def get_headers() -> dict:
     headers["User-Agent"] = random.choice(USER_AGENTS)
     return headers
-
-
-def all_comics() -> dict[str, "BaseComic"]:
-    return comic_details
 
 
 def get_random_footer() -> str:
