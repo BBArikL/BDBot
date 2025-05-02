@@ -28,15 +28,11 @@
       },
       {
         "name": "Git",
-        "value": "Gives the link of the git page.\nCommand:\n`/git`"
-      },
-      {
-        "name": "Invite",
-        "value": "Gives a link to add the bot to your servers!\nCommand:\n`/invite`"
+        "value": "Want to help the bot? Go here: https://github.com/BBArikL/BDBot"
       },
       {
         "name": "Vote",
-        "value": "Vote for the bot on Top.gg!\nCommand:\n`/vote`"
+        "value": "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : https://discordbotlist.com/bots/bdbot"
       }
     ]
   },
@@ -60,7 +56,7 @@
     "description":"Find out what new features have been implemented since the last update!",
     "fields": [
       {"name":"Comics", "value":"7 new comics have been added! Some comics have has been removed because they are finished or are not posting anymore, Garfield minus Garfield and Webtoons now work."},
-      {"name":"Updoming comics", "value":"These comics are coming very soon: Nyazsche, Saturday Morning Breakfast Cereal and The Far Side"},
+      {"name":"Upcoming comics", "value":"These comics are coming very soon: Nyazsche, Saturday Morning Breakfast Cereal and The Far Side"},
       {"name":"Changes in /random add <schedule>", "value":"Now, adding a random to a schedule will not add a fixed comic to be set to the schedule but the comic will be different each time on that schedule!"},
       {"name":"Optimizations", "value":"Under the hood, optimizations have been made to the bot to make it more responsive and support the growth! I am also looking into porting the bot to other platforms like Matrix and Revolt."
       }
@@ -72,7 +68,7 @@
     "fields": [
       {"name":"What is this bot?", "value":"This bot is a helper to keep up with your favorite comics! It search each hour more than 40+ pages to fetch the most up to date comics for your eyes only!"},
       {"name":"Why can I only go up to 14 comics in the past for Gocomics comics?","value":"As of April 1st 2025, Gocomics implemented a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser."},
-      {"name":"How can I support the project?", "value":"You can vote for the bot on top.gg (`/vote`) or star the project on GitHub (`/git`). If you want to support one of the comics that are presented through this bot, go on  their page to see how to support them directly!"},
+      {"name":"How can I support the project?", "value":"You can vote for the bot on top.gg or star the project on GitHub. If you want to support one of the comics that are presented through this bot, go on  their page to see how to support them directly!"},
       {"name":"How can I request comics?", "value":"You can use `/request` to request comics or features directly to the developer."},
       {"name":"How can I receive scheduled comics?","value":"You can use `/help schedule` to get help on how to schedule comics."},
       {

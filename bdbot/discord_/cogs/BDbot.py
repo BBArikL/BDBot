@@ -137,13 +137,6 @@ class BDBot(commands.Cog):
                 " receive comics automatically!"
             )
 
-    @app_commands.command()
-    async def git(self, inter: discord.Interaction):
-        """GitHub page"""
-        await send_message(
-            inter, "Want to help the bot? Go here: https://github.com/BBArikL/BDBot"
-        )
-
     # Only mods can add comics
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
@@ -198,15 +191,6 @@ class BDBot(commands.Cog):
         """Get the server's mention policy. Mods only"""
         status = await discord_utils.get_mention(inter, self.bot)
         await send_message(inter, status)
-
-    @app_commands.command()
-    async def vote(self, inter: discord.Interaction):
-        """Vote for the bot!"""
-        await send_message(
-            inter,
-            "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : "
-            "https://discordbotlist.com/bots/bdbot",
-        )
 
     @app_commands.command()
     async def request(self, inter: discord.Interaction):
