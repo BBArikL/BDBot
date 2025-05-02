@@ -1,0 +1,81 @@
+{
+  "general": {
+    "title": "BDBot!",
+    "fields": [
+      {
+        "name": "Hourly comics commands.",
+        "value": "Use /help schedule to see available commands for daily comics. Post daily at 6:00 AM UTC."
+      },
+      {
+        "name": "Request",
+        "value": "Have a request for the bot? Post your request at https://github.com/BBArikL/BDBot/issues/new?assignees=&labels=enhancement&template=comic-request.md&title=New+Comic+request for maximum visibility or use `/request` to leave a message to the developer!"
+      },
+      {
+        "name": "Ping",
+        "value": "Pong! Gives back the bot latency.\nCommand:\n`/ping`"
+      },
+      {
+        "name": "Uptime",
+        "value": "Gives back the uptime.\nCommand:\n`/up`"
+      },
+      {
+        "name": "FAQ",
+        "value": "Have any question on the bot? This FAQ (`/faq`) might have the response you need!"
+      },
+      {
+        "name": "New commands",
+        "value": "See the the newly added commands by using `/new`"
+      },
+      {
+        "name": "Git",
+        "value": "Want to help the bot? Go here: https://github.com/BBArikL/BDBot"
+      },
+      {
+        "name": "Vote",
+        "value": "Vote for the bot here: https://top.gg/bot/807780409362481163 and / or here : https://discordbotlist.com/bots/bdbot"
+      }
+    ]
+  },
+  "schedule": {
+    "title": "Daily commands!",
+    "description": "Date and hour are optional arguments that can specify when the the bot should send the comic. \nThere are 2 ways to set up scheduled comics:\nLatest: Get only the latest comics when they are posted, no need to set up an exact day of the week or an hour of the day.\nRegular: Get the comic at a regular day and hour of the week. A date should be one of the seven days of the week and the hour a number representing the time in a 24h clock in UTC time (0h to 23h). If not specified, defaults to the current time in UTC.",
+    "fields": [
+      {"name":"Post", "value": "The bot did not post the comics or you want to be sure that all comics are correctly set up? Use `/post <date> <hour>` to force the post of comics set at the specified time."},
+      {"name":"Add", "value": "Use `/<name_of_comic> add <date> <hour>` to add the comic to the daily list of the channel."},
+      {"name":"Add all", "value": "Use `/add_all <date> <hour>` to add all the comics to a specific day of the week and hour."},
+      {"name":"Remove", "value": "Use `/<name_of_comic> remove <date> <hour>` to remove the comic from the daily list."},
+      {"name":"Remove channel", "value": "Use `/remove_channel` to unsubscribe your channel from all the comics"},
+      {"name":"Remove all", "value": "Use `/remove_all` to unsubscribe your server from all the comics in all the channels."},
+      {"name":"Subscriptions","value":"Use `/sub` to view all subscribed comics for this server."},
+      {"name":"Set role mention", "value":"Use `/set_role @<role>` to add a role to mention for comics posts. To remove, use `/remove_role`."},
+      {"name":"Get mention policy","value":"Use `/get_mention` to get the server's mention policy."}
+    ]
+  },
+  "new": {
+    "title":"New features",
+    "description":"Find out what new features have been implemented since the last update!",
+    "fields": [
+      {"name":"Comics", "value":"7 new comics have been added! Some comics have has been removed because they are finished or are not posting anymore, Garfield minus Garfield and Webtoons now work."},
+      {"name":"Upcoming comics", "value":"These comics are coming very soon: Nyazsche, Saturday Morning Breakfast Cereal and The Far Side"},
+      {"name":"Changes in /random add <schedule>", "value":"Now, adding a random to a schedule will not add a fixed comic to be set to the schedule but the comic will be different each time on that schedule!"},
+      {"name":"Optimizations", "value":"Under the hood, optimizations have been made to the bot to make it more responsive and support the growth! I am also looking into porting the bot to other platforms like Matrix and Revolt."
+      }
+    ]
+  },
+  "faq": {
+    "title":"FAQ",
+    "description":"Have a question on the bot? This is the place you are looking for!",
+    "fields": [
+      {"name":"What is this bot?", "value":"This bot is a helper to keep up with your favorite comics! It search each hour more than 40+ pages to fetch the most up to date comics for your eyes only!"},
+      {"name":"Why can I only go up to 14 comics in the past for Gocomics comics?","value":"As of April 1st 2025, Gocomics implemented a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser."},
+      {"name":"How can I support the project?", "value":"You can vote for the bot on top.gg or star the project on GitHub. If you want to support one of the comics that are presented through this bot, go on  their page to see how to support them directly!"},
+      {"name":"How can I request comics?", "value":"You can use `/request` to request comics or features directly to the developer."},
+      {"name":"How can I receive scheduled comics?","value":"You can use `/help schedule` to get help on how to schedule comics."},
+      {
+        "name":"What information is collected by using this bot?",
+        "value":"No personal information is used by this bot if you only use it to read comics. The information collected by the bot when a comic is scheduled is: the ID of the server, the ID of the channel, the ID of the role to mention, the server's mention policy and the information about the scheduled comic itself. This information is deleted when the bot loses access to the server or when all comics of the server have been unscheduled. When you use `/request`, your username, your discriminator, the time of the message and the message itself is logged to prevent abuse and relevance of the request. To delete this personal information (and get rid of the requests sent), use `/delete_request`.",
+        "inline":false
+      }
+    ]
+  }
+}

@@ -1,15 +1,54 @@
 {
     "Jon": {
-        "Name": "Jon",
-        "Web_name": "Jon",
-        "Main_website": "None",
-        "Working_type": "image",
-        "Description": "The original comic! Visit James Davis' original strip that later became the comic we all know and love.\nSee also:\nGarfield,\nGarfield Classics,\nGarfield minus Garfield",
-        "Position": 11,
-        "First_date": "None",
-        "Color": "FFA202",
-        "Image": "https://static.wikia.nocookie.net/garfield/images/f/fe/Missing.JPG/revision/latest?cb=20201124041539",
+        "name": "Jon",
+        "web_name": "Jon",
+        "main_website": "None",
+        "working_type": "image",
+        "description": "The original comic! Visit James Davis' original strip that later became the comic we all know and love.\nSee also:\nGarfield,\nGarfield Classics,\nGarfield minus Garfield",
+        "id": 1,
+        "first_date": "None",
+        "color": "FFA202",
+        "image": "https://static.wikia.nocookie.net/garfield/images/f/fe/Missing.JPG/revision/latest?cb=20201124041539",
         "Aliases": "'Jon', 'jon'",
-        "Helptxt": "Revisit the comic before Garfield, with the original art style and humor of Jim Davis."
+        "help": "Revisit the comic before Garfield, with the original art style and humor of Jim Davis."
+    },
+    "Nyazsche": {
+        "name": "Nyazsche",
+        "author": "Nyazsche",
+        "web_name": "nyazsche.bsky.social",
+        "main_website": "https://bsky.app/profile/",
+        "working_type": "rss",
+        "description": "Artist of \u201chigh quality\u201d.\nWebsite: https://bsky.app/profile/nyazsche.bsky.social",
+        "id": 55,
+        "first_date": "",
+        "color": "FFFFFF",
+        "image": "https://cdn.bsky.app/img/avatar/plain/did:plc:t3y6b72bgnof5tf3uzdgw5ps/bafkreif6nmfzjrqgq75e3k4xre37sllcupi4hkfu74ttr3d6fnenxkranq@jpeg",
+        "help": "Nyazsche"
+    },
+    "SaturdayMorningBreakfastCereal": {
+        "name": "Saturday Morning Breakfast Cereal",
+        "author": "Zach Weinersmith",
+        "web_name": "smbc-comics",
+        "main_website": "https://www.smbc-comics.com",
+        "working_type": "rss",
+        "description": "Saturday Morning Breakfast Cereal is a webcomic by Zach Weinersmith. Recurring themes in SMBC include science, research, superheroes, religion, romance, dating, parenting and the meaning of life.\nWebsite: https://www.smbc-comics.com/index.php\nFacebook: https://www.facebook.com/smbccomics\nTwitter: https://x.com/ZachWeiner\nPatreon: https://www.patreon.com/ZachWeinersmith\nStore: https://smbc-store.myshopify.com/",
+        "id": 56,
+        "first_date": "",
+        "color": "ED6B24",
+        "image": "https://www.smbc-comics.com/images/moblogo.webp",
+        "help": "Daily funnies from Zach Weinersmith!"
+    },
+    "TheFarSide": {
+        "name": "The Far Side",
+        "author": "Gary Larson",
+        "web_name": "thefarside",
+        "main_website": "https://www.thefarside.com",
+        "working_type": "date",
+        "description": "Welcome to TheFarSide.com, the first official online home of The Far Side! Created by Gary Larson, the single-panel cartoon ran daily in newspapers from 1980 to 1995. In those fifteen years, The Far Side went from garnering controversy to becoming one of the most beloved cartoons of its time.\nWebsite: https://www.thefarside.com\nAbout: https://www.thefarside.com/about",
+        "id": 57,
+        "first_date": "1980-12-31",
+        "color": "FFFFFF",
+        "image": "https://siteassets.thefarside.com/packs/media/images/brand/logo/tfs_logo_cow-9f701760d9d962d7151c22000644bc12.svg",
+        "help": "Read the legendary 'Far Side' comic!"
     }
 }

@@ -1,33 +1,110 @@
+import asyncio
 import getpass
 import json
 import logging
 import os
 import platform
+import pty
 import re
 import shutil
 import sys
-from typing import Optional, Union
+from typing import Optional, Type, Union
 
+from dotenv import load_dotenv
 from InquirerPy import inquirer
 from InquirerPy.prompts import ListPrompt, SecretPrompt
+from tortoise import connections
 
-from bdbot.utils import (
+from bdbot.cache import create_link_cache
+from bdbot.comics import ComicsKingdom, Gocomics, Webtoons, initialize_comics
+from bdbot.comics.base import BaseComic, WorkingType
+from bdbot.db import (
+    ChannelSubscription,
+    DiscordSubscription,
+    ServerSubscription,
+    dbinit,
+    save_backup,
+)
+from bdbot.discord_.discord_utils import clean_database
+from bdbot.files import (
     BACKUP_FILE_PATH,
     BASE_DATA_PATH,
+    DATA_PATH,
     DATABASE_FILE_PATH,
     DETAILS_PATH,
     ENV_FILE,
     FOOTERS_FILE_PATH,
     LOGS_DIRECTORY_PATH,
+    PROD_DATA_PATH,
     REQUEST_FILE_PATH,
     load_json,
-    save_backup,
     save_json,
 )
-from bdbot.Web_requests_manager import create_link_cache
+from bdbot.subscription_type import SubscriptionType
+from bdbot.time import Weekday
 
 TEMP_FILE_PATH = "misc/comics_not_ready.json"
 RETIRED_COMICS_PATH = "misc/retired_comics.json"
+EXIT_CHOICE = "Exit"
+RETURN_CHOICE = "Return"
+INQUIRY = "inquiry"
+ENV_VARS: dict[str, dict[str, Union[str, Union[SecretPrompt, ListPrompt]]]] = {
+    "TOKEN": {
+        "value": "",
+        INQUIRY: inquirer.secret(message="Enter the token (The bot discord token):"),
+    },
+    "CLIENT_ID": {
+        "value": "",
+        INQUIRY: inquirer.secret(
+            message="Enter the client ID (The bot client ID. "
+            "To get a invite for the bot):"
+        ),
+    },
+    "PRIVATE_CHANNEL_SUPPORT_ID": {
+        "value": "",
+        INQUIRY: inquirer.secret(
+            message="Enter the ID of the private channel (The ID of the channel where the bot can print"
+            " debugging information):"
+        ),
+    },
+    "PRIVATE_SERVER_SUPPORT_ID": {
+        "value": "",
+        INQUIRY: inquirer.secret(
+            message="Enter the ID of the private server (The ID of the server where the bot can allow owner "
+            "commands):"
+        ),
+    },
+    "TOP_GG_TOKEN": {
+        "value": "",
+        INQUIRY: inquirer.secret(message="Enter the topgg token (if applicable):"),
+    },
+    "DEBUG": {
+        "value": "",
+        INQUIRY: inquirer.select(
+            message="Is the bot used for development purposes? (Should be False if the bot is supposed to"
+            " serve multiple servers):",
+            choices=["True", "False"],
+        ),
+    },
+    "BYPASS_GOCOMICS_JS": {
+        "value": "",
+        INQUIRY: inquirer.select(
+            message="Do you want to bypass Gocomic's JS? (Please note that you will need to install Playwright):",
+            choices=["True", "False"],
+        ),
+    },
+    "BYPASS_GOCOMICS_SUBSCRIPTION": {
+        "value": "",
+        INQUIRY: inquirer.select(
+            message="Do you want to bypass Gocomic's ~14 day block?:",
+            choices=["True", "False"],
+        ),
+    },
+}
+LOCAL_SERVICE_PATH = "misc/runbdbot.service"
+SERVICE_PATH = "/etc/systemd/system/"
+HOME_PATH = "/home/"
+COMMAND = "sudo systemctl daemon-reload && sudo systemctl enable --now runbdbot.service"
 
 logger = logging.Logger("manager_logger", logging.INFO)
 
@@ -35,36 +112,38 @@ logger = logging.Logger("manager_logger", logging.INFO)
 def main():
     """Add, delete or modify comics in the comic details file"""
     os.chdir(os.path.dirname(__file__))  # Force the current working directory
-
+    load_dotenv()
     # Set the logging handler
     handler = logging.StreamHandler(stream=sys.stdout)
     logger.addHandler(handler)
+    choices = {
+        "Manage bot": manage_bot,
+        "Manage comics": manage_comics,
+        EXIT_CHOICE: todo,
+    }
 
     action = ""
-    while action != "Exit":
+    while action != EXIT_CHOICE:
         action = inquirer.select(
             message="What do you want to do?",
-            choices=["Manage bot", "Manage comics", "Exit"],
+            choices=list(choices.keys()),
         ).execute()
-
-        if action == "Manage bot":
-            manage_bot()
-        elif action == "Manage comics":
-            manage_comics()
+        choices[action]()
 
 
 def manage_bot():
     """Manage the bot and its settings"""
     action = ""
-    while action != "Return":
+    while action != RETURN_CHOICE:
         choices = {
-            "Database tools - Not implemented": todo,
-            "Verify requests - Not implemented": todo,
+            "Database tools": spawn_tortoise_shell,
+            "Verify requests": view_requests,
             "Create image link cache": link_cache_generate,
             "Refresh configuration files (to do after every update)": refresh_conf_files,
+            "Migrate from v4 to v5": migrate_v4_v5,
             "Setup Bot": setup_bot,
             "Uninstall Bot": uninstall_bot,
-            "Return": todo,
+            RETURN_CHOICE: todo,
         }
 
         action = inquirer.select(
@@ -76,21 +155,137 @@ def manage_bot():
         choices[action]()
 
 
+def spawn_tortoise_shell():
+    print(
+        "Import the subscription object with:\n"
+        "from bdbot.db.discord_subscription import *\n\n"
+        "After, you can fetch data from with 'await' statements "
+        "and standard tortoise functions.\n"
+        "Documentation can be found here: https://github.com/tortoise/tortoise-cli"
+    )
+    pty.spawn(["tortoise-cli", "-c", "bdbot.db.TORTOISE_ORM", "shell"])
+
+
+def view_requests():
+    print("Here are the current requests:")
+    if not os.path.exists(REQUEST_FILE_PATH):
+        print("There are no requests yet")
+        return
+    with open(REQUEST_FILE_PATH, "r") as file:
+        for line in file:
+            print(f"> {line}")
+
+
 def uninstall_bot():
     """Uninstall bot files"""
-    conf = inquirer.confirm("Are you sure you want to uninstall the bot?").execute()
-    if conf:
-        os.rmdir(BASE_DATA_PATH)
-    else:
-        logger.info("Canceled bot uninstallation")
+    if inquirer.confirm("Are you sure you want to uninstall the bot?").execute():
+        return os.rmdir(BASE_DATA_PATH)
+    logger.info("Canceled bot uninstallation")
+    return None
 
 
 def link_cache_generate():
     """Regenerate the link cache"""
     logger.info("Running link cache, please wait up to 1-2 minutes...")
     os.makedirs("data", exist_ok=True)
-    create_link_cache(logger)
+    asyncio.run(create_link_cache(logger))
     logger.info("Link cache created!")
+
+
+async def migrate_db():
+    # 1. initialize db
+    print("Initializing database...")
+    await dbinit()
+
+    try:
+        # 2. Load old database
+        print("Loading old database...")
+        old_db_path = os.path.join(DATA_PATH, "data.json")
+        db = load_json(old_db_path)
+
+        # 3. Migrate data
+        print("Creating the sqlite database...")
+        for server_id, server in db.items():
+            if "channels" not in server:
+                continue
+            role_id = None
+            if "role" in server:
+                role_id = server["role"]
+
+            server_ = ServerSubscription(
+                id=int(server_id),
+                role_id=role_id,
+            )
+            await server_.save()
+
+            match_date = {
+                "Mo": Weekday.Monday,
+                "Tu": Weekday.Tuesday,
+                "We": Weekday.Wednesday,
+                "Th": Weekday.Thursday,
+                "Fr": Weekday.Friday,
+                "Sa": Weekday.Saturday,
+                "Su": Weekday.Sunday,
+                "D": Weekday.Daily,
+                "La": Weekday.Latest,
+            }
+            for channel_id, channel in server["channels"].items():
+                channel_ = ChannelSubscription(
+                    id=int(channel_id), server_id=int(server_id)
+                )
+                await channel_.save()
+                if "date" in channel:
+                    for date_str, date in channel["date"].items():
+                        for hour_str, hour in date.items():
+                            for comic in hour:
+                                if comic in [1, 20, 36, 26, 25, 24, 11]:
+                                    continue
+                                sub = DiscordSubscription(
+                                    comic_id=comic,
+                                    subscription_type=SubscriptionType.Normal,
+                                    weekday=Weekday(match_date[date_str]),
+                                    hour=int(hour_str),
+                                    channel_id=int(channel_id),
+                                )
+                                await sub.save()
+                if "latest" in channel:
+                    for comic in channel["latest"]:
+                        if comic in [1, 20, 36, 26, 25, 24, 11]:
+                            continue
+                        sub = await DiscordSubscription(
+                            comic_id=comic,
+                            subscription_type=SubscriptionType.Normal,
+                            weekday=Weekday.Latest,
+                            hour=-1,
+                            channel_id=int(channel_id),
+                        )
+                        await sub.save()
+
+    finally:
+        await connections.close_all()
+
+
+def migrate_v4_v5():
+    # 1. Move from $HOME/.local/bdbot to $HOME/.local/share/bdbot
+    if platform.system() == "Linux":
+        old_path = os.path.join("/home", os.getenv("USER", ""), ".local", "bdbot")
+        if os.path.exists(old_path):
+            print(f"Migrating conf files from {old_path} to {PROD_DATA_PATH}...")
+            shutil.move(old_path, PROD_DATA_PATH)
+
+    # 2. Update config files
+    print("Updating the configuration files...")
+    refresh_conf_files()
+
+    # 3. Migrate the database
+    print("Migrating the database...")
+    asyncio.run(migrate_db())
+
+    print("Creating the link cache...")
+    asyncio.run(create_link_cache(logger))
+    print("Link cache created!")
+
+    print("The 'data.json' file can now be deleted.")
 
 
 def setup_bot():
@@ -106,62 +301,12 @@ def setup_bot():
         ).execute()
 
     if write_env:
-        environment_variables: dict[
-            str, dict[str, Union[str, Union[SecretPrompt, ListPrompt]]]
-        ] = {
-            "TOKEN": {
-                "value": "",
-                "inquiry": inquirer.secret(
-                    message="Enter the token (The bot discord token):"
-                ),
-            },
-            "CLIENT_ID": {
-                "value": "",
-                "inquiry": inquirer.secret(
-                    message="Enter the client ID (The bot client ID. "
-                    "To get a invite for the bot):"
-                ),
-            },
-            "PRIVATE_CHANNEL_SUPPORT_ID": {
-                "value": "",
-                "inquiry": inquirer.secret(
-                    message="Enter the ID of the private channel (The ID of the channel where the bot can print"
-                    " debugging information):"
-                ),
-            },
-            "PRIVATE_SERVER_SUPPORT_ID": {
-                "value": "",
-                "inquiry": inquirer.secret(
-                    message="Enter the ID of the private server (The ID of the server where the bot can allow owner "
-                    "commands):"
-                ),
-            },
-            "TOP_GG_TOKEN": {
-                "value": "",
-                "inquiry": inquirer.secret(
-                    message="Enter the topgg token (if applicable):"
-                ),
-            },
-            "DEBUG": {
-                "value": "",
-                "inquiry": inquirer.select(
-                    message="Is the bot used for development purposes? (Should be False if the bot is supposed to"
-                    " serve multiple servers):",
-                    choices=["True", "False"],
-                ),
-            },
-        }
-
-        for envv in environment_variables:
-            environment_variables[envv]["value"] = environment_variables[envv][
-                "inquiry"
-            ].execute()
+        responses = []
+        for envv in ENV_VARS:
+            responses.append(ENV_VARS[envv][INQUIRY].execute())
 
         output = "\n".join(
-            [
-                f"{envv}={environment_variables[envv]['value']}"
-                for envv in environment_variables
-            ]
+            [f"{envv}={response}" for envv, response in zip(ENV_VARS, responses)]
         )
         usage = "w" if os.path.exists(ENV_FILE) else "x"
         with open(ENV_FILE, f"{usage}t") as f:
@@ -173,12 +318,14 @@ def setup_bot():
     os.makedirs(os.path.dirname(DETAILS_PATH), exist_ok=True)
 
     if not os.path.exists(DATABASE_FILE_PATH):
-        with open(DATABASE_FILE_PATH, "xt") as f:
-            f.write("{}")
+        loop = asyncio.new_event_loop()
+        try:
+            loop.run_until_complete(dbinit())
+        finally:
+            loop.close()
 
     if not os.path.exists(REQUEST_FILE_PATH):
-        with open(REQUEST_FILE_PATH, "xt"):
-            pass
+        open(REQUEST_FILE_PATH, "xt").close()
 
     logger.info("Copying details and footer files...")
     continue_copy = True
@@ -192,46 +339,47 @@ def setup_bot():
         shutil.copy("misc/random-footers.txt", FOOTERS_FILE_PATH)
 
     logger.info("Creating link cache, this might take some time...")
-    create_link_cache(logger)
+    asyncio.run(create_link_cache(logger))
 
     if platform.system() == "Linux":
-        # Tries to install service file and command to run the bot only on Linux
-        user = getpass.getuser()
-        local_service_path = "misc/runbdbot.service"
-        service_path = "/etc/systemd/system/"
-        dst_service_path = f"/home/{user}"
-        command = "sudo systemctl daemon-reload && sudo systemctl enable --now runbdbot.service"
-        install_service = inquirer.confirm(
-            "Do you want to install the service file which will let you run the bot automatically in the"
-            f" background?\n The file will need to be copied manually at {service_path} with root privileges and\n"
-            f" enabled with '{command}'?"
-        ).execute()
-
-        if install_service:
-            with open(local_service_path, "rt") as f:
-                service_file = f.read()
-
-            service_file = service_file.replace("{USER}", user)
-            service_file = service_file.replace("{PACKAGE_DIRECTORY}", os.getcwd())
-
-            with open(f"{dst_service_path}/runbdbot.service", "wt") as f:
-                f.write(service_file)
-
-            logger.info(
-                f"The service file is now available at {dst_service_path} and is ready to be moved to"
-                f" {service_path}. Do not forget to enable the service with {command}!"
-            )
+        install_linux_service()
 
     logger.info("All done! You can start the bot with 'python -m bdbot'!")
+
+
+def install_linux_service():
+    # Tries to install service file and command to run the bot only on Linux
+    user = getpass.getuser()
+    install_service = inquirer.confirm(
+        "Do you want to install the service file which will let you run the bot automatically in the"
+        f" background?\n The file will need to be copied manually at {SERVICE_PATH} with root privileges and\n"
+        f" enabled with '{COMMAND}'?"
+    ).execute()
+    if not install_service:
+        return
+    dst_service_path = os.path.join(HOME_PATH, user)
+    with open(LOCAL_SERVICE_PATH, "rt") as f:
+        service_file = f.read()
+
+    service_file = service_file.replace("{USER}", user)
+    service_file = service_file.replace("{PACKAGE_DIRECTORY}", os.getcwd())
+
+    with open(f"{dst_service_path}/runbdbot.service", "wt") as f:
+        f.write(service_file)
+
+    logger.info(
+        f"The service file is now available at {dst_service_path} and is ready to be moved to"
+        f" {SERVICE_PATH}. Do not forget to enable the service with {COMMAND}!"
+    )
 
 
 def manage_comics():
     """Manage comics configuration"""
     logger.info("Loading comics....")
-    comics = load_json(DETAILS_PATH)
     logger.info("Comics loaded!")
     action = None
     while action != "Return":
+        comics = initialize_comics(load_json(DETAILS_PATH), base_on_error=True)
         action = inquirer.select(
             message="What do you want to do with the comics?",
             choices=["Add", "Delete", "Modify", "Return"],
@@ -252,27 +400,28 @@ def choose_comic(action: str, comics: dict):
     :param action: The action to do with the comic
     :param comics: The list of comics
     """
+    comic_map = {
+        f"{comic.id}. {comic.name}": comic_name for comic_name, comic in comics.items()
+    }
     comic = inquirer.fuzzy(
         message=f"What comic do you want to {action.lower()}?",
-        choices=[f"{comics[x]['Position']}. {comics[x]['Name']}" for x in comics]
-        + ["Return"],
+        choices=[comic for comic in comic_map.keys()] + ["Return"],
         mandatory=False,
     ).execute()
 
     if comic is None or comic == "Return":
         return
     elif action == "Delete":
-        delete(comics, comic)
+        delete(comics, comic_map[comic])
     else:
-        modify(comics, comic)
+        modify(comics, comic_map[comic])
 
 
-def add_comic(comics: dict):
+def add_comic(comics: dict[str, BaseComic]):
     """Add a comic to the list of comics.
 
     :param comics: The dictionary of comics
     """
-    websites = {"Gocomics": None, "ComicsKingdom": None, "Webtoon": None}
     socials = ["Website", "Facebook", "Twitter", "Youtube", "Patreon", "About"]
     first_date = {"Year": 0, "Month": 0, "Day": 0}
     name = inquirer.text(
@@ -288,21 +437,32 @@ def add_comic(comics: dict):
     ).execute()
     main_website = inquirer.text(
         message="What is the main website of the comic?",
-        completer={"Gocomics": None, "ComicsKingdom": None, "Webtoon": None},
+        completer={
+            website: None
+            for website in [
+                Gocomics.WEBSITE_NAME,
+                ComicsKingdom.WEBSITE_NAME,
+                Webtoons.WEBSITE_NAME,
+            ]
+        },
         mandatory=False,
     ).execute()
-    if main_website not in websites:
-        working_type = inquirer.select(
-            message="What is the working type of the comic? (For example,are comics "
-            "accessible by specifying a date, a number or is there a rss "
-            "available?)\nIf you do not know, please choose other. ",
-            choices=["date", "number", "rss", "other"],
-            mandatory=False,
-        ).execute()
-    elif main_website == "Gocomics" or main_website == "ComicsKingdom":
-        working_type = "date"
-    else:
-        working_type = "rss"
+
+    working_type: str
+    match main_website:
+        case Gocomics.WEBSITE_NAME | ComicsKingdom.WEBSITE_NAME:
+            working_type = WorkingType.Date.value
+        case Webtoons.WEBSITE_NAME:
+            working_type = WorkingType.RSS.value
+        case _:
+            working_type = inquirer.select(
+                message="What is the working type of the comic? (For example,are comics "
+                "accessible by specifying a date, a number or is there a rss "
+                "available?)\nIf you do not know, please choose other. ",
+                choices=[working_type.name for working_type in WorkingType],
+                mandatory=False,
+            ).execute()
+    working_type: WorkingType = WorkingType(working_type.lower())
 
     description = inquirer.text(
         message="Enter a long description of the comic: ", mandatory=False
@@ -316,14 +476,15 @@ def add_comic(comics: dict):
         if social_link.strip():
             description += f"\n{social}: {social_link}"
 
-    if working_type == "date":
+    if working_type == WorkingType.Date:
         for date in first_date:
             first_date[date] = inquirer.number(
                 message=f"What is the first date of the comic? "
                 f"Please enter the {date}: ",
                 mandatory=False,
             ).execute()
-    elif working_type == "number" or working_type == "rss":
+        first_date = f"{first_date['Year']}-{first_date['Month']}-{first_date['Day']}"
+    elif working_type in [WorkingType.Number, WorkingType.RSS]:
         first_date = "1"
     else:
         first_date = ""
@@ -343,6 +504,7 @@ def add_comic(comics: dict):
         invalid_message="This short description must be equal or less than 100 characters!",
         mandatory=False,
     ).execute()
+    last_comic_id = list(comics.values())[-1].id + 1
     final_comic_dict = process_inputs(
         name,
         author,
@@ -350,7 +512,7 @@ def add_comic(comics: dict):
         main_website,
         working_type,
         description,
-        len(comics),
+        last_comic_id,
         first_date,
         color,
         image,
@@ -358,21 +520,27 @@ def add_comic(comics: dict):
     )
     logger.info("Final comic data:")
     logger.info(json.dumps(final_comic_dict, indent=4))
+    name = name.replace(" ", "")
     confirm = inquirer.confirm("Is the data good?").execute()
     if confirm:  # Adds the details to the file
         logger.info("Updating the details file....")
-        comics.update(final_comic_dict)
+        comics.update({name: final_comic_dict})
+        comics = {
+            cmc: comic.to_dict() if isinstance(comic, BaseComic) else comic
+            for cmc, comic in comics.items()
+        }
         save_json(comics, file_path=DETAILS_PATH)
         logger.info("Update done!")
-    else:  # Adds the details to a temporary file
-        absolute_path = os.getcwd() + "/" + TEMP_FILE_PATH
-        logger.info(f"Writing dictionary to a temporary location.... ({absolute_path})")
-        temp_comic_data = open_json_if_exist(absolute_path)
-        temp_comic_data.update(final_comic_dict)
-        save_json(temp_comic_data, absolute_path)
-        logger.info(
-            "Wrote the details to the temporary file! You can edit this file manually or with this tool!"
-        )
+        return
+    # Adds the details to a temporary file
+    absolute_path = os.path.join(os.getcwd(), TEMP_FILE_PATH)
+    logger.info(f"Writing dictionary to a temporary location.... ({absolute_path})")
+    temp_comic_data = open_json_if_exist(absolute_path)
+    temp_comic_data.update({name: final_comic_dict})
+    save_json(temp_comic_data, absolute_path)
+    logger.info(
+        "Wrote the details to the temporary file! You can edit this file manually or with this tool!"
+    )
 
 
 def process_inputs(
@@ -380,15 +548,15 @@ def process_inputs(
     author: str,
     web_name: str,
     main_website: str,
-    working_type: str,
+    working_type: WorkingType,
     description: str,
-    position: int,
+    id: int,
     first_date: Union[str, dict],
     color: str,
     image: str,
     helptxt: str,
 ) -> dict:
-    """Create the comic json
+    """Create the comic object
 
     :param name: Comic name
     :param author: Comic author
@@ -396,189 +564,142 @@ def process_inputs(
     :param main_website: Comic's main website
     :param working_type: Comic's working type
     :param description: Comic description
-    :param position: Comic position
+    :param id: Comic id
     :param first_date: Comic first date
     :param color: Comic color
     :param image: Comic image
     :param helptxt: Comic help text
     :return: The comic dict
     """
-    websites = {
-        "Gocomics": "https://www.gocomics.com/",
-        "ComicsKingdom": "https://comicskingdom.com/",
-        "Webtoon": "https://www.webtoons.com/en/",
-    }
-    normalized_name = name.replace(" ", "")
-    return {
-        normalized_name: {
-            "Name": name,
-            "Author": author,
-            "Web_name": web_name,
-            "Main_website": websites.get(main_website, main_website),
-            "Working_type": working_type,
-            "Description": description,
-            "Position": position,
-            "First_date": first_date
-            if type(first_date) is str
-            else f"{first_date['Year']}, {first_date['Month']}, "
-            f"{first_date['Day']}",
-            "Color": color,
-            "Image": image,
-            "Helptxt": helptxt,
-        }
-    }
+    comic_type: Type[BaseComic] = BaseComic.get_type(
+        main_website, working_type, base_on_error=True
+    )
+    return comic_type(
+        WEBSITE_NAME=comic_type.WEBSITE_NAME,
+        WEBSITE_URL=comic_type.WEBSITE_URL,
+        WEBSITE_HELP=comic_type.WEBSITE_HELP,
+        WORKING_TYPE=comic_type.WORKING_TYPE,
+        name=name,
+        author=author,
+        web_name=web_name,
+        main_website=main_website,
+        working_type=working_type.value,
+        description=description,
+        id=id,
+        first_date=first_date,
+        color=color,
+        image=image,
+        help=helptxt,
+    ).to_dict()
 
 
-def delete(comics: dict, comic: str):
-    """
-    Removes a comic from the main configuration file and move it to a retired configuration file.
+def delete(comics: dict[str, BaseComic], comic_name: str):
+    """Removes a comic from the main configuration file and move it to a retired configuration file.
 
     :param comics: Main configuration dictionary.
-    :param comic: The comic to remove.
+    :param comic_name: The comic name to remove.
     """
-    comic_number, comic_name = comic.split(". ")
-    comic_number = int(comic_number)
+    comic = comics[comic_name]
     confirm = inquirer.confirm(
         message=f"Are you sure you want to delete {comic_name}?"
     ).execute()
 
-    if confirm:
-        abs_path = os.getcwd() + "/" + RETIRED_COMICS_PATH
-        logger.info(f"Moving comic to {abs_path} ...")
-        # Retires the comic from the main config file
-        comic_name = list(comics.keys())[comic_number]
-        retired_comic: dict = comics.pop(comic_name)
-
-        logger.info("Changing positions of the next comics...")
-        for cmc in comics:
-            pos = comics[cmc]["Position"]
-            comics[cmc]["Position"] = pos - 1 if pos > comic_number else pos
-
-        save_json(comics, DETAILS_PATH)
-
-        retired_comics = open_json_if_exist(abs_path)  # Moves the comic
-        retired_comics.update({comic_name: retired_comic})
-        save_json(retired_comics, abs_path)
-        logger.info("Deletion successful in the details file!")
-
-        update_database = inquirer.confirm(
-            message="Do you want to update the database as well? (Note: A backup will "
-            "be made in case this step breaks the database.)"
-        ).execute()
-        if update_database:
-            remove_comic_from_database(comic_number)
-        else:
-            logger.info("The database has not been modified.")
-
-    else:
+    if not confirm:
         logger.info("Deletion aborted.")
+        return
+
+    abs_path = os.path.join(os.getcwd(), RETIRED_COMICS_PATH)
+    logger.info(f"Moving comic to {abs_path} ...")
+    # Retires the comic from the main config file
+    retired_comic: BaseComic = comics.pop(comic_name)
+
+    cmcs = {cmc: comic.to_dict() for cmc, comic in comics.items()}
+    save_json(cmcs, DETAILS_PATH)
+
+    retired_comics = open_json_if_exist(abs_path)  # Moves the comic
+    retired_comics.update({comic_name: retired_comic.to_dict()})
+    save_json(retired_comics, abs_path)
+    logger.info("Deletion successful in the details file!")
+
+    update_database = inquirer.confirm(
+        message="Do you want to update the database as well? (Note: A backup will "
+        "be made in case this step breaks the database.)"
+    ).execute()
+    if not update_database:
+        logger.info("The database has not been modified.")
+        return
+    remove_comic_from_database(comic.id)
 
 
 def open_json_if_exist(absolute_path: str) -> dict:
-    """Load a json from a file if it exists, create it otherwise.
-
-    :param absolute_path: The path to the
-    :return: The dictionary of data in the json file
+    """Load a JSON from a file if it exists, create it otherwise.
+    :param absolute_path: The path to the dictionary
+    :return: Data in the JSON file
     """
     temp_comic_data = {}
     if os.path.exists(absolute_path):
         return load_json(absolute_path)
-    else:
-        open(absolute_path, "x").close()
-        return temp_comic_data
+    open(absolute_path, "x").close()
+    return temp_comic_data
 
 
 def remove_comic_from_database(comic_number: int):
-    """Remove comic from database, based on comic number
+    """Remove comic from the database, based on comic number
 
     :param comic_number: The comic number to remove
     """
     logger.info("Updating database....")
-    data = open_json_if_exist(DATABASE_FILE_PATH)
-    comic_number_remove = comic_number  # the comic number to remove
-    save_backup(data, logger)
-    # Removes a comic permanently
-    for gid in data:
-        guild = data[gid]
-        for channel in guild["channels"]:
-            channel_data = guild["channels"][channel]
+    save_backup(logger)
 
-            if "latest" in channel_data:
-                data[gid]["channels"][channel]["latest"] = remove_from_array(
-                    channel_data["latest"], comic_number_remove
-                )
+    async def update_db():
+        await dbinit()
+        subs = await DiscordSubscription.filter(comic_id=comic_number).delete()
+        print(f"{subs} subscription(s) deleted.")
+        await clean_database()
 
-            if "date" in channel_data:
-                for date in channel_data["date"]:
-                    date_data = channel_data["date"][date]
-                    for hour in date_data:
-                        hour_data: list = date_data[hour]
-                        data[gid]["channels"][channel]["date"][date][
-                            hour
-                        ] = remove_from_array(hour_data, comic_number_remove)
-
-    save_json(data)
+    loop = asyncio.new_event_loop()
+    try:
+        loop.run_until_complete(update_db())
+    finally:
+        loop.close()
     logger.info("Database update done!")
 
 
-def remove_from_array(array, comic_number_remove) -> list[str]:
-    """Remove the comic number from the array and shift all other numbers
-
-    :param array:
-    :param comic_number_remove:
-    :return:
-    """
-    new_arr = []
-    if comic_number_remove in array:
-        array.remove(comic_number_remove)
-
-    for cmc_nb in array:
-        if cmc_nb > comic_number_remove:
-            new_arr.append(cmc_nb - 1)
-        else:
-            new_arr.append(cmc_nb)
-
-    return new_arr
-
-
-def modify(comics: dict, comic: str):
+def modify(comics: dict[str, BaseComic], comic_name: str):
     """Modify a comic
 
     :param comics: The list of comics
-    :param comic: The name of the comic to modify
+    :param comic_name: The name of the comic to modify
     """
-    comic_property: str = ""
-    comic_number, comic_name = comic.split(". ")
-    comic_number = int(comic_number)
-    comic_dict_key = list(comics.keys())[comic_number]
-    comic_dict = comics[comic_dict_key]
+    comic_property = ""
+    comic = comics[comic_name]
 
-    while comic_property != "Return":
+    while comic_property != RETURN_CHOICE:
         comic_property = inquirer.select(
             message=f"Which property of the comic {comic_name} do you want to edit?",
-            choices=[prop for prop in comic_dict] + ["Return"],
+            choices=[prop.capitalize() for prop in comic.to_dict().keys()]
+            + [RETURN_CHOICE],
             mandatory=False,
         ).execute()
 
         if comic_property != "" and comic_property != "Return":
-            comic_dict = modify_property(comic_dict, comic_property)
+            comic = modify_property(comic, comic_property.lower())
 
     # Saves the modifications
-    comics.update({comic_dict_key: comic_dict})
+    comics.update({comic_name: comic})
+    comics = {cmc: comic.to_dict() for cmc, comic in comics.items()}
     save_json(comics, file_path=DETAILS_PATH)
 
 
-def modify_property(comic_dict: dict, comic_property: str) -> dict:
+def modify_property(comic: BaseComic, comic_property: str) -> BaseComic:
     """Modify a comic's property
 
-    :param comic_dict: The information about the comic
+    :param comic: The information about the comic
     :param comic_property: The property to change
     :return: The modified comic
     """
-    property_value = comic_dict[comic_property]
-    logger.info(
-        f"Current {comic_property!r} value:\n`\n{comic_dict[comic_property]}\n`"
-    )
+    property_value = getattr(comic, comic_property)
+    logger.info(f"Current {comic_property!r} value:\n`\n{property_value}\n`")
 
     completer: Optional[dict] = None
     if type(property_value) is str:
@@ -592,19 +713,21 @@ def modify_property(comic_dict: dict, comic_property: str) -> dict:
 
     if new_value == "":
         logger.info(f"{comic_property!r} has not been changed.")
-    else:
-        confirm = inquirer.confirm(
-            message=f"Are you sure your want to set "
-            f"{comic_property!r} to \n`\n{new_value}\n` ?"
-        ).execute()
+        return comic
 
-        if confirm:
-            logger.info(f"Updating property {comic_property!r}...")
-            comic_dict.update({comic_property: new_value})
-        else:
-            logger.info(f"{comic_property!r} has not been changed.")
+    confirm = inquirer.confirm(
+        message=f"Are you sure your want to set "
+        f"{comic_property!r} to \n`\n{new_value}\n`\n ?"
+    ).execute()
 
-    return comic_dict
+    if not confirm:
+        logger.info(f"{comic_property!r} has not been changed.")
+        return comic
+
+    logger.info(f"Updating property {comic_property!r}...")
+    setattr(comic, comic_property, new_value)
+
+    return comic
 
 
 def refresh_conf_files():

@@ -21,27 +21,19 @@ Discord bot that post bd strips. Simple as that!
 - Cyanide and Happiness https://explosm.net/
 - Frazz https://www.gocomics.com/frazz
 - Garfield minus Garfield https://garfieldminusgarfield.net/
-- Jon (not ready)
 - Frank and Ernest https://www.gocomics.com/frank-and-ernest
 - Broom Hilda https://www.gocomics.com/broomhilda
-- Inspector Dangers Crime Quiz https://www.gocomics.com/inspector-dangers-crime-quiz
-- Cheer up emo kid https://www.gocomics.com/cheer-up-emo-kid
-- Catana Comics https://www.gocomics.com/ (not ready)
 - Brevity https://www.gocomics.com/brevity
 - Cats cafe https://www.gocomics.com/cats-cafe
 - Popeyes https://comicskingdom.com/popeye
 - Artic Circle https://comicskingdom.com/arctic-circle
-- Lockhorns https://comicskingdom.com/lockhorns
+- Lockhorns https://gocomics.com/lockhorns
 - Marvin https://comicskingdom.com/marvin
 - Zits https://comicskingdom.com/zits
 - Hi and Lois https://comicskingdom.com/hi-and-lois
-- Safely endangered https://www.webtoons.com/en/comedy/safely-endangered/list?title_no=352
 - Carl https://www.webtoons.com/en/slice-of-life/carl/list?title_no=1216
 - BlueChair https://www.webtoons.com/en/slice-of-life/bluechair/list?title_no=199
-- Live with yourself https://www.webtoons.com/en/comedy/live-with-yourself/list?title_no=919
 - Adventures of god https://www.webtoons.com/en/comedy/adventures-of-god/list?title_no=853
-- System32Comics https://www.webtoons.com/en/challenge/system32comics/list?title_no=235074
-- The Gamer https://www.webtoons.com/en/action/the-gamer/list?title_no=88
 - Big Nate https://www.gocomics.com/bignate
 - Get Fuzzy https://www.gocomics.com/getfuzzy
 - Beetle Bailey https://comicskingdom.com/beetle-bailey-1
@@ -51,8 +43,6 @@ Discord bot that post bd strips. Simple as that!
 - Chibird https://www.webtoons.com/en/challenge/chibird/list?title_no=97265
 - War and Peas https://www.webtoons.com/en/challenge/war-and-peas/list?title_no=63305
 - Humans are stupid https://www.webtoons.com/en/challenge/humans-are-stupid/list?title_no=54265
-- Maximumble https://www.webtoons.com/en/challenge/maximumble/list?title_no=10005
-- Poorly Drawn Lines https://www.gocomics.com/en/poorly-drawn-lines
 - Heathcliff https://www.gocomics.com/heathcliff
 - Andy Capp https://www.gocomics.com/andycapp
 - Ziggy https://www.gocomics.com/ziggy 
@@ -63,15 +53,18 @@ Discord bot that post bd strips. Simple as that!
 - Sarah's Scribbles https://www.gocomics.com/sarahs-scribbles
 - Speed Bump https://www.gocomics.com/speedbump
 - Wallace the Brave https://www.gocomics.com/wallace-the-brave/characters
-- Ripley's believe it or Not https://www.gocomics.com/ripleysbelieveitornot 
+- Ripley's believe it or Not https://www.gocomics.com/ripleysbelieveitornot
+- Baby Blues
+- Outland
+- Bloom County
+- The Phantom
+- Erma
+- Cat Bird Dog
 
-
-### Removed comics
-Dilbert: See https://www.bbc.com/news/world-us-canada-64775250 . Functionality is still there but this is a public bot and I cannot take the risk of keeping it.
-
-~~- Dilbert https://dilbert.com/~~
-
-~~- Dilbert classics https://www.gocomics.com/dilbert-classics~~
+### Planned
+- Nyazsche
+- Saturday Morning Breakfast Cereal
+- The Far Side
 
 ## Related GitHub pages: 
 CalvinBot : https://github.com/wdr1/CalvinBot
@@ -109,8 +102,6 @@ There are 2 ways to set up scheduled comics:
 
 ![comic subscription](https://github.com/BBArikL/BDBot/blob/assets/comic-demo-4.png)
 
-
-
 ## Current state of the project
 - Functionalities
   - `/<comic_name>` Use comic <comic_name>
@@ -123,18 +114,30 @@ There are 2 ways to set up scheduled comics:
   - Tell me if I forgot some commands here!
 
 - Bugs
-  - None for the moment. Open an issue if you find any! :)
+  - Cyanide and Happiness specific date returns the latest comic
+  - Cyanide and Happiness random comic returns the same comic
  
 - Anything else to know?
-  - Why can't I go farther than 7 comics on Comics Kingdom? Comics Kingdom use a special premium subscription plan to view all comics. There is no known way to get around it and getting the subscription and after distributing the comic for free could cause some undesirable consequences in the future.
+  - How can I host the bot? The requirements are: Playwright (use 'BYPASS_GOCOMICS_JS=False' to disable that requirement), and python 3.11+.
+    1. Install [Playwright](https://playwright.dev/)
+    2. Install [pipx](https://pipx.pypa.io/latest/installation/)
+    3. Install the bot: `pipx install git+https://github.com/BBArikL/BDBot/`
+    4. Create a new bot here https://discord.com/developers/applications and save the credentials.
+    5. Run `bdbot_manager` and select the options : 'Manage Bot' > 'Setup Bot'
+    6. Go through the prompts.
+    7. Run the bot with `bdbot`. If you are on Linux and have selected the service installation, make sure the bot is installed with : `systemctl status runbdbot`.
+  - Why can't I go farther than 14 comics on Gocomics? As of April 1st 2025, Gocomics implemented a premium membership to view older comics. You can go on their site to get one and see the comics directly in your browser. Self-host the bot and define `BYPASS_GOCOMICS_SUBSCRIPTION=True` in your environment to view older comics. Distributing the comics for free could cause some undesirable consequences in the future. 
+    - Gocomics also added some JS injection to prevent scraping and it seems to be put at random. This means that each gocomics page need to be fully rendered to reliably scrape it. This puts more stress on the host and more memory is used (I am sensing some memory leak with `requests-htmlc`). If you want to disable this, set `BYPASS_GOCOMICS_JS` to false in your .env file. 
   - Why is there only 2 images for Webtoons? Webtoons only gives out two images link to the comic in their rss feed. Finding each image link is way more complicated than this and is not in place now.
+  - I requested a comic but it isn't there, why? I personally choose the requests to keep a balance of quality and diversity of comics. I still aim for the bot to be mostly "family-friendly". For some websites requested that could fit but are not here:
+    - ComicRocket: It doesn't work for me strangely. And it seems to be just a linker back to other sites.
   - You want to do a pull request to add your favourite comic? 
     - Preferably, Gocomics and Comics Kingdom comics are the easiest to implement, so try to stick with that if your comic is hosted there. 
-      - Please see [this README](CONTRIBUTING.md) for complete instructions
+      - Please see [this README](bdbot/misc/ADD_COMIC.md) for complete instructions
   - If the comic is NOT hosted on GoComics/Comics Kingdom, please open an issue on the git page (https://github.com/BBArikL/BDBot). 
   - Any pull requests that was not approved from another site will be automatically rejected, and you will be asked to follow the procedure cited.
   - 'Beta' and 'main'?
-    - The main branch is the current bot that is running on Discord.
+    - The main branch is the current bot running on Discord.
     - Beta branch is for all experiments and additions waiting for approval to add to the current bot. This runs on a (for now) private bot upon completion of current goals.
     - More about branches: https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-branches
   - The bot is considered complete feature-wise (but not comic-wise).
