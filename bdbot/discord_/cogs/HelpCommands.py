@@ -53,17 +53,19 @@ class HelpCommands(commands.Cog):
     @help_group.command()
     async def gocomics(self, inter: discord.Interaction):
         """Gocomics help"""
-        await send_embed(inter, Gocomics.get_website_help_embed(self.bot))
+        await send_embed(inter, Gocomics.get_website_help_embed(self.bot.comic_details))
 
     @help_group.command()
     async def comicskingdom(self, inter: discord.Interaction):
         """Comics Kingdom help"""
-        await send_embed(inter, ComicsKingdom.get_website_help_embed(self.bot))
+        await send_embed(
+            inter, ComicsKingdom.get_website_help_embed(self.bot.comic_details)
+        )
 
     @help_group.command()
     async def webtoons(self, inter: discord.Interaction):
         """Webtoons help"""
-        await send_embed(inter, Webtoons.get_website_help_embed(self.bot))
+        await send_embed(inter, Webtoons.get_website_help_embed(self.bot.comic_details))
 
     @app_commands.command()
     async def new(self, inter: discord.Interaction):

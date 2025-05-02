@@ -90,7 +90,9 @@ class BaseComic(ABC):
 
     @classmethod
     def get_website_help_embed(
-        cls, comic_details, fields_per_embed: int = DEFAULT_FIELDS_PER_EMBED
+        cls,
+        comic_details: dict[str, "BaseComic"],
+        fields_per_embed: int = DEFAULT_FIELDS_PER_EMBED,
     ) -> list[Embed]:
         """Create embeds with all the specific comics from a website
 
