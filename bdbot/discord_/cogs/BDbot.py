@@ -34,7 +34,6 @@ class BDBot(commands.Cog):
 
         Initialize all the properties of the cog"""
         self.bot: BDBotClient = bot
-        self.topggpy = None
         self.start_time: datetime = get_now()
         self.bot.tree.error(on_error)
 

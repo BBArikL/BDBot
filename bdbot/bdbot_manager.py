@@ -75,10 +75,6 @@ ENV_VARS: dict[str, dict[str, Union[str, Union[SecretPrompt, ListPrompt]]]] = {
             "commands):"
         ),
     },
-    "TOP_GG_TOKEN": {
-        "value": "",
-        INQUIRY: inquirer.secret(message="Enter the topgg token (if applicable):"),
-    },
     "DEBUG": {
         "value": "",
         INQUIRY: inquirer.select(
