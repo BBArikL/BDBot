@@ -76,8 +76,8 @@ async def comic_send(
 
     try:
         details = (await comic.get_comic(action, comic_date=comic_date)).to_embed()
-    except ComicNotFound:
-        details = ComicDetail.comic_not_found(comic.name)
+    except ComicNotFound as e:
+        details = ComicDetail.comic_not_found(comic.name, e.message)
     except ComicExtractionFailed as e:
         details = ComicDetail.comic_extraction_failed(comic.name, e.message)
 
@@ -130,17 +130,14 @@ async def parameters_interpreter(
     match action:
         case None | Action.Info:
             # If the user didn't send any parameters, return the information the comic requested
-            # await send_comic_info(inter, comic)
             return send_comic_info, {"inter": inter, "comic": comic}
         case Action.Today | Action.Random:
             # Sends the website of today's comic
             # or random comic
-            # await comic_send(inter, comic, action)
             return comic_send, {"inter": inter, "comic": comic, "action": action}
         case Action.Add | Action.Remove:
             # Add or remove a comic to the daily list for a guild
             status = await new_change(bot, inter, comic, action, date=date, hour=hour)
-            # await send_message(inter, status)
             return send_message, {"inter": inter, "message": status}
         case Action.Specific_date:
             # Tries to parse date / number of comic
@@ -148,14 +145,11 @@ async def parameters_interpreter(
                 comic, GarfieldMinusGarfield
             ):
                 # Works by date
-                # await extract_date_comic(inter, comic, day, month, year)
                 return extract_date_comic(inter, comic, day, month, year)
 
             # Works by number of comic
-            # await extract_number_comic(
             return extract_number_comic(inter, comic, action, comic_number)
         case _:
-            # await send_message(inter, "Command not understood!")
             return send_message, {"inter": inter, "message": "Command not understood!"}
 
 
