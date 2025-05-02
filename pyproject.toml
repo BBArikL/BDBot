@@ -14,7 +14,6 @@ dependencies = [
     "beautifulsoup4>=4.12.3",
     "python-dotenv>=1.0.1",
     "randomtimestamp @ git+https://github.com/ByteBaker/randomtimestamp.git",
-    "topggpy>=1.4.0",
     "inquirerpy>=0.3.4",
     "dotenv",
     "tortoise-orm",

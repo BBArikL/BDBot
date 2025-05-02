@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 import logging
-import os
 import random
 from datetime import datetime
 from typing import Any, Callable, Optional, Union
 
 import discord
-import topgg
 from discord import Client
 from discord import Embed as DiscordEmbed
 from discord import app_commands
@@ -736,14 +734,6 @@ def get_possible_hours():
 async def update_presence(bot: discord.Client):
     """Gets the number of guilds that the bot is in (for analytics)"""
     logger.info(f"The bot is in {len(bot.guilds)} servers.")
-    if not os.getenv("DEBUG"):
-        try:
-            topggpy = topgg.DBLClient(bot, str(os.getenv("TOP_GG_TOKEN")))
-            await topggpy.post_guild_count()
-            logger.info(f"Posted server count ({topggpy.guild_count})")
-        except Exception as e:
-            logger.error(f"Failed to post server count\n{e.__class__.__name__}: {e}")
-
     await bot.change_presence(
         activity=discord.Activity(
             type=discord.ActivityType.listening,

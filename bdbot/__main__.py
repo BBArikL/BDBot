@@ -74,16 +74,10 @@ async def run(bot: commands.Bot, logger: logging.Logger):
     :param logger: The logging object
     """
     logger.info("Setting up private server object")
-    try:
-        discord_utils.SERVER = discord.Object(
-            id=int(os.getenv("PRIVATE_SERVER_SUPPORT_ID"))
-        )
-        logger.info("Private server set!")
-    except TypeError:
-        logger.warning(
-            "Could not set private server object, please be wary that owner commands are usable everywhere"
-        )
-        discord_utils.SERVER = None
+    discord_utils.SERVER = discord.Object(
+        id=int(os.getenv("PRIVATE_SERVER_SUPPORT_ID"))
+    )
+    logger.info("Private server set!")
 
     logger.info("Loading comic details...")
     bot.comic_details = initialize_comics(load_json(DETAILS_PATH))
