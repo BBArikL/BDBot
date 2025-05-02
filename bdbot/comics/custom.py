@@ -62,16 +62,12 @@ class CyanideAndHappiness(BaseNumberComic):
         # Parse the json that is embedded into the end of the page
         soup = BeautifulSoup(content, self._BASE_PARSER)
         data = soup.find("script", id="__NEXT_DATA__").get_text()
-
         json_data = json.loads(data)
-
         urql_states = json_data["props"]["pageProps"]["urqlState"]
-
         for state_id in urql_states:
             # Bruteforce the json entries to find the one contains the content of the comic
             state_data = urql_states[state_id]
             state_json = json.loads(state_data["data"])
-
             if "comic" in state_json:
                 detail = self.extract_json_content(detail, state_json)
                 break

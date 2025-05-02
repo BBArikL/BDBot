@@ -12,7 +12,7 @@ class ComicsKingdom(BaseDateComic):
 
     @property
     def random_link(self) -> str:
-        return f'{self.WEBSITE_URL}{self.web_name}/{self.get_random_comic_date().strftime("%Y-%m-%d")}'
+        return f"{self.WEBSITE_URL}{self.web_name}{self.get_random_comic_date().strftime(self.url_date_format)}"
 
     @property
     def url_date_format(self) -> str:

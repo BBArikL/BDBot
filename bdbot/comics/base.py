@@ -1,4 +1,5 @@
 import enum
+import logging
 import xml
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
@@ -254,15 +255,19 @@ class BaseDateComic(BaseComic):
     ) -> ComicDetail:
         from bdbot.cache import check_if_latest_link
 
+        logger = logging.getLogger("discord")
+        logger.debug(f"Getting details for comic {self.name}...")
+
         detail = await super().get_comic(action)
-        i = 0
+        tries = 0
 
         # Gets today date
         if comic_date is None:
+            logger.debug("No comic date provided, using current date")
             comic_date = get_now()
 
-        while i < self._MAX_TRIES and detail.image_url == self.image:
-            i += 1
+        while tries < self._MAX_TRIES and detail.image_url == self.image:
+            tries += 1
             detail.date = comic_date
             detail.url = (
                 self.random_link
@@ -271,6 +276,7 @@ class BaseDateComic(BaseComic):
             )
 
             # Get the html of the comic site
+            logger.debug(f"Retrieving image from {detail.url}...")
             content = await self.read_url_content(detail.url)
             soup = BeautifulSoup(content, self._BASE_PARSER)
 
@@ -278,8 +284,9 @@ class BaseDateComic(BaseComic):
             image_url = self.extract_meta_content(soup, "image")
 
             if image_url is None:  # Go back one day
+                logger.debug("No image url found, backing up one day...")
                 comic_date = comic_date - timedelta(days=1)
-                if i >= self._MAX_TRIES:
+                if tries >= self._MAX_TRIES:
                     # If it hasn't found anything
                     raise ComicNotFound(
                         f"Could not find any comic for '{self.name}' around the requested date!",
@@ -287,6 +294,7 @@ class BaseDateComic(BaseComic):
                     )
                 continue
 
+            logger.debug(f"Image url is {image_url}...")
             # Extracts the title of the comic
             detail.title = self.extract_meta_content(soup, "title")
             # Finds the final url (if necessary)
@@ -294,15 +302,31 @@ class BaseDateComic(BaseComic):
             if url:
                 detail.url = clean_url(url)
             detail.image_url = clean_url(image_url)
-            detail.date = comic_date
 
-        if action == Action.Random:
-            detail.date = self.extract_date_from_url(detail.url)
+        detail.date = self.extract_date_from_url(detail.url)
+
+        yesterday = comic_date.date() - timedelta(days=1)
+        if detail.date.date() < yesterday and tries == 1 and action == Action.Today:
+            # Special check for Comics Kingdom, might be good for Gocomics in the future
+            # Giving a date with no comic available gives back an older comic
+            # So we forcefully check for one day later
+            logger.debug(
+                f"The comic found for '{self.name}' was not valid, backing up one day"
+                f" (probably a Comics Kingdom comic with no available comic for the current date...)"
+            )
+            yesterday = datetime(yesterday.year, yesterday.month, yesterday.day)
+            return await self.get_comic(
+                action,
+                verify_latest=verify_latest,
+                comic_date=yesterday,
+                link_cache=link_cache,
+            )
 
         if verify_latest:
             detail.is_latest = check_if_latest_link(
                 detail.name, detail.image_url, link_cache
             )
+        logger.debug(f"All done for {self.name}")
         return detail
 
     def extract_date_from_url(self, url: str) -> datetime:
@@ -365,7 +389,9 @@ class BaseRSSComic(BaseComic, ABC):
     def extract_content(
         self, content: str, date: int, detail: ComicDetail
     ) -> ComicDetail:
+        logger = logging.getLogger("discord")
         try:
+            logger.debug("Parsing RSS...")
             rss: RSS = RSSParser.parse(content)
         except xml.parsers.expat.ExpatError:
             raise ComicExtractionFailed(
@@ -373,11 +399,11 @@ class BaseRSSComic(BaseComic, ABC):
             )
         feed = rss.channel.content.items[date].content
 
-        new_date = datetime.strptime(
+        detail.date = datetime.strptime(
             feed.pub_date.content,
             f"%{self.weekday_token}, %d %b %Y %H:%M:%S %{self.timezone_token}",
         )
-        detail.date = new_date
+        logger.debug(f"Comic date is {detail.date}")
 
         detail.url = feed.links[0].content
 
@@ -388,6 +414,7 @@ class BaseRSSComic(BaseComic, ABC):
         ]
         if len(description_images) > 0:
             img_index = 0
+            logger.debug(f"Found {len(description_images)} images for {self.name}")
             if len(description_images) > 1:
                 # general check for a second image to embed
                 detail.sub_image_url = clean_url(
@@ -396,6 +423,7 @@ class BaseRSSComic(BaseComic, ABC):
                 img_index += 1
             detail.image_url = clean_url(description_images[img_index]["source"])
         else:
+            logger.debug(f"No images found for {self.name}, using fallback...")
             detail.image_url = self.fallback_image
         return detail
 
@@ -408,9 +436,14 @@ class BaseRSSComic(BaseComic, ABC):
     ) -> ComicDetail:
         from bdbot.cache import check_if_latest_link
 
+        logger = logging.getLogger("discord")
+        logger.debug(f"Getting details for comic {self.name}...")
+
         detail = await super().get_comic(action)
 
         if action == Action.Specific_date:
+            logger.debug("Specific date requested, using fallback image...")
+            logger.debug("Yet to implement fully...")
             detail.image_url = self.fallback_image
             detail.url = self.get_specific_url(get_now())
             return detail
@@ -418,6 +451,7 @@ class BaseRSSComic(BaseComic, ABC):
         comic_nb: int = 0
         if action == Action.Random:
             # Random comic
+            logger.debug("Getting a random comic...")
             comic_nb = randint(0, self.MAX_ENTRIES)
 
         content = await self.read_url_content(self.rss_url)
@@ -428,6 +462,7 @@ class BaseRSSComic(BaseComic, ABC):
             detail.is_latest = check_if_latest_link(
                 detail.name, detail.image_url, link_cache
             )
+        logger.debug(f"All done for {self.name}")
         return detail
 
     @classmethod
@@ -494,14 +529,18 @@ class BaseNumberComic(BaseComic):
     ) -> ComicDetail:
         from bdbot.cache import check_if_latest_link
 
+        logger = logging.getLogger("discord")
         detail = await super().get_comic(action)
         detail.url = await self.get_comic_url(action, comic_date)
+        logger.debug(f"Got {detail.url} for {self.name}")
         html = await self.read_url_content(detail.url)
+        logger.debug("Extracting content...")
         detail = self.extract_content(html, 0, detail)
         if verify_latest:
             detail.is_latest = check_if_latest_link(
                 detail.name, detail.image_url, link_cache
             )
+        logger.debug(f"All done for {self.name}")
         return detail
 
     @classmethod
