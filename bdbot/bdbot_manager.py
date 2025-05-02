@@ -34,6 +34,7 @@ from bdbot.files import (
     DETAILS_PATH,
     ENV_FILE,
     FOOTERS_FILE_PATH,
+    HELP_EMBED_PATH,
     LOGS_DIRECTORY_PATH,
     PROD_DATA_PATH,
     REQUEST_FILE_PATH,
@@ -337,6 +338,7 @@ def setup_bot():
     if continue_copy:
         shutil.copy("misc/comics_details.json", DETAILS_PATH)
         shutil.copy("misc/random-footers.txt", FOOTERS_FILE_PATH)
+        shutil.copy("misc/help_embeds.json", HELP_EMBED_PATH)
 
     logger.info("Creating link cache, this might take some time...")
     asyncio.run(create_link_cache(logger))
@@ -746,6 +748,7 @@ def refresh_conf_files():
     # Copy files over
     shutil.copy("misc/comics_details.json", DETAILS_PATH)
     shutil.copy("misc/random-footers.txt", FOOTERS_FILE_PATH)
+    shutil.copy("misc/help_embeds.json", HELP_EMBED_PATH)
 
 
 def todo():
