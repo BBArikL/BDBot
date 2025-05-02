@@ -100,12 +100,15 @@ class CyanideAndHappiness(BaseNumberComic):
         detail.title = comic_data["title"]
         logger.debug("Getting image url...")
         detail.image_url = None
-        if "comicimgurl" in comic_details:
+        if "comicimgurl" in comic_details and comic_details["comicimgurl"] is not None:
             # Legacy comics
             detail.image_url = (
                 "https://files.explosm.net/comics/" + comic_details["comicimgurl"]
             )
-        elif "comicimgstaticbucketurl" in comic_details:
+        elif (
+            "comicimgstaticbucketurl" in comic_details
+            and comic_details["comicimgstaticbucketurl"] is not None
+        ):
             # modern comics
             image_static = comic_details["comicimgstaticbucketurl"]
             if image_static is not None and "mediaItemUrl" in image_static:

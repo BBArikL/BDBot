@@ -1,6 +1,6 @@
 [project]
 name = "bdbot"
-version = "5.0"
+version = "5.0.1"
 description = "A discord bot that post comics strip."
 readme = "README.md"
 authors = [{name = "Arik", email = "BBArik@protonmail.com"}]
