@@ -39,8 +39,6 @@ def check_if_latest_link(
     comic_name: str, current_link: str, link_cache: dict[str, str]
 ) -> bool:
     """Returns if the provided link is the latest one"""
-    a = link_cache[comic_name]
-    print(f"Cached link is {a} while current link is {current_link}")
     return current_link != link_cache[comic_name]
 
 

@@ -69,7 +69,7 @@ async def comic_send(
     comic_date: datetime | int | None = None,
     next_send: NextSend = NextSend.Normal,
 ):
-    """Post the strip (with the given parameters)"""
+    """Post the comic (with the given parameters)"""
     if next_send == NextSend.Normal:
         # Defers the return, so Discord can wait longer
         await inter.response.defer()
@@ -586,7 +586,9 @@ async def check_comics_and_post(
         except (Exception, ComicNotFound, ComicExtractionFailed) as e:
             # Anything can happen (connection problem, etc... and the bot will crash if any error
             # is raised in the poster loop)
-            logger.error(f"An error occurred while getting a comic: {e}")
+            logger.error(
+                f"An error occurred while getting a comic '{e.__class__.__name__}: {e.__str__()}'"
+            )
             embed = ComicDetail.comic_not_found(comic.name)
             is_latest = False
 

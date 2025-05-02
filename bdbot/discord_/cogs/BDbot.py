@@ -256,6 +256,7 @@ class BDBot(commands.Cog):
                 "This server is not subscribed to any comic!",
                 next_send=NextSend.Deferred,
             )
+            return
 
         subscriptions: list[DiscordSubscription] = []
         for channel in server.channels:
