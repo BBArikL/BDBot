@@ -114,7 +114,8 @@ There are 2 ways to set up scheduled comics:
   - Tell me if I forgot some commands here!
 
 - Bugs
-  - None for the moment. Open an issue if you find any! :)
+  - Cyanide and Happiness specific date returns the latest comic
+  - Cyanide and Happiness random comic returns the same comic
  
 - Anything else to know?
   - How can I host the bot? The requirements are: Playwright (use 'BYPASS_GOCOMICS_JS=False' to disable that requirement), and python 3.11+.

@@ -22,6 +22,7 @@ from bdbot.time import get_now
 from bdbot.utils import clean_url, get_headers
 
 FIRST_DATE_FORMAT = "%Y-%m-%d"
+HUMAN_READABLE_DATE_FORMAT = "%B %d, %Y"
 
 
 class WorkingType(enum.Enum):
@@ -74,8 +75,8 @@ class BaseComic(ABC):
         pass
 
     @abstractmethod
-    def extract_content(
-        self, content: str, date: Any, detail: ComicDetail
+    async def extract_content(
+        self, content: str, date: Any, detail: ComicDetail, action: Action | None = None
     ) -> ComicDetail:
         pass
 
@@ -243,8 +244,8 @@ class BaseDateComic(BaseComic):
     def get_link_from_date(self, date: datetime):
         pass
 
-    def extract_content(
-        self, content: str, date: Any, detail: ComicDetail
+    async def extract_content(
+        self, content: str, date: Any, detail: ComicDetail, action=None
     ) -> ComicDetail:
         pass
 
@@ -267,7 +268,7 @@ class BaseDateComic(BaseComic):
         if comic_date is None:
             logger.debug("No comic date provided, using current date")
             comic_date = get_now()
-
+        original_date = comic_date
         while tries < self._MAX_TRIES and detail.image_url == self.image:
             tries += 1
             detail.date = comic_date
@@ -291,38 +292,43 @@ class BaseDateComic(BaseComic):
                 if tries >= self._MAX_TRIES:
                     # If it hasn't found anything
                     raise ComicNotFound(
-                        f"Could not find any comic for '{self.name}' around the requested date!",
+                        f"Could not find any comic for '{self.name}' around the requested date!"
+                        f" ({original_date.strftime(HUMAN_READABLE_DATE_FORMAT)})!",
                         self.name,
                     )
                 continue
 
             logger.debug(f"Image url is {image_url}...")
+            detail.image_url = clean_url(image_url)
             # Extracts the title of the comic
             detail.title = self.extract_meta_content(soup, "title")
             # Finds the final url (if necessary)
             url = self.extract_meta_content(soup, "url")
             if url:
                 detail.url = clean_url(url)
-            detail.image_url = clean_url(image_url)
-
-        detail.date = self.extract_date_from_url(detail.url)
-
-        yesterday = comic_date.date() - timedelta(days=1)
-        if detail.date.date() < yesterday and tries == 1 and action == Action.Today:
-            # Special check for Comics Kingdom, might be good for Gocomics in the future
-            # Giving a date with no comic available gives back an older comic
-            # So we forcefully check for one day later
-            logger.debug(
-                f"The comic found for '{self.name}' was not valid, backing up one day"
-                f" (probably a Comics Kingdom comic with no available comic for the current date...)"
-            )
-            yesterday = datetime(yesterday.year, yesterday.month, yesterday.day)
-            return await self.get_comic(
-                action,
-                verify_latest=verify_latest,
-                comic_date=yesterday,
-                link_cache=link_cache,
-            )
+            try:
+                detail.date = self.extract_date_from_url(detail.url)
+            except ValueError:
+                detail.date = None
+            if detail.date is None or (
+                detail.date.date() != comic_date.date() and action != Action.Random
+            ):
+                # Giving a date with no comic available gives back an older comic, so we back up one day
+                logger.debug(
+                    f"The comic found for '{self.name}' has an invalid date, backing up one day"
+                    f" (probably a Comics Kingdom comic with no available comic for the current date...)"
+                )
+                comic_date = comic_date - timedelta(days=1)
+                tries += 1
+                if tries >= self._MAX_TRIES:
+                    # If it hasn't found anything
+                    raise ComicNotFound(
+                        f"Could not find any comic for '{self.name}' around the requested date"
+                        f" ({original_date.strftime(HUMAN_READABLE_DATE_FORMAT)})!",
+                        self.name,
+                    )
+                detail.image_url = self.image
+                continue
 
         if verify_latest:
             detail.is_latest = check_if_latest_link(
@@ -388,8 +394,8 @@ class BaseRSSComic(BaseComic, ABC):
     def get_comic_specific_date(self, date: Any):
         pass
 
-    def extract_content(
-        self, content: str, date: int, detail: ComicDetail
+    async def extract_content(
+        self, content: str, date: int, detail: ComicDetail, action=None
     ) -> ComicDetail:
         logger = logging.getLogger("discord")
         try:
@@ -458,7 +464,7 @@ class BaseRSSComic(BaseComic, ABC):
 
         content = await self.read_url_content(self.rss_url)
 
-        detail = self.extract_content(content, comic_nb, detail)
+        detail = await self.extract_content(content, comic_nb, detail)
 
         if verify_latest:
             detail.is_latest = check_if_latest_link(
@@ -512,8 +518,8 @@ class BaseNumberComic(BaseComic):
             "url",
         )
 
-    def extract_content(
-        self, content: str, date: Any, detail: ComicDetail
+    async def extract_content(
+        self, content: str, date: int, detail: ComicDetail, action: Action = None
     ) -> ComicDetail:
         # General extractor
         soup = BeautifulSoup(content, self._BASE_PARSER)
@@ -536,8 +542,8 @@ class BaseNumberComic(BaseComic):
         detail.url = await self.get_comic_url(action, comic_date)
         logger.debug(f"Got {detail.url} for {self.name}")
         html = await self.read_url_content(detail.url)
-        logger.debug("Extracting content...")
-        detail = self.extract_content(html, 0, detail)
+        logger.debug(f"Extracting content with action {action}...")
+        detail = await self.extract_content(html, 0, detail, action=action)
         if verify_latest:
             detail.is_latest = check_if_latest_link(
                 detail.name, detail.image_url, link_cache
