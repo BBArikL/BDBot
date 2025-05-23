@@ -151,8 +151,6 @@ class BaseComic(ABC):
         d.pop("WEBSITE_HELP")
         d.pop("WORKING_TYPE")
         d.pop("_BASE_PARSER")
-        d.pop("IMAGE_CLASS_REGEX", None)
-        d.pop("SECTION_IMAGE_CLASS", None)
         d["first_date"] = self.first_date_format
         d["color"] = hex(self.color).upper()[2:]
         return d
@@ -180,6 +178,8 @@ class BaseComic(ABC):
         content: str
         async with aiohttp.ClientSession(headers=get_headers()) as session:
             async with session.get(url) as response:
+                if response.status != 200:
+                    return ""
                 content = await response.text()
         return content
 

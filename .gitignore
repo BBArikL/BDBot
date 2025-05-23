@@ -154,3 +154,5 @@ cython_debug/
 # Project-specific ignores
 data/
 *.pid
+*.sqlite3
+latest_comics.json
