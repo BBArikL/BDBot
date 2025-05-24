@@ -75,3 +75,9 @@ def parse_all(
     final_date = default_date if date is None else date
     final_hour = default_hour if hour is None else hour
     return final_date, final_hour
+
+
+def save_page_content(url, html):
+    """Very useful, keep for debugging"""
+    with open(f"{url.replace('/', '-').replace(':', '')}.html", "w") as f:
+        f.write(html.html)

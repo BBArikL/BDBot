@@ -1,31 +1,30 @@
 [project]
 name = "bdbot"
-version = "5.0.2"
+version = "5.0.3"
 description = "A discord bot that post comics strip."
 readme = "README.md"
 authors = [{name = "Arik", email = "BBArik@protonmail.com"}]
 license = {text = "GPL 3.0"}
 requires-python = ">=3.11"
 dependencies = [
-    "discord.py>=2.5.1",
+    "discord.py>=2.5.2",
     "requests>=2.32.3",
     "requests-htmlc>=0.0.8",
     "rss-parser>=2.1.0",
     "beautifulsoup4>=4.12.3",
-    "python-dotenv>=1.0.1",
+    "python-dotenv>=1.1.0",
     "randomtimestamp @ git+https://github.com/ByteBaker/randomtimestamp.git",
     "inquirerpy>=0.3.4",
-    "dotenv",
-    "tortoise-orm",
-    "tortoise-cli"
+    "tortoise-orm>=0.25.0",
+    "tortoise-cli>=0.1.2"
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.3.4", "flake8>=7.1.2", "isort>=6.0.1", "black>=25.1.0", "pre-commit>=4.1.0", "Flake8-pyproject>=1.2.3"]
+dev = ["pytest>=8.3.5", "flake8>=7.2.0", "isort>=6.0.1", "black>=25.1.0", "pre-commit>=4.2.0", "Flake8-pyproject>=1.2.3"]
 
 
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
+requires = ["setuptools>=80.8.0", "setuptools-scm>=8.3.1"]
 build-backend = "setuptools.build_meta"
 
 [project.scripts]
