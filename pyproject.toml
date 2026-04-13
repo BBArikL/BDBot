@@ -30,7 +30,7 @@ dev = [
     "isort>=6.0.1",
     "black>=25.1.0",
     "pre-commit>=4.2.0",
-    "Flake8-pyproject>=1.2.3",
+    "Flake8-pyproject>=1.2.4",
     "tomli_w",
 ]
 
