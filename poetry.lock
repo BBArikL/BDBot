@@ -2783,4 +2783,4 @@ dev = []
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "3f31c31a8eab2021e5eee1a9ff05c5442a8807b93c40539c5dc8b8b52af7c534"
+content-hash = "f1978926eaa441e55f3d34be14b3904e73cf5ff562107f7191a178936651b9d5"
