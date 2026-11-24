@@ -1,6 +1,5 @@
 import asyncio
 import os
-import re
 from datetime import datetime, timezone
 from typing import Optional, Union
 
@@ -14,7 +13,6 @@ from bdbot.actions import ExtendedAction
 from bdbot.comics import initialize_comics
 from bdbot.db import DiscordSubscription, ServerSubscription
 from bdbot.discord_ import discord_utils
-from bdbot.discord_.bot_request import BotRequest
 from bdbot.discord_.client import BDBotClient
 from bdbot.discord_.cogs.AutomaticPoster import PosterHandler
 from bdbot.discord_.cogs.Comics import Comic
@@ -22,7 +20,7 @@ from bdbot.discord_.discord_utils import SERVER, NextSend, is_owner, send_messag
 from bdbot.discord_.exceptions import on_error
 from bdbot.embed import Embed
 from bdbot.field import Field
-from bdbot.files import DETAILS_PATH, REQUEST_FILE_PATH, load_json
+from bdbot.files import DETAILS_PATH, load_json
 from bdbot.time import Weekday, get_now, get_time_between
 
 
@@ -192,37 +190,6 @@ class BDBot(commands.Cog):
         await send_message(inter, status)
 
     @app_commands.command()
-    async def request(self, inter: discord.Interaction):
-        """Request something from the developer!"""
-        # Adds a request to the database
-        await inter.response.send_modal(BotRequest())
-
-    @app_commands.command()
-    async def delete_requests(self, inter: discord.Interaction):
-        """Delete requests sent through 'request'"""
-        author = f"{inter.user.name}#{inter.user.discriminator}"
-        output = []
-        count = 0
-
-        with open(REQUEST_FILE_PATH, "rt") as rq:
-            # Removes all lines matching with the username and discriminator
-            lines = rq.readlines()
-
-        for line in lines:
-            if not re.match(f'.*".*"[^"]+{author}[^"]+', line):
-                # Tries to be sure that that request can't be used to delete another user's request
-                output.append(line)
-            else:
-                count += 1
-
-        if count > 0:
-            with open(REQUEST_FILE_PATH, "wt") as rq:
-                rq.writelines("".join(output))  # Rewrites all lines
-            await send_message(inter, f"Deleted {count} request(s)!")
-        else:
-            await send_message(inter, "No requests to delete!")
-
-    @app_commands.command()
     @app_commands.checks.has_permissions(manage_guild=True)
     async def sub(self, inter: discord.Interaction):
         """Checks if the server is subbed to any comic"""
@@ -286,11 +253,15 @@ class BDBot(commands.Cog):
         await discord_utils.send_embed(inter, embeds, NextSend.Deferred)
 
     @app_commands.command()
+    @app_commands.guilds(SERVER.id)
+    @app_commands.checks.check(is_owner)
     async def ping(self, inter: discord.Interaction):
         """Get the bot latency with discord API"""
         await send_message(inter, "Pong! " + str(round(self.bot.latency * 1000)) + "ms")
 
     @app_commands.command()
+    @app_commands.guilds(SERVER.id)
+    @app_commands.checks.check(is_owner)
     async def uptime(self, inter: discord.Interaction):
         """Get the bot uptime"""
         delta = get_time_between(self.start_time, datetime.now(timezone.utc))

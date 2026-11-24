@@ -1,8 +1,10 @@
 import json
 import logging
+import ssl
 from datetime import datetime
 from typing import Any
 
+import aiohttp
 from bs4 import BeautifulSoup
 
 from bdbot.actions import Action
@@ -38,6 +40,11 @@ class GarfieldMinusGarfield(BaseRSSComic):
 
     def get_specific_url(self, date: Any):
         return self.website_url + "day/" + date.strftime("%Y/%m/%d")
+
+    async def read_url_content(self, url: str, connector=None) -> str:
+        context = ssl.create_default_context()
+        connector = aiohttp.TCPConnector(ssl=context)
+        return await super().read_url_content(url=url, connector=connector)
 
 
 class CyanideAndHappiness(BaseNumberComic):

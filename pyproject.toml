@@ -3,20 +3,18 @@ name = "bdbot"
 version = "5.0.4"
 description = "A discord bot that post comics strip."
 readme = "README.md"
-authors = [
-    { name = "Arik", email = "BBArik@protonmail.com" },
-]
-requires-python = ">=3.11"
+authors = [{ name = "Arik", email = "BBArik@protonmail.com" }]
+requires-python = ">=3.11,<4.0"
 dependencies = [
     "discord.py>=2.6.4",
     "requests>=2.32.3",
-    "requests-htmlc>=0.0.8",
-    "rss-parser>=2.1.1",
+    "requests-htmlc>=0.0.9",
+    "rss-parser>=4.4.1",
     "beautifulsoup4>=4.12.3",
     "python-dotenv>=1.2.2",
     "randomtimestamp>=2.3",
     "inquirerpy>=0.3.4",
-    "tortoise-orm>=1.1.7",
+    "tortoise-orm>=1.1.9",
     "tortoise-cli>=0.2.0",
 ]
 
@@ -24,42 +22,30 @@ dependencies = [
 text = "GPL 3.0"
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=9.0.3",
-    "flake8>=7.2.0",
-    "isort>=8.0.1",
-    "black>=25.1.0",
-    "pre-commit>=4.2.0",
-    "Flake8-pyproject>=1.2.4",
-    "tomli_w",
-]
+dev = []
 
 [project.scripts]
 bdbot = "bdbot.__main__:main"
 bdbot_manager = "bdbot.bdbot_manager:main"
 
 [build-system]
-requires = [
-    "setuptools>=80.8.0",
-    "setuptools-scm>=8.3.1",
-]
+requires = ["setuptools>=80.8.0", "setuptools-scm>=8.3.1"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = [
-    "bdbot",
-]
+packages = ["bdbot"]
 
 [tool.flake8]
 max-line-length = 120
-exclude = [
-    ".git",
-    "__pycache__",
-    ".venv",
-    "venv",
-]
+exclude = [".git", "__pycache__", ".venv", "venv"]
 
 [dependency-groups]
 dev = [
     "tomli-w>=1.2.0",
+    "pytest>=9.2.0",
+    "flake8>=7.2.0",
+    "isort>=9.0.2",
+    "black>=26.10.1",
+    "pre-commit>=4.2.0",
+    "Flake8-pyproject>=1.2.3",
 ]
