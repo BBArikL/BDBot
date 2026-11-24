@@ -23,7 +23,7 @@ class Webtoons(BaseRSSComic):
 
     @property
     def weekday_token(self):
-        return "A"
+        return "a"
 
     @property
     def timezone_token(self):

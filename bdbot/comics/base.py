@@ -174,9 +174,11 @@ class BaseComic(ABC):
             return content_meta["content"]
         return None
 
-    async def read_url_content(self, url: str) -> str:
+    async def read_url_content(self, url: str, connector=None) -> str:
         content: str
-        async with aiohttp.ClientSession(headers=get_headers()) as session:
+        async with aiohttp.ClientSession(
+            headers=get_headers(), connector=connector
+        ) as session:
             async with session.get(url) as response:
                 if response.status != 200:
                     return ""
@@ -426,10 +428,8 @@ class BaseRSSComic(BaseComic, ABC):
             )
         feed = rss.channel.content.items[date].content
 
-        detail.date = datetime.strptime(
-            feed.pub_date.content,
-            f"%{self.weekday_token}, %d %b %Y %H:%M:%S %{self.timezone_token}",
-        )
+        detail.date = feed.pub_date.content
+
         logger.debug(f"Comic date is {detail.date}")
 
         detail.url = feed.links[0].content
